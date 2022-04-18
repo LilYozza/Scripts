@@ -1,0 +1,27 @@
+local Games = {
+    ["8328351891"] = {
+        Name = "Mega Mansion Tycoon",
+        Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Mansion%20Tycoon.txt'))
+    },
+    ["35397735"] = {
+        Name = "Scuba Diving at Quill Lake",
+        Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Scuba%20Diving%20at%20Quill%20Lake.txt'))
+    },
+	["321778215"] = {
+		Name = "Royale High",
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Royale%20High.txt'))
+	},
+	["7971857341"] = {
+		Name = "YouTube Tycoon",
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Youtube%20Tycoon.txt'))
+	}
+}
+
+local found = false
+for key, value in pairs(Games) do
+    if key == tostring(game.PlaceId) or key == tostring(game.GameId) then
+        value.Script() found = true
+        break
+    end
+end
+if found == false then print("Here") loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() end

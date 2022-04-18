@@ -1,0 +1,170 @@
+--Game Link: https://www.roblox.com/games/7971857341/Youtuber-Tycoon
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
+local FullBright = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+local Youtuber = "PrestonPlayz" --Can Change
+local Tycoons = workspace:FindFirstChild("Tycoons")
+local Plots = workspace:FindFirstChild("Plots")
+local Tycoon = nil
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+function FindTycoon()
+    for key, value in pairs(Tycoons:GetDescendants()) do
+        if value.Name == "Owner" and value.Value == Player then
+            Tycoon = value.Parent.Parent
+            break
+        end
+    end
+end
+
+if Tycoon == nil then
+    for key, value in pairs(Plots:GetDescendants()) do
+        if value.Name == "TouchInterest" then
+            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 0)
+            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 1)
+            break
+        end
+    end
+end
+
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        if Tycoon == nil then FindTycoon() end
+        MainItems = Tycoon:FindFirstChild("MainItems")
+        CashButton = MainItems:FindFirstChild("CashButton")
+        while shared.toggle1 do
+            pcall(function()
+                for key, value in pairs(CashButton:GetDescendants()) do
+                    if value.Name == "TouchInterest" then
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 0)
+                        firetouchinterest( Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 1)
+                        wait(1)
+                    end
+                end
+                wait()
+            end)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.toggle2 = bool
+    spawn (function()
+        while shared.toggle2 do
+            pcall(function()
+                if Tycoon == nil then FindTycoon() end
+                local cost = 0
+                Buttons = Tycoon:FindFirstChild("Buttons")
+                for key, value in pairs(Buttons:GetDescendants()) do
+                    if value.Name == "TouchInterest" then
+                        for i, price in pairs(value.Parent:GetDescendants()) do
+                            if price.Name == "PriceLabel" then
+                                cost = string.gsub(price.text, "%D", "")
+                            end
+                        end
+                        if Player.leaderstats.Cash.Value >= tonumber(cost) then
+                            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 0)
+                            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 1)
+                            wait()
+                        end
+                    end
+                end
+                wait()
+            end)
+        end
+    end)
+end)
+
+Auto:Button("Sword Aura",function()
+    spawn (function()
+        local credit='guardscripts'
+        local url=('https://raw.githubusercontent.com/%s/myscripts/main/scriptinit.lua'):format(credit)
+        init=loadstring(game:HttpGet(url,true))
+        getgenv().xscriptId='NDA5MzBy'
+        init()
+    end)
+end)
+
+Auto:Button("Delete Doors",function()
+    spawn (function()
+        for key, value in pairs(Tycoons:GetDescendants()) do
+            if value.Name == "Lasers" then
+                value:Destroy()
+            end
+        end
+    end)
+end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:DestroyGui()
