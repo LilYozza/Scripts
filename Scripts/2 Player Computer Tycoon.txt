@@ -100,7 +100,7 @@ Auto:Toggle("Auto Buy",function(bool)
                         if type(cost) == "number" and Player.leaderstats.Cash.value >= cost and CheckTycoon(value) then
                             firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
                             firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
-                            wait()
+                            wait(0.5)
                         end
                     end
                 end
