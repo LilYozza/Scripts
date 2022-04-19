@@ -87,6 +87,25 @@ Auto:Toggle("Auto Buy",function(bool)
     end)
 end)
 
+Auto:Toggle("Sabotage",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        if Tycoon == nil then FindTycoon() end
+        while shared.toggle3 do
+            pcall(function()
+                for key, value in pairs(Tycoons:GetDescendants()) do
+                    if value.Name == "ProximityPrompt" and value:FindFirstAncestor("OwnerOnlyDoor") and not value:FindFirstAncestor(Tycoon.Name) and (value.Parent.Position - Player.character:WaitForChild("HumanoidRootPart").Position).magnitude < 20 then
+                        fireproximityprompt(value)
+                        wait()
+                        print("Firing")
+                    end
+                end
+                wait()
+            end)
+        end
+    end)
+end)
+
 Auto:Button("Sword Aura",function()
     spawn (function()
         local credit='guardscripts'
