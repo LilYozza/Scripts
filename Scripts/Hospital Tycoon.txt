@@ -132,6 +132,14 @@ Auto:Toggle("Auto Heal",function(bool)
     end)
 end)
 
+Auto:Button("Remove Doors",function()
+    for key, value in pairs(Tycoons:GetDescendants()) do
+        if value.Name:match("OwnerOnlyDoor") or value.Name:match("SecurityRoomDoor") then
+            value:Destroy()
+        end
+    end
+end)
+
 Misc:Toggle("Anti AFK",function(bool)
     shared.Misc1 = bool
     spawn (function()
