@@ -182,6 +182,7 @@ end
 
 --[[ Initialize ESP ]]--
 function RunESP(bool)
+	print(bool)
 	isRun = bool
 	while isRun do
 		Cleanup()
