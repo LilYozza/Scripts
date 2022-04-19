@@ -182,10 +182,11 @@ end
 
 --[[ Initialize ESP ]]--
 function RunESP(bool)
-	while isRun do
+	while bool do
 		Cleanup()
 		local func, ok = pcall(function()
 			for i,v in pairs(_G.PlayerLocation()) do
+			    if not bool then break
 				if v.Name ~= LocalPlayer.Name then
 					local Char = GetPropPC(v, "Character") or v or nil
 					local TeamCheck = (GetPropPC(v, "Team") ~= LocalPlayer.Team) or (GetPropPC(v, "TeamColor") ~= LocalPlayer.TeamColor) or (LocalPlayer.Team == nil)
@@ -240,19 +241,6 @@ function RunESP(bool)
 									end
 								end
 							end
-							local PosPart = INSTNEW("Part")
-							PosPart.CFrame = Head.CFrame
-							PosPart.Size = VEC3(1,1,1)
-							PosPart.Transparency = 1
-							Create3DVertex(PosPart, {
-								["Offset"] = VEC3(1,1,1);
-								["Thickness"] = 1;
-								["Transparency"] = 1;
-								["Filled"] = false;
-								["Visible"] = true;
-								["Color"] = Color;
-							})
-							PosPart:Destroy()
 						end
 					end
 				end
