@@ -1,3 +1,4 @@
+wait(5)
 --Game Link: https://www.roblox.com/games/7050008107/Hospital-Tycoon
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
@@ -10,8 +11,6 @@ local virtual = game:GetService("VirtualUser")
 local Tycoon
 local Tycoons = workspace:FindFirstChild("Tycoons")
 local suffixes = {"K", "M", "B", "T", "Q"}
-
-
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
@@ -87,7 +86,7 @@ Auto:Toggle("Auto Buy",function(bool)
                         if value.Name == "ItemPrice" and value:FindFirstAncestor("Anchor") then
                             if value.text == "FREE" or value.text == "UNLOCK" then Player.character:WaitForChild("HumanoidRootPart").CFrame = value:FindFirstAncestor("Anchor").CFrame wait(1) else
                                 price = fromSuffixString(value.text)
-                                if type(price) == "number" and fromSuffixString(Player.leaderstats.Cash.Value) >= price and not value:FindFirstAncestor("Anchor").Parent.Name:match("Robux") then
+                                if type(price) == "number" and fromSuffixString(Player.leaderstats.Cash.Value) >= price and not value:FindFirstAncestor("Anchor").Parent.Name:match("Robux") and not value:FindFirstAncestor("Anchor").Parent.Name:match("DropAppearance") then
                                     Player.character:WaitForChild("HumanoidRootPart").CFrame = value:FindFirstAncestor("Anchor").CFrame
                                     wait(1)
                                 end
