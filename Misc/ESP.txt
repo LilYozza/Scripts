@@ -182,12 +182,13 @@ end
 
 --[[ Initialize ESP ]]--
 function RunESP(bool)
-	while bool do
+	isRun = bool
+	while isRun do
 		Cleanup()
 		local func, ok = pcall(function()
 			for i,v in pairs(_G.PlayerLocation()) do
 				if v.Name ~= LocalPlayer.Name then
-		    			if not bool then break end
+		    		if not isRun then break end
 					local Char = GetPropPC(v, "Character") or v or nil
 					local TeamCheck = (GetPropPC(v, "Team") ~= LocalPlayer.Team) or (GetPropPC(v, "TeamColor") ~= LocalPlayer.TeamColor) or (LocalPlayer.Team == nil)
 					if Char and TeamCheck then
