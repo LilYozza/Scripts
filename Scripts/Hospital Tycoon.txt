@@ -84,7 +84,7 @@ Auto:Toggle("Auto Buy",function(bool)
                     for key, value in pairs(Effects:GetDescendants()) do
                         if not shared.toggle3 then break end
                         if value.Name == "ItemPrice" and value:FindFirstAncestor("Anchor") then
-                            if value.text == "FREE" or value.text == "UNLOCK" then Player.character:WaitForChild("HumanoidRootPart").CFrame = value:FindFirstAncestor("Anchor").CFrame wait(1) else
+                            if value.text == "FREE" or value.text == "UNLOCK!" then Player.character:WaitForChild("HumanoidRootPart").CFrame = value:FindFirstAncestor("Anchor").CFrame wait(1) else
                                 price = fromSuffixString(value.text)
                                 if type(price) == "number" and fromSuffixString(Player.leaderstats.Cash.Value) >= price and not value:FindFirstAncestor("Anchor").Parent.Name:match("Robux") and not value:FindFirstAncestor("Anchor").Parent.Name:match("DropAppearance") then
                                     Player.character:WaitForChild("HumanoidRootPart").CFrame = value:FindFirstAncestor("Anchor").CFrame
