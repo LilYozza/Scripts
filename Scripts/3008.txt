@@ -1,0 +1,162 @@
+--Game Link: https://www.roblox.com/games/2768379856/3008-2-7
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+local TweenService = game:GetService("TweenService")
+
+local ItemSelect, SetBase, SetDump
+local ItemsList = {}
+local GameObjects = workspace:FindFirstChild("GameObjects")
+local Physical = GameObjects:FindFirstChild("Physical")
+local Map = Physical:FindFirstChild("Map")
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+for key, value in pairs(Map:GetDescendants()) do
+    if value.Name == "Root" and value:FindFirstAncestor("Items") then
+        if not table.find(ItemsList, value.Parent.Name) then
+            table.insert(ItemsList, value.Parent.Name)
+        end
+    end
+end
+table.sort(ItemsList, function(a, b) return a:byte() < b:byte() end)
+
+function TweenTo(part, distance)
+    Player.character:WaitForChild("HumanoidRootPart").Anchored = true
+    CurrentTween = TweenService:Create(Player.character:WaitForChild("HumanoidRootPart"), TweenInfo.new(distance/80,Enum.EasingStyle.Quad,Enum.EasingDirection.Out,0,false,0), {CFrame = part})
+    CurrentTween:Play()
+    wait(distance/80)
+    Player.character:WaitForChild("HumanoidRootPart").Anchored = false
+end
+
+local DropList = Auto:Dropdown("Select Item",ItemsList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    ItemSelect = SItem
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            pcall(function()
+                if table.find(ItemsList, ItemSelect) then
+                    for key, value in pairs(Map:GetDescendants()) do
+                        if value:FindFirstChild("Root") and SetBase == nil then SetBase = Player.character:WaitForChild("HumanoidRootPart").CFrame end
+                        if value.Name == ItemSelect and value:FindFirstChild("Root") and shared.toggle1 and (value:FindFirstChild("Root").Position - SetBase.Position).magnitude > 100 then
+                            distance = (value:FindFirstChild("Root").Position - Player.character:WaitForChild("HumanoidRootPart").Position).magnitude
+                            if SetDump ~= nil then back = SetDump else back = Player.character:WaitForChild("HumanoidRootPart").CFrame end
+                            TweenTo(value:FindFirstChild("Root").CFrame, distance)
+                            wait(5)
+                            TweenTo(back, distance)
+                            wait(5)
+                        end
+                    end
+                end
+                wait(1)
+            end)
+        end
+    end)
+end)
+
+Auto:Button("GoTo Item",function()
+    pcall(function()
+        if table.find(ItemsList, ItemSelect) then
+            for key, value in pairs(Map:GetDescendants()) do
+                if value:FindFirstChild("Root") and SetBase == nil then SetBase = Player.character:WaitForChild("HumanoidRootPart").CFrame end
+                if value.Name == ItemSelect and value:FindFirstChild("Root") and (value:FindFirstChild("Root").Position - SetBase.Position).magnitude > 100 then
+                    distance = (value:FindFirstChild("Root").Position - Player.character:WaitForChild("HumanoidRootPart").Position).magnitude
+                    if SetDump ~= nil then back = SetDump else back = Player.character:WaitForChild("HumanoidRootPart").CFrame end
+                    TweenTo(value:FindFirstChild("Root").CFrame, distance)
+                    break
+                end
+            end
+        end
+        wait(1)
+    end)
+end)
+
+Auto:Button("SetBase Location",function()
+    SetBase = Player.character:WaitForChild("HumanoidRootPart").CFrame
+end)
+
+Auto:Button("SetDump Location",function()
+    SetDump = Player.character:WaitForChild("HumanoidRootPart").CFrame
+end)
+
+Auto:Button("Teleport To Base",function()
+    if SetBase ~= nil then Player.character:WaitForChild("HumanoidRootPart").CFrame = SetBase end
+end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
