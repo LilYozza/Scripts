@@ -9,20 +9,7 @@ local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local w = library:CreateWindow("Main")
-local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
-
-Auto:Toggle("Name",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            pcall(function()
-                -- Function
-                wait()
-            end)
-        end
-    end)
-end)
 
 Misc:Toggle("Anti AFK",function(bool)
     shared.Misc1 = bool

@@ -18,6 +18,10 @@ local Games = {
 	["28382335"] = {
 		Name = "Zombie Survival Tycoon",
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zombie%20Survival%20Tycoon.txt'))
+	},
+	["7050008107"] = {
+		Name = "Hospital Tycoon",
+		Script = loadstring(game:HttpGet(''))
 	}
 }
 repeat wait() until game:IsLoaded()
@@ -28,4 +32,4 @@ for key, value in pairs(Games) do
         break
     end
 end
-if found == false then print("Here") loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() end
+if found == false then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() end
