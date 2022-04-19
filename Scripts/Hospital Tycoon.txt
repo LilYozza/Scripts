@@ -11,12 +11,13 @@ local Tycoon
 local Tycoons = workspace:FindFirstChild("Tycoons")
 local suffixes = {"K", "M", "B", "T", "Q"}
 
+
+
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
-
 for key, value in pairs(Tycoons:GetDescendants()) do
-    if value.Name == "Title" and value:FindFirstAncestor("NameSign") and value.text:match(Player.Name) then
+    if value.Name == "Title" and value:FindFirstAncestor("NameSign") and value.text:match(string.upper(Player.Name)) then
         Tycoon = value:FindFirstAncestor("Environment").Parent
         break
     end
