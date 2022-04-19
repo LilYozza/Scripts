@@ -61,6 +61,16 @@ function GetTycoon()
 end
 GetTycoon()
 
+function SpawnAtTycoon()
+    for i, part in pairs(Tycoons:FindFirstChild("Tycoons"):FindFirstChild(Tycoon.Name):GetDescendants()) do
+        if part.Name == "Spawn" and CheckTycoon(part) then
+            Player.character:WaitForChild("HumanoidRootPart").CFrame = part.CFrame
+        end
+    end
+end
+
+SpawnAtTycoon()
+
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
     spawn (function()
@@ -113,11 +123,7 @@ Auto:Toggle("Auto Rebirth",function(bool)
                         wait(5)
                         GetTycoon()
                         wait(1)
-                        for i, part in pairs(Tycoons:FindFirstChild("Tycoons"):FindFirstChild(Tycoon.Name):GetDescendants()) do
-                            if part.Name == "Spawn" and CheckTycoon(part) then
-                                Player.character:WaitForChild("HumanoidRootPart").CFrame = part.CFrame
-                             end
-                        end
+                        SpawnAtTycoon()
                     end
                 end
                 wait(60)
