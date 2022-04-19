@@ -69,7 +69,7 @@ function SpawnAtTycoon()
     end
 end
 
-SpawnAtTycoon()
+spawn(function() wait(3) SpawnAtTycoon())
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
