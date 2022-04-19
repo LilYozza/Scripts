@@ -180,12 +180,10 @@ function Create3DVertex(PART, SETT)
 	end
 end
 
-
 --[[ Initialize ESP ]]--
-spawn(function()
-	while true do
+function RunESP(bool)
+	while isRun do
 		Cleanup()
-		
 		local func, ok = pcall(function()
 			for i,v in pairs(_G.PlayerLocation()) do
 				if v.Name ~= LocalPlayer.Name then
@@ -264,5 +262,5 @@ spawn(function()
 		if not func then warn(ok) end
 		
 		RunService.RenderStepped:Wait()
-	end
-end)
+    end    
+end
