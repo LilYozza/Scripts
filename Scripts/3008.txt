@@ -1,6 +1,5 @@
 --Game Link: https://www.roblox.com/games/2768379856/3008-2-7
-local Event = game:GetService("ReplicatedStorage").PublicValues.MapLoaded.Value
-repeat wait() until Event == true
+repeat wait() until game:GetService("ReplicatedStorage").PublicValues.MapLoaded.Value == true
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
