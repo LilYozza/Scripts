@@ -1,0 +1,199 @@
+--Game Link: https://www.roblox.com/games/1020232214/FIRST-3-PLAYER-TYCOON-IN-ROBLOX
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+local Tycoon
+local Tycoons = workspace:FindFirstChild("Tycoons")
+local ProtectionBlocks = workspace:FindFirstChild("ProtectionBlocks")
+local suffixes = {"K", "M", "B", "T", "Q"}
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+function GetTycoon()
+    for key, value in pairs(Tycoons:GetDescendants()) do
+        if value.Name == "Owner" and value.Value == Player then
+            Tycoon = value.Parent
+            break
+        end
+    end
+end
+
+function ClaimTycoon()
+    if Tycoon == nil then
+        for key, value in pairs(Tycoon:GetDescendants()) do
+            if value.Name == "Owner" and value.Value == nil then
+                for i, part in pairs(value.Parent:FindFirstChild("Entrance")) do
+                    if part.Name == "Head" then
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), part, 0)
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), part, 1)
+                        Tycoon = value.Parent
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function fromSuffixString(s)
+    found = false
+    if s:match("$") then s = string.gsub(s, '%$', "") end
+    if s:match(",") then s = string.gsub(s, '%,', "") end
+    if s:match("+") then s = string.gsub(s, '%+', "") end
+    for i, value in ipairs(suffixes) do
+        if s:match(value) then found = true end
+    end
+    if found == false then return tonumber(s) end
+	local n, suffix = string.match(s, "(.*)(%a)$")
+	if n and suffix then
+		local i = table.find(suffixes, suffix) or 0
+		return tonumber(n) * math.pow(10, i * 3)
+	end
+	return tonumber(s)
+end
+
+Auto:Toggle("Auto Click",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        if Tycoon == nil then GetTycoon() end
+        while shared.toggle1 do
+            for key, value in pairs(Tycoon:GetDescendants()) do
+                if value:isA("ClickDetector") and value:FindFirstAncestor("Mine") and shared.toggle1 then
+                    fireclickdetector(value)
+                    wait()
+                end
+            end
+            wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle2 = bool
+    spawn (function()
+        if Tycoon == nil then GetTycoon() end
+        while shared.toggle2 do
+            for key, value in pairs(Tycoon:GetDescendants()) do
+                if value.Name == "Giver" and shared.toggle2 then
+                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
+                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
+                    wait()
+                end
+            end
+            wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        if Tycoon == nil then GetTycoon() end
+        while shared.toggle3 do
+            for key, value in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
+                if value.Name == "Head" and value:FindFirstChild("TouchInterest") and shared.toggle3 then
+                    price = value.Parent:FindFirstChild("Price").Value
+                    if price <= fromSuffixString(Player.leaderstats.Blocks.Value) then
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
+                        wait()
+                    end
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Button("Sword Aura",function()
+    local credit='guardscripts'
+    local url=('https://raw.githubusercontent.com/%s/myscripts/main/scriptinit.lua'):format(credit)
+    init=loadstring(game:HttpGet(url,true))
+    getgenv().xscriptId='NDA5MzBy'
+    init()
+end)
+
+Auto:Button("Remove Doors",function()
+    ProtectionBlocks:Destroy()
+    for key, value in pairs(Tycoons:GetDescendants()) do
+        if value.Name == "OwnerOnlyDoor" then
+            value:Destroy()
+        end
+    end
+end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
