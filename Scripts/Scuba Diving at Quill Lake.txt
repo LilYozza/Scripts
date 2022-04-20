@@ -43,19 +43,17 @@ Auto:Toggle("Auto Artifact",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
-            pcall(function()
-                Player = game.Players.LocalPlayer
-                for key, value in pairs(Artifacts:GetChildren()) do
-                local back = root.CFrame
-                root.CFrame = part.CFrame
+            for key, value in pairs(Artifacts:GetChildren()) do
+                if not shared.toggle2 then break end 
+                back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+                Player.character:WaitForChild("HumanoidRootPart").CFrame = value.CFrame
                 wait(1)
                 keypress(0x45)
                 wait(2)
                 keyrelease(0x45)
-                root.CFrame = back
-                end
-                wait()
-            end)
+                Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+            end
+            wait()
         end
     end)
 end)
@@ -64,19 +62,16 @@ Auto:Toggle("Auto QuestItem",function(bool)
     shared.toggle3 = bool
     spawn (function()
         while shared.toggle3 do
-            pcall(function()
-                Player = game.Players.LocalPlayer
-                for key, value in pairs(QuestItems:GetChildren()) do
-                local back = root.CFrame
-                root.CFrame = part.CFrame
+            for key, value in pairs(QuestItems:GetChildren()) do
+                back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+                Player.character:WaitForChild("HumanoidRootPart").CFrame = value.CFrame
                 wait(1)
                 keypress(0x45)
                 wait(2)
                 keyrelease(0x45)
-                root.CFrame = back
-                end
-                wait()
-            end)
+                Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+            end
+            wait()
         end
     end)
 end)
@@ -85,15 +80,12 @@ Auto:Toggle("Auto Sell",function(bool)
     shared.toggle4 = bool
     spawn (function()
         while shared.toggle4 do
-            pcall(function()
-                Player = game.Players.LocalPlayer
-                if Player.GoldCoins.value > 0 then
-                    local Event = game:GetService("ReplicatedStorage").SellAll
-                    Event:FireServer()
-                    wait(0.5)
-                end
-                wait()
-            end)
+            if game.Players.LocalPlayer.GoldCoins.value > 0 then
+                local Event = game:GetService("ReplicatedStorage").SellAll
+                Event:FireServer()
+                wait(0.5)
+            end
+            wait()
         end
     end)
 end)
@@ -102,15 +94,12 @@ Auto:Toggle("Auto Heal",function(bool)
     shared.toggle5 = bool
     spawn (function()
         while shared.toggle5 do
-            pcall(function()
-                Player = game.Players.LocalPlayer
-                if Player.character:WaitForChild("Humanoid").Health < 100 then
-                    local Event = game:GetService("ReplicatedStorage").HealHumanoid
-                    Event:FireServer(Player.character:WaitForChild("Humanoid"))
-                    wait()
-                end
+            if Player.character:WaitForChild("Humanoid").Health < 100 then
+                Event = game:GetService("ReplicatedStorage").HealHumanoid
+                Event:FireServer(Player.character:WaitForChild("Humanoid"))
                 wait()
-            end)
+               end
+            wait()
         end
     end)
 end)
@@ -119,20 +108,22 @@ Auto:Toggle("Auto Oxygen",function(bool)
     shared.toggle6 = bool
     spawn (function()
         while shared.toggle6 do
-            pcall(function()
-                Player = game.Players.LocalPlayer
-                if Player.ScubaGear.AirTank.value < 270 then
+            Player = game.Players.LocalPlayer
+            if Player.ScubaGear.AirTank then
+                if Player.ScubaGear.AirTank.Value < 270 then
                     local Event = game:GetService("ReplicatedStorage").ChangeValue
                     Event:FireServer(Player.ScubaGear.AirTank, 270)
                     wait()
                 end
---                if Player.ScubaGear.SuperScuba.value < 270 then
---                    local Event = game:GetService("ReplicatedStorage").ChangeValue
---                    Event:FireServer(Player.ScubaGear.SuperScuba, 270)
---                    wait()
---                end
-                wait()
-            end)
+            end
+            if Player.ScubaGear.SuperScuba then
+                if Player.ScubaGear.SuperScuba.Value < 270 then
+                    local Event = game:GetService("ReplicatedStorage").ChangeValue
+                    Event:FireServer(Player.ScubaGear.SuperScuba, 270)
+                    wait()
+                end
+            end
+            wait()
         end
     end)
 end)
