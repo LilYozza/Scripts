@@ -46,6 +46,10 @@ local Games = {
 	["6374779901"] = {
 		Name = "Escape Easy Choko Fun Obby Parkour",
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Choko%20Fun%20Obby%20Parkour.txt'))
+	},
+	["8003084678"] = {
+		Name = "oMega Obby Parkour 525 Stages!",
+		Script = loadstring(game:HttpGet(''))
 	}
 }
 repeat wait() until game:IsLoaded()
