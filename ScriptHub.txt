@@ -36,8 +36,8 @@ local Games = {
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FIRST%203%20PLAYER%20TYCOON%20IN%20ROBLOX!.txt'))
 	},
 	["6283640837"] = {
-		Name = "Escape Super Fat Guy Obby"
-		Script = loadstring(game:HttpGet(''))
+		Name = "Escape Super Fat Guy Obby",
+		Script = loadstring(game:HttpGet('https://github.com/LilYozza/Scripts/blob/main/Scripts/Escape%20Super%20Fat%20Guy%20Obby.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
