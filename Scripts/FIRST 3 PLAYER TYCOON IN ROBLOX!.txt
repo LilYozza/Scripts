@@ -70,6 +70,7 @@ Auto:Toggle("Auto Click",function(bool)
             for key, value in pairs(Tycoons:GetDescendants()) do
                 if value:isA("ClickDetector") and value:FindFirstAncestor("Mine") and shared.toggle1 and value:FindFirstAncestor("Essentials").Parent.Name:match(Tycoon.Name:split(" ")[1]) then
                     fireclickdetector(value)
+                    wait()
                     break
                 end    
             end
@@ -153,7 +154,7 @@ Auto:Button("Sword Aura",function()
 end)
 
 Auto:Button("Remove Doors",function()
-    ProtectionBlocks:Destroy()
+    if ProtectionBlocks then ProtectionBlocks:Destroy() end
     for key, value in pairs(Tycoons:GetDescendants()) do
         if value.Name == "OwnerOnlyDoor" then
             value:Destroy()
