@@ -35,7 +35,7 @@ Auto:Toggle("Auto Complete",function(bool)
             firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Stages:FindFirstChild(_):FindFirstChild("Spawn"), 1)
             wait(0.5)
         end
-        if shared.toggle2 then Rebirth() end
+        if shared.toggle2 and Player.leaderstats.Stage.Value >= 524 then Rebirth() end
     end)
 end)
 
