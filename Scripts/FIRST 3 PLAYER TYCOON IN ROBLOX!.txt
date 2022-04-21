@@ -13,6 +13,7 @@ local Tycoon
 local Tycoons = workspace:FindFirstChild("Tycoons")
 local ProtectionBlocks = workspace:FindFirstChild("ProtectionBlocks")
 local suffixes = {"K", "M", "B", "T", "Q"}
+local Swords = {"Final Hero", "Darkheart", "ClassicSword", "StarterSword"}
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
@@ -83,7 +84,7 @@ Auto:Toggle("Auto Collect",function(bool)
         if Tycoon == nil then GetTycoon() end
         while shared.toggle2 do
             for key, value in pairs(Tycoon:GetDescendants()) do
-                if value.Name == "Giver" and shared.toggle2 then
+                if value.Name == "Giver" and value:FindFirstAncestor("Essentials") and shared.toggle2 then
                     firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
                     firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
                     wait()
@@ -106,6 +107,35 @@ Auto:Toggle("Auto Buy",function(bool)
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
                         wait()
+                    end
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Heal",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            if Player.character:WaitForChild("Humanoid").Health <= 50 then
+                for key, value in pairs(Tycoons:GetDescendants()) do
+                    if value.Name == "Giver" and value:FindFirstAncestor("MedkitGiver") then
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
+                        repeat wait() until Player.Backpack:WaitForChild("Medkit") ~= nil
+                        Medkit = Player.Backpack:WaitForChild("Medkit")
+                        Player.character:WaitForChild("Humanoid"):EquipTool(Medkit)
+                        virtual:ClickButton1(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+                        for i, part in pairs(Swords) do
+                            if Player.Backpack:FindFirstChild(part) then
+                                weapon = Player.Backpack:FindFirstChild(part)
+                                Player.character:WaitForChild("Humanoid"):EquipTool(weapon)
+                                break
+                            end
+                        end
+                        break
                     end
                 end
             end
