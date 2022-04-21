@@ -53,6 +53,7 @@ Auto:Toggle("Auto Buy",function(bool)
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
                         wait(0.7)
+			break
                     end
                 end
             end
