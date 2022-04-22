@@ -62,11 +62,15 @@ local Games = {
 	["3587619225"] = {
 		Name = "Mega Easy Obby 🌟 775 Stages!",
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Easy%20Obby%20%F0%9F%8C%9F%20775%20Stages!.txt'))
+	},
+	["9099326192"] = {
+		Name = "GREAT SCHOOL BREAKOUT!",
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GREAT%20SCHOOL%20BREAKOUT!.txt')) 
+	},
+	["8712817601"] = {
+		Name = "BARRY'S PRISON RUN! (First Person Obby!)",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRY'S%20PRISON%20RUN!.txt'))
 	}
-	--["8712817601"] = {
-		--Name = "BARRY'S PRISON RUN! (First Person Obby!)",
-		--Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRY'S%20PRISON%20RUN!.txt'))
-	--}
 }
 repeat wait() until game:IsLoaded()
 local found = false
