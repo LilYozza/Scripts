@@ -1,4 +1,4 @@
---Game Link: https://www.roblox.com/games/8712817601/BARRYS-PRISON-RUN-First-Person-Obby
+--Game Link: https://www.roblox.com/games/9099326192/GREAT-SCHOOL-BREAKOUT-First-Person-Obby
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
