@@ -86,6 +86,10 @@ local Games = {
 	["6153766069"] = {
 		Name = "Escape The Carnival of Terror Obby!",
 		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Carnival%20of%20Terror%20Obby!.txt'))
+	},
+	["5809883124"] = {
+		Name = "Easy 500 Stages Obby [⭐NEW STAGES⭐]",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20500%20Stages%20Obby%20%5B%E2%AD%90NEW%20STAGES%E2%AD%90%5D.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
