@@ -58,6 +58,10 @@ local Games = {
 	["8651851179"] = {
 		Name = "[174] Find The Pandas",
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B174%5D%20Find%20The%20Pandas.txt'))
+	},
+	["3587619225"] = {
+		Name = "Mega Easy Obby 🌟 775 Stages!",
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Easy%20Obby%20%F0%9F%8C%9F%20775%20Stages!.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
