@@ -10,8 +10,7 @@ local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local LocalObjects = workspace:WaitForChild("LocalObjects")
-local GameObstacles = workspace:WaitForChild("GameObstacles")
-local Spawns = LocalObjects:WaitForChild("spawns")
+local Spawns = LocalObjects:WaitForChild("Spawns")
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
@@ -23,8 +22,8 @@ Auto:Toggle("Auto Complete",function(bool)
         while shared.toggle1 do
             for _ = Player.leaderstats.Stage.Value+1, #Spawns:getChildren(), 1 do
                 if not shared.toggle1 then break end
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Spawns:WaitForChild("p"..Player.leaderstats.Stage.Value+1):WaitForChild("go"), 0)
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Spawns:WaitForChild("p"..Player.leaderstats.Stage.Value+1):WaitForChild("go"), 1)
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Spawns:WaitForChild("s"..Player.leaderstats.Stage.Value+1):WaitForChild("go"), 0)
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Spawns:WaitForChild("s"..Player.leaderstats.Stage.Value+1):WaitForChild("go"), 1)
                 _ = Player.leaderstats.Stage.Value+1
                 wait(1)
             end
@@ -47,10 +46,6 @@ Auto:Button("Give Items (WIP)",function()
             end
         end
     end)
-end)
-
-Auto:Button("Remove Obstacles",function()
-    if GameObstacles then GameObstacles:Destroy() end
 end)
 
 Misc:Toggle("Anti AFK",function(bool)
