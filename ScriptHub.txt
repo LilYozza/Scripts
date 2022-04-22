@@ -69,9 +69,10 @@ local Games = {
 	},
 	["8712817601"] = {
 		Name = "BARRY'S PRISON RUN! (First Person Obby!)",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRY'S%20PRISON%20RUN!.txt'))
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRYS%20PRISON%20RUN!.txt'))
 	}
 }
+print("Loaded")
 repeat wait() until game:IsLoaded()
 local found = false
 for key, value in pairs(Games) do
