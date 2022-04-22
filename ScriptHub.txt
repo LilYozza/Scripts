@@ -79,6 +79,10 @@ local Games = {
 		Name = "Escape The Dungeon Obby!",
 		Script =  loadstring(game:HttpGet('https://github.com/LilYozza/Scripts/blob/main/Scripts/Escape%20The%20Dungeon%20Obby!.txt'))
 	}
+	["7839281987"] = {
+		Name = "Escape Mr Funnys ToyShop!",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Mr%20Funnys%20ToyShop!.txt'))
+	}
 }
 repeat wait() until game:IsLoaded()
 local found = false
