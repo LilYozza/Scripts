@@ -9,8 +9,8 @@ local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
-local LocalObjects = workspace:WaitForChild("LocalObjects")
-local Spawns = LocalObjects:WaitForChild("Spawns")
+local LocalObjects = workspace:FindFirstChild("LocalObjects")
+local Spawns = LocalObjects:FindFirstChild("Spawns")
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
