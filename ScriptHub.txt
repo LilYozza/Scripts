@@ -54,6 +54,10 @@ local Games = {
 	["8891045283"] = {
 		Name = "[135] Find The Bacons",
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B135%5D%20Find%20The%20Bacons.txt'))
+	},
+	["8651851179"] = {
+		Name = "[174] Find The Pandas",
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B174%5D%20Find%20The%20Pandas.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
