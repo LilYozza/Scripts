@@ -12,7 +12,7 @@ local virtual = game:GetService("VirtualUser")
 local PowerUp = workspace:FindFirstChild("Meshes/shrink platform")
 local Eggs = workspace:FindFirstChild("Eggs")
 local Trophies = workspace:FindFirstChild("Trophies")
-local Drops = {"Gem", "Plasma GrenadePickup", "Sticky BombPickup", "Black Hole GrenadePickup", "GrenadePickupa"}
+local Drops = {"Gem", "Plasma GrenadePickup", "Sticky BombPickup", "Black Hole GrenadePickup", "GrenadePickup", "Stun GrenadePickup"}
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
