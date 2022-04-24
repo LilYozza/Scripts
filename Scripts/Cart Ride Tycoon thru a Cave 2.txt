@@ -12,6 +12,7 @@ local virtual = game:GetService("VirtualUser")
 local Tycoon, NilTycoon, SCollect
 local Spawn = workspace:FindFirstChild("Spawn")
 local AdminRoom = Spawn:FindFirstChild("Admin room")
+local BlackListItems = {"Gem Teleporter"}
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
@@ -44,10 +45,10 @@ Auto:Toggle("Auto Collect",function(bool)
     spawn (function()
         if not Tycoon then GetTycoon() end
         while shared.toggle1 do
-            for _,v in pairs(Tycoon:FindFirstChild("Cash to collect"):GetDescendants()) do
+            for _,v in pairs(Tycoon:GetDescendants()) do
                 if v:IsA("TouchTransmitter") and v.Parent.Name:match("Collect") and shared.toggle1 then
                     firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) break
+                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
                 end
             end
         	wait(1)
@@ -68,14 +69,13 @@ Auto:Toggle("Auto Buy",function(bool)
             for _,v in pairs(Tycoon:FindFirstChild("Factory"):GetDescendants()) do
                 if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Humanoid") and shared.toggle3 and not v:FindFirstAncestor("OpenClose door") then
                     price = string.gsub(v.Parent.Parent:FindFirstChild("Humanoid").DisplayName:split("-")[2], "%D", "")
-                    --print(price, Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Money").Value)
                     if SCollect and tonumber(price) <= Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Money").Value then
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Collect"), 0)
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Collect"), 1) wait(0.5)
                     end
                     if tonumber(price) <= Player.leaderstats.Cash.Value then
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.5)
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.5) break
                     end
                     wait(1)
                 end
@@ -119,6 +119,16 @@ end)
 
 Auto:Button("Give Items",function()
     spawn(function()
+        for _,v in pairs(Tycoon:FindFirstChild("Factory"):GetDescendants()) do
+            if v:IsA("TouchTransmitter") and v.Parent.Parent.Parent.Name:match("Gem") and not table.find(BlackListItems,  v.Parent.Parent.Parent.Name) then
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.5)
+            end
+            if v:IsA("TouchTransmitter") and v.Parent.Parent.Name:match("Giver") then
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.5)
+            end
+        end
         for _,v in pairs(workspace:GetDescendants()) do
             if v:isA("TouchTransmitter") and v.Parent.Parent.Name:match("GearGiver") then
                 firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
@@ -171,19 +181,16 @@ Troll:Toggle("SpeedDown Cart",function(bool)
     end)
 end)
 
-Troll:Toggle("Break Cart",function(bool)
-    shared.toggle13 = bool
+Troll:Button("Break Carts",function()
     spawn (function()
         if not Tycoon then GetTycoon() end
-        while shared.toggle13 do
-            for _,v in pairs(workspace:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name == "On" then
-                    fireclickdetector(v)
-                    wait()
-                end
+        for _,v in pairs(workspace:GetDescendants()) do
+            if v:IsA("ClickDetector") and v.Parent.Name == "On" then
+                fireclickdetector(v)
+                wait()
             end
-            wait()
         end
+        wait()
     end)
 end)
 
@@ -191,7 +198,6 @@ Troll:Button("Spawn Carts",function()
     spawn(function()
         for _,v in pairs(workspace:GetDescendants()) do
             if v:IsA("TouchTransmitter") and v.Parent.Name:match("Regen") then
-                print("Touching")
                 firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
                 firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
             end
