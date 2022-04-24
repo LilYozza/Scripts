@@ -196,7 +196,7 @@ end)
 Item:Button("Get Item",function()
     spawn(function()
         for _, v in pairs(Tycoons:GetDescendants()) do
-            if table.find(Items, ItemSelect) and v.Name:match(ItemSelect) then
+            if  v.Name:match(ItemSelect) and v:FindFirstChild("Giver") then
                 firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v:FindFirstChild("Giver"), 0)
                 firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v:FindFirstChild("Giver"), 1)
                 break
