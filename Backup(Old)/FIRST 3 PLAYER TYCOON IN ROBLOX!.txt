@@ -9,37 +9,20 @@ local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
-local Tycoon, TCollect, ItemSelect
-local PName = {}
+local Tycoon
 local Tycoons = workspace:FindFirstChild("Tycoons")
 local ProtectionBlocks = workspace:FindFirstChild("ProtectionBlocks")
 local suffixes = {"K", "M", "B", "T", "Q"}
-local Swords = {"Final Hero", "Darkheart", "ClassicSword", "StarterSword", "SCAR"}
-local Items = {}
+local Swords = {"Final Hero", "Darkheart", "ClassicSword", "StarterSword"}
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
-local Item = w:CreateFolder("Items")
 local Misc = w:CreateFolder("Misc")
-
-function UpdateItems()
-    if Items ~= nil then table.clear(Items) end
-    for _, v in pairs(Tycoons:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Giver") and not v:FindFirstAncestor("Essentials") and not table.find(Items, v.Parent.Parent.Name) then
-            table.insert(Items, v.Parent.Parent.Name)
-        end
-    end
-    if Items ~= nil then table.sort(Items, function(a, b) return a:byte() < b:byte() end) end
-end
-UpdateItems()
-
 
 function GetTycoon()
     for key, value in pairs(Tycoons:GetDescendants()) do
         if value.Name == "Owner" and value.Value == Player then
             Tycoon = value.Parent
-            PName = Tycoon.Name:split(" ")
-            PName = string.gsub(Tycoon.Name, PName[#PName], "").."worker"
             break
         end
     end
@@ -84,7 +67,7 @@ Auto:Toggle("Auto Click",function(bool)
     spawn (function()
         if Tycoon == nil then GetTycoon() end
         while shared.toggle1 do
-            for key, value in pairs(Tycoons:FindFirstChild(PName):GetDescendants()) do
+            for key, value in pairs(Tycoons:GetDescendants()) do
                 if value:isA("ClickDetector") and value:FindFirstAncestor("Mine") and shared.toggle1 and value:FindFirstAncestor("Essentials").Parent.Name:match(Tycoon.Name:split(" ")[1]) then
                     fireclickdetector(value)
                     wait()
@@ -112,27 +95,19 @@ Auto:Toggle("Auto Collect",function(bool)
         end
     end)
 end)
-Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle5 = bool
-    TCollect = shared.toggle5
-end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle3 = bool
     spawn (function()
         if Tycoon == nil then GetTycoon() end
         while shared.toggle3 do
-            for _, v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Transparency == 0 then
-                    if TCollect and v.Parent.Parent:FindFirstChild("Price").Value <= fromSuffixString(Player.leaderstats.Blocks.Value) + Tycoon:FindFirstChild("CurrencyToCollect").Value then
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Tycoon:FindFirstChild("Essentials"):FindFirstChild("Giver"), 0)
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Tycoon:FindFirstChild("Essentials"):FindFirstChild("Giver"), 1)
-                        wait(1)
-                    end
-                    if v.Parent.Parent:FindFirstChild("Price").Value <= fromSuffixString(Player.leaderstats.Blocks.Value) then
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
-                        wait(1)
+            for key, value in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
+                if value.Name == "Head" and value:FindFirstChild("TouchInterest") and shared.toggle3 then
+                    price = value.Parent:FindFirstChild("Price").Value
+                    if price <= fromSuffixString(Player.leaderstats.Blocks.Value) then
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
+                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
+                        wait()
                     end
                 end
             end
@@ -185,55 +160,6 @@ Auto:Button("Remove Doors",function()
             value:Destroy()
         end
     end
-end)
-
-
-
-local DropList = Item:Dropdown("Select Item",Items,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    ItemSelect = SItem
-end)
-
-Item:Button("Get Item",function()
-    spawn(function()
-        for _, v in pairs(Tycoons:GetDescendants()) do
-            if table.find(Items, ItemSelect) and v.Name:match(ItemSelect) then
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v:FindFirstChild("Giver"), 0)
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v:FindFirstChild("Giver"), 1)
-                break
-            end
-        end
-    end)
-end)
-
-Item:Button("Refresh",function()
-    UpdateItems()
-    DropList:Refresh(Items)
-end)
-
-Item:Button("Give Toruch",function()
-    back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Parkour1") then
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
-            break
-        end
-    end
-    wait(0.5)
-    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
-end)
-
-Item:Button("Give Diamond",function()
-    back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Parkour2") then
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
-            break
-        end
-    end
-    wait(0.5)
-    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
 end)
 
 Misc:Toggle("Anti AFK",function(bool)
