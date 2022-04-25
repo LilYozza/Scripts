@@ -10,9 +10,11 @@ local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local RCart, Cart
+local PathGivers = workspace:FindFirstChild("PathGivers")
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Troll")
+local Other = w:CreateFolder("Other")
 local Misc = w:CreateFolder("Misc")
 
 for _,v in pairs(workspace:GetDescendants()) do
@@ -66,6 +68,27 @@ Auto:Button("Spawn",function()
         for _,v in pairs(RCart:GetDescendants()) do
             if v:IsA("ClickDetector") and v.Parent.Name:match("Regen") then
                 fireclickdetector(v) wait()
+            end
+        end
+    end)
+end)
+
+Other:Button("Give Items",function()
+    spawn(function()
+        for _,v in pairs(PathGivers:GetDescendants()) do
+            if v:IsA("TouchTransmitter") then
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
+                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) wait()
+            end
+        end
+    end)
+end)
+
+Other:Button("Teleport End",function()
+    spawn(function()
+        for _,v in pairs(workspace:GetDescendants()) do
+            if v:IsA("TouchTransmitter") and v.Parent.Name == "SpawnLocation" then
+                Player.character:WaitForChild("HumanoidRootPart").CFrame = v.Parent.CFrame
             end
         end
     end)
