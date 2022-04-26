@@ -4,11 +4,16 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
 
+local DropList
 local Player = game.Players.LocalPlayer
 local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
+local SColor = BrickColor.new("Lime green")
+local DColor = BrickColor.new("Neon orange")
+local CartList = {} local PlayerList = {} local BlackList = {}
+local CartSelect, PlayerSelect
 local RollerCoaster = workspace:FindFirstChild("RollerCoaster")
 local Finish = workspace:FindFirstChild("Finish")
 local PathGivers = Finish:FindFirstChild("PathGivers")
@@ -20,14 +25,101 @@ local Auto = w:CreateFolder("Troll")
 local Other = w:CreateFolder("Other")
 local Misc = w:CreateFolder("Misc")
 
+function SelectColor(model, p)
+    for _,v in pairs(model:GetChildren()) do
+        if v:IsA("Part") and v.Name == "Part" then
+            v.BrickColor = p
+        end
+    end
+end
+
+function ListenPlayer()
+    table.clear(PlayerList)
+    table.insert(PlayerList, "All")
+    for _,v in pairs(game.Players:GetChildren()) do
+        if v.Character:WaitForChild("Humanoid").sit and not table.find(PlayerList, v.Name) then
+           table.insert(PlayerList, v.Name)
+        end
+    end
+end
+
+function onSeated(isSeated, seat)
+	if isSeated then
+	    ListenPlayer()
+	    DropList:Refresh(PlayerList)
+		print("I'm now sitting on: " .. seat.Name .. "!")
+	else
+	    
+	    ListenPlayer()
+	    DropList:Refresh(PlayerList)
+		print("I'm not sitting on anything")
+	end
+end
+
+
+
+function UpdatePlayers()
+    table.clear(PlayerList)
+    table.insert(PlayerList, "All")
+    for _,v in pairs(game.Players:GetChildren()) do
+        if v.Character:WaitForChild("Humanoid").sit and not table.find(BlackList, v.Name) then
+           table.insert(PlayerList, v.Name)
+           table.insert(BlackList, v.Name)
+           print("Connecting:", v.Name)
+           v.Character:WaitForChild("Humanoid").Seated:Connect(onSeated)
+        end
+    end
+end UpdatePlayers()
+
+DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    PlayerSelect = SItem
+    if PlayerSelect == "All" then CartSelect = "All" 
+    else
+        for _,v in pairs(game.Players:GetChildren()) do
+            if PlayerSelect == v.Name then PlayerSelect = v break end
+        end
+        PlayerSelect.character:WaitForChild("Humanoid").SeatPart.Parent.Name = PlayerSelect.Name
+        CartSelect = PlayerSelect.character:WaitForChild("Humanoid").SeatPart.Parent.Name
+    end
+    if CartSelect == "All" then
+        for _,v in pairs(Carts:GetDescendants()) do
+            if v:IsA("Part") and v.Name == "Part" then
+                if v.BrickColor == DColor then SelectColor(v.parent, SColor) end
+            end
+        end
+        
+    else
+        for _,v in pairs(Carts:GetDescendants()) do
+            if v:IsA("Part") and v.Name == "Part" then
+                if v.BrickColor == SColor then SelectColor(v.parent, DColor) end
+            end
+        end
+        for _,v in pairs(Carts:FindFirstChild(CartSelect):FindFirstChild("Body"):GetChildren()) do
+            if v:IsA("Part") and v.Name == "Part" then
+                if v.BrickColor == DColor then SelectColor(v.parent, SColor) end
+            end
+        end
+    end
+end)
+
+
+
 
 Auto:Toggle("Speed Up",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _,v in pairs(Carts:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name:match("Up") and shared.toggle1 then
-                    fireclickdetector(v) wait()
+            if CartSelect == "All" and shared.toggle1 then
+                for _,v in pairs(Carts:GetDescendants()) do
+                    if v:IsA("ClickDetector") and v.Parent.Name:match("Up") then
+                        fireclickdetector(v) wait()
+                    end
+                end
+            else
+                for _,v in pairs(Carts:FindFirstChild(CartSelect):GetDescendants()) do
+                    if v:IsA("ClickDetector") and v.Parent.Name:match("Up") then
+                        fireclickdetector(v) wait()
+                    end
                 end
             end
         	wait()
@@ -39,9 +131,17 @@ Auto:Toggle("Speed Down",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
-            for _,v in pairs(Carts:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name:match("Down") and shared.toggle2 then
-                    fireclickdetector(v) wait()
+            if CartSelect == "All" and shared.toggle2 then
+                for _,v in pairs(Carts:GetDescendants()) do
+                    if v:IsA("ClickDetector") and v.Parent.Name:match("Down") then
+                        fireclickdetector(v) wait()
+                    end
+                end
+            else
+                for _,v in pairs(Carts:FindFirstChild(CartSelect):GetDescendants()) do
+                    if v:IsA("ClickDetector") and v.Parent.Name:match("Down") then
+                        fireclickdetector(v) wait()
+                    end
                 end
             end
         	wait()
@@ -51,9 +151,17 @@ end)
 
 Auto:Button("Break",function()
     spawn(function()
-        for _,v in pairs(Carts:GetDescendants()) do
-            if v:IsA("ClickDetector") and v.Parent.Name:match("On") then
-                fireclickdetector(v) wait()
+        if CartSelect == "All" then
+            for _,v in pairs(Carts:GetDescendants()) do
+                if v:IsA("ClickDetector") and v.Parent.Name:match("On") then
+                    fireclickdetector(v) wait()
+                end
+            end
+        else
+            for _,v in pairs(Carts:FindFirstChild(CartSelect):GetDescendants()) do
+                if v:IsA("ClickDetector") and v.Parent.Name:match("On") then
+                    fireclickdetector(v) wait()
+                end
             end
         end
     end)
@@ -70,6 +178,12 @@ Auto:Button("Spawn",function()
     end)
 end)
 
+Auto:Button("Refresh",function()
+    spawn(function()
+        UpdatePlayers() DropList:Refresh(PlayerList)
+    end)
+end)
+
 Other:Button("Give Items",function()
     spawn(function()
         for _,v in pairs(PathGivers:GetDescendants()) do
@@ -83,13 +197,13 @@ end)
 
 Other:Button("Teleport Start",function()
     spawn(function()
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("SpawnLocation").CFrame
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("SpawnLocation").CFrame + Vector3.new(0,6,0)
     end)
 end)
 
 Other:Button("Teleport End",function()
     spawn(function()
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = Finish:FindFirstChild("Baseplate").CFrame
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = Finish:FindFirstChild("Baseplate").CFrame + Vector3.new(0,6,0)
     end)
 end)
 
@@ -160,3 +274,11 @@ Misc:Button("ESP",function()
 end)
 
 Misc:DestroyGui()
+
+Players.PlayerAdded:Connect(function(player)
+    UpdatePlayers()
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    UpdatePlayers()
+end)
