@@ -3,7 +3,3 @@ local var = {}
 local var:PrintString(s)
 	print(s)
 end
-
-local var:Print()
-	print("Joe")
-end
