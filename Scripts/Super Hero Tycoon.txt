@@ -51,10 +51,10 @@ function GetTycoon()
             end
         end
     end
-    for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Essentials") then Collection = v.Parent end end
+    for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Essentials") and v.Parent.Name == "Giver" then Collection = v.Parent end end
 end GetTycoon()
 
-Auto:Toggle("Auto Grab",function(bool)
+Auto:Toggle("Auto Crate",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
@@ -73,8 +73,8 @@ Auto:Toggle("Auto Click",function(bool)
     if not Tycoon then GetTycoon() end
     spawn (function()
         while shared.toggle2 do
-            for _,v in pairs(Tycoon:FindFirstChild("Essentials"):GetDescendants()) do
-                if v:IsA("ClickDetector") and shared.toggle2 then fireclickdetector(v) wait(0.2) end
+            for _,v in pairs(Tycoon:GetDescendants()) do
+                if v:IsA("ClickDetector") and v.Parent.Name == "clicker" and shared.toggle2 then fireclickdetector(v) wait(0.2) end
             end
         	wait()
         end
