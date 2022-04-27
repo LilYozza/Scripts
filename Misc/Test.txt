@@ -1,7 +1,9 @@
-local function PrintString(s)
+local var = {}
+
+local var:PrintString(s)
 	print(s)
 end
 
-local function Print()
+local var:Print()
 	print("Joe")
 end
