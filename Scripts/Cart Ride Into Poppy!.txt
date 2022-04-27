@@ -33,6 +33,20 @@ function SelectColor(model, p)
     end
 end
 
+function CreateTag(c, h)
+    GUI = Instance.new("BillboardGui", h)
+    GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)
+    GUI.AlwaysOnTop = true
+    GUI.Size = UDim2.new(3, 0, 1, 0)
+    TextLabel = Instance.new("TextLabel", GUI)
+    TextLabel.Text =  h.Parent:WaitForChild("Humanoid").DisplayName
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Font = "ArialBold"
+    TextLabel.TextSize = 15
+    TextLabel.TextColor3 = c
+    TextLabel.Size = UDim2.new(1,0,1,0)
+end
+
 local DropList = Troll:Dropdown("Select Player",PlayerList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     PlayerSelect = SItem
     if PlayerSelect == "All" then CartSelect = "All"
@@ -68,7 +82,10 @@ function UpdatePlayers()
             table.insert(PlayerList, v.character:WaitForChild("Humanoid").DisplayName)
         end
         if not table.find(BlackList, v.Name) then table.insert(BlackList, v.Name)
-            v.Character:WaitForChild("Humanoid").Seated:Connect(onSeated) wait()
+            v.Character:WaitForChild("Humanoid").Seated:Connect(onSeated)
+        end
+        if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+            CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) wait()
         end
     end
     DropList:Refresh(PlayerList)
@@ -88,6 +105,9 @@ function GetPlayers()
         if not table.find(BlackList, v.Name) then
             table.insert(BlackList, v.Name)
             v.Character:WaitForChild("Humanoid").Seated:Connect(onSeated) wait()
+        end
+        if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+            CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) wait()
         end
     end
     DropList:Refresh(PlayerList)
