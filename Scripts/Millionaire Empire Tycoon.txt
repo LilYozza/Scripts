@@ -1,4 +1,4 @@
---Game Link:https://www.roblox.com/games/6677985923/X2-CASH-Millionaire-Empire-Tycoon
+--Game Link:
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
@@ -32,8 +32,8 @@ end GetTycoon()
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
     spawn (function()
-        if not Tycoon then GetTycoon() end
         while shared.toggle1 do
+            if not Tycoon then GetTycoon() end
             firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Collection, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Collection, 1) wait(1)
         	wait()
         end
@@ -48,13 +48,12 @@ end)
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle3 = bool
     spawn (function()
-        if not Tycoon then GetTycoon() end
         while shared.toggle3 do
+            if not Tycoon then GetTycoon() end
             for _,v in pairs(TycoonItems:FindFirstChild("Buttons"):GetDescendants()) do
                 if v:IsA("TouchTransmitter") and shared.toggle3 and not v.Parent.Parent:FindFirstChild("GamePass") then
                     if SCollect and v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value + TycoonItems:FindFirstChild("P1 Cash").Value then firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Collection, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Collection, 1) wait(0.2) end
-                    if v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value then firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.2) end
-                    wait()
+                    if v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value then firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.2) break end
                 end
             end
         	wait()
@@ -62,11 +61,13 @@ Auto:Toggle("Auto Buy",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto Rebirth WIP",function(bool)
-    shared.toggle1 = bool
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.toggle4 = bool
     spawn (function()
-        while shared.toggle1 do
-        	wait()
+        while shared.toggle4 do
+            local Event = game:GetService("ReplicatedStorage").rebirthEvent
+            Event:FireServer() Tycoon = nil
+        	wait(15)
         end
     end)
 end)
