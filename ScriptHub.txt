@@ -126,7 +126,7 @@ local Games = {
 	["3440262694"] = {
 		Name = "Airport Tycoon!",
 		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Airport%20Tycoon.txt'))
-	}
+	},
 	["574407221"] = {
 		Name = "Super Hero Tycoon",
 		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Hero%20Tycoon.txt'))
