@@ -1,5 +1,5 @@
 local var = {}
 
-local var:PrintString(s)
+function var:PrintString(s)
 	print(s)
 end
