@@ -67,7 +67,7 @@ Auto:Toggle("Auto Buy",function(bool)
         if not Tycoon then GetTycoon() end
         while shared.toggle3 do
             for _,v in pairs(Tycoon:FindFirstChild("Factory"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Humanoid") and shared.toggle3 and not v:FindFirstAncestor("OpenClose door") then
+                if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Humanoid") and shared.toggle3 and not v:FindFirstAncestor("OpenClose door") and not v.Parent.Parent:FindFirstChild("Humanoid").DisplayName:match("RS") then
                     price = string.gsub(v.Parent.Parent:FindFirstChild("Humanoid").DisplayName:split("-")[2], "%D", "")
                     if SCollect and tonumber(price) <= Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Money").Value then
                         firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Collect"), 0)
