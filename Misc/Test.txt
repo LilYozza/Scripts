@@ -1,5 +1,5 @@
 local var = {}
 
-function var:PrintString(s)
-	print(s)
+function var:PrintString()
+	print("HereIAm")
 end
