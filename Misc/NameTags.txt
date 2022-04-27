@@ -1,0 +1,31 @@
+function CreateTag(c, h)
+    GUI = Instance.new("BillboardGui", h)
+    GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)
+    GUI.AlwaysOnTop = true
+    GUI.Size = UDim2.new(3, 0, 1, 0)
+    TextLabel = Instance.new("TextLabel", GUI)
+    TextLabel.Text =  h.Parent:WaitForChild("Humanoid").DisplayName
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Font = "ArialBold"
+    TextLabel.TextSize = 15
+    TextLabel.TextColor3 = c
+    TextLabel.Size = UDim2.new(1,0,1,0)
+end
+
+function UpdateTag()
+	for _,v in pairs(game.Players:GetChildren()) do
+        if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+            CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) wait()
+        end
+	end
+end
+
+function onSeated(isSeated, seat) UpdateTag() end
+Players.PlayerAdded:Connect(function(player) UpdateTag() end)
+Players.PlayerRemoving:Connect(function(player) UpdateTag() end)  
+
+for _,v in pairs(game.Players:GetChildren()) do
+    if v.character:WaitForChild("Head") then
+        CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head"))
+    end
+end
