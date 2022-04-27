@@ -1,5 +1,5 @@
-local var = {}
+local Var = {}
 
-function var:PrintString()
-	print("HereIAm")
+function Var:FunctionName()
+print("Hello")
 end
