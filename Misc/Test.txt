@@ -1,0 +1,3 @@
+local function PrintString(s)
+	print(s)
+end
