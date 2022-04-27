@@ -1,3 +1,7 @@
 local function PrintString(s)
 	print(s)
 end
+
+local function Print()
+	print("Joe")
+end
