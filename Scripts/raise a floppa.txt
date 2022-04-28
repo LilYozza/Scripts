@@ -1,0 +1,246 @@
+--Game Link:
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local BR = w:CreateFolder("BackRooms")
+local Misc = w:CreateFolder("Misc")
+
+local Farms = {}
+for _,v in pairs(workspace:GetChildren()) do
+    if v.Name:match("Catnip Farm") then table.insert(Farms, v) print("Adding", v) end
+end
+
+Auto:Toggle("Auto Clicker",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(workspace:FindFirstChild("Flopa"):GetDescendants()) do
+                if v:IsA("ClickDetector") and shared.toggle1 then
+                    fireclickdetector(v) wait()
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Money",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        while shared.toggle3 do
+            for _,v in pairs(workspace:GetChildren()) do
+                if v.Name == "Money Bag"  or v.Name == "Rent" or v.Name == "Money" and shared.toggle3 then
+                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v, 1) wait()
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Scoop",function(bool)
+    shared.toggle4 = bool
+    spawn (function()
+        while shared.toggle4 do
+            for _,v in pairs(workspace:GetDescendants()) do
+                if v.Name == "ProximityPrompt" and v:FindFirstAncestor("Poop") and shared.toggle4 then
+                    fireproximityprompt(v) wait()
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rent",function(bool)
+    shared.toggle6 = bool
+    spawn (function()
+        while shared.toggle6 do
+            local Event = game:GetService("ReplicatedStorage").RequestRent
+            Event:FireServer()
+            local Event = game:GetService("ReplicatedStorage").RequestRaise
+            Event:FireServer()
+        	wait(60)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Mushroom",function(bool)
+    shared.toggle8 = bool
+    spawn (function()
+        while shared.toggle8 do
+            for _,v in pairs(workspace:FindFirstChild("Outside"):GetDescendants()) do
+                if v.Name == "ForagePrompt" and v.Parent.Transparency == 0 then
+                    local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = v.Parent.CFrame
+                    wait(0.5) fireproximityprompt(v) wait(1)
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Bandit",function(bool)
+    shared.toggle9 = bool
+    spawn (function()
+        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+        while shared.toggle9 do
+            for _,v in pairs(workspace:FindFirstChild("Enemies"):GetDescendants()) do
+                if v:IsA("Humanoid") and v.Health > 0 and shared.toggle9 then
+                    v.Parent:FindFirstChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Mailbox"):FindFirstChild("Part").CFrame + Vector3.new(0,6,0)
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Plant",function(bool)
+    shared.toggle10 = bool
+    spawn (function()
+        
+        while shared.toggle10 do
+            for i, part in pairs(Farms) do
+                for _,v in pairs(part:GetDescendants()) do
+                    if v.Name == "FarmPrompt" and part:FindFirstChild("Growth").Value == 100 then
+                        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+                        Player.character:WaitForChild("HumanoidRootPart").CFrame = part:FindFirstChild("Primary").CFrame
+                        wait(0.5) fireproximityprompt(v) wait(0.5)
+                        Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+                    end
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Faith",function(bool)
+    shared.toggle7 = bool
+    spawn (function()
+        while shared.toggle7 do
+            for _,v in pairs(workspace:GetDescendants()) do
+                if v.Name == "ProximityPrompt" and v:FindFirstAncestor("Altar") and shared.toggle7 then
+                    fireproximityprompt(v) wait()
+                end
+            end
+        	wait()
+        end
+    end)
+end)
+
+BR:Button("Buy Almond Water",function()
+    spawn (function()
+        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Backrooms Zone").CFrame wait(0.5)
+        local A_1 = "Almond Water"
+        local Event = game:GetService("ReplicatedStorage").Purchase2
+        Event:FireServer(A_1)
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+    end)
+end)
+
+BR:Button("Buy Destroyer",function()
+    spawn (function()
+        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Backrooms Zone").CFrame wait(0.5)
+        local A_1 = "Destroyer"
+        local Event = game:GetService("ReplicatedStorage").Purchase2
+        Event:FireServer(A_1)
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+    end)
+end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(game.Players:GetChildren()) do
+                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
+                    if part.Name == "BillboardGui" then part:Destroy() end
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
