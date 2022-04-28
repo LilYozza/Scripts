@@ -18,15 +18,18 @@ local BR = w:CreateFolder("BackRooms")
 local Misc = w:CreateFolder("Misc")
 
 local Farms = {}
+
+function GetFamrs()
 for _,v in pairs(workspace:GetChildren()) do
-    if v.Name:match("Catnip Farm") then table.insert(Farms, v) print("Adding", v) end
+    if v.Name:match("Catnip Farm") and not table.find(Farms, v) then table.insert(Farms, v) print("Adding", v) end
+end
 end
 
 Auto:Toggle("Auto Clicker",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _,v in pairs(workspace:FindFirstChild("Flopa"):GetDescendants()) do
+            for _,v in pairs(workspace:FindFirstChild("Floppa"):GetDescendants()) do
                 if v:IsA("ClickDetector") and shared.toggle1 then
                     fireclickdetector(v) wait()
                 end
@@ -112,8 +115,8 @@ end)
 Auto:Toggle("Auto Plant",function(bool)
     shared.toggle10 = bool
     spawn (function()
-        
         while shared.toggle10 do
+            GetFamrs()
             for i, part in pairs(Farms) do
                 for _,v in pairs(part:GetDescendants()) do
                     if v.Name == "FarmPrompt" and part:FindFirstChild("Growth").Value == 100 then
