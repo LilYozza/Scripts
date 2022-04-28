@@ -12,6 +12,8 @@ local virtual = game:GetService("VirtualUser")
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
+local Items = w:CreateFolder("Items")
+local Teleport = w:CreateFolder("Teleports")
 local BR = w:CreateFolder("BackRooms")
 local Misc = w:CreateFolder("Misc")
 
@@ -139,6 +141,33 @@ Auto:Toggle("Auto Faith",function(bool)
             end
         	wait()
         end
+    end)
+end)
+
+Teleport:Button("Teleport Home",function()
+    spawn (function()
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("SpawnLocation").CFrame + Vector3.new(0,6,0)
+    end)
+end)
+
+Teleport:Button("Teleport Backrooms",function()
+    spawn (function()
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Backrooms Zone").CFrame + Vector3.new(0,6,0)
+    end)
+end)
+Teleport:Button("Teleport Temple",function()
+    spawn (function()
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Temple"):FindFirstChild("TempleTeleport").CFrame + Vector3.new(0,6,0)
+    end)
+end)
+
+Items:Button("Get TimeCube",function()
+    spawn (function()
+        TimeCube = workspace:FindFirstChild("Temple"):FindFirstChild("Time Cube")
+        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = TimeCube.CFrame + Vector3.new(0,6,0) wait(0.5)
+        fireproximityprompt(TimeCube:FindFirstChild("ProximityPrompt")) wait(0.5)
+        Player.character:WaitForChild("HumanoidRootPart").CFrame = back
     end)
 end)
 
