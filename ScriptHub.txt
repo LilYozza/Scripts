@@ -158,7 +158,11 @@ local Games = {
 	["5650369483"] = {
 		Name = "Tiny Difficulty Chart Obby Remastered",
 		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tiny%20Difficulty%20Chart%20Obby%20Remastered.txt'))
-	}	
+	},
+	["8146731988"] = {
+		Name = "Ultra Power Tycoon",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Ultra%20Power%20Tycoon.txt'))
+	}
 }
 repeat wait() until game:IsLoaded()
 local found = false
