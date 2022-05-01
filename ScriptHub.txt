@@ -150,7 +150,15 @@ local Games = {
 	["5865858426"] = {
 		Name = "Retail Tycoon 2",
 		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Retail%20Tycoon%202.txt'))
-	}
+	},
+	["7219650554"] = {
+		Name = "Escape Easy Obby Parkour!",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Obby%20Parkour!.txt'))
+	},
+	["5650369483"] = {
+		Name = "Tiny's Difficulty Chart Obby Remastered",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tiny's%20Difficulty%20Chart%20Obby%20Remastered.txt'))
+	}	
 }
 repeat wait() until game:IsLoaded()
 local found = false
