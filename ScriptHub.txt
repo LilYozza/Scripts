@@ -162,6 +162,18 @@ local Games = {
 	["8146731988"] = {
 		Name = "Ultra Power Tycoon",
 		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Ultra%20Power%20Tycoon.txt'))
+	},
+	["6492279150"] = {
+		Name = "Two Player Obby 2",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Two%20Player%20Obby%202.txt'))
+	},
+	["8596003516"] = {
+		Name = "[UPD4]Ninja Troop Tycoon",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BUPD4%5DNinja%20Troop%20Tycoon.txt'))
+	},
+	["9103460924"] = {
+		Name = "Sword Factory X",
+		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sword%20Factory%20X.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
