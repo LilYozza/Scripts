@@ -1,0 +1,166 @@
+--Game Link:
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+--> Variables <--
+local Buttons, Plants = {},{}
+local Tycoon, SCollect, GReward
+local Tycoons = Workspace:FindFirstChild("Tycoons")
+local Collector = {CollectPoint, Amount}
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+--> Functions <--
+local function GetTycoonInfo() for _,v in pairs(Tycoons:GetDescendants()) do if v.Name:match("Owner") and v.Value==Player then Tycoon=v.Parent return end end end GetTycoonInfo()
+local function GetCollectInfo() if not Tycoon then GetTycoon() end for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v:FindFirstAncestor("MoneyCollector") then Collector.CollectPoint = v.Parent end if v:IsA("TextLabel") and v:FindFirstAncestor("Screen") then Collector.Amount=v.text end end end GetCollectInfo()
+local function GetButtonInfo(p) local t = {part, price, robux=false} for _,v in pairs(p:GetDescendants()) do if v.Name == "Cost" then t.price=v.Value end if v:IsA("TouchTransmitter") and v.Parent.Name:match("Trigger") then t.part=v.parent end if v.Name == "DevProductID" then t.robux = true end end return t end
+local function GetPlantInfo(p) local t = {part, prompt, CurrentStage} for _,v in pairs(p:GetDescendants()) do if v:IsA("ProximityPrompt") then t.prompt=v end if v.Name:match("CurrentStage") then t.CurrentStage=v end if v.Parent == p and v:IsA("BasePart") then t.part=v end end return t end
+local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) wait(t) end
+local function FireProximity(t,p) local back = Player.Character:WaitForChild("HumanoidRootPart").CFrame Player.Character:WaitForChild("HumanoidRootPart").CFrame = t.CFrame+Vector3.new(0,6,0) wait(1) fireproximityprompt(p) wait(0.5) Player.Character:WaitForChild("HumanoidRootPart").CFrame = back end
+local function GetBuyButtons() for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetChildren()) do if not table.find(Buttons,v) and not v.Configuration:FindFirstChild("DevProductID") then print("Adding Button", v) table.insert(Buttons,v) end end end GetBuyButtons()
+local function GetPlants() for _,v in pairs(Tycoon:FindFirstChild("Entities"):GetChildren()) do if v.Name:match("Carrot") or v.Name:match("Onion") and v:FindFirstChildWhichIsA("BasePart") and not table.find(Plants, v) then print("Adding Plant:",v) table.insert(Plants, v) end end end GetPlants()
+local function RemoveFromTable(t,p) for _,v in pairs(t) do if v==p then table.remove(t,_) return end end end
+
+--> Post Tycoon Variables <--
+local TButtons = Tycoon:FindFirstChild("Buttons")
+local Entities = Tycoon:FindFirstChild("Entities")
+
+--> Conditional <--
+function GroupPlant()
+if Entities:FindFirstChild("GroupJoinRadish") then GroupPlant = Entities:FindFirstChild("GroupJoinRadish") GPlant = GetPlantInfo(GroupPlant) 
+P1 = GPlant.CurrentStage.Changed:Connect(function(n) if GReward and n >= 50 then FireProximity(GPlant.part, GPlant.prompt) end end) end end GroupPlant()
+
+--> Events <--
+local E1 = TButtons.ChildAdded:Connect(function(b)if not table.find(Buttons,b) then table.insert(Buttons,b) print("Added:",b) end end)
+local E2 = TButtons.ChildRemoved:Connect(function(b) RemoveFromTable(Buttons,b) print("Removed:",b) end)
+local E3 = Entities.ChildAdded:Connect(function(p) if p.Name:match("Carrot") or p.Name:match("Onion") and not table.find(Plants, p) and p.Name ~= "GreenhouseOnions" then table.insert(Plants, p) end if p.Name == "GroupJoinRadish" then GroupPlant() end end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function() while shared.toggle1 do FireTouch(1,Collector.CollectPoint) wait() end end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle2 = bool
+    spawn(function() SCollect = shared.toggle2 end)
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        while shared.toggle3 do
+            for _,v in pairs(Buttons) do local t = GetButtonInfo(v)
+                if not t.robux and t.price <= Player.leaderstats.Money.value + math.floor(string.gsub(Collector.Amount, "%,", "")) and SCollect and shared.toggle3 then print("Smart Collect") FireTouch(0.5,Collector.CollectPoint) end
+                if not t.robux and t.price <= Player.leaderstats.Money.value and shared.toggle3 then print("Buying") FireTouch(0.5,t.part) end
+            end wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Planter",function(bool)
+    shared.toggle4 = bool
+    spawn (function() GReward = shared.toggle4
+        while shared.toggle4 do
+            for _,v in pairs(Plants) do
+                local Plant = GetPlantInfo(v)
+                if v.Name:match("Carrot") and Plant.CurrentStage.Value >= 15 then FireProximity(Plant.part, Plant.prompt) end
+                if v.Name:match("Onion") and Plant.CurrentStage.Value >=50 then FireProximity(Plant.part, Plant.prompt) end
+            end
+            if GPlant then if GPlant.CurrentStage.Value >= 50 then FireProximity(GPlant.part, GPlant.prompt) end end wait()
+        end
+    end)
+end)
+
+Auto:Button("Disconnect Conntions",function()
+spawn(function() E1:Disconnect() E2:Disconnect() if P1 then P1:Disconnect() end E3:Disconnect() print("Disconnected Events") end)end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(game.Players:GetChildren()) do
+                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
+                    if part.Name == "BillboardGui" then part:Destroy() end
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
