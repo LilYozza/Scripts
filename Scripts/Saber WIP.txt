@@ -1,0 +1,198 @@
+--Game Link:loadstring(game:HttpGet("https://pastebin.com/raw/JQPzcZH4"))()
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+-->Base<--
+local Locations = Workspace:FindFirstChild("Locations")
+local Sell = Locations:FindFirstChild("Sell")
+local suffixes = {"K", "M", "B", "T", "Q"}
+local Swords, Dnas, Classes = {},{},{}
+local PSwords = game:GetService("ReplicatedStorage").ShopItems.Swords
+local BuyAll = {"Swords", "Backpacks", "Auras", "PetAuras"}
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+local function fromSuffixString(s)
+    found = false
+    if s == "0" then return 0 end
+    s = s:gsub('%s+', '')
+    if s:match("t") then s = s:gsub('%t', 'T') end
+    if s:match("b") then s = s:gsub('%b', 'B') end
+    for i, value in ipairs(suffixes) do
+        if s:match(value) then found = true end
+    end
+    if found == false then return tonumber(s) end
+	local n, suffix = string.match(s, "(.*)(%a)$")
+	if n and suffix then
+		local i = table.find(suffixes, suffix) or 0
+		return tonumber(n) * math.pow(10, i * 3)
+	end
+	return tonumber(s)
+end
+
+-->Functions<--
+function GetSwords() for _,v in pairs(Player.PlayerGui.Gui.Submenus.Shop:GetDescendants()) do if v:IsA("ImageButton") and v:FindFirstAncestor("SwordsFrame") and not table.find(Swords, v) then table.insert(Swords, v) end end end
+function GetClasses() for _,v in pairs(Player.PlayerGui.Gui.Submenus.Shop.ClassesFrame.Frame:GetChildren()) do if v:IsA("ImageButton") and not v:FindFirstChild("Locked").Visible and not table.find(Classes, v) then table.insert(Classes, v) end end end
+   
+-->Function Returns<--
+function GetCoins() return fromSuffixString(Player.PlayerGui.Gui.Home.Coins.Amount.Text) end
+function GetPrice(s, p) for _,v in pairs(p:GetChildren()) do if s.Name:match(v.Name) then return v:FindFirstChild("Price").Value end end end
+function GetStrength() local p = Player.PlayerGui.Gui.Home.Sand.Amount.Text:split("/") local t = {fromSuffixString(p[1]), fromSuffixString(p[2])} return t end
+function GetWeapon()
+    if Player.Character:FindFirstChildWhichIsA("Tool") then return Player.Character:FindFirstChildWhichIsA("Tool") end
+    if Player.Backpack:FindFirstChildWhichIsA("Tool") then return Player.Backpack:FindFirstChildWhichIsA("Tool") end
+end
+Auto:Toggle("Auto Click",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            local Event = Player.character:FindFirstChild(GetWeapon().Name).RemoteClick Event:FireServer()
+            local Event = game:GetService("ReplicatedStorage").Events.Clicked Event:FireServer() wait()
+        	wait(0.1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Sell",function(bool)
+    shared.toggle2 = bool
+    spawn (function()
+        while shared.toggle2 do
+            if GetStrength()[1] >= GetStrength()[2] then
+                local back = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame = Sell.CFrame + Vector3.new(0,6,0) wait(0.5)
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame = back
+            end
+        	wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Upgrade",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        while shared.toggle3 do
+            for _,v in pairs(BuyAll) do
+                local Event = game:GetService("ReplicatedStorage").Events.BuyAll Event:FireServer(v) wait(0.5)
+            end
+        	wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Class",function(bool)
+    shared.toggle4 = bool
+    spawn (function()
+        while shared.toggle4 do
+            GetClasses()
+            for _,v in pairs(Classes) do
+                local A_1 = game:GetService("ReplicatedStorage").ShopItems.Classes:FindFirstChild(v.Name)
+                local Event = game:GetService("ReplicatedStorage").Events.BuyItem Event:FireServer(A_1) wait(0.5)
+            end
+        	wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Pets",function(bool)
+    shared.toggle5 = bool
+    spawn (function()
+        while shared.toggle5 do
+            local Event = game:GetService("ReplicatedStorage").Events.HatchEggs
+            Event:InvokeServer(game:GetService("ReplicatedStorage").Eggs["Reinforced Egg"], 1)
+            local Event = game:GetService("ReplicatedStorage").Events.CombineAll
+            Event:FireServer()
+        	wait(1)
+        end
+    end)
+end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(game.Players:GetChildren()) do
+                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
+                    if part.Name == "BillboardGui" then part:Destroy() end
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
