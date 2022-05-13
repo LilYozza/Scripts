@@ -15,12 +15,19 @@ local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
 --> Base Variables <--
+local Cells={}
 local Tycoon, SCollect
+local Drops = Workspace:FindFirstChild("Drops")
+local Criminals = Workspace:FindFirstChild("Criminals")
 local Tycoons = Workspace:FindFirstChild("Tycoons")
+local Event1 = Player.Backpack.Handcuffs.CuffEvent
 
 --> Non Return Functions <--
 local function GetTycoon() for _,v in pairs(Tycoons:GetDescendants()) do if v.Name=="Owner" and v.Parent.Name=="Tycoon" and v.Value==Player then Tycoon=v.Parent end end end GetTycoon()
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) wait(t) end
+local function GetCells() for _,v in pairs(Tycoon.Buildings:GetChildren()) do if not table.find(Cells,v) and v.Name:match("Cell") then table.insert(Cells,v) end end end
+local function FireTouchTable(t) for _,v in pairs(t) do if v:FindFirstChild("Hitbox") then FireTouch(0,v.Hitbox) end end end
+local function Arrest(v,p,c)local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame Player.Character:WaitForChild("HumanoidRootPart").CFrame=v.CFrame task.wait(0.3) if not p then return else fireproximityprompt(p) end task.wait(0.3) Event1:FireServer(c) task.wait(0.3) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back GetCells() wait(4) FireTouchTable(Cells) end
 
 --> Post Variables <--
 local Collector = Tycoon:FindFirstChild("MoneyCollector")
@@ -41,8 +48,32 @@ Auto:Toggle("Auto Buy",function(bool)
     spawn (function()
         while shared.toggle3 do
             for _,v in pairs(Buttons:GetChildren()) do
-                if v:FindFirstChild("Configuration(s)").Visible.value==true and v:FindFirstChild("Configuration(s)").Configuration.Cost.Value <= Player.PlayerData.Money.Value + Tycoon.Money.Value and SCollect and shared.toggle3 then FireTouch(0.3,Collector.Hitbox) end
-                if v:FindFirstChild("Configuration(s)").Visible.value==true and v:FindFirstChild("Configuration(s)").Configuration.Cost.Value <= Player.PlayerData.Money.Value and shared.toggle3 then print("Buying:",v.Hitbox) local Event = game:GetService("ReplicatedStorage").Remotes.TycoonFunction Event:InvokeServer("ActivateButton", v.Name) wait(1) end
+                if v:FindFirstChild("Configuration(s)").Visible.value==true and v:FindFirstChild("Configuration(s)").Configuration.Cost.Value <= Player.PlayerData.Money.Value + Tycoon.Money.Value and SCollect and shared.toggle3 and not v:FindFirstChild("Configuration(s)"):FindFirstChild("IsHireButton") then FireTouch(0.3,Collector.Hitbox) end
+                if v:FindFirstChild("Configuration(s)").Visible.value==true and v:FindFirstChild("Configuration(s)").Configuration.Cost.Value <= Player.PlayerData.Money.Value and shared.toggle3 and not v:FindFirstChild("Configuration(s)"):FindFirstChild("IsHireButton") then local Event = game:GetService("ReplicatedStorage").Remotes.TycoonFunction Event:InvokeServer("ActivateButton", v.Name) wait(1) end
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Arrest",function(bool)
+    shared.toggle4 = bool
+    spawn (function()
+        while shared.toggle4 do
+            for _,v in pairs(Criminals:GetChildren()) do
+                if v.Head:FindFirstChild("ProximityPrompt")then Arrest(v.HumanoidRootPart,v.Head:FindFirstChild("ProximityPrompt"),v) end wait()
+            end
+        	wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Drops",function(bool)
+    shared.toggle5 = bool
+    spawn (function()
+        while shared.toggle5 do
+            for _,v in pairs(Drops:GetChildren()) do
+                if shared.toggle5 and v.Player.Value==Player then v.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame end 
             end
         	wait()
         end
