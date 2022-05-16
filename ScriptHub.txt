@@ -210,6 +210,10 @@ local Games = {
 	['6538660276'] = {
 		Name = 'Super Villain Tycoon',
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Villain%20Tycoon.txt'))
+	},
+	['5310443220'] = {
+		Name = 'GOD TYCOON',
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GOD%20TYCOON.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
