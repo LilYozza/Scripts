@@ -19,9 +19,9 @@ local Misc = w:CreateFolder("Misc")
 local Tycoon, SCollect, Clicker
 local Tycoons = Workspace:FindFirstChild("Zednov's Tycoon Kit").Tycoons
 
---> Non Return Functions <-- Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Essentials.Spawn.CFrame+Vector3.new(0,9,0)
+--> Non Return Functions <--
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) wait(t) end
-local function GetTycoon() local NilTycoon for _,v in pairs(Tycoons:GetDescendants()) do if v.Name=="Owner" and v.Value==Player then Tycoon=v.Parent end if not NilTycoon and v.Name=="Owner" and v.Value==nil then NilTycoon=v.Parent end end if not Tycoon then Tycoon=NilTycoon for _,v in pairs(Tycoon.Entrance:GetDescendants()) do if v:IsA("TouchTransmitter") then FireTouch(0,v.Parent) end end end end GetTycoon()
+local function GetTycoon() local NilTycoon for _,v in pairs(Tycoons:GetDescendants()) do if v.Name=="Owner" and v.Value==Player then Tycoon=v.Parent end if not NilTycoon and v.Name=="Owner" and v.Value==nil then NilTycoon=v.Parent end end if not Tycoon then Tycoon=NilTycoon for _,v in pairs(Tycoon.Entrance:GetDescendants()) do if v:IsA("TouchTransmitter") then FireTouch(0,v.Parent) end end end Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Essentials.Spawn.CFrame+Vector3.new(0,9,0) end GetTycoon()
 local function GetClicker() for _,v in pairs(Tycoon.PurchasedObjects:GetDescendants()) do if v:IsA("ClickDetector") and v:FindFirstAncestor("Mine") then Clicker=v end end end
 
 --> Post Variables <--
