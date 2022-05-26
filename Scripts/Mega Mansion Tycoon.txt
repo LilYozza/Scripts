@@ -8,56 +8,41 @@ local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
+local Tycoon, SCollect, Collector
+local Kit = Workspace:FindFirstChild("Zednov's Tycoon Kit")
+local Tycoons = Kit:FindFirstChild("Tycoons")
+
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
-local Tycoon
-for key, value in pairs(workspace:GetDescendants()) do
-    if value.Name == "Owner" and value.Value == Player then
-        Tycoon = value.Parent
-    end
-end
+local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) task.wait(t) end
+local function GetTycoon() for key, value in pairs(Tycoons:GetDescendants()) do if value.Name == "Owner" and value.Value == Player then Tycoon = value.Parent break end end end GetTycoon()
+local function GetCollector() for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="Giver" then Collector=v.Parent break end end end
+
+local Buttons = Tycoon:FindFirstChild("Buttons")
+local Essentials = Tycoon:FindFirstChild("Essentials")
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            pcall(function()
-                local Player = game.Players.LocalPlayer 
-                for key, value in pairs(Tycoon:GetDescendants()) do
-                    if value.Name == "Giver" then
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 0)
-                        firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value, 1)
-                        wait()
-                    end
-                end
-                wait()
-            end)
-        end
-    end)
+    spawn (function() if not Collector then GetCollector() end while shared.toggle1 do FireTouch(1,Collector) end end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle11 = bool
+    spawn (function() SCollect=shared.toggle11 end)
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
-            pcall(function()
-                for key, value in pairs(Tycoon:GetDescendants()) do
-                    if value.Name == "TouchInterest" and value.Parent.Name == "Head" and value.Parent.Parent.Name ~= "gamepass_button" then
-                        for i, part in pairs(value.Parent.Parent:GetChildren()) do
-                            if part.Name == "Price" then
-                                if part.value <= Player.leaderstats.Cash.value then
-                                    firetouchinterest(root, value.Parent, 0)
-                                    firetouchinterest(root, value.Parent, 1)
-                                    wait(1)
-                                end
-                            end
-                        end
-                    end
+            for _,v in pairs(Buttons:GetDescendants()) do
+                if shared.toggle2 and v.Name=="Head" and v.Transparency==0 and not v:FindFirstAncestor("GoldifyButton") and not v:FindFirstAncestor("gamepass_button") then
+                    if v.Parent.Price.Value <= Player.leaderstats.Cash.Value + Tycoon.CurrencyToCollect.Value and SCollect then if not Collector then GetCollector() end FireTouch(0.3,Collector) end
+                    if v.Parent.Price.Value <= Player.leaderstats.Cash.Value then FireTouch(0.3,v) end
                 end
-                wait()
-            end)
+            end wait()
         end
     end)
 end)
