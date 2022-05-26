@@ -1,0 +1,178 @@
+--Game Link:
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+--> Base Variables <--
+local FlowerWorlds={}
+local SCollect, FlowerWorld
+local Flowers=Workspace:FindFirstChild("Flowers")
+local Tycoons=Workspace.Tycoon.Tycoons
+local Tycoon=Tycoons:FindFirstChild(Player.Team.Name)
+
+--> Non Return Functions <--
+local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) task.wait(t) end
+local function FireProximity(v,p) local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame Player.Character:WaitForChild("HumanoidRootPart").CFrame=v.CFrame+Vector3.new(0,0,0) task.wait(0.3) fireproximityprompt(p) task.wait(0.3) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back end
+local function GetFlowerWorlds() for _,v in pairs(Flowers:GetChildren()) do if not table.find(FlowerWorlds,v) then table.insert(FlowerWorlds,v) end end end GetFlowerWorlds() table.sort(FlowerWorlds, function(a, b) return a.Name:byte() < b.Name:byte() end) table.insert(FlowerWorlds,"All")
+
+--> Post Variables <--
+local Essentials=Tycoon:FindFirstChild("Essentials")
+local Rewards=Essentials:FindFirstChild("Rewards")
+local Buttons=Tycoon:FindFirstChild("Buttons")
+local PurchasedObjects=Tycoon:FindFirstChild("PurchasedObjects")
+
+--> Return Functions <--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+local function GetTimeLabel(t) for _,v in pairs(Rewards:GetDescendants()) do if v:IsA("TextLabel") and v.Parent.Name=="Frame" and v:FindFirstAncestor(t) then return v end end end
+local function GetRewardProximity() local t={Normal,Group} for _,v in pairs(Rewards:GetDescendants()) do if v:IsA("ProximityPrompt") then if v:FindFirstAncestor("Normal") then t.Normal=v end if v:FindFirstAncestor("Group") then t.Group=v end end end return t end
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function() while shared.toggle1 do FireTouch(1,PurchasedObjects:FindFirstChild("1_1F_Floor_2"):FindFirstChild("Cashier"):FindFirstChild("Button")) wait() end end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle2 = bool
+    spawn (function() SCollect=shared.toggle2 end)
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        while shared.toggle3 do
+            for _,v in pairs(Buttons:GetChildren()) do
+                if shared.toggle3 and not v:FindFirstChild("DevProduct") and v.Price.Value <= fromSuffixString(Player.leaderstats.Honey.Value) + Tycoon.CurrencyToCollect.Value and v.Head.Transparency==0 and SCollect then FireTouch(1,PurchasedObjects:FindFirstChild("1_1F_Floor_2"):FindFirstChild("Cashier"):FindFirstChild("Button")) end
+                if shared.toggle3 and not v:FindFirstChild("DevProduct") and v.Price.Value <= fromSuffixString(Player.leaderstats.Honey.Value) and v.Head.Transparency==0 then FireTouch(0.3,v.Head) end
+            end
+        	wait()
+        end
+    end)
+end)
+
+local DropList = Auto:Dropdown("World",FlowerWorlds,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+   if Flowers:FindFirstChild(SItem) then FlowerWorld = Flowers:FindFirstChild(SItem) else FlowerWorld="All" end
+end)
+
+Auto:Toggle("Auto Harvest",function(bool)
+    shared.toggle4 = bool
+    spawn (function() local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+        while shared.toggle4 do
+            if FlowerWorld==nil then return end
+            if FlowerWorld=="All" then
+                for i,p in pairs(Flowers:GetChildren()) do
+                    for _,v in pairs(p:GetChildren()) do 
+                        if v.Base.Attachment.HarvestPrompt.Enabled then FireProximity(v.Base,v.Base.Attachment.HarvestPrompt) end if not shared.toggle4 then break end
+                    end
+                end
+            else
+                for _,v in pairs(FlowerWorld:GetChildren()) do
+                    if v.Base.Attachment.HarvestPrompt.Enabled then FireProximity(v.Base,v.Base.Attachment.HarvestPrompt) end if not shared.toggle4 then break end
+                end
+            end
+
+        wait(1) end 
+    end)
+    Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+end)
+
+Auto:Toggle("Auto Reward",function(bool)
+    shared.toggle44 = bool
+    spawn (function() local t1=GetTimeLabel("Normal") local t2=GetTimeLabel("Group") local c=GetRewardProximity()
+        while shared.toggle44 do 
+            if t1.text:match("Get!") then FireProximity(c.Normal.Parent.Parent,c.Normal) end
+            if t2.text:match("Get!") then FireProximity(c.Group.Parent.Parent,c.Group) end
+        wait(5) end 
+    end)
+end)
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(game.Players:GetChildren()) do
+                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
+                    if part.Name == "BillboardGui" then part:Destroy() end
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
