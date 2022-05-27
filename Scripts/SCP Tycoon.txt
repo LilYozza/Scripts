@@ -16,28 +16,40 @@ local Misc = w:CreateFolder("Misc")
 
 --> Variables <--
 local Dropper
-local Tycoon=Player.leaderstats.Tycoon.Value
-local Folder_Buy=Tycoon:FindFirstChild("Folder_Buy")
+local isWaiting=false
 
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) task.wait(t) end
 local function GetProx(p) for _,v in pairs(p:GetDescendants()) do if v:IsA("ProximityPrompt") then return v end end end
 
 Auto:Toggle("Auto Click",function(bool)
     shared.toggle2 = bool
-    spawn (function() local p=GetProx(Folder_Buy:FindFirstChild("Manual Dropper [cost: 10]"))
-        while shared.toggle2 do
-            if p then fireproximityprompt(p) end task.wait()
+    spawn (function()
+        while shared.toggle2 do 
+            local p=GetProx(Player.leaderstats.Tycoon.Value:FindFirstChild("Folder_Buy"):FindFirstChild("Manual Dropper [cost: 10]"))
+            if p then fireproximityprompt(p) else task.wait(1) end task.wait()
         end
     end)
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle1 = bool
-    spawn (function() while shared.toggle1 do for _,v in pairs(Folder_Buy:GetChildren()) do if v:FindFirstChild("Head") and v.Head.Transparency==0 and v:FindFirstChild("Folder_Stats") and v.Folder_Stats.Cost.Value <= Player.leaderstats.Money.Value and not v.Folder_Stats:FindFirstChild("GamepassNeeded") and not v.Folder_Stats:FindFirstChild("RequiresPremium") and not v.Folder_Stats:FindFirstChild("SCP") then FireTouch(0.3,v.Head) end end wait() end end)
+    spawn (function() while shared.toggle1 do for _,v in pairs(Player.leaderstats.Tycoon.Value:FindFirstChild("Folder_Buy"):GetChildren()) do if not isWaiting and v:FindFirstChild("Head") and v.Head.Transparency==0 and v:FindFirstChild("Folder_Stats") and v.Folder_Stats.Cost.Value <= Player.leaderstats.Money.Value and not v.Folder_Stats:FindFirstChild("GamepassNeeded") and not v.Folder_Stats:FindFirstChild("RequiresPremium") and not v.Folder_Stats:FindFirstChild("SCP") then FireTouch(0.3,v.Head) end end wait() end end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.toggle11 = bool
+    spawn (function() while shared.toggle11 do local RebirthInfo=Player.PlayerGui.TycoonGui.Rebirth.InfoText.Text
+        if math.floor(string.gsub(Player.leaderstats.Completion.Value, "%%", "")) >= 60 then isWaiting=true end
+        if math.floor(string.gsub(Player.leaderstats.Completion.Value, "%%", "")) >= 60 and Player.leaderstats.Money.Value >= math.floor(string.split(RebirthInfo, "$")[2]) then
+            local Event = game:GetService("ReplicatedStorage").Rebirth
+            Event:FireServer()
+        end
+        if isWaiting and math.floor(string.gsub(Player.leaderstats.Completion.Value, "%%", ""))<60 then isWaiting=false end
+        task.wait(1) end if not shared.toggle11 then isWaiting=false end end)
 end)
 
 Auto:Button("Get Weapons",function()
-    spawn(function() for _,v in pairs(Folder_Buy:GetDescendants()) do
+    spawn(function() for _,v in pairs(Player.leaderstats.Tycoon.Value:FindFirstChild("Folder_Buy"):GetDescendants()) do
         if v:IsA("ClickDetector") and v:FindFirstAncestor("Model"):FindFirstChild("WeaponModel") then fireclickdetector(v) task.wait() end
     end end)
 end)
