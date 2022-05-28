@@ -17,53 +17,48 @@ local Teleport = w:CreateFolder("Teleports")
 local BR = w:CreateFolder("BackRooms")
 local Misc = w:CreateFolder("Misc")
 
+--> Variables <--
 local Farms = {}
+local Currency={"Money Bag","Rent","Money"}
+local Floppa=Workspace:FindFirstChild("Floppa")
+local OutSide=Workspace:FindFirstChild("Outside")
+local Enemies=Workspace:FindFirstChild("Enemies")
+local Temple=Workspace:FindFirstChild("Temple")
+local Bowl=Workspace:FindFirstChild("Bowl")
+local LitterBox=Workspace:FindFirstChild("Litter Box")
 
-function GetFamrs()
-for _,v in pairs(workspace:GetChildren()) do
-    if v.Name:match("Catnip Farm") and not table.find(Farms, v) then table.insert(Farms, v) print("Adding", v) end
-end
-end
+
+local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) task.wait(t) end
+local function FireProximity(v,p) local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame Player.Character:WaitForChild("HumanoidRootPart").CFrame=v.CFrame+Vector3.new(0,3,0) task.wait(0.3) fireproximityprompt(p) task.wait(0.3) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back end
+local function GetFamrs() for _,v in pairs(Workspace:GetChildren()) do if v.Name:match("Catnip Farm") and not table.find(Farms, v) then table.insert(Farms, v) end end end
 
 Auto:Toggle("Auto Clicker",function(bool)
     shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            for _,v in pairs(workspace:FindFirstChild("Floppa"):GetDescendants()) do
-                if v:IsA("ClickDetector") and shared.toggle1 then
-                    fireclickdetector(v) wait()
-                end
-            end
-        	wait()
-        end
+    spawn (function() while shared.toggle1 do fireclickdetector(Floppa.ClickDetector) task.wait() end
+    end)
+end)
+
+Auto:Toggle("Auto Feed",function(bool)
+    shared.toggle12 = bool
+    spawn (function() while shared.toggle12 do if Bowl.Part.Transparency==1 then local Event = game:GetService("ReplicatedStorage").Purchase Event:FireServer("Floppa Food") task.wait() FireProximity(Bowl.Part, Bowl.Part.ProximityPrompt) end task.wait() end
+    end)
+end)
+
+Auto:Toggle("Auto Pat",function(bool)
+    shared.toggle11 = bool
+    spawn (function() while shared.toggle11 do if Floppa.Configuration.Mood.Value <= 95 then FireProximity(Floppa.HumanoidRootPart, Floppa.HumanoidRootPart.PetPrompt) task.wait(3) end task.wait() end
     end)
 end)
 
 Auto:Toggle("Auto Money",function(bool)
     shared.toggle3 = bool
-    spawn (function()
-        while shared.toggle3 do
-            for _,v in pairs(workspace:GetChildren()) do
-                if v.Name == "Money Bag"  or v.Name == "Rent" or v.Name == "Money" and shared.toggle3 then
-                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v, 1) wait()
-                end
-            end
-        	wait()
-        end
+    spawn (function() while shared.toggle3 do for _,v in pairs(Workspace:GetChildren()) do if table.find(Currency,v.Name) and shared.toggle3 then FireTouch(0,v) end end task.wait() end
     end)
 end)
 
 Auto:Toggle("Auto Scoop",function(bool)
     shared.toggle4 = bool
-    spawn (function()
-        while shared.toggle4 do
-            for _,v in pairs(workspace:GetDescendants()) do
-                if v.Name == "ProximityPrompt" and v:FindFirstAncestor("Poop") and shared.toggle4 then
-                    fireproximityprompt(v) wait()
-                end
-            end
-        	wait()
-        end
+    spawn (function() while shared.toggle4 do for _,v in pairs(LitterBox:GetChildren()) do if v.Name=="Poop" then FireProximity(v.PoopPart,v.ProximityPrompt) end end for _,v in pairs(Workspace:GetChildren()) do if v.Name=="Poop" then FireProximity(v.PoopPart,v.ProximityPrompt) end end task.wait() end
     end)
 end)
 
@@ -71,29 +66,21 @@ Auto:Toggle("Auto Rent",function(bool)
     shared.toggle6 = bool
     spawn (function()
         while shared.toggle6 do
-            local Event = game:GetService("ReplicatedStorage").RequestRent
-            Event:FireServer()
-            local Event = game:GetService("ReplicatedStorage").RequestRaise
-            Event:FireServer()
-        	wait(60)
+            local Event = game:GetService("ReplicatedStorage").RequestRent Event:FireServer()
+            local Event = game:GetService("ReplicatedStorage").RequestRaise Event:FireServer() task.wait(60)
         end
     end)
 end)
 
 Auto:Toggle("Auto Mushroom",function(bool)
     shared.toggle8 = bool
-    spawn (function()
-        while shared.toggle8 do
-            for _,v in pairs(workspace:FindFirstChild("Outside"):GetDescendants()) do
-                if v.Name == "ForagePrompt" and v.Parent.Transparency == 0 then
-                    local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-                    Player.character:WaitForChild("HumanoidRootPart").CFrame = v.Parent.CFrame
-                    wait(0.5) fireproximityprompt(v) wait(1)
-                    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
-                end
-            end
-        	wait()
-        end
+    spawn (function() while shared.toggle8 do for _,v in pairs(OutSide:GetChildren()) do if shared.toggle8 and v.Name=="Mushroom" and v.Transparency==0 then FireProximity(v,v.ForagePrompt) end end task.wait() end
+    end)
+end)
+
+Auto:Toggle("Auto Meteorite",function(bool)
+    shared.toggle88 = bool
+    spawn (function() while shared.toggle88 do for _,v in pairs(Workspace:GetChildren()) do if shared.toggle88 and v.Name=="Meteorite" then FireTouch(0.3,v.Handle) end end task.wait() end
     end)
 end)
 
@@ -102,7 +89,7 @@ Auto:Toggle("Auto Bandit",function(bool)
     spawn (function()
         local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
         while shared.toggle9 do
-            for _,v in pairs(workspace:FindFirstChild("Enemies"):GetDescendants()) do
+            for _,v in pairs(Enemies:GetDescendants()) do
                 if v:IsA("Humanoid") and v.Health > 0 and shared.toggle9 then
                     v.Parent:FindFirstChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Mailbox"):FindFirstChild("Part").CFrame + Vector3.new(0,6,0)
                 end
@@ -115,35 +102,14 @@ end)
 Auto:Toggle("Auto Plant",function(bool)
     shared.toggle10 = bool
     spawn (function()
-        while shared.toggle10 do
-            GetFamrs()
-            for i, part in pairs(Farms) do
-                for _,v in pairs(part:GetDescendants()) do
-                    if v.Name == "FarmPrompt" and part:FindFirstChild("Growth").Value == 100 then
-                        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-                        Player.character:WaitForChild("HumanoidRootPart").CFrame = part:FindFirstChild("Primary").CFrame
-                        wait(0.5) fireproximityprompt(v) wait(0.5)
-                        Player.character:WaitForChild("HumanoidRootPart").CFrame = back
-                    end
-                end
-            end
-        	wait()
-        end
+        while shared.toggle10 do GetFamrs() for i, part in pairs(Farms) do for _,v in pairs(part:GetDescendants()) do if v.Name == "FarmPrompt" and part:FindFirstChild("Growth").Value == 100 then FireProximity(part:FindFirstChild("Primary"), v) end end end task.wait() end
     end)
 end)
 
 
-Auto:Toggle("Auto Faith",function(bool)
+Auto:Toggle("Auto Faith",function(bool) --Could do Player Money Check but cba
     shared.toggle7 = bool
-    spawn (function()
-        while shared.toggle7 do
-            for _,v in pairs(workspace:GetDescendants()) do
-                if v.Name == "ProximityPrompt" and v:FindFirstAncestor("Altar") and shared.toggle7 then
-                    fireproximityprompt(v) wait()
-                end
-            end
-        	wait()
-        end
+    spawn (function() local Altar=Workspace:FindFirstChild("Altar") while shared.toggle7 do if Altar:FindFirstChild("Thin Wall").Faith.Value < 100 then FireProximity(Altar:FindFirstChild("Thin Wall"), (Altar:FindFirstChild("Thin Wall").ProximityPrompt)) end task.wait() end
     end)
 end)
 
@@ -166,11 +132,7 @@ end)
 
 Items:Button("Get TimeCube",function()
     spawn (function()
-        TimeCube = workspace:FindFirstChild("Temple"):FindFirstChild("Time Cube")
-        local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = TimeCube.CFrame + Vector3.new(0,6,0) wait(0.5)
-        fireproximityprompt(TimeCube:FindFirstChild("ProximityPrompt")) wait(0.5)
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+        FireProximity(Temple:FindFirstChild("Time Cube"), Temple:FindFirstChild("Time Cube").ProximityPrompt)
     end)
 end)
 
@@ -178,9 +140,7 @@ BR:Button("Buy Almond Water",function()
     spawn (function()
         local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
         Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Backrooms Zone").CFrame wait(0.5)
-        local A_1 = "Almond Water"
-        local Event = game:GetService("ReplicatedStorage").Purchase2
-        Event:FireServer(A_1)
+        local Event = game:GetService("ReplicatedStorage").Purchase2 Event:FireServer("Almond Water")
         Player.character:WaitForChild("HumanoidRootPart").CFrame = back
     end)
 end)
@@ -189,9 +149,7 @@ BR:Button("Buy Destroyer",function()
     spawn (function()
         local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
         Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Backrooms Zone").CFrame wait(0.5)
-        local A_1 = "Destroyer"
-        local Event = game:GetService("ReplicatedStorage").Purchase2
-        Event:FireServer(A_1)
+        local Event = game:GetService("ReplicatedStorage").Purchase2 Event:FireServer("Destroyer")
         Player.character:WaitForChild("HumanoidRootPart").CFrame = back
     end)
 end)
