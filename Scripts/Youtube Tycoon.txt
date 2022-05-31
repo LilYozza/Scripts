@@ -9,86 +9,47 @@ local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
-local Tycoon
-local Tycoons = workspace:FindFirstChild("Tycoons")
-local Plots = workspace:FindFirstChild("Plots")
-local suffixes = {"K", "M", "B", "T", "Q"}
+local Tycoon, SCollect
+local Tycoons = Workspace:FindFirstChild("Tycoons")
+local Plots = Workspace:FindFirstChild("Plots")
 
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
-function GetTycoon()
-    for _,v in pairs(Tycoons:GetDescendants()) do
-        if v:IsA("ObjectValue") and v.Value == Player then
-            Tycoon = v.Parent.Parent
-        end
-    end
-    if not Tycoon then
-        for key, value in pairs(Plots:GetDescendants()) do
-            if value.Name == "TouchInterest" then
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 0)
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), value.Parent, 1) break
-            end
-        end
-    end
-end
-GetTycoon()
+--> Non Return Functions <--
+local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t) end
+local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v.Values.Owner.Value==Player then Tycoon=v break end end if not Tycoon then for key, value in pairs(Plots:GetDescendants()) do if v:IsA("TouchTransmitter") then FireTouch(0,v.Parent) break end end end end GetTycoon()
 
-local function fromSuffixString(s)
-    found = false
-    if s == "0" then return 0 end
-    if s:match("$") then s = string.gsub(s, '%$', "") end
-    if s:match(",") then s = string.gsub(s, '%,', "") end
-    if s:match("+") then s = string.gsub(s, '%+', "") end
-    for i, value in ipairs(suffixes) do
-        if s:match(value) then found = true end
-    end
-    if found == false then return tonumber(s) end
-	local n, suffix = string.match(s, "(.*)(%a)$")
-	if n and suffix then
-		local i = table.find(suffixes, suffix) or 0
-		return tonumber(n) * math.pow(10, i * 3)
-	end
-	return tonumber(s)
-end
+--> Post Variables <--
+local MainItems=Tycoon:FindFirstChild("MainItems")
+local Buttons=Tycoon:FindFirstChild("Buttons")
+local CashButton=MainItems:FindFirstChild("CashButton")
+local Values=Tycoon:FindFirstChild("Values")
+
+--> Return Functions <--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+local function GetPrice(p) for _,v in pairs(p:GetDescendants()) do if v.Name=="PriceLabel" then if v.Text:match("Free!") then return "0" else return v.Text end end end end
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
-    spawn (function()
-        if not Tycoon then GetTycoon() end
-        while shared.toggle1 do
-            for _,v in pairs(Tycoon:FindFirstChild("MainItems"):FindFirstChild("CashButton"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") then
-                    firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                    firetouchinterest( Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(1)
-                end
-            end
-            wait()
-        end
-    end)
+    spawn (function() if not Tycoon then GetTycoon() end while shared.toggle1 do FireTouch(1,CashButton.ButtonPart)task.wait() end end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle11 = bool
+    spawn (function() SCollect=shared.toggle11 end)
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle2 = bool
-    spawn (function()
+    spawn (function() if not Tycoon then GetTycoon() end
         while shared.toggle2 do
-            if not Tycoon then GetTycoon() end
-            for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v:FindFirstAncestor("ButtonPart") and shared.toggle2 then
-                    price = v.Parent:FindFirstChild("Gui"):FindFirstChild("Frame"):FindFirstChild("PriceLabel").Text
-                    if price:match("Free!") then price = "0" end
-                    if not price:match("Subs") then
-                        print(fromSuffixString(price))
-                        if fromSuffixString(price) <= Player.leaderstats.Cash.Value then
-                            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.5)
-                        end
-                    end
-                end
-            end
-            wait()
+            for _,v in pairs(Buttons:GetChildren()) do
+                if not GetPrice(v):match("Subs") and fromSuffixString(GetPrice(v.ButtonPart)) <= Player.leaderstats.Cash.Value + Values.CashStore.Value and SCollect and v.ButtonPart.Transparency==0 then FireTouch(1,CashButton.ButtonPart) end
+                if not GetPrice(v):match("Subs") and fromSuffixString(GetPrice(v.ButtonPart)) <= Player.leaderstats.Cash.Value and v.ButtonPart.Transparency==0 then FireTouch(1,v.ButtonPart) end
+            end task.wait()
         end
     end)
 end)
@@ -99,12 +60,8 @@ Auto:Toggle("Sabotage",function(bool)
         if not Tycoon then GetTycoon() end
         while shared.toggle3 do
             for key, value in pairs(Tycoons:GetDescendants()) do
-                if value.Name == "ProximityPrompt" and value:FindFirstAncestor("OwnerOnlyDoor") and (value.Parent.Position - Player.character:WaitForChild("HumanoidRootPart").Position).magnitude < 25 and value:FindFirstAncestor("OwnerOnlyDoor").Parent.Parent:FindFirstChild("Values"):FindFirstChild("Owner").Value ~= Player then
-                    fireproximityprompt(value)
-                    wait()
-                end
-            end
-            wait()
+                if value.Name == "ProximityPrompt" and value:FindFirstAncestor("OwnerOnlyDoor") and (value.Parent.Position - Player.character:WaitForChild("HumanoidRootPart").Position).magnitude < 25 and value:FindFirstAncestor("OwnerOnlyDoor").Parent.Parent:FindFirstChild("Values"):FindFirstChild("Owner").Value ~= Player then fireproximityprompt(value) task.wait() end
+            end task.wait()
         end
     end)
 end)
@@ -122,21 +79,14 @@ end)
 Auto:Button("Give Items",function()
     spawn (function()  
         for _,v in pairs(Tycoons:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Parent.Name:match("Kit") then
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait(0.5)
-            end
+            if v:IsA("TouchTransmitter") and v.Parent.Parent.Name:match("Kit") then FireTouch(0.3,v.Parent) end
         end
     end)
 end)
 
 Auto:Button("Delete Doors",function()
     spawn (function()
-        for key, value in pairs(Tycoons:GetDescendants()) do
-            if value.Name == "Lasers" then
-                value:Destroy()
-            end
-        end
+        for key, value in pairs(Tycoons:GetDescendants()) do if value.Name == "Lasers" then value:Destroy() end end
     end)
 end)
 
