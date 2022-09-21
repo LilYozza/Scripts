@@ -21,6 +21,9 @@ local Tycoons=Workspace:FindFirstChild("Tycoons")
 local function GetTycoon()for _,v in pairs(Tycoons:GetChildren()) do if v.Owner.Value==Player.Name then Tycoon=v break end end end GetTycoon()
 local function FireTouch(p)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) end
 
+repeat GetTycoon() until Tycoon ~= nil
+print("Found Tycoon")
+
 --Post Variables
 local Buttons=Tycoon:FindFirstChild("Buttons")
 local Drops = Tycoon:FindFirstChild("Drops")
