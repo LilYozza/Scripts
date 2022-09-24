@@ -37,9 +37,8 @@ Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _,v in pairs(Drops:GetChildren()) do
-                if shared.toggle1 and v:FindFirstChild("Part") then v.Part.CFrame = Player.Character:WaitForChild("HumanoidRootPart").CFrame end
-                if shared.toggle1 and v:FindFirstChild("Hitbox") then v.Hitbox.CFrame = Player.Character:WaitForChild("HumanoidRootPart").CFrame end
+            for _,v in pairs(Drops:GetDescendants()) do
+                if shared.toggle1 and v:IsA("Part") then v.CFrame = Player.Character:WaitForChild("HumanoidRootPart").CFrame end
             end
         	task.wait()
         end
