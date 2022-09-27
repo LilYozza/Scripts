@@ -114,7 +114,7 @@ Auto:Toggle("Auto Obby",function(bool)
     spawn (function()
         while shared.toggle do
             local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
-            FireTouch(ObbyPart) FireTouch(Obby.RewardPart) task.wait(2) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back task.wait(90)
+            FireTouch(ObbyPart) FireTouch(Obby.RewardPart) task.wait(2) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back task.wait(92)
         end
     end)
 end)
