@@ -113,7 +113,8 @@ Auto:Toggle("Auto Obby",function(bool)
     shared.toggle = bool
     spawn (function()
         while shared.toggle do
-            FireTouch(ObbyPart) FireTouch(Obby.RewardPart) task.wait(2) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Baseplate.CFrame task.wait(90)
+            local back=PLayer.Character:WaitForChild("HumanoidRootPart").CFrame
+            FireTouch(ObbyPart) FireTouch(Obby.RewardPart) task.wait(2) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back task.wait(92)
         end
     end)
 end)
