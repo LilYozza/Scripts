@@ -15,11 +15,13 @@ local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
 local Tycoon
-local Tycoons=Workspace:FindFirstChild("Tycoons")
+local Tycoons=Workspace:WaitForChild("Tycoons")
+local Obby=Workspace:WaitForChild("Obby")
 
 --Non Return Functions
 local function GetTycoon()for _,v in pairs(Tycoons:GetChildren()) do if v.Owner.Value==Player.Name then Tycoon=v break end end end GetTycoon()
 local function FireTouch(p)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) end
+local function ObbyChecker() for _,v in pairs(Obby:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="TouchPart" then return v.Parent end end end local ObbyPart=ObbyChecker()
 
 repeat GetTycoon() task.wait() until Tycoon ~= nil
 print("Found Tycoon")
@@ -103,6 +105,15 @@ Auto:Toggle("Auto Upgrade",function(bool)
     spawn (function()
         while shared.toggle do
             FireTouch(Buttons.Upgrade) task.wait(5)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Obby",function(bool)
+    shared.toggle = bool
+    spawn (function()
+        while shared.toggle do
+            FireTouch(ObbyPart) FireTouch(Obby.RewardPart) task.wait(2) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Baseplate.CFrame task.wait(90)
         end
     end)
 end)
