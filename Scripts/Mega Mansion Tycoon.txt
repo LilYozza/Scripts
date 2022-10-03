@@ -11,17 +11,28 @@ local virtual = game:GetService("VirtualUser")
 local Tycoon, SCollect, Collector
 local Kit = Workspace:FindFirstChild("Zednov's Tycoon Kit")
 local Tycoons = Kit:FindFirstChild("Tycoons")
+local ClientButtons=Workspace:WaitForChild("ClientButtons") 
+local ClientApartmentObjects=Workspace:FindFirstChild("ClientApartmentObjects")
+
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) task.wait(t) end
-local function GetTycoon() for key, value in pairs(Tycoons:GetDescendants()) do if value.Name == "Owner" and value.Value == Player then Tycoon = value.Parent break end end end GetTycoon()
-local function GetCollector() for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="Giver" then Collector=v.Parent break end end end
+local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v.Owner.Value==Player then Tycoon=v break end end end
+local function GetCollector() for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="Giver" then Collector=v.Parent break end end 
+       if Collector==nil then for _,v in pairs(ClientApartmentObjects:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="Part" then Collector=v.Parent break end end end
+    end
 
+--Getting Data
+repeat GetTycoon()task.wait()until Tycoon~=nil
+
+--Post Variables
 local Buttons = Tycoon:FindFirstChild("Buttons")
 local Essentials = Tycoon:FindFirstChild("Essentials")
+
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
@@ -29,20 +40,29 @@ Auto:Toggle("Auto Collect",function(bool)
 end)
 
 Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle11 = bool
-    spawn (function() SCollect=shared.toggle11 end)
+    spawn (function() SCollect=bool end)
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
-            for _,v in pairs(Buttons:GetDescendants()) do
-                if shared.toggle2 and v.Name=="Head" and v.Transparency==0 and not v:FindFirstAncestor("GoldifyButton") and not v:FindFirstAncestor("gamepass_button") then
-                    if v.Parent.Price.Value <= Player.leaderstats.Cash.Value + Tycoon.CurrencyToCollect.Value and SCollect then if not Collector then GetCollector() end FireTouch(0.3,Collector) end
-                    if v.Parent.Price.Value <= Player.leaderstats.Cash.Value then FireTouch(0.3,v) end
+            if Buttons~=nil then
+                for _,v in pairs(Buttons:GetDescendants()) do
+                    if shared.toggle2 and v.Name=="Head" and v.Transparency==0 and not v:FindFirstAncestor("GoldifyButton") and not v:FindFirstAncestor("gamepass_button") then
+                        if v.Parent.Price.Value <= Player.leaderstats.Cash.Value + Tycoon.CurrencyToCollect.Value and SCollect then if not Collector then GetCollector() end FireTouch(0.3,Collector) end
+                        if v.Parent.Price.Value <= Player.leaderstats.Cash.Value then FireTouch(0.3,v) end
+                    end
                 end
-            end wait()
+            end
+            if ClientButtons~=nil and #ClientButtons:GetChildren()>0 then
+                for _,v in pairs(ClientButtons:GetChildren()) do
+                    if shared.toggle2 and v:FindFirstChild("Head") then
+                        if fromSuffixString(v.BillboardGui.Frame.ImageLabel.PriceText.Text) <= Player.leaderstats.Cash.Value + Tycoon.CurrencyToCollect.Value and SCollect then if not Collector then GetCollector() end FireTouch(0.3,Collector) end
+                        if fromSuffixString(v.BillboardGui.Frame.ImageLabel.PriceText.Text) <= Player.leaderstats.Cash.Value then FireTouch(0.3,v.Head) end
+                    end
+                end
+            end task.wait()
         end
     end)
 end)
