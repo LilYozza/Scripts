@@ -16,7 +16,6 @@ local Misc = w:CreateFolder("Misc")
 
 --Base Variables
 local Tycoon, NilTycoon, SCollect
-repeat task.wait() until Workspace:FindFirstChild("Tycoons")
 local Tycoons=Workspace:WaitForChild("Tycoons")
 local Button=Player.PlayerGui.Spinner.SpinnerNormal.Reward.Claim
 
@@ -24,8 +23,13 @@ local Button=Player.PlayerGui.Spinner.SpinnerNormal.Reward.Claim
 local function Touch(p,t) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 
 --Getting Data
-local function GetTycoon() for _,v in pairs(Tycoons:GetChildren())do if v.Values.Owner.Value==Player then Tycoon=v break end if v.Values.Owner.Value==nil and NilTycoon==nil then NilTycoon=v end  if Tycoon == nil then Tycoon=NilTycoon Touch(Tycoon.Important.Door,0) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Important.Door.CFrame end end end
-task.wait(5) repeat GetTycoon()task.wait()until Tycoon~=nil
+local function GetTycoon() 
+    for _,v in pairs(Tycoons:GetChildren())do 
+        if v:FindFirstChild("Values"):FindFirstChild("Owner") then
+        if v.Values.Owner.Value==Player then Tycoon=v break end 
+        if v.Values.Owner.Value==nil and NilTycoon==nil then NilTycoon=v end end end
+    if Tycoon==nil then Tycoon=NilTycoon Touch(Tycoon.Important.Door,0) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Important.Door.CFrame end end
+repeat GetTycoon()task.wait()until Tycoon~=nil
 
 --Post Variables
 local Buttons=Tycoon:FindFirstChild("Buttons")
