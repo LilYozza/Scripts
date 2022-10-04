@@ -242,6 +242,10 @@ local Games = {
 	['6772424226'] = {
 		Name = '2 Player Millionaire Tycoon',
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Millionaire%20Tycoon.txt'))
+	},
+	['9898710720'] = {
+		Name = 'Money Tycoon!',
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Money%20Tycoon!.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
