@@ -16,6 +16,7 @@ local Misc = w:CreateFolder("Misc")
 
 --Base Variables
 local Tycoon, NilTycoon, SCollect
+repeat task.wait() until Workspace:FindFirstChild("Tycoons")
 local Tycoons=Workspace:WaitForChild("Tycoons")
 local Button=Player.PlayerGui.Spinner.SpinnerNormal.Reward.Claim
 
