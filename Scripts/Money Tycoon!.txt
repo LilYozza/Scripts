@@ -44,9 +44,9 @@ Auto:Toggle("Auto Buy",function(bool)
     spawn (function()
         while shared.toggle1 do
             for _,v in pairs(ButtonsFolder:GetChildren()) do
-                if not v:FindFirstChild("Gamepass") and shared.toggle1 then
+                if not v:FindFirstChild("Gamepass") and shared.toggle1 and v:FindFirstChild("Price") then
                     if v.Price.Value <= fromSuffixString(Player.leaderstats.Cash.Value)+Tycoon.Cash.Value and SCollect then Touch(Collector.CollectPart,0.3) end
-                    if v.Price.Value <= fromSuffixString(Player.leaderstats.Cash.Value) then Touch(v.Touch.TouchPart,0.3) break end
+                    if v.Price.Value <= fromSuffixString(Player.leaderstats.Cash.Value) then Touch(v.Touch.TouchPart,0.3) end
                 end
             end
         	task.wait()
