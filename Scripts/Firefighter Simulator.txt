@@ -25,6 +25,8 @@ local Cash
 local Remotes=game:GetService("ReplicatedStorage").Remotes
 local EquipmentShopFrame=Player.PlayerGui.Main.EquipmentShopFrame
 local Sprayers={"NULL","UltimateOne","SimplePistol","AdvancedPistol","BiggerPistol","AssaultRifle","MachineGun","MachineGunAdvanced","HiTechPistol","HiTechAdvancedPistol","HiTechRifle","HiTechRailgun","HiTechAdvancedRailgun","GalaxyPistol","GalaxyAssault","GalaxyMachineGun","GalaxyRailgun","GalaxyVaporizer"}
+local Tanks={"NULL","OldTank","BasicTank","DoubleTank","LargeTank","MegaTank","HiTechSmallTank","HiTechMediumTank","HiTechLargeTank","HiTechMegaTank","UltraTank","GalaxySmallTank","GalaxyMediumTank","GalaxyLargeTank","GalaxyMegaTank"}
+local QuestFrame=Player.PlayerGui.Main.QuestFrame
 
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
@@ -34,12 +36,14 @@ local Misc = w:CreateFolder("Misc")
 
 --Non Return Functions
 local function UpdateTool() Tool = game.Players.LocalPlayer.Backpack:FindFirstChildWhichIsA('Tool') or game.Players.LocalPlayer.Character:FindFirstChildWhichIsA('Tool') end
-local function GetPart(t) for _,v in pairs(t:GetChildren()) do if v:FindFirstChild("FireParts") then for num,p in pairs(v:FindFirstChild("FireParts"):GetChildren()) do if p:IsA("BasePart") then if num~=1 then p.Transparency=1 end p.Size=Vector3.new(1,1,1) p.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(5,0,0) end end end end end
+local function GetPart(t) for _,v in pairs(t:GetChildren()) do if v:FindFirstChild("FireParts") then for num,p in pairs(v:FindFirstChild("FireParts"):GetChildren()) do if p:IsA("BasePart") then if num~=1 then p.Transparency=1 end p.Size=Vector3.new(1,1,1) p.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(10,0,0) end end end end end
 local function Touch(p,t) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p) local P=Player.Character:WaitForChild("HumanoidRootPart") P.Anchored=true local pos1=P.CFrame P.CFrame=p task.wait(5) P.CFrame=pos1 P.Anchored=false end
 local function GetPCash() for _,v in pairs(Player.leaderstats:GetChildren()) do if v.Name:match("Cash") then Cash=v break end end end GetPCash()
 local function GetSprayer(sprayer) Remotes.RequestBuyItem:InvokeServer("Weapon", sprayer) Remotes.RequestEquipItem:InvokeServer("Weapon", sprayer) task.wait() UpdateTool() if Tool~=nil then Player.Character:WaitForChild("Humanoid"):EquipTool(Tool) local Holding = Tool.Configuration.Holding Holding.Value=1 local Damage = Tool.Configuration.Damage Damage.Value = 9999999999 local Distance = Tool.Configuration.Distance Distance.Value = 9999 local FuelUse = Tool.Configuration.FuelUse FuelUse.Value = -9999 local HitRadius = Tool.Configuration.HitRadius HitRadius.Value = 999 end end
+local function GetTank(tank)Remotes.RequestBuyItem:InvokeServer("Tank", tank)Remotes.RequestEquipItem:InvokeServer("Tank", tank)task.wait(0.1)Bp=Player.Character:WaitForChild("TankBackpack")Bp.Configuration.Fuel.Value=100 end
 local function RemoveLag()for _,v in pairs(Workspace:GetDescendants()) do if v:IsA("ParticleEmitter") then v:Destroy() end if v:IsA("PointLight") and v:FindFirstAncestor("FireParts") then v:Destroy() end end end
+local function ClaimQuest(quest)Remotes.RequestCompleteQuest:InvokeServer(quest)end
 
 local ZoneLabel=Player.PlayerGui.Main.ZoneCompletionFrame
 --Return Functions
@@ -47,13 +51,23 @@ local function CurrentStage() if ZoneLabel.TopTextLabel.Text:match("You made it"
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
 
+Auto:Toggle("Auto Quest",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(QuestFrame.Inner:GetChildren())do
+                if v.Name~="UIListLayout" then if v.BottomFrame.Complete.Visible==true then ClaimQuest(v.Name) end end
+            end task.wait()
+        end
+    end)
+end)
+
 Auto:Toggle("Auto Sprayer",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
             for _,v in pairs(EquipmentShopFrame.SprayersFrame:GetChildren())do
                 if v:IsA("ImageLabel") and v.Name=="Item" and  _==#EquipmentShopFrame.SprayersFrame:GetChildren()or EquipmentShopFrame.SprayersFrame:GetChildren()[_+1].Name=="ItemLocked" then 
-                    --print(fromSuffixString(v.BuyButton.TL.Text)) print(Cash.Value) print(Sprayers[_])
                     if v:FindFirstChild("BuyButton") and v:FindFirstChild("BuyButton"):FindFirstChild("TL") then
                     if fromSuffixString(v.BuyButton.TL.Text) <= Cash.Value then 
                         GetSprayer(Sprayers[_])
@@ -65,6 +79,45 @@ Auto:Toggle("Auto Sprayer",function(bool)
     end)
 end)
 
+Auto:Toggle("Auto Tank",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(EquipmentShopFrame.FuelTanksFrame:GetChildren())do
+                if v:IsA("ImageLabel") and v.Name=="Item" and  _==#EquipmentShopFrame.FuelTanksFrame:GetChildren()or EquipmentShopFrame.FuelTanksFrame:GetChildren()[_+1].Name=="ItemLocked" then 
+                    if v:FindFirstChild("BuyButton") and v:FindFirstChild("BuyButton"):FindFirstChild("TL") then
+                    if fromSuffixString(v.BuyButton.TL.Text) <= Cash.Value then 
+                       GetTank(Tanks[_])
+                    end end break
+                end task.wait()
+            end
+        	task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Chest",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(Zones:GetChildren())do
+                if v:FindFirstChild("Util") and v:FindFirstChild("Util"):FindFirstChild("Chests") then
+                    for key,value in pairs(v.Util.Chests:GetDescendants()) do
+                        if value:IsA("BasePart") then value.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(0,0,10) end
+                    end
+                end
+            end
+            for _,v in pairs(Zones2:GetChildren())do
+                if v:FindFirstChild("Util") and v:FindFirstChild("Util"):FindFirstChild("Chests") then
+                    for key,value in pairs(v.Util.Chests:GetDescendants()) do
+                        if value:IsA("BasePart") then value.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(0,0,10) end
+                    end
+                end
+            end
+        	task.wait(1)
+        end
+    end)
+end)
 
 Auto:Toggle("Auto Complete",function(bool)
     shared.toggle1 = bool
