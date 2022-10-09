@@ -1,0 +1,248 @@
+--Game Link:
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+
+local Players = game:GetService("Players")
+local Player = game.Players.LocalPlayer
+local character = Player.Character or Player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local virtual = game:GetService("VirtualUser")
+
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+local Misc = w:CreateFolder("Misc")
+
+local PlayerSelect
+local PlayerList={}
+local CartT={"Cart", "CartXL", "RaceCart"}
+local Carts=Workspace:FindFirstChild("Carts")
+local Spawners=Workspace:FindFirstChild("Spawners")
+
+local Door1Pos1=CFrame.new(-431.011902, 163.23996, 106.55619, -0.999347329, 5.2415384e-08, 0.0361240394, 5.34193099e-08, 1, 2.68259281e-08, -0.0361240394, 2.87381408e-08, -0.999347329) local Door1Pos2=CFrame.new(-431.064514, 163.299957, 129.420593, -0.999973178, 2.01184562e-08, -0.00732675474, 2.07553779e-08, 1, -8.68550458e-08, 0.00732675474, -8.70047856e-08, -0.999973178) local Door2Pos1=CFrame.new(-485.554291, -20.9977245, -302.351532, -0.02270847, -2.80011037e-09, -0.99974215, -6.43189821e-08, 1, -1.3398701e-09, 0.99974215, 6.42719726e-08, -0.02270847) local Door2Pos2=CFrame.new(-473.584442, -22.4980602, -302.014191, 0.0625409335, 1.57291016e-08, -0.998042405, -1.24102506e-09, 1, 1.56821862e-08, 0.998042405, 2.57816962e-10, 0.0625409335)
+
+local CartCheckRoom=Workspace:FindFirstChild("CartCheckRoom")
+local CartCheckRoomFinish=Workspace:FindFirstChild("CartCheckRoomFinish")
+
+local function RemoveObj(p) for _,v in pairs(Workspace:GetDescendants())do if v.Name==p then v:Destroy() end end end
+local function CreateTag(c, h) GUI = Instance.new("BillboardGui", h) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  h.Parent:WaitForChild("Humanoid").DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
+local function RoomCheck(Door1, Door2, Type, Room)
+    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door1+Vector3.new(-3,0,0) task.wait() until Room.Light.SpotLight.Enabled==true
+    Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door2
+    Player.Character:WaitForChild("Humanoid").Sit=true
+    repeat task.wait() until Player.Team.name == Type
+    Player.Character:WaitForChild("Humanoid").Sit=false
+end
+
+Auto:Button("Complete",function()
+    spawn(function()
+    if Player.Team.Name=="starting to suffer" then RoomCheck(Door1Pos1, Door1Pos2, "suffering", CartCheckRoom)end
+    if Player.Team.Name=="suffering" then RoomCheck(Door2Pos1, Door2Pos2, "suffered", CartCheckRoomFinish)end
+    end)
+end)
+
+Auto:Toggle("Auto Start",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(Carts:GetChildren())do
+                if shared.toggle1 and table.find(CartT, v.Name) and not v.Values.IsOn.Value then
+                    local o=nil if v.Name==CartT[2] then o=v.Car3.Walls.GeneratorWall.ProximityPrompt else o=v.Car2.Walls.GeneratorWall.ProximityPrompt end
+                    fireproximityprompt(o)task.wait(1)
+                end
+            end
+        	task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Stop",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(Carts:GetChildren())do
+                if shared.toggle1 and table.find(CartT, v.Name) and v.Values.IsOn.Value then
+                    local o=nil if v.Name==CartT[2] then o=v.Car3.Walls.GeneratorWall.ProximityPrompt else o=v.Car2.Walls.GeneratorWall.ProximityPrompt end
+                    fireproximityprompt(o)task.wait(1)
+                end
+            end
+        	task.wait(1)
+        end
+    end)
+end)
+Auto:Toggle("Auto Spawner",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(Spawners:GetChildren())do
+                if shared.toggle1 and v:FindFirstChild("ProximityPrompt") then
+                    fireproximityprompt(v:FindFirstChild("ProximityPrompt"))task.wait()
+                end
+            end
+        	task.wait(1)
+        end
+    end)
+end)
+
+
+
+local DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem)
+    for _,v in pairs(game.Players:GetChildren())do
+        if v.Character:WaitForChild("Humanoid").DisplayName==SItem then
+            PlayerSelect = v
+        end
+    end
+end)
+
+local function UpdateList() if table.getn(PlayerList) >0 then table.clear(PlayerList)end for _,v in pairs(Players:GetChildren())do table.insert(PlayerList, v.Character:WaitForChild("Humanoid").DisplayName) end end UpdateList()
+local function UpdatePlayers() for _,v in pairs(Players:GetChildren()) do if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) task.wait() end end end UpdatePlayers()
+spawn(function() repeat task.wait(1) UpdateList()  DropList:Refresh(PlayerList) print("Updating") until false end)
+
+--Players.PlayerRemoving:Connect(function() print("Player Removed") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)end) 
+--game.Players.ChildRemoved:Connect(function()spawn(function() print("Childed Removed") UpdateList() DropList:Refresh(PlayerList) UpdatePlayers() end) end)
+--game.Players.ChildAdded:Connect(function() spawn(function() print("ChildAdded") UpdateList() DropList:Refresh(PlayerList) UpdatePlayers() end) end)
+--Players.PlayerAdded:Connect(function(player)
+--         player.CharacterAdded:Connect(function(character)
+--             print("Player Added") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)
+--                character.Humanoid.Died:Connect(function()
+--                    print("Player Died") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)
+--                end)
+--         end)
+--end)
+
+Auto:Toggle("Auto Aim",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            if shared.toggle1 and Workspace:FindFirstChild("ShootPartC4") and PlayerSelect then
+                Workspace:FindFirstChild("ShootPartC4").CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame
+                if Workspace:FindFirstChild("ShootPartC4").CFrame==PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame then task.wait(1) end
+            end
+        	task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Refresh",function()
+    spawn(function()UpdateList() UpdatePlayers() DropList:Refresh(PlayerList) end)
+end)
+
+--Auto:Toggle("Auto Aim",function(bool)
+--    shared.toggle1 = bool
+--    spawn (function()
+--        while shared.toggle1 do
+--            if Player.Character:WaitForChild("Humanoid").sit and PlayerSelect then
+--                local p=Player.Character:WaitForChild("Humanoid").SeatPart.Parent
+--                for _,v in pairs(p:GetChildren())do
+--                    if v.Name=="ShootPart" then v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(0,-2,0) print("Shooting") end
+--                end
+--           end
+--        	task.wait()
+--        end
+--    end)
+--end)
+
+Auto:Toggle("Remove Cars",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            for _,v in pairs(Carts:GetChildren())do
+                if v.Name:match("Accelerating")then v:Destroy()end
+            end
+        	task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Button("Remove Doors",function()
+    spawn(function()RemoveObj("DoorPair")end)
+end)
+
+Auto:Button("Remove Bumps",function()
+    spawn(function()RemoveObj("Bump")end)
+end)
+
+
+
+Misc:Toggle("Anti AFK",function(bool)
+    shared.Misc1 = bool
+    spawn (function()
+        if shared.Misc1 then
+            game:GetService("Players").LocalPlayer.Idled:connect(function()
+            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            wait(1)
+            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()
+        FullBright()
+    end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        local mouse = Player:GetMouse()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(game.Players:GetChildren()) do
+                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
+                    if part.Name == "BillboardGui" then part:Destroy() end
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Slider",{
+    ['default'] = 16;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Button("ESP",function()
+    ESP()
+end)
+
+Misc:DestroyGui()
