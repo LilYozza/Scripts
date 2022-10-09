@@ -97,8 +97,16 @@ local DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem)
 end)
 
 local function UpdateList() if table.getn(PlayerList) >0 then table.clear(PlayerList)end for _,v in pairs(Players:GetChildren())do table.insert(PlayerList, v.Character:WaitForChild("Humanoid").DisplayName) end end UpdateList()
-local function UpdatePlayers() for _,v in pairs(Players:GetChildren()) do if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) task.wait() end end end UpdatePlayers()
-spawn(function() repeat task.wait(1) UpdateList()  DropList:Refresh(PlayerList) print("Updating") until false end)
+local function UpdatePlayers() 
+    for _,v in pairs(Players:GetChildren()) do 
+        if v.Character:WaitForChild("Head",10) then
+            if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then 
+                CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) task.wait() 
+            end
+        end 
+    end 
+end UpdatePlayers()
+spawn(function() repeat task.wait(1) UpdateList() UpdatePlayers()  DropList:Refresh(PlayerList) until false end)
 
 --Players.PlayerRemoving:Connect(function() print("Player Removed") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)end) 
 --game.Players.ChildRemoved:Connect(function()spawn(function() print("Childed Removed") UpdateList() DropList:Refresh(PlayerList) UpdatePlayers() end) end)
@@ -117,9 +125,11 @@ Auto:Toggle("Auto Aim",function(bool)
     spawn (function()
         while shared.toggle1 do
             if shared.toggle1 and Workspace:FindFirstChild("ShootPartC4") and PlayerSelect then
-                Workspace:FindFirstChild("ShootPartC4").CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame
-                if Workspace:FindFirstChild("ShootPartC4").CFrame==PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame then task.wait(1) end
-            end
+                for _,v in pairs(Workspace:GetChildren())do
+                    if shared.toggle1 and v.Name=="ShootPartC4" and game.Players:FindFirstChild(PlayerSelect.Name) then
+                        v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame
+                        if v.CFrame==PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame then task.wait(1) end
+            end end end
         	task.wait()
         end
     end)
