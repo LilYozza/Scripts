@@ -129,7 +129,7 @@ Auto:Toggle("Auto Aim",function(bool)
                 PCart=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart
             end
             for _,v in pairs(Workspace:GetDescendants())do
-                if v.Name=="ShootPartC4" and v:FindFirstChild("Fire") and PCart and PlayerSelect.Character:WaitForChild("HumanoidRootPart",5) then v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart",5).CFrame task.wait(1) Touch(PCart,v,0)end
+                if v.Name=="ShootPartC4" and v:FindFirstChild("Fire") and PCart and PlayerSelect.Character:WaitForChild("HumanoidRootPart",5) then v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart",5).CFrame task.wait(1) Touch(PCart,v,0) print("Moving")end
             end
         	task.wait()
         end
