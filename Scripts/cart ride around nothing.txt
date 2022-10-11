@@ -107,7 +107,7 @@ local function UpdatePlayers()
         end 
     end 
 end UpdatePlayers()
-spawn(function() repeat UpdateList() UpdatePlayers() DropList:Refresh(PlayerList) task.wait() until false end)
+spawn(function() repeat UpdateList() task.wait(1) UpdatePlayers() task.wait(1) DropList:Refresh(PlayerList) task.wait() until false end)
 
 --Players.PlayerRemoving:Connect(function() print("Player Removed") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)end) 
 --game.Players.ChildRemoved:Connect(function()spawn(function() print("Childed Removed") UpdateList() DropList:Refresh(PlayerList) UpdatePlayers() end) end)
