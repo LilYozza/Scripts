@@ -254,6 +254,10 @@ local Games = {
 	['9912491609'] = {
 		Name = 'How far can you jump',
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/How%20far%20can%20you%20jump.txt'))
+	},
+	['10681346822'] = {
+		Name = 'Roblox but every second you get +1 Jump Power',
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20but%20every%20second%20you%20get%20+1%20Jump%20Power.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
