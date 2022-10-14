@@ -15,7 +15,7 @@ local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
-local PlayerSelect, PCart
+local PlayerSelect
 local PlayerList={}
 local CartT={"Cart", "CartXL", "RaceCart"}
 local Carts=Workspace:FindFirstChild("Carts")
@@ -97,7 +97,7 @@ local DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem)
     end
 end)
 
-local function UpdateList() if PlayerList and table.getn(PlayerList) >0 then table.clear(PlayerList)end for _,v in pairs(Players:GetChildren())do if v.Character:WaitForChild("Humanoid",5) then table.insert(PlayerList, v.Character:WaitForChild("Humanoid",5).DisplayName) end end end UpdateList()
+local function UpdateList() if PlayerList and table.getn(PlayerList) >0 then table.clear(PlayerList)end for _,v in pairs(Players:GetChildren())do if v.Character:WaitForChild("Humanoid",5) then table.insert(PlayerList, v.Character:WaitForChild("Humanoid",5).DisplayName) end end end
 local function UpdatePlayers() 
     for _,v in pairs(game.Players:GetChildren()) do 
         if v and v.Character:WaitForChild("Head",5) then
@@ -106,30 +106,20 @@ local function UpdatePlayers()
             end
         end 
     end 
-end UpdatePlayers()
-spawn(function() repeat UpdateList() task.wait(1) UpdatePlayers() task.wait(1) DropList:Refresh(PlayerList) task.wait() until false end)
-
---Players.PlayerRemoving:Connect(function() print("Player Removed") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)end) 
---game.Players.ChildRemoved:Connect(function()spawn(function() print("Childed Removed") UpdateList() DropList:Refresh(PlayerList) UpdatePlayers() end) end)
---game.Players.ChildAdded:Connect(function() spawn(function() print("ChildAdded") UpdateList() DropList:Refresh(PlayerList) UpdatePlayers() end) end)
---Players.PlayerAdded:Connect(function(player)
---         player.CharacterAdded:Connect(function(character)
---             print("Player Added") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)
---                character.Humanoid.Died:Connect(function()
---                    print("Player Died") UpdateList() UpdatePlayers() DropList:Refresh(PlayerList)
---                end)
---         end)
---end)
+end
+spawn(function() repeat UpdateList() task.wait(1) DropList:Refresh(PlayerList) task.wait() until false end)
+spawn(function() repeat task.wait(1) UpdatePlayers()until false end)
 
 Auto:Toggle("Auto Aim",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
+            local PCart
             if PlayerSelect and PlayerSelect.Character:WaitForChild("Humanoid",5) and PlayerSelect.Character:WaitForChild("Humanoid",5).Sit==true then
                 PCart=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart
             end
             for _,v in pairs(Workspace:GetDescendants())do
-                if v.Name=="ShootPartC4" and v:FindFirstChild("Fire") and PCart and PlayerSelect.Character:WaitForChild("HumanoidRootPart",5) then v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart",5).CFrame task.wait(1) Touch(PCart,v,0) PCart=nil end
+                if v.Name=="ShootPartC4" and v:FindFirstChild("Fire") and PCart and PlayerSelect.Character:WaitForChild("HumanoidRootPart",5) then v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart",5).CFrame task.wait(1) Touch(PCart,v,0) end
             end
         	task.wait()
         end
@@ -139,21 +129,6 @@ end)
 Auto:Button("Refresh",function()
     spawn(function()UpdateList() UpdatePlayers() DropList:Refresh(PlayerList) end)
 end)
-
---Auto:Toggle("Auto Aim",function(bool)
---    shared.toggle1 = bool
---    spawn (function()
---        while shared.toggle1 do
---            if Player.Character:WaitForChild("Humanoid").sit and PlayerSelect then
---                local p=Player.Character:WaitForChild("Humanoid").SeatPart.Parent
---                for _,v in pairs(p:GetChildren())do
---                    if v.Name=="ShootPart" then v.CFrame=PlayerSelect.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(0,-2,0) print("Shooting") end
---                end
---           end
---        	task.wait()
---        end
---    end)
---end)
 
 Auto:Toggle("Remove Cars",function(bool)
     shared.toggle1 = bool
