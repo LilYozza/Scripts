@@ -131,7 +131,6 @@ local function GetPlayers()
     end
 end GetPlayers()
 
-print("Connected")
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         AddPlayer(player)
