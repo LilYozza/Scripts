@@ -11,7 +11,6 @@ local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local w = library:CreateWindow("Main")
-local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
 Misc:Toggle("Anti AFK",function(bool)
