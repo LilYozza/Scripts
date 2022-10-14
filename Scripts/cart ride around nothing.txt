@@ -98,25 +98,15 @@ local DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem)
     end
 end)
 
-local function GetPlayers()
-    if not PlayerList[1] then
-        for _,v in pairs(Players:GetChildren())do
-            table.insert(PlayerList, v.DisplayName)
-            DropList:Refresh(PlayerList)
-            if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then 
-                CreateTag((Color3.new(255, 0, 0)), v)
-            end
-        end
-    end
-end GetPlayers()
-
-
 local function AddPlayer(player)
+    print("Function", player)
     if not table.find(PlayerList,player.DisplayName) then
         table.insert(PlayerList, player.DisplayName)
-        DropList:Refresh(PlayerList) player.CharacterAdded:Wait()
-        CreateTag((Color3.new(255, 0, 0)), player)
+        DropList:Refresh(PlayerList)
     end
+    print("Checking Tagg")
+    if not player.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+    CreateTag((Color3.new(255, 0, 0)), player) end
 end
 
 
@@ -127,8 +117,23 @@ local function RemovePlayer(player)
     end
 end
 
+local function GetPlayers()
+    if not PlayerList[1] then
+        for _,v in pairs(Players:GetChildren())do
+            table.insert(PlayerList, v.DisplayName)
+            DropList:Refresh(PlayerList)
+            print(v.Parent)
+            v.CharacterAdded:Connect(function()AddPlayer(v)end)
+            if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then 
+                CreateTag((Color3.new(255, 0, 0)), v)
+            end
+        end
+    end
+end GetPlayers()
+
+print("Connected")
 Players.PlayerAdded:Connect(function(player)
-    Player.CharacterAdded:Connect(function()
+    player.CharacterAdded:Connect(function()
         AddPlayer(player)
     end)
 end)
