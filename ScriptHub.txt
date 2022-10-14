@@ -274,6 +274,10 @@ local Games = {
 	['6938764986'] = {
 		Name = 'AirPlane Simulator',
 		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/AirPlane%20Simulator.txt'))
+	},
+	['10809467765'] = {
+		Name = 'Zipline Obby',
+		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zipline%20Obby.txt'))
 	}
 }
 repeat wait() until game:IsLoaded()
