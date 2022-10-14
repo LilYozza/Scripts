@@ -99,12 +99,10 @@ local DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem)
 end)
 
 local function AddPlayer(player)
-    print("Function", player)
     if not table.find(PlayerList,player.DisplayName) then
         table.insert(PlayerList, player.DisplayName)
         DropList:Refresh(PlayerList)
     end
-    print("Checking Tagg")
     if not player.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
     CreateTag((Color3.new(255, 0, 0)), player) end
 end
