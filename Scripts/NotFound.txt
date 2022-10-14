@@ -3,6 +3,7 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
 
 local Player = game.Players.LocalPlayer
 local character = Player.Character or Player.CharacterAdded:Wait()
@@ -10,6 +11,7 @@ local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
 Misc:Toggle("Anti AFK",function(bool)
@@ -57,6 +59,20 @@ Misc:Toggle("Teleport",function(bool)
     end)
 end)
 
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(game.Players:GetChildren()) do
+                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
+                    if part.Name == "BillboardGui" then part:Destroy() end
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
 local Speed = Misc:Slider("Slider",{
     ['default'] = 16;
     ['min'] = 0;
@@ -72,9 +88,9 @@ Misc:Button("3rd Person",function()
     Player.CameraMaxZoomDistance = 150
     Player.CameraMinZoomDistance = 0
 end)
+
 Misc:Button("ESP",function()
     ESP()
 end)
-
 
 Misc:DestroyGui()
