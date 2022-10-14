@@ -29,7 +29,7 @@ local CartCheckRoomFinish=Workspace:FindFirstChild("CartCheckRoomFinish")
 local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
 local function Touch(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
 local function RemoveObj(p) for _,v in pairs(Workspace:GetDescendants())do if v.Name==p then v:Destroy() end end end
-local function CreateTag(c, player) GUI = Instance.new("BillboardGui", player) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
+local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
 local function RoomCheck(Door1, Door2, Type, Room)
     repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door1+Vector3.new(-3,0,0) task.wait() until Room.Light.SpotLight.Enabled==true
     Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door2
@@ -104,7 +104,7 @@ local function GetPlayers()
             table.insert(PlayerList, v.DisplayName)
             DropList:Refresh(PlayerList)
             if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then 
-                CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head",5))
+                CreateTag((Color3.new(255, 0, 0)), v)
             end
         end
     end
@@ -115,7 +115,7 @@ local function AddPlayer(player)
     if not table.find(PlayerList,player.DisplayName) then
         table.insert(PlayerList, player.DisplayName)
         DropList:Refresh(PlayerList) player.CharacterAdded:Wait()
-        CreateTag((Color3.new(255, 0, 0)), player.Character:WaitForChild("Head",10))
+        CreateTag((Color3.new(255, 0, 0)), player)
     end
 end
 
