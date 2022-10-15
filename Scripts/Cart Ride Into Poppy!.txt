@@ -4,215 +4,154 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
 
-local Player = game.Players.LocalPlayer
 local Players = game:GetService("Players")
-local character = Player.Character or Player.CharacterAdded:Wait()
-local root = character:WaitForChild("HumanoidRootPart")
+local Player = Players.LocalPlayer
 local virtual = game:GetService("VirtualUser")
 
-local PlayerSelect, CartSelect
+local PlayerList = {}
+local PlayerSelect, CartSelect, OldCart
 local SColor = BrickColor.new("Lime green")
 local DColor = BrickColor.new("Neon orange")
-local PlayerList = {} local BlackList = {}
-local RollerCoaster = workspace:FindFirstChild("RollerCoaster")
-local Finish = workspace:FindFirstChild("Finish")
-local PathGivers = Finish:FindFirstChild("PathGivers")
-local Carts = RollerCoaster:FindFirstChild("Carts")
-local Interactive = RollerCoaster:FindFirstChild("Interactive")
+
+local RollerCoaster=Workspace:FindFirstChild("RollerCoaster")
+local Finish=Workspace:FindFirstChild("Finish")
+local PathGivers=Finish:FindFirstChild("PathGivers")
+local Carts=RollerCoaster:FindFirstChild("Carts")
+local Interactive=RollerCoaster:FindFirstChild("Interactive")
+
+local SpawnLocation=Workspace:FindFirstChild("SpawnLocation")
+local Baseplate=Finish:FindFirstChild("Baseplate")
 
 local w = library:CreateWindow("Main")
 local Troll = w:CreateFolder("Troll")
 local Other = w:CreateFolder("Other")
 local Misc = w:CreateFolder("Misc")
 
-function SelectColor(model, p)
-    for _,v in pairs(model:GetChildren()) do
-        if v:IsA("Part") and v.Name == "Part" then
-            v.BrickColor = p
-        end
-    end
-end
+local function SelectColor(p, color)for _,v in pairs(p:GetChildren()) do if v:IsA("Part")and v.Name=="Part" then v.BrickColor=color end end end
+local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
+local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 
-function CreateTag(c, h)
-    GUI = Instance.new("BillboardGui", h)
-    GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)
-    GUI.AlwaysOnTop = true
-    GUI.Size = UDim2.new(3, 0, 1, 0)
-    TextLabel = Instance.new("TextLabel", GUI)
-    TextLabel.Text =  h.Parent:WaitForChild("Humanoid").DisplayName
-    TextLabel.BackgroundTransparency = 1
-    TextLabel.Font = "ArialBold"
-    TextLabel.TextSize = 15
-    TextLabel.TextColor3 = c
-    TextLabel.Size = UDim2.new(1,0,1,0)
-end
-
-local DropList = Troll:Dropdown("Select Player",PlayerList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    PlayerSelect = SItem
-    if PlayerSelect == "All" then CartSelect = "All"
-    else for _,v in pairs(game.Players:GetChildren()) do if PlayerSelect == v.character:WaitForChild("Humanoid").DisplayName then PlayerSelect = v break end end
-        PlayerSelect.character:WaitForChild("Humanoid").SeatPart.Parent.Name = PlayerSelect.Name
-        CartSelect = PlayerSelect.character:WaitForChild("Humanoid").SeatPart.Parent.Name
-    end
-    if CartSelect == "All" then
-        for _,v in pairs(Carts:GetDescendants()) do
-            if v:IsA("Part") and v.Name == "Part" then
-                if v.BrickColor == DColor then SelectColor(v.parent, SColor) end
-            end
+local DropList = Troll:Dropdown("Select Player",PlayerList,true,function(SItem)
+    local s,e=pcall(function()
+        if SItem=="All" then CartSelect="All" OldCart=CartSelect
+            for _,v in pairs(Carts:GetChildren()) do SelectColor(v.Body, SColor) end 
+        else 
+            for _,v in pairs(Players:GetChildren()) do 
+                if SItem==v.DisplayName then PlayerSelect=v break end end
+            
+            if PlayerSelect.Character:WaitForChild("Humanoid").SeatPart then
+            CartSelect=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart.Parent
+            CartSelect.Name=PlayerSelect.Name end
+            
+            if OldCart and CartSelect then if OldCart=="All" then for _,v in pairs(Carts:GetChildren()) do SelectColor(v.Body, DColor) end end SelectColor(CartSelect.Body, DColor)end
+            SelectColor(CartSelect.Body, SColor)OldCart=CartSelect
         end
-        
-    else
-        for _,v in pairs(Carts:GetDescendants()) do
-            if v:IsA("Part") and v.Name == "Part" then
-                if v.BrickColor == SColor then SelectColor(v.parent, DColor) end
-            end
-        end
-        for _,v in pairs(Carts:FindFirstChild(CartSelect):FindFirstChild("Body"):GetChildren()) do
-            if v:IsA("Part") and v.Name == "Part" then
-                if v.BrickColor == DColor then SelectColor(v.parent, SColor) end
-            end
-        end
-    end
+    end) if not s then print("Error:",e)end
 end)
 
-function UpdatePlayers()
-    table.clear(PlayerList) table.insert(PlayerList, "All")
-    for _,v in pairs(game.Players:GetChildren()) do
-        if v.character:WaitForChild("Humanoid"). sit then
-            table.insert(PlayerList, v.character:WaitForChild("Humanoid").DisplayName)
-        end
-        if not table.find(BlackList, v.Name) then table.insert(BlackList, v.Name)
-            v.Character:WaitForChild("Humanoid").Seated:Connect(onSeated)
-        end
-        if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
-            CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) wait()
-        end
-    end
+local function onSeat(player)
+    if player.Character:WaitForChild("Humanoid").sit and not table.find(PlayerList, player.DisplayName) then
+        table.insert(PlayerList, player.DisplayName)
+    else RemoveItem(PlayerList, player.DisplayName) end
     DropList:Refresh(PlayerList)
 end
 
-function onSeated(isSeated, seat) UpdatePlayers() end
-Players.PlayerAdded:Connect(function(player) UpdatePlayers() end)
-Players.PlayerRemoving:Connect(function(player) UpdatePlayers() end)    
+local function AddPlayer(player)
+    if not table.find(PlayerList, player.DisplayName) and player.Character:WaitForChild("Humanoid").sit then
+        table.insert(PlayerList, player.DisplayName)DropList:Refresh(PlayerList)
+    end
+    if not player.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+    CreateTag((Color3.new(255, 0, 0)), player) end
+end
 
-function GetPlayers()
-    table.clear(PlayerList) table.insert(PlayerList, "All")
-    for _,v in pairs(game.Players:GetChildren()) do
-        if v.Character:WaitForChild("Humanoid").sit then
-            table.insert(PlayerList, v.character:WaitForChild("Humanoid").DisplayName)
-            print("Conntecting...", v.Name)
-        end
-        if not table.find(BlackList, v.Name) then
-            table.insert(BlackList, v.Name)
-            v.Character:WaitForChild("Humanoid").Seated:Connect(onSeated) wait()
-        end
+local function RemovePlayer(player)
+    if table.find(PlayerList,player.DisplayName) then
+        RemoveItem(PlayerList, player.DisplayName)
+        DropList:Refresh(PlayerList)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)AddPlayer(player)
+    character:WaitForChild("Humanoid").Seated:Connect(function()onSeat(player)end)
+    end)
+end)
+Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end) 
+
+--Get Players
+local function GetPlayers() table.insert(PlayerList,"All")
+    for _,v in pairs(Players:GetChildren()) do
+        if v.Character:WaitForChild("Humanoid").sit then table.insert(PlayerList, v.DisplayName)end
+        v.Character:WaitForChild("Humanoid").Seated:Connect(function()onSeat(v)end)
+        v.CharacterAdded:Connect(function()AddPlayer(v)end)
         if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
-            CreateTag((Color3.new(255, 0, 0)), v.character:WaitForChild("Head")) wait()
+            CreateTag((Color3.new(255, 0, 0)), v)
         end
     end
     DropList:Refresh(PlayerList)
-end GetPlayers() 
+end GetPlayers()
+
 
 Troll:Toggle("Speed Up",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            if CartSelect == "All" and shared.toggle1 then
-                for _,v in pairs(Carts:GetDescendants()) do
-                    if v:IsA("ClickDetector") and v.Parent.Name:match("Up") then
-                        fireclickdetector(v) wait()
-                    end
-                end
-            else
-                for _,v in pairs(Carts:FindFirstChild(CartSelect):GetDescendants()) do
-                    if v:IsA("ClickDetector") and v.Parent.Name:match("Up") then
-                        fireclickdetector(v) wait()
-                    end
-                end
-            end
-        	wait()
+            if CartSelect == "All" and shared.toggle1 then for _,v in pairs(Carts:GetChildren()) do fireclickdetector(v.Up.Click)end
+            else if CartSelect then fireclickdetector(CartSelect.Up.Click)end end
+        	task.wait()
         end
     end)
 end)
 
 Troll:Toggle("Speed Down",function(bool)
-    shared.toggle2 = bool
+    shared.toggle1 = bool
     spawn (function()
-        while shared.toggle2 do
-            if CartSelect == "All" and shared.toggle2 then
-                for _,v in pairs(Carts:GetDescendants()) do
-                    if v:IsA("ClickDetector") and v.Parent.Name:match("Down") then
-                        fireclickdetector(v) wait()
-                    end
-                end
-            else
-                for _,v in pairs(Carts:FindFirstChild(CartSelect):GetDescendants()) do
-                    if v:IsA("ClickDetector") and v.Parent.Name:match("Down") then
-                        fireclickdetector(v) wait()
-                    end
-                end
-            end
-        	wait()
+        while shared.toggle1 do
+            if CartSelect=="All" and shared.toggle1 then for _,v in pairs(Carts:GetChildren()) do fireclickdetector(v.Down.Click)end
+            else if CartSelect then fireclickdetector(CartSelect.Down.Click)end end
+        	task.wait()
         end
     end)
 end)
 
 Troll:Button("Break",function()
     spawn(function()
-        if CartSelect == "All" then
-            for _,v in pairs(Carts:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name:match("On") then
-                    fireclickdetector(v) wait()
-                end
-            end
-        else
-            for _,v in pairs(Carts:FindFirstChild(CartSelect):GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name:match("On") then
-                    fireclickdetector(v) wait()
-                end
-            end
-        end
+        if CartSelect=="All" then for _,v in pairs(Carts:GetChildren()) do fireclickdetector(v.On.Click)end
+        else if CartSelect then fireclickdetector(CartSelect.On.Click)end end
     end)
 end)
 
 Troll:Button("Spawn",function()
     spawn(function()
-        for _,v in pairs(Interactive:GetDescendants()) do
-            if v.Name == "ProximityPrompt" and v.Parent.Name == "1" or v.Parent.Name == "2" then
-                v.MaxActivationDistance = 99999
-                fireproximityprompt(v)
-            end
-        end
+        fireproximityprompt(Interactive:FindFirstChild("1").ProximityPrompt)fireproximityprompt(Interactive:FindFirstChild("2").ProximityPrompt)
     end)
 end)
 
 Troll:Button("Refresh",function()
     spawn(function()
-        UpdatePlayers() DropList:Refresh(PlayerList)
-    end)
-end)
-
-Other:Button("Give Items",function()
-    spawn(function()
-        for _,v in pairs(PathGivers:GetDescendants()) do
-            if v.Name == "ProximityPrompt" then
-                v.MaxActivationDistance = 99999
-                fireproximityprompt(v) wait(1)
+        for _,v in pairs(Players:GetChildren())do
+            if not table.find(PlayerList, v.DisplayName) and v.character:WaitForChild("Humanoid").sit then
+                table.insert(PlayerList, v.DisplayName)
             end
         end
     end)
 end)
 
-Other:Button("Teleport Start",function()
+Other:Button("Give Items",function()
     spawn(function()
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("SpawnLocation").CFrame + Vector3.new(0,6,0)
+        for _,v in pairs(PathGivers:GetChildren()) do
+            if v:FindFirstChild("Giver") then fireproximityprompt(v.Giver.ProximityPrompt)end
+        end
     end)
 end)
 
+Other:Button("Teleport Start",function()
+    spawn(function()MoveTo(SpawnLocation,Vector3.new(0,6,0))end)
+end)
+
 Other:Button("Teleport End",function()
-    spawn(function()
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = Finish:FindFirstChild("Baseplate").CFrame + Vector3.new(0,6,0)
-    end)
+    spawn(function()MoveTo(Baseplate,Vector3.new(0,6,0))end)
 end)
 
 Misc:Toggle("Anti AFK",function(bool)
