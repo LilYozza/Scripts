@@ -16,8 +16,11 @@ local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
 
 --Base Variables
-local whiteballfolder=Workspace:FindFirstChild("whiteballfolder")
-local Teleporter50x=whiteballfolder:FindFirstChild("Teleporter")
+local Teleporter50x
+local whiteballfolder
+
+for _,v in pairs(Workspace:GetChildren())do if v.Name=="whiteballfolder" and v:FindFirstChild("Teleporter") then whiteballfolder=v break end end
+for _,v in pairs(whiteballfolder:GetChildren())do if v:FindFirstChildWhichIsA("TouchTransmitter") and v.Name=="Teleporter" then Teleporter50x=v break end end
 
 --Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
