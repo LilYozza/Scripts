@@ -40,10 +40,10 @@ Auto:Toggle("Auto Buttons",function(bool)
         while shared.Toggle do
             for _,v in pairs(Workspace:GetDescendants())do
                 if v:FindFirstChildWhichIsA("TouchTransmitter") and v.Name:match("switch") and v:IsA("BasePart") then
-                    Touch(v,5)
+                    Touch(v)
                 end
             end
-            task.wait()
+            task.wait(5)
         end
     end)
 end)
