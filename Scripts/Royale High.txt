@@ -4,59 +4,106 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
  
-local Collectibles = workspace:FindFirstChild("CollectibleDiamonds")
-
 local Player = game.Players.LocalPlayer
 local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
- 
+
 local w = library:CreateWindow("Main")
-local Auto = w:CreateFolder("Auto")
+
+--Event Variable Checks
+if Workspace:FindFirstChild("CollectibleDiamonds")then CollectibleDiamonds=Workspace:FindFirstChild("CollectibleDiamonds") Auto = w:CreateFolder("Auto")end
+if Workspace:FindFirstChild("EggHuntMinigame")then Hunt=Workspace:FindFirstChild("EggHuntMinigame") Egg = Hunt:FindFirstChild("Eggs") EggHunt = w:CreateFolder("EggHunt")end
+
+if Workspace:FindFirstChild("TrickorTreatDoors")then TrickorTreatDoors=Workspace:FindFirstChild("TrickorTreatDoors") CandyHunt= w:CreateFolder("CandyHunt")
+if Workspace:FindFirstChild("DroppedCandyFolder")then DroppedCandyFolder=Workspace:FindFirstChild("DroppedCandyFolder")end
+if Workspace:FindFirstChild("AppleBobbing")then AppleBobbing=Workspace:FindFirstChild("AppleBobbing")end end
+
 local Misc = w:CreateFolder("Misc")
- 
-Auto:Toggle("Auto Diamond",function(bool)
+
+--Non Return Functions
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p, offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+--Return Functions
+local function GetSeat(p)if p:FindFirstChild("Seat")then for _,v in pairs(p:GetChildren())do if not v.Occupant then return v end end end end
+
+--Trigger Functions
+local function CollectCandy()task.wait(4)for _,v in pairs(DroppedCandyFolder:GetChildren())do Touch(v,0.4)end return true end
+
+
+if CollectibleDiamonds then Auto:Toggle("Auto Diamonds",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            pcall(function()
-                local Player = game.Players.LocalPlayer
-                Diamonds = Collectibles:GetChildren()
-                for key, value in pairs(Diamonds) do
-                    value.CFrame = Player.character:WaitForChild("HumanoidRootPart").CFrame
-                    wait(1)
-                end
-                wait()
-            end)
+            for _,v in pairs(CollectibleDiamonds:GetChildren()) do
+                v.CFrame = Player.character:WaitForChild("HumanoidRootPart").CFrame task.wait(1)
+            end
+            task.wait()
         end
     end)
-end)
+end)end
 
-Auto:Toggle("Auto Egg",function(bool)
-    shared.toggle2 = bool
-	local Hunt = workspace:FindFirstChild("EggHuntMinigame")
-	local Egg = Hunt:FindFirstChild("Eggs")
+
+if AppleBobbing then CandyHunt:Toggle("Auto Apples",function(bool)
+    shared.toggle1 = bool
     spawn (function()
-        back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-        while shared.toggle2 do
-            Eggs = Egg:GetChildren()
-            pcall(function()
-                for key, value in pairs(Eggs) do
-                    click = value:FindFirstChild("ClickDetector")
-                    if click ~= nil and shared.toggle2 then
-                        Player.character:WaitForChild("HumanoidRootPart").Anchored = true
-                        Player.character:WaitForChild("HumanoidRootPart").CFrame = value.CFrame + Vector3.new(3,-8,0)
-                        fireclickdetector(click, 1000)
+        while shared.toggle1 do
+            if not Player.Character:WaitForChild("Humanoid").sit then
+                for _,v in pairs(AppleBobbing:GetChildren())do
+                    if v:FindFirstChild("Seat") then
+                        PSeat=GetSeat(v) MoveTo(PSeat,Vector3.new(0,0,0)) Touch(PSeat) break
                     end
                 end
+            else
+                PSeat=Player.Character:WaitForChild("Humanoid").SeatPart
+            end
+            repeat fireproximityprompt(PSeat.Attachment.ProximityPrompt)task.wait(5)until not shared.toggle1
+            task.wait()
+        end
+    end)
+end)end
+
+if TrickorTreatDoors then CandyHunt:Toggle("Auto Doors",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do
+            local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+            local s,e=pcall(function()
+            for _,v in pairs(TrickorTreatDoors:GetChildren())do
+                if shared.toggle1 and v:FindFirstChild("Doorbell") then local c spawn(function()c=CollectCandy()end)
+                    local doorpos=v.Door.CFrame local count=0
+                    repeat MoveTo(v.Doorbell,Vector3.new(0,-8,0)) if doorpos==v.Door.CFrame and count<=5 then fireproximityprompt(v.Doorbell.Attachment.ProximityPrompt) count=count+1 end task.wait()until c or not shared.toggle1
+                end
+            end
+            if not s then print(e) end
+            end)Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+            task.wait()
+        end
+    end)
+end)end
+
+if Hunt then EggHunt:Toggle("Egg Hunt",function(bool) --Really Old Code (Will Patch When Event Back On)
+    shared.toggle2 = bool
+        spawn (function()
+            back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+            while shared.toggle2 do
+                Eggs = Egg:GetChildren()
+                    for key, value in pairs(Eggs) do
+                        click = value:FindFirstChild("ClickDetector")
+                        if click ~= nil and shared.toggle2 then
+                            Player.character:WaitForChild("HumanoidRootPart").Anchored = true
+                            Player.character:WaitForChild("HumanoidRootPart").CFrame = value.CFrame + Vector3.new(3,-8,0)
+                            fireclickdetector(click, 1000)
+                        end
+                    end
                 Player.character:WaitForChild("HumanoidRootPart").Anchored = false
                 wait()
-            end)
-        end
+            end
         Player.character:WaitForChild("HumanoidRootPart").CFrame = back
-		Player.character:WaitForChild("HumanoidRootPart").Anchored = false
+        Player.character:WaitForChild("HumanoidRootPart").Anchored = false
     end)
-end)
+end)end
  
 Misc:Toggle("Anti AFK",function(bool)
     shared.Misc1 = bool
@@ -70,14 +117,14 @@ Misc:Toggle("Anti AFK",function(bool)
         end
     end)
 end)
- 
+
 Misc:Toggle("Full Bright",function(bool)
     shared.Misc2 = bool
     spawn (function()
         FullBright()
     end)
 end)
- 
+
 Misc:Toggle("Infinite Jump",function(bool)
     shared.Misc3 = bool
     spawn (function()
@@ -88,7 +135,7 @@ Misc:Toggle("Infinite Jump",function(bool)
         end)
     end)
 end)
- 
+
 Misc:Toggle("Teleport",function(bool)
     shared.Misc4 = bool
     spawn(function()
@@ -102,24 +149,39 @@ Misc:Toggle("Teleport",function(bool)
         end)
     end)
 end)
-local Speed = Misc:Slider("Slider",{
+
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(Players:GetChildren()) do
+                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+                    v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
+                end
+            end
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Walk Speed",{
     ['default'] = 16;
     ['min'] = 0;
-    ['max'] = 100;
+    ['max'] = 200;
     ['precise'] = true;
 },function(value)
     game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
     local Players = game:GetService("Players")
 end)
- 
+
 Misc:Button("3rd Person",function()
     game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
     Player.CameraMaxZoomDistance = 150
     Player.CameraMinZoomDistance = 0
 end)
+
 Misc:Button("ESP",function()
     ESP()
 end)
 
- 
 Misc:DestroyGui()
