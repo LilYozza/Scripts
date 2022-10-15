@@ -5,13 +5,31 @@ local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/Li
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
 
-local Player = game.Players.LocalPlayer
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
 local character = Player.Character or Player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
 local Misc = w:CreateFolder("Misc")
+
+--Base Variables
+local GlassBridge=Workspace:FindFirstChild("Glass Bridge")
+local GlassPane=GlassBridge:FindFirstChild("GlassPane")
+
+--Non Return Functions
+local function Touh(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+
+Auto:Button("Show Path",function()
+    spawn(function()
+         for _,v in pairs(GlassPane:GetChildren())do
+            if v[1].CanCollide then v[1].BrickColor=BrickColor.new("Lime green")
+            else v[2].BrickColor=BrickColor.new("Lime green") end
+        end       
+    end)
+end)
 
 Misc:Button("Sword Aura",function()
     spawn (function()
@@ -59,20 +77,21 @@ Misc:Toggle("NameTags",function(bool)
     shared.Misc5 = bool
     spawn(function()
         if shared.Misc5 then NameTag() else
-            for _,v in pairs(game.Players:GetChildren()) do
-                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
-                    if part.Name == "BillboardGui" then part:Destroy() end
+            for _,v in pairs(Players:GetChildren()) do
+                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+                    v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
                 end
             end
+            Connect1:Disconnect()Connect2:Disconnect()Connect3:Disconnect()
         end
         wait()
     end)
 end)
 
-local Speed = Misc:Slider("Slider",{
+local Speed = Misc:Slider("Walk Speed",{
     ['default'] = 16;
     ['min'] = 0;
-    ['max'] = 100;
+    ['max'] = 200;
     ['precise'] = true;
 },function(value)
     game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
