@@ -7,14 +7,14 @@ local function AddTag(player)
 end
 
 for _,v in pairs(game.Players:GetChildren()) do
-	v.CharacterAdded:Connect(function()AddTag(v)end)
+	Connect2 = v.CharacterAdded:Connect(function()AddTag(v)end)
     if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
         CreateTag((Color3.new(255, 0, 0)), v)
     end
 end
 
 Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function()
+    Connect1 = player.CharacterAdded:Connect(function()
         AddTag(player)
     end)
 end)
