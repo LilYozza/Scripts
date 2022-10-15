@@ -34,6 +34,20 @@ Auto:Toggle("Auto Complete",function(bool)
     end)
 end)
 
+Auto:Toggle("Auto Buttons",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            for _,v in pairs(Workspace:GetDescendants())do
+                if v:FindFirstChildWhichIsA("TouchTransmitter") and v.Name:match("switch") and v:IsA("BasePart") then
+                    Touch(v,5)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
 Misc:Button("Sword Aura",function()
     spawn (function()
         local credit='guardscripts'
