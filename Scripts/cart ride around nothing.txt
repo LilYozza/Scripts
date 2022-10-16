@@ -171,6 +171,18 @@ Auto:Toggle("Remove Cars",function(bool)
     end)
 end)
 
+Auto:Button("Easy Cart",function()
+    spawn(function()
+        if Player.Character:WaitForChild("Humanoid").SeatPart then
+            for _,v in pairs(Player.Character:WaitForChild("Humanoid").SeatPart.Parent:GetDescendants())do
+                if v.Name=="Wheel" and v:IsA("BasePart") then v.Size=Vector3.new(0.7, 1.1, 1.1) end
+                if v.Name=="Flange" and v:IsA("BasePart") then v.Size=Vector3.new(0.1, 1.7, 1.7)end
+                if v.Name=="Suspension" and v:IsA("SpringConstraint") then v.LimitsEnabled=true v.MaxLength=1 v.MinLength=0 end
+            end
+        end
+    end)
+end)
+
 Auto:Button("Remove Doors",function()
     spawn(function()RemoveObj("DoorPair")end)
 end)
