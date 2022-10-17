@@ -7,10 +7,7 @@ local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYo
 
 
 local Player = game.Players.LocalPlayer
-local character = Player.Character or Player.CharacterAdded:Wait()
-local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
-
 local Tycoon, NilTycoon, SCollect, PTeam
 local Tycoons = workspace:FindFirstChild("berezaa's Tycoon Kit")
 
@@ -26,7 +23,7 @@ local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart")
 local function GetTeam()for _,v in pairs(Tycoons:GetChildren())do if v.Name:lower():match(Player.Team.Name:lower()) then return v end end end
 local function GetTycoon()for _,v in pairs(PTeam:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end
 local function ClaimTycoon()for _,v in pairs(Tycoons:GetDescendants())do if v:FindFirstChild("Owner") and v.Owner.Value==nil then return v end end end
-PTeam=GetTeam()if PTeam then GetTycoon()else NilTycoon=ClaimTycoon()Touch(NilTycoon.Gate.Head)MoveTo(NilTycoon.Gate.Head,Vector3.new(0,4,0))task.wait(1)PTeam=GetTeam()GetTycoon()end
+repeat PTeam=GetTeam()if PTeam then GetTycoon()else NilTycoon=ClaimTycoon()Touch(NilTycoon.Gate.Head)MoveTo(NilTycoon.Gate.Head,Vector3.new(0,4,0))task.wait(1)PTeam=GetTeam()GetTycoon()end task.wait()until Tycoon
 
 
 Auto:Toggle("Auto Clicker",function(bool)
