@@ -18,7 +18,7 @@ local Misc = w:CreateFolder("Misc")
 local Checkpoints=Workspace:FindFirstChild("Checkpoints")
 
 --Non Return function
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)task.wait(t)end
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 
 Auto:Toggle("Auto Complete",function(bool)
     shared.Toggle=bool
