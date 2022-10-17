@@ -5,7 +5,7 @@ local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/Li
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
 
-
+print("Start")
 local Player = game.Players.LocalPlayer
 local virtual = game:GetService("VirtualUser")
 local Tycoon, NilTycoon, SCollect, PTeam
