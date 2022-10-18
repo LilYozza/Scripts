@@ -14,7 +14,7 @@ local virtual = game:GetService("VirtualUser")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Cart = w:CreateFolder("Cart")
-local PlayerS= w:CreateFolder("Players")
+local PlrS= w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
 
 local PlayerSelect
@@ -189,14 +189,14 @@ local function GetPlayers()
     end
 end GetPlayers()
 
-Players.PlayerAdded:Connect(function(player)
+PlrS.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         AddPlayer(player)
     end)
 end)
-Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
+PlrS.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
 
-PlayerS:Toggle("Auto Aim",function(bool)
+PlrS:Toggle("Auto Aim",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
@@ -215,7 +215,7 @@ PlayerS:Toggle("Auto Aim",function(bool)
     end)
 end)
 
-PlayerS:Button("MoveCartTo",function()
+PlrS:Button("MoveCartTo",function()
     spawn(function()
         local back= Player.Character:WaitForChild("HumanoidRootPart").CFrame
         local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart)
@@ -227,7 +227,7 @@ PlayerS:Button("MoveCartTo",function()
     end)
 end)
 
-PlayerS:Button("Refresh",function()
+PlrS:Button("Refresh",function()
     spawn(function()end)
 end)
 
