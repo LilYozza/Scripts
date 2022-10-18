@@ -149,7 +149,7 @@ Cart:Button("Reset Cart",function()
     end)
 end)
 local DropList = PlrS:Dropdown("Select Player",PlayerList,true,function(SItem)
-    for _,v in pairs(Players:GetChildren())do
+    for _,v in pairs(game.Players:GetChildren())do
         if  v.DisplayName==SItem then
             PlayerSelect = v break
         end
@@ -186,12 +186,12 @@ local function GetPlayers()
     end
 end GetPlayers()
 
-PlrS.PlayerAdded:Connect(function(player)
+Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         AddPlayer(player)
     end)
 end)
-PlrS.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
+Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
 
 PlrS:Toggle("Auto Aim",function(bool)
     shared.toggle1 = bool
