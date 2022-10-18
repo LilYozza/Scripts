@@ -7,8 +7,6 @@ local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYo
 
 local Players = game:GetService("Players")
 local Player = game.Players.LocalPlayer
-local character = Player.Character or Player.CharacterAdded:Wait()
-local root = character:WaitForChild("HumanoidRootPart")
 local virtual = game:GetService("VirtualUser")
 
 local w = library:CreateWindow("Main")
@@ -150,9 +148,8 @@ Cart:Button("Reset Cart",function()
         end
     end)
 end)
-
-local DropList = PlayerS:Dropdown("Select Player",PlayerList,true,function(SItem)
-    for _,v in pairs(game.Players:GetChildren())do
+local DropList = PlrS:Dropdown("Select Player",PlayerList,true,function(SItem)
+    for _,v in pairs(Players:GetChildren())do
         if  v.DisplayName==SItem then
             PlayerSelect = v break
         end
