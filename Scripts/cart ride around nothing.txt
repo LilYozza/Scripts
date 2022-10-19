@@ -13,6 +13,7 @@ local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local Cart = w:CreateFolder("Cart")
 local PlrS= w:CreateFolder("Players")
+local Items=w:CreateFolder("Items")
 local Misc = w:CreateFolder("Misc")
 
 local PlayerSelect
@@ -33,6 +34,12 @@ local function Touch(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.
 local function RemoveObj(p) for _,v in pairs(Workspace:GetDescendants())do if v.Name==p then v:Destroy() end end end
 local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function FindItem(item)
+    for _,v in pairs(Players:GetChildren())do
+        if v.Backpack:FindFirstChild(item)then return v.Backpack:FindFirstChild(item)end
+        if v.Character:FindFirstChild(item)then return v.Character:FindFirstChild(item)end
+    end
+end
 
 
 local function RoomCheck(Door1, Door2, Type, Room)
@@ -89,28 +96,6 @@ Auto:Toggle("Auto Spawner",function(bool)
                 end
             end
         	task.wait(1)
-        end
-    end)
-end)
-Auto:Toggle("Remove Cars",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            for _,v in pairs(Carts:GetChildren())do
-                if v.Name:match("Accelerating")then v:Destroy()end
-            end
-        	task.wait(0.5)
-        end
-    end)
-end)
-
-Auto:Toggle("P Collision",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-        for _,v in pairs(Players:GetChildren())do
-            if v~=Player then v.Character:WaitForChild("HumanoidRootPart").CanCollide=false end
-        end task.wait(1)
         end
     end)
 end)
@@ -226,6 +211,24 @@ end)
 
 PlrS:Button("Refresh",function()
     spawn(function()end)
+end)
+
+PlrS:Button("Hack Check",function()
+    spawn(function()
+        if PlayerSelect.Character:FindFirstChild("expensive flight potion") or PlayerSelect.Backpack:FindFirstChild("expensive flight potion")then print("Has Flying Potion")else print("Does Not Have Flying Potion") end
+    end)
+end)
+
+Items:Button("Explosion Tool",function()
+    spawn(function()
+        local it=FindItem("dangerous bomb creator") it=it:Clone() it.Parent=Player.Backpack
+    end)
+end)
+
+Items:Button("Fly Potion",function()
+    spawn(function()
+        local it=FindItem("expensive flight potion") it=it:Clone() it.Parent=Player.Backpack
+    end)
 end)
 
 Misc:Toggle("Anti AFK",function(bool)
