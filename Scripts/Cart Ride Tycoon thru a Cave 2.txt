@@ -6,50 +6,44 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 local Troll = w:CreateFolder("Troll")
 
+--Base Variables
 local Tycoon, NilTycoon, SCollect
 local Spawn = workspace:FindFirstChild("Spawn")
 local AdminRoom = Spawn:FindFirstChild("Admin room")
 local BlackListItems = {"Gem Teleporter"}
 
+--Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-
 local function GetTycoon()
-    for _,v in pairs(workspace:GetDescendants()) do
-        if v:IsA("StringValue") and v.Value == Player.Name then
-            Tycoon = v.Parent break
+    for _,v in pairs(Workspace:GetChildren()) do
+        if v:FindFirstChild("OwnerName") and v.OwnerName.Value==Player.Name then
+            Tycoon = v break
         end
-        if v:IsA("StringValue") and v.Value == "" and not NilTycoon and not v:FindFirstAncestor("Teleport script") then
-            NilTycoon = v.Parent
+        if v:FindFirstChild("OwnerName") and v.OwnerName.Value=="" and not NilTycoon then
+            NilTycoon = v
         end
     end
     if Tycoon == nil then Tycoon = NilTycoon 
-        for _,v in pairs(Tycoon:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Become Tycoon Owner") then
-                Touch(v.Parent)
-                Player.character:WaitForChild("HumanoidRootPart").CFrame = v.Parent.CFrame break
-            end
-        end
+        Touch(Tycoon:FindFirstChild("Become Tycoon Owner").Head)
+        Player.character:WaitForChild("HumanoidRootPart").CFrame=Tycoon:FindFirstChild("Become Tycoon Owner").Head.CFrame
     end
-end GetTycoon()
+end GetTycoon(t)
+local function Collect()for _,v in pairs(Tycoon:GetChildren())do if v:FindFirstChild("Collect")then Touch(v.Collect)end end task.wait(t)end
+
+--Post Variables
+local Factory=Tycoon:FindFirstChild("Factory")
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
     spawn (function()
         if not Tycoon then GetTycoon() end
-        while shared.toggle1 do
-            for _,v in pairs(Tycoon:GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Name:match("Collect") and shared.toggle1 then
-                    Touch(v.Parent)
-                end
-            end
-        	task.wait(1)
+        while shared.toggle1 do Collect(1)
         end
     end)
 end)
 
 Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle2 = bool
-    SCollect = shared
+    shared.toggle2 = bool SCollect = shared
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
@@ -57,16 +51,13 @@ Auto:Toggle("Auto Buy",function(bool)
     spawn (function()
         if not Tycoon then GetTycoon() end
         while shared.toggle3 do
-            for _,v in pairs(Tycoon:FindFirstChild("Factory"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Humanoid") and shared.toggle3 and not v:FindFirstAncestor("OpenClose door") and not v.Parent.Parent:FindFirstChild("Humanoid").DisplayName:match("RS") then
-                    price = string.gsub(v.Parent.Parent:FindFirstChild("Humanoid").DisplayName:split("-")[2], "%D", "")
-                    if SCollect and tonumber(price) <= Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Money").Value then
-                        Touch(Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Collect"),0.5)
-                    end
+            for _,v in pairs(Factory:GetChildren())do
+                if shared.toggle3 and v:FindFirstChild("Head")and v.Head.Transparency==0 and not v.Name:match("Gamepass") and not v:FindFirstChild("NameTag") and v:FindFirstChild("Humanoid").DisplayName ~=""and not v:FindFirstChild("Humanoid").DisplayName:match("RS") then
+                    local price=string.gsub(v:FindFirstChild("Humanoid").DisplayName:split("-")[2], "%D", "")
+                    if SCollect and tonumber(price) <= Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Money").Value then Collect()end
                     if tonumber(price) <= Player.leaderstats.Cash.Value then
-                        Touch(v.Parent,0.5) break
+                        Touch(v.Head,0.3)
                     end
-                    task.wait(1)
                 end
             end
         	task.wait()
@@ -74,16 +65,15 @@ Auto:Toggle("Auto Buy",function(bool)
     end)
 end)
 
+local CaveObby=Workspace:FindFirstChild("Cave obby")
+local Inside=CaveObby:FindFirstChild("Inside")
+local Cash3k=Inside:FindFirstChild("30.000 cash giver")
+
 Auto:Toggle("Cash Giver",function(bool)
     shared.toggle5 = bool
     spawn(function()
         while shared.toggle5 do
-            for _,v in pairs(AdminRoom:GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Name == "Head" then
-                    Touch(v.Parent,0.5)Touch(game:GetService("Workspace")["Cave obby"].Inside["30.000 cash giver"]["Cash giver"])
-                end
-            end
-            task.wait()
+            Touch(Cash3k:FindFirstChild("Cash giver"))task.wait()
         end
     end)
 end)
@@ -93,11 +83,8 @@ Auto:Toggle("Cash Giver(Stealth)",function(bool)
     spawn(function()
         while shared.toggle6 do
             for _,v in pairs(AdminRoom:GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Name == "Head" then
-                    Touch(v.Parent)
-                end
-            end
-            wait()
+                if v:IsA("TouchTransmitter") and v.Parent.Name == "Head" then Touch(v.Parent)end
+            end task.wait()
         end
     end)
 end)
@@ -136,13 +123,12 @@ Troll:Toggle("SpeedUp Cart",function(bool)
     spawn (function()
         if not Tycoon then GetTycoon() end
         while shared.toggle11 do
-            for _,v in pairs(workspace:GetDescendants()) do
+            for _,v in pairs(Workspace:GetDescendants()) do
                 if v:IsA("ClickDetector") and v.Parent.Name == "Up" then
-                    fireclickdetector(v)
-                    wait()
+                    fireclickdetector(v)task.wait()
                 end
             end
-            wait()
+            task.wait()
         end
     end)
 end)
@@ -152,13 +138,12 @@ Troll:Toggle("SpeedDown Cart",function(bool)
     spawn (function()
         if not Tycoon then GetTycoon() end
         while shared.toggle12 do
-            for _,v in pairs(workspace:GetDescendants()) do
+            for _,v in pairs(Workspace:GetDescendants()) do
                 if v:IsA("ClickDetector") and v.Parent.Name == "Down" then
-                    fireclickdetector(v)
-                    wait()
+                    fireclickdetector(v)task.wait()
                 end
             end
-            wait()
+            task.wait()
         end
     end)
 end)
@@ -168,11 +153,10 @@ Troll:Button("Break Carts",function()
         if not Tycoon then GetTycoon() end
         for _,v in pairs(workspace:GetDescendants()) do
             if v:IsA("ClickDetector") and v.Parent.Name == "On" then
-                fireclickdetector(v)
-                wait()
+                fireclickdetector(v)task.wait()
             end
         end
-        wait()
+        task.wait()
     end)
 end)
 
