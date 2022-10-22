@@ -6,27 +6,26 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 local Other = w:CreateFolder("Other")
 
-local RCart, Cart
 local PathGivers = workspace:FindFirstChild("PathGivers")
 
-for _,v in pairs(workspace:GetDescendants()) do
-    if v:IsA("ClickDetector") and v.Parent.Parent.Parent.Name:match("Carts") and not Cart then
-        v.Parent.Parent.Parent.Name = "Carts1" Cart =  v.Parent.Parent.Parent
-    end
-    if v:IsA("ClickDetector") and v.Parent.Name:match("Regen") and not RCart then
-        v.Parent.Parent.Name = "Carts2" RCart =  v.Parent.Parent
-    end
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+
+
+--Getting Data
+local RCarts
+for _,v in pairs(Workspace:GetChildren())do
+    if v:FindFirstChild("1Regen")then v.Name="RegenCartss" RCarts=v end
 end
+
+local Carts=Workspace:FindFirstChild("Carts")
+
 Auto:Toggle("Speed Up",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _,v in pairs(Cart:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name:match("Up") and shared.toggle1 then
-                    fireclickdetector(v) wait()
-                end
-            end
-        	wait()
+            for _,v in pairs(Carts:GetChildren()) do
+                if v:FindFirstChild("Up")then print(v.Up.Click) fireclickdetector(v.Up.Click)end
+            end task.wait(0.1)
         end
     end)
 end)
@@ -35,52 +34,42 @@ Auto:Toggle("Speed Down",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
-            for _,v in pairs(Cart:GetDescendants()) do
-                if v:IsA("ClickDetector") and v.Parent.Name:match("Down") and shared.toggle2 then
-                    fireclickdetector(v) wait()
-                end
-            end
-        	wait()
+            for _,v in pairs(Carts:GetChildren()) do
+                if v:FindFirstChild("Down")then fireclickdetector(v.Down.Click)end
+            end task.wait(0.1)
         end
     end)
 end)
 
 Auto:Button("Break",function()
     spawn(function()
-        for _,v in pairs(Cart:GetDescendants()) do
-            if v:IsA("ClickDetector") and v.Parent.Name:match("On") then
-                fireclickdetector(v) wait()
-            end
-        end
+        for _,v in pairs(Carts:GetChildren()) do
+            if v:FindFirstChild("On")then fireclickdetector(v.On.Click)end
+        end task.wait(0.1)
     end)
 end)
 
 Auto:Button("Spawn",function()
     spawn(function()
-        for _,v in pairs(RCart:GetDescendants()) do
-            if v:IsA("ClickDetector") and v.Parent.Name:match("Regen") then
-                fireclickdetector(v) wait()
-            end
+        for _,v in pairs(RCarts:GetChildren()) do
+            if v:FindFirstChild("Click")then fireclickdetector(v.Click)end
         end
     end)
 end)
 
 Other:Button("Give Items",function()
     spawn(function()
-        for _,v in pairs(PathGivers:GetDescendants()) do
-            if v:IsA("TouchTransmitter") then
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) wait()
-            end
+        for _,v in pairs(PathGivers:GetChildren()) do
+            if v:FindFirstChild("Giver") then Touch(v.Giver)end
         end
     end)
 end)
 
 Other:Button("Teleport End",function()
     spawn(function()
-        for _,v in pairs(workspace:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Name == "SpawnLocation" then
-                Player.character:WaitForChild("HumanoidRootPart").CFrame = v.Parent.CFrame
+        for _,v in pairs(Workspace:GetChildren())do
+            if v.Name=="SpawnLocation" and v.BrickColor==BrickColor.new("Bright yellow")then
+                Player.character:WaitForChild("HumanoidRootPart").CFrame = v.CFrame break
             end
         end
     end)
