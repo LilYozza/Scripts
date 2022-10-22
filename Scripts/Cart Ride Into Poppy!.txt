@@ -4,7 +4,7 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Troll = w:CreateFolder("Troll")
-loacl Other = w:CreateFolder("Other")
+local Other = w:CreateFolder("Other")
 
 local PlayerList = {}
 local PlayerSelect, CartSelect, OldCart
