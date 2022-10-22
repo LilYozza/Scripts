@@ -1,4 +1,4 @@
-local Players=game:GetService("Players")
+local Players=game:GetService("Players") local Player=Players.LocalPlayer local virtual=game:GetService("VirtualUser")
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
