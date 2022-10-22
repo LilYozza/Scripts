@@ -3,16 +3,15 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-local Auto = w:CreateFolder("Auto")
+local Auto=w:CreateFolder("Auto")
 
-local Bacons = Workspace:FindFirstChild("AllBacons")
+local AllBacons=Workspace:FindFirstChild("AllBacons")
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 
 Auto:Button("Auto Find",function()
-    for _, v in pairs(Bacons:GetChildren()) do
-        Player.character:WaitForChild("HumanoidRootPart").CFrame = v.CFrame
-        wait(1)
+    for _, v in pairs(AllBacons:GetChildren()) do
+        if v:FindFirstChild("TouchInterest")then print("Touching",v) Touch(v,0.5)end
     end
 end)
-
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
