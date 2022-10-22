@@ -3,8 +3,6 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-local Auto = w:CreateFolder("Auto")
-
 --Event Variable Checks
 if Workspace:FindFirstChild("CollectibleDiamonds")then CollectibleDiamonds=Workspace:FindFirstChild("CollectibleDiamonds") Auto = w:CreateFolder("Auto")end
 if Workspace:FindFirstChild("EggHuntMinigame")then Hunt=Workspace:FindFirstChild("EggHuntMinigame") Egg = Hunt:FindFirstChild("Eggs") EggHunt = w:CreateFolder("EggHunt")end
@@ -12,8 +10,6 @@ if Workspace:FindFirstChild("EggHuntMinigame")then Hunt=Workspace:FindFirstChild
 if Workspace:FindFirstChild("TrickorTreatDoors")then TrickorTreatDoors=Workspace:FindFirstChild("TrickorTreatDoors") CandyHunt= w:CreateFolder("CandyHunt")
 if Workspace:FindFirstChild("DroppedCandyFolder")then DroppedCandyFolder=Workspace:FindFirstChild("DroppedCandyFolder")end
 if Workspace:FindFirstChild("AppleBobbing")then AppleBobbing=Workspace:FindFirstChild("AppleBobbing")end end
-
-local Misc = w:CreateFolder("Misc")
 
 --Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
