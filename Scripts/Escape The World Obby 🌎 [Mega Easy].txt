@@ -4,26 +4,34 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
-local isRebirth
-local Checkpoints = workspace:FindFirstChild("Checkpoints")
 
+local Stages=250
+local isRebirth
+local WorldPortals=Workspace:FindFirstChild("WorldPortals")
+local Checkpoints=Workspace:FindFirstChild("Checkpoints")
+
+local function MoveTo(p)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame end
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function GetDistance(p)return (p.Position-Player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude end
+local function CheckPortals()local Max for _,v in pairs(WorldPortals:GetChildren())do if v:FindFirstChild("InPortal")then Max=v.InPortal break end  end for _,v in pairs(WorldPortals:GetChildren())do if v:FindFirstChild("InPortal") and GetDistance(v.InPortal) < GetDistance(Max) then Max=v.InPortal end end return Max end
 
 local function Rebirth()
     local Event = game:GetService("ReplicatedStorage").Remotes.ToServer.RestartPlayer
     Event:FireServer()task.wait(1)
 end
 
-Auto:Toggle("(Semi)Auto Complete",function(bool)
+Auto:Toggle("Auto Complete",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _ = Player.leaderstats.Stage.Value+1, 200, 1 do
+            for _ = Player.leaderstats.Stage.Value+1, Stages, 1 do
                 if not shared.toggle1 then break end
-                if not Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value+1) then Player.character:WaitForChild("HumanoidRootPart").CFrame = Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value).CFrame end
+                if not Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value+1) then MoveTo(Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value))task.wait(0.1)
+                    print(CheckPortals())
+                    MoveTo(CheckPortals()) end
                 Touch(Checkpoints:WaitForChild(Player.leaderstats.Stage.Value+1))
                 _ = Player.leaderstats.Stage.Value+1
-                task.wait(0.5)
+                task.wait(0.1)
             end
             if isRebirth then Rebirth() end
         	wait()
