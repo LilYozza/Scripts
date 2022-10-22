@@ -8,7 +8,7 @@ local Auto = w:CreateFolder("Auto")
 local tStage
 local Stages = workspace:FindFirstChild("Stages")
 local Obby = workspace:FindFirstChild("Obby")
-local troll = {"All", "48", "47", "17", "3"}
+local troll = {"All", "48", "47", "17", "70","71"}
 
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 
@@ -31,15 +31,13 @@ Auto:Dropdown("Dropdown",troll,true,function(mob)
     tStage = mob
 end)
 
-Auto:Toggle("Troll",function(bool)
+Auto:Toggle("Touch",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
-            if tStage ~= "All" then --Code
+            if tStage~="All" then --Code
                 for _, v in pairs(Obby:FindFirstChild(tStage):GetDescendants()) do
-                    if v:IsA("TouchTransmitter") then
-                        Touch(v.Parent)
-                    end
+                    if v:FindFirstChild("TouchInterest")then Touch(v)end
                 end                
             else
                 for key, value in pairs(troll) do
