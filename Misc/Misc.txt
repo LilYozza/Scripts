@@ -1,3 +1,5 @@
+print("Hi")
+
 Misc:Button("Sword Aura",function()
     spawn (function()
     end)
