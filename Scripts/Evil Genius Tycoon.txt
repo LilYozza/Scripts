@@ -6,18 +6,25 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 --> Variables <--
-local Tycoon, SCollect
+local Tycoon,NilTycoon, SCollect
 local Tycoons=Workspace:FindFirstChild("Tycoons")
 local Terrain=Workspace:FindFirstChild("Terrain Folder")
 local VolcanoIsland=Terrain:FindFirstChild("VolcanoIsland")
 local AirDropContainer=Workspace:FindFirstChild("AirDropContainer")
 
+local Lobby=Workspace:FindFirstChild("Lobby")
+local TycoonSpawns=Lobby:FindFirstChild("TycoonSpawns")
+
 --> Non Return Functions <--
 local function FireProximity(v,p) local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame Player.Character:WaitForChild("HumanoidRootPart").CFrame=v.CFrame+Vector3.new(0,3,0) task.wait(0.3) fireproximityprompt(p) task.wait(0.3) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back end 
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1) task.wait(t) end
-local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v.Owner.Value==Player.Name then Tycoon=v break end end end GetTycoon()
+local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v:FindFirstChild("TycoonOwner")and v.TycoonOwner.Value==Player then Tycoon=v break end if not NilTycoon and v.TycoonOwner.Value==nil then NilTycoon=v end end if not Tycoon then FireTouch(0,TycoonSpawns:FindFirstChild(NilTycoon.Name).Teleport)end end GetTycoon()
+
+--Waiting For Data
+repeat task.wait()until Tycoon
 
 --> Post Variables <--
+
 local PurchasePads=Tycoon:FindFirstChild("Purchase Pads")
 local Collector=Tycoon.Collectors:FindFirstChild("[House] Money Collection").Collect
 local PurchasedBuildings=Tycoon:FindFirstChild("Purchased Buildings")
