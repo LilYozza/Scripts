@@ -1,7 +1,8 @@
-FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
-ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
-NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
-Misc = w:CreateFolder("Misc")
+local Players=game:GetService("Players")
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+local Misc = w:CreateFolder("Misc")
 
 Misc:Button("Sword Aura",function()
     spawn (function()
@@ -54,7 +55,6 @@ Misc:Toggle("NameTags",function(bool)
                     v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
                 end
             end
-            Connect1:Disconnect()Connect2:Disconnect()Connect3:Disconnect()
         end
         wait()
     end)
