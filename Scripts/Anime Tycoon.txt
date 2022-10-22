@@ -53,7 +53,7 @@ Auto:Toggle("Auto Buy",function(bool)
                        Touch(Collection,0.5)
                     end
                     if v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value then
-                        Touvh(v.Parent,0.5)
+                        Touch(v.Parent,0.5)
                     end
                 end
             end
