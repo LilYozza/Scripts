@@ -1,20 +1,13 @@
---Game Link:
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
-local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
-local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
-local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
 
-local Player = game.Players.LocalPlayer
-local character = Player.Character or Player.CharacterAdded:Wait()
-local root = character:WaitForChild("HumanoidRootPart")
-local virtual = game:GetService("VirtualUser")
+local Auto = w:CreateFolder("Auto")
 
 local Checkpoints = Workspace:FindFirstChild("Checkpoints")
 
-local w = library:CreateWindow("Main")
-local Auto = w:CreateFolder("Auto")
-local Misc = w:CreateFolder("Misc")
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 
 Auto:Toggle("Auto Complete",function(bool)
     shared.toggle1 = bool
@@ -22,9 +15,9 @@ Auto:Toggle("Auto Complete",function(bool)
         while shared.toggle1 do
             for _ = Player.leaderstats.Stage.Value+1, #Checkpoints:GetChildren(), 1 do
                 if not shared.toggle1 then break end
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value+1), 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value+1), 1) wait(0.5)
+                Touch(Checkpoints:FindFirstChild(Player.leaderstats.Stage.Value+1),0.5)
             end
-        	wait()
+        	task.wait()
         end
     end)
 end)
@@ -32,89 +25,10 @@ Auto:Button("Give Items",function()
     spawn(function()
         for _,v in pairs(Workspace:FindFirstChild("Obby"):GetDescendants()) do
             if v:IsA("TouchTransmitter") and v.Parent.Name:match("WEAPON") then
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
+                Touch(v.Parent)
             end
         end
     end)
 end)
 
-Misc:Toggle("Anti AFK",function(bool)
-    shared.Misc1 = bool
-    spawn (function()
-        if shared.Misc1 then
-            game:GetService("Players").LocalPlayer.Idled:connect(function()
-            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            wait(1)
-            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            end)
-        end
-    end)
-end)
-
-Misc:Toggle("Full Bright",function(bool)
-    shared.Misc2 = bool
-    spawn (function()
-        FullBright()
-    end)
-end)
-
-Misc:Toggle("Infinite Jump",function(bool)
-    shared.Misc3 = bool
-    spawn (function()
-        game:GetService("UserInputService").JumpRequest:Connect(function()
-            if shared.Misc3 then
-                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
-            end
-        end)
-    end)
-end)
-
-Misc:Toggle("Teleport",function(bool)
-    shared.Misc4 = bool
-    spawn(function()
-        local mouse = Player:GetMouse()
-        mouse.KeyDown:Connect(function(key)
-            if key == "q" and shared.Misc4 then
-                if mouse.Target then
-                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
-                end
-            end
-        end)
-    end)
-end)
-
-Misc:Toggle("NameTags",function(bool)
-    shared.Misc5 = bool
-    spawn(function()
-        if shared.Misc5 then NameTag() else
-            for _,v in pairs(game.Players:GetChildren()) do
-                for i, part in pairs(v.Character:WaitForChild("Head"):GetChildren()) do
-                    if part.Name == "BillboardGui" then part:Destroy() end
-                end
-            end
-        end
-        wait()
-    end)
-end)
-
-local Speed = Misc:Slider("Slider",{
-    ['default'] = 16;
-    ['min'] = 0;
-    ['max'] = 100;
-    ['precise'] = true;
-},function(value)
-    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
-    local Players = game:GetService("Players")
-end)
-
-Misc:Button("3rd Person",function()
-    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
-    Player.CameraMaxZoomDistance = 150
-    Player.CameraMinZoomDistance = 0
-end)
-
-Misc:Button("ESP",function()
-    ESP()
-end)
-
-Misc:DestroyGui()
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
