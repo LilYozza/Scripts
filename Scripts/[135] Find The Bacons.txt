@@ -5,7 +5,7 @@ local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 
-local Bacons = workspace:FindFirstChild("Bacons")
+local Bacons = Workspace:FindFirstChild("AllBacons")
 
 Auto:Button("Auto Find",function()
     for _, v in pairs(Bacons:GetChildren()) do
