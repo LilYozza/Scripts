@@ -1,7 +1,7 @@
 local Players=game:GetService("Players") local Player=Players.LocalPlayer local virtual=game:GetService("VirtualUser")
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
-local GPlayers = w:CreateFolder("Misc")
+local GPlayers = w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
 
 local PlayerSelect_M
@@ -42,7 +42,7 @@ end GetPlayers()
 Players.PlayerAdded:Connect(function(player)player.CharacterAdded:Connect(function()AddPlayer(player)end)end)
 Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
 
-Misc:Button("Teleport",function()
+GPlayers:Button("Teleport",function()
     spawn (function()
         if PlayerSelect_M then
             Player.Character:WaitForChild("HumanoidRootPart").CFrame=PlayerSelect_M.Character:WaitForChild("HumanoidRootPart").CFrame
