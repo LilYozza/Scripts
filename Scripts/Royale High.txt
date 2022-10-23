@@ -63,7 +63,7 @@ if TrickorTreatDoors then CandyHunt:Toggle("Auto Doors",function(bool)
             for _,v in pairs(TrickorTreatDoors:GetChildren())do
                 if shared.toggle1 and v:FindFirstChild("Doorbell") then local c spawn(function()c=CollectCandy()end)
                     local doorpos=v.Door.CFrame local count=0
-                    repeat MoveTo(v.Doorbell,Vector3.new(0,-8,0)) if doorpos==v.Door.CFrame and count<=5 then fireproximityprompt(v.Doorbell.Attachment.ProximityPrompt) count=count+1 end task.wait()until c or not shared.toggle1
+                    repeat MoveTo(v.Doorbell,Vector3.new(0,-7,0)) if doorpos==v.Door.CFrame and count<=8 then fireproximityprompt(v.Doorbell.Attachment.ProximityPrompt) count=count+1 end task.wait()until c or not shared.toggle1
                 end
             end
             if not s then print(e) end
