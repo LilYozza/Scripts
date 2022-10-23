@@ -1,8 +1,54 @@
 local Players=game:GetService("Players") local Player=Players.LocalPlayer local virtual=game:GetService("VirtualUser")
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
-local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+local GPlayers = w:CreateFolder("Misc")
 local Misc = w:CreateFolder("Misc")
+
+local PlayerSelect_M
+local PlayerList_M={}
+
+local DropList = GPlayers:Dropdown("Select Player",PlayerList_M,true,function(SItem)
+    for _,v in pairs(Players:GetChildren())do
+        if  v.DisplayName==SItem then
+            PlayerSelect_M = v break
+        end
+    end
+end)
+
+local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
+local function AddPlayer(player)
+    if not table.find(PlayerList_M,player.DisplayName) then
+        table.insert(PlayerList_M, player.DisplayName)
+        DropList:Refresh(PlayerList_M)
+    end
+end
+
+local function RemovePlayer(player)
+    if table.find(PlayerList_M,player.DisplayName) then
+        RemoveItem(PlayerList_M, player.DisplayName)
+        DropList:Refresh(PlayerList_M)
+    end
+end
+
+local function GetPlayers()
+    if not PlayerList_M[1] then
+        for _,v in pairs(Players:GetChildren())do
+            table.insert(PlayerList_M, v.DisplayName)
+            v.CharacterAdded:Connect(function()AddPlayer(v)end)
+        end
+    end DropList:Refresh(PlayerList_M)
+end GetPlayers()
+
+Players.PlayerAdded:Connect(function(player)player.CharacterAdded:Connect(function()AddPlayer(player)end)end)
+Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
+
+Misc:Button("Teleport",function()
+    spawn (function()
+        if PlayerSelect_M then
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame=PlayerSelect_M.Character:WaitForChild("HumanoidRootPart").CFrame
+        end
+    end)
+end)
 
 Misc:Button("Sword Aura",function()
     spawn (function()
@@ -74,10 +120,6 @@ Misc:Button("3rd Person",function()
     game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
     Player.CameraMaxZoomDistance = 150
     Player.CameraMinZoomDistance = 0
-end)
-
-Misc:Button("ESP",function()
-    ESP()
 end)
 
 Misc:DestroyGui()
