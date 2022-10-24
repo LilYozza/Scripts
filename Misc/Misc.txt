@@ -105,7 +105,7 @@ Misc:Toggle("Fly",function(bool)
     isFly = bool
     spawn (function()
         Fly()
-        if Fly1Connection then Fly1Connection:Disconnect() Fly2Connection:Disconnect()end
+        if not isFly and Fly1Connection then Fly1Connection:Disconnect() Fly2Connection:Disconnect()end
     end)
 end)
 
