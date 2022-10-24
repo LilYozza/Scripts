@@ -294,6 +294,10 @@ local Games = {
 	[10738647949] = {
 		Name = 'Roblox But You Get Taller Every Second',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20But%20You%20Get%20Taller%20Every%20Second.txt'
+	},
+	[10979991953] = {
+		Name = 'Max Speed Update 3',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Max%20Speed%20Update%203.txt'
 	}
 }
 

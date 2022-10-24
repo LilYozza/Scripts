@@ -1,0 +1,37 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+local OldValue
+local Environment=Workspace:FindFirstChild("Environment")
+local Stage1K=Environment:FindFirstChild("Stage1K")
+
+--Non Return Functions
+local function MoveTo(p)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame end
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function Complete()for _,v in pairs(Environment:GetChildren())do if v:FindFirstChild("Sign")then Touch(v.Sign)end end end
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            local s,e=pcall(function()
+                local MainUI=Player.PlayerGui:FindFirstChild("MainUI")
+                local UI=MainUI:FindFirstChild("UI")
+                local Timer=UI.TopMenu.RaceTimer.TextLabel.Text
+                if shared.Toggle and Timer and tonumber(Timer:split(":")[1])==1 and tonumber(Timer:split(":")[2])>=58 then Complete() end
+                if shared.Toggle and OldValue~=Player.leaderstats.Trophies.Value then OldValue=Player.leaderstats.Trophies.Value Complete() end
+            end)
+            task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Button("Other",function()
+    spawn(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/ToraIsMe2/ToraIsMe2/main/0max2", true))()end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
