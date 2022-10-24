@@ -1,10 +1,10 @@
 --Connections= F1Connection, F2Connection, F3Fonnection
 local mouse = game.Players.LocalPlayer:GetMouse()
-local groot = nil local isON
+local groot = nil
 
 F1Connection = mouse.KeyDown:connect(function(k)
 	if k == "z" and isFlingOn and not isON then
-	    isON=true
+	   isON=true
         local ch = game.Players.LocalPlayer.Character
         local prt=Instance.new("Model", workspace)
         local z1 =  Instance.new("Part", prt)
