@@ -2,12 +2,28 @@ local Players=game:GetService("Players") local Player=Players.LocalPlayer local 
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
 local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))
+local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))
+
 
 local GPlayers = w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
 
 local PlayerSelect_M
 local PlayerList_M={}
+
+GPlayers:Toggle("NameTags",function(bool)
+    shared.Misc5 = bool
+    spawn(function()
+        if shared.Misc5 then NameTag() else
+            for _,v in pairs(Players:GetChildren()) do
+                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+                    v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
+                end
+            end
+        end
+        wait()
+    end)
+end)
 
 local DropList = GPlayers:Dropdown("Select Player",PlayerList_M,true,function(SItem)
     for _,v in pairs(Players:GetChildren())do
@@ -33,9 +49,9 @@ GPlayers:Button("TeleportTo",function()
 end)
 
 local FlingLabel=GPlayers:Label("Inv Fling: OFF",{
-    TextSize = 20; -- Self Explaining
-    TextColor = Color3.fromRGB(255,0,0); -- Self Explaining
-    BgColor = Color3.fromRGB(0,0,0); -- Self Explaining
+    TextSize = 20;
+    TextColor = Color3.fromRGB(255,0,0);
+    BgColor = Color3.fromRGB(0,0,0);
     
 })
 
@@ -84,6 +100,15 @@ Misc:Button("Sword Aura",function()
     end)
 end)
 
+Fly1Connection,Fly2Connection=nil
+Misc:Toggle("Fly",function(bool)
+    isFly = bool
+    spawn (function()
+        Fly()
+        if Fly1Connection then Fly1Connection:Disconnect() Fly2Connection:Disconnect()end
+    end)
+end)
+
 Misc:Toggle("Full Bright",function(bool)
     shared.Misc2 = bool
     spawn (function()FullBright()end)
@@ -111,20 +136,6 @@ Misc:Toggle("Teleport",function(bool)
                 end
             end
         end)
-    end)
-end)
-
-Misc:Toggle("NameTags",function(bool)
-    shared.Misc5 = bool
-    spawn(function()
-        if shared.Misc5 then NameTag() else
-            for _,v in pairs(Players:GetChildren()) do
-                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
-                    v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
-                end
-            end
-        end
-        wait()
     end)
 end)
 
