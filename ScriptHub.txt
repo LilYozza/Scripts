@@ -302,6 +302,10 @@ local Games = {
 	[8884334497] = {
 		Name = 'Mining Clicker Simulator',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mining%20Clicker%20Simulator.txt'
+	},
+	[3102144307] = {
+		Name = 'Anime Clicker Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Clicker%20Simulator.txt'
 	}
 }
 
