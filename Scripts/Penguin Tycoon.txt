@@ -2,34 +2,55 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local Events=game:GetService("ReplicatedStorage").Remotes
 
 local Auto = w:CreateFolder("Auto")
 
-local Tycoons = workspace:FindFirstChild("Tycoons")
+-->Base Variables<--
+local Tycoon,SCollect
+local Tycoons=Workspace:FindFirstChild("Tycoons")
 
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+-->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Owner.Value==Player.Name then Tycoon=v break end end end
 
-for _, v in pairs(Tycoons:GetDescendants()) do
-    if v:IsA("StringValue") and v.Value == Player.Name then
-        Tycoon = v.Parent
-    end
-end
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+-->Waiting For Data<--
+repeat GetTycoon()task.wait()until Tycoon
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do Events.CollectIncome:FireServer()task.wait(1)end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle1 = bool SCollect=shared.toggle1
+end)
+
+
+-->Post Variables<--
+local Buttons=Tycoon:FindFirstChild("Buttons")
+
+-->GUI Variables<--
+local CashToCollect=Tycoon.StartIsland.IncomeCollectPoint.Hitbox.BillboardGui.Value
+local PlayerCash=Player.PlayerGui.Main.Top.Currencies.MoneyDisplay.Amount.Change
+local PenguinsList=Player.PlayerGui.Main.Center.Penguins.List
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _, v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:isA("TouchTransmitter") then
-                    price = v.Parent.Parent:FindFirstChild("InfoPart"):FindFirstChild("Info"):FindFirstChild("Price").Text
-                    money = Player.PlayerGui.Main.Top.MoneyDisplay.Amount.Text
-                    if not price:match("ROBUX") and fromSuffixString(price) <= fromSuffixString(money) and shared.toggle1 then
-                    Touch(v.Parent,0.7)break
-                    end
+            for _,v in pairs(Buttons:GetChildren())do
+                if shared.toggle1 and v:FindFirstChild("InfoPart") and v:FindFirstChild("Hitbox") and v:FindFirstChild("Part") and v.Part.Transparency==0 then
+                    local price=v.InfoPart.Info.Price.Text if price:match("FREE")then price="0"end
+                    if not price:match("ROBUX")and fromSuffixString(price)<=PlayerCash.Value+fromSuffixString(CashToCollect.Text) and SCollect then Events.CollectIncome:FireServer()task.wait(0.3)end
+                    if not price:match("ROBUX")and fromSuffixString(price)<=PlayerCash.Value then Touch(v.Hitbox,0.3)end
                 end
-            end
-        	task.wait()
+            end task.wait()
         end
     end)
 end)
@@ -37,19 +58,18 @@ end)
 Auto:Toggle("Auto Upgrade",function(bool)
     shared.toggle2 = bool
     spawn (function()
+
         while shared.toggle2 do
-            for _, v in pairs(Tycoon:FindFirstChild("Tycoon"):GetDescendants()) do
-                if v:isA("Humanoid") and tonumber(v.Parent:FindFirstChild("Info"):FindFirstChild("PenguinInfo"):FindFirstChild("PenguinLevel").text:split(" ")[2]:split("/")[1]) < 10  then
-                    price = tonumber(fromSuffixString(Player.PlayerGui.Main.Center.Penguins.List:FindFirstChild(v.Parent.Name).PenguinPrice.Text))
-                    money = tonumber(fromSuffixString(Player.PlayerGui.Main.Top.MoneyDisplay.Amount.Text))
-                    if price <= money then
-                        Event = game:GetService("ReplicatedStorage").Remotes.Customization
-                        Event:InvokeServer("Upgrade", v.Parent)
-                        task.wait()
-                    end
+            for _,v in pairs(Tycoon:FindFirstChild("Tycoon"):GetChildren())do
+                if shared.toggle2 and v:FindFirstChild("Humanoid") and v:FindFirstChild("Info")then
+                    local Lvl=v.Info.PenguinInfo.PenguinLevel.Text:split(" ")[2]:split("/")[1]
+                    local price=PenguinsList:FindFirstChild(v.Name).PenguinPrice.Text
+                    --print("Name:",v,"\tLevl:",fromSuffixString(Lvl),"\tPrice:",fromSuffixString(price))
+                    if SCollect and fromSuffixString(Lvl)<10 and fromSuffixString(price)<=PlayerCash.Value+fromSuffixString(CashToCollect.Text) then Events.CollectIncome:FireServer()task.wait(0.3)end
+                    if fromSuffixString(Lvl)<10 and fromSuffixString(price)<=PlayerCash.Value then Events.Customization:InvokeServer("Upgrade", v)task.wait(0.3)end
                 end
             end
-        	wait()
+            task.wait()
         end
     end)
 end)
@@ -57,11 +77,7 @@ end)
 Auto:Toggle("Auto Fish",function(bool)
     shared.toggle3 = bool
     spawn (function()
-        while shared.toggle3 do
-            Event = game:GetService("ReplicatedStorage").Remotes.ReelFish
-            Event:InvokeServer(Vector3.new(0, 0, 0), true)
-        	task.wait(1)
-        end
+        while shared.toggle3 do Events.ReelFish:InvokeServer(Vector3.new(0, 0, 0), true)task.wait(1)end
     end)
 end)
 
