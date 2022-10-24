@@ -1,4 +1,5 @@
 --Connections= F1Connection, F2Connection, F3Fonnection
+spawn(function()
 local mouse = game.Players.LocalPlayer:GetMouse()
 local groot = nil
 
@@ -159,4 +160,5 @@ F1Connection = mouse.KeyDown:connect(function(k)
             end
     	end Cleanup() isON=false
     end
+end)
 end)
