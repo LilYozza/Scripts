@@ -130,7 +130,7 @@ F1Connection = mouse.KeyDown:connect(function(k)
         
         Fly()
     
-    elseif k == "x" and isFlingOn then
+    elseif k == "x" and isFlingOn and isON then
     	
         local ch = game.Players.LocalPlayer.Character
         local prt=Instance.new("Model", workspace)
