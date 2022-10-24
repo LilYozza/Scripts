@@ -1,308 +1,306 @@
 local Games = {
-    ["8328351891"] = {
+    [8328351891] = {
         Name = "Mega Mansion Tycoon",
-        Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Mansion%20Tycoon.txt'))
+        Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Mansion%20Tycoon.txt'
     },
-    ["35397735"] = {
+    [35397735] = {
         Name = "Scuba Diving at Quill Lake",
-        Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Scuba%20Diving%20at%20Quill%20Lake.txt'))
+        Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Scuba%20Diving%20at%20Quill%20Lake.txt'
     },
-	["321778215"] = {
+	[321778215] = {
 		Name = "Royale High",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Royale%20High.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Royale%20High.txt'
 	},
-	["7971857341"] = {
+	[7971857341] = {
 		Name = "YouTube Tycoon",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Youtube%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Youtube%20Tycoon.txt'
 	},
-	["28382335"] = {
+	[28382335] = {
 		Name = "Zombie Survival Tycoon",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zombie%20Survival%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zombie%20Survival%20Tycoon.txt'
 	},
-	["7050008107"] = {
+	[7050008107] = {
 		Name = "Hospital Tycoon",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Hospital%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Hospital%20Tycoon.txt'
 	},
-	["5345933661"] = {
+	[5345933661] = {
 		Name = "2 Player Computer Tycoon",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Computer%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Computer%20Tycoon.txt'
 	},
-	["2768379856"] = {
+	[2768379856] = {
 		Name = "3008",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/3008.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/3008.txt'
 	},
-	["1020232214"] = {
+	[1020232214] = {
 		Name = "FIRST 3 PLAYER TYCOON IN ROBLOX!",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FIRST%203%20PLAYER%20TYCOON%20IN%20ROBLOX!.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FIRST%203%20PLAYER%20TYCOON%20IN%20ROBLOX!.txt'
 	},
-	["6283640837"] = {
+	[6283640837] = {
 		Name = "Escape Super Fat Guy Obby",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Super%20Fat%20Guy%20Obby.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Super%20Fat%20Guy%20Obby.txt'
 	},
-	["7951464846"] = {
+	[7951464846] = {
 		Name = "Penguin Tycoon",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Penguin%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Penguin%20Tycoon.txt'
 	},
-	["6374779901"] = {
+	[6374779901] = {
 		Name = "Escape Easy Choko Fun Obby Parkour",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Choko%20Fun%20Obby%20Parkour.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Choko%20Fun%20Obby%20Parkour.txt'
 	},
-	["8003084678"] = {
+	[8003084678] = {
 		Name = "oMega Obby Parkour 525 Stages!",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/oMega%20Obby%20Parkour%20525%20Stages!.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/oMega%20Obby%20Parkour%20525%20Stages!.txt'
 	},
-	["8891045283"] = {
+	[8891045283] = {
 		Name = "[135] Find The Bacons",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B135%5D%20Find%20The%20Bacons.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B135%5D%20Find%20The%20Bacons.txt'
 	},
-	["8651851179"] = {
+	[8651851179] = {
 		Name = "[174] Find The Pandas",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B174%5D%20Find%20The%20Pandas.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B174%5D%20Find%20The%20Pandas.txt'
 	},
-	["3587619225"] = {
+	[3587619225] = {
 		Name = "Mega Easy Obby 🌟 775 Stages!",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Easy%20Obby%20%F0%9F%8C%9F%20775%20Stages!.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Easy%20Obby%20%F0%9F%8C%9F%20775%20Stages!.txt'
 	},
-	["9099326192"] = {
+	[9099326192] = {
 		Name = "GREAT SCHOOL BREAKOUT!",
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GREAT%20SCHOOL%20BREAKOUT!.txt')) 
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GREAT%20SCHOOL%20BREAKOUT!.txt'
 	},
-	["8712817601"] = {
+	[8712817601] = {
 		Name = "BARRY'S PRISON RUN! (First Person Obby!)",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRYS%20PRISON%20RUN!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRYS%20PRISON%20RUN!.txt'
 	},
-	["6939111033"] = {
+	[6939111033] = {
 		Name = "Escape Papa Pizza's Pizzeria!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Papa%20Pizzas%20Pizzeria!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Papa%20Pizzas%20Pizzeria!.txt'
 	},
-	["2028593804"] = {
+	[2028593804] = {
 		Name = "Escape The Dungeon Obby!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Dungeon%20Obby!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Dungeon%20Obby!.txt'
 	},
-	["7839281987"] = {
+	[7839281987] = {
 		Name = "Escape Mr Funnys ToyShop!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Mr%20Funnys%20ToyShop!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Mr%20Funnys%20ToyShop!.txt'
 	},
-	["6153766069"] = {
+	[6153766069] = {
 		Name = "Escape The Carnival of Terror Obby!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Carnival%20of%20Terror%20Obby!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Carnival%20of%20Terror%20Obby!.txt'
 	},
-	["5809883124"] = {
+	[5809883124] = {
 		Name = "Easy 500 Stages Obby [⭐NEW STAGES⭐]",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20500%20Stages%20Obby%20%5B%E2%AD%90NEW%20STAGES%E2%AD%90%5D.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20500%20Stages%20Obby%20%5B%E2%AD%90NEW%20STAGES%E2%AD%90%5D.txt'
 	},
-	["6496746583"] = {
+	[6496746583] = {
 		Name = "Escape The World Obby 🌎 [Mega Easy]",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20World%20Obby%20%F0%9F%8C%8E%20%5BMega%20Easy%5D.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20World%20Obby%20%F0%9F%8C%8E%20%5BMega%20Easy%5D.txt'
 	},
-	["7378813434"] = {
+	[7378813434] = {
 		Name = "Cotton Obby!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cotton%20Obby!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cotton%20Obby!.txt'
 	},
-	["6847090259"] = {
+	[6847090259] = {
 		Name = "Bulked Up",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bulked%20Up.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bulked%20Up.txt'
 	},
-	["6939849554"] = {
+	[6939849554] = {
 		Name = "Cart Ride Tycoon thru a Cave 2",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Tycoon%20thru%20a%20Cave%202.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Tycoon%20thru%20a%20Cave%202.txt'
 	},
-	["281489669"] = {
+	[281489669] = {
 		Name = "[SPELLS] Wizard Tycoon - 2 Player",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BSPELLS%5D%20Wizard%20Tycoon%20-%202%20Player.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BSPELLS%5D%20Wizard%20Tycoon%20-%202%20Player.txt'
 	},
-	["4913581664"] = {
+	[4913581664] = {
 		Name = "Cart Ride Into Rdite!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Into%20Rdite!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Into%20Rdite!.txt'
 	},
-	["8270679637"] = {
+	[8270679637] = {
 		Name = "Cart Ride Into Poppy!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Into%20Poppy!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Into%20Poppy!.txt'
 	},
-	["5963376918"] = {
+	[5963376918] = {
 		Name = "Anime Tycoon",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Tycoon.txt'
 	},
-	["3440262694"] = {
+	[3440262694] = {
 		Name = "Airport Tycoon!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Airport%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Airport%20Tycoon.txt'
 	},
-	["574407221"] = {
+	[574407221] = {
 		Name = "Super Hero Tycoon",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Hero%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Hero%20Tycoon.txt'
 	},
-	["6677985923"] = {
+	[6677985923] = {
 		Name = "Millionaire Empire Tycoon",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Millionaire%20Empire%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Millionaire%20Empire%20Tycoon.txt'
 	},
-	["3451663900"] = {
+	[3451663900] = {
 		Name = "raise a floppa",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/raise%20a%20floppa.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/raise%20a%20floppa.txt'
 	},
-	["7591156407"] = {
+	[7591156407] = {
 		Name = "My School Tycoon",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20School%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20School%20Tycoon.txt'
 	},
-	["6035061795"] = {
+	[6035061795] = {
 		Name = "My Supermarket",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Supermarket.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Supermarket.txt'
 	},
-	["5865858426"] = {
+	[5865858426] = {
 		Name = "Retail Tycoon 2",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Retail%20Tycoon%202.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Retail%20Tycoon%202.txt'
 	},
-	["7219650554"] = {
+	[7219650554] = {
 		Name = "Escape Easy Obby Parkour!",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Obby%20Parkour!.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Obby%20Parkour!.txt'
 	},
-	["5650369483"] = {
+	[5650369483] = {
 		Name = "Tiny Difficulty Chart Obby Remastered",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tiny%20Difficulty%20Chart%20Obby%20Remastered.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tiny%20Difficulty%20Chart%20Obby%20Remastered.txt'
 	},
-	["8146731988"] = {
+	[8146731988] = {
 		Name = "Ultra Power Tycoon",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Ultra%20Power%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Ultra%20Power%20Tycoon.txt'
 	},
-	["6492279150"] = {
+	[6492279150] = {
 		Name = "Two Player Obby 2",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Two%20Player%20Obby%202.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Two%20Player%20Obby%202.txt'
 	},
-	["8596003516"] = {
+	[8596003516] = {
 		Name = "[UPD4]Ninja Troop Tycoon",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BUPD4%5DNinja%20Troop%20Tycoon.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BUPD4%5DNinja%20Troop%20Tycoon.txt'
 	},
-	["9103460924"] = {
+	[9103460924] = {
 		Name = "Sword Factory X",
-		Script =  loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sword%20Factory%20X.txt'))
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sword%20Factory%20X.txt'
 	},
-	['3823781113'] = {
+	[3823781113] = {
 		Name = '[UPDATE] Saber Simulator',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Saber%20WIP.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Saber%20WIP.txt'
 	},
-	['7059049638'] = {
+	[7059049638] = {
 		Name = 'Gas Station Tycoon [CAR WASH]',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Gas%20Station%20Tycoon%20%5BCAR%20WASH%5D.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Gas%20Station%20Tycoon%20%5BCAR%20WASH%5D.txt'
 	},
-	['5320510816'] = {
+	[5320510816] = {
 		Name = 'Farm Life Tycoon 🥕',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Farm%20Life%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Farm%20Life%20Tycoon.txt'
 	},
-	['5485374801'] = {
+	[5485374801] = {
 		Name = 'Sonic Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sonic%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sonic%20Tycoon.txt'
 	},
-	['8749261952'] = {
+	[8749261952] = {
 		Name = 'My Apartment Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Apartment%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Apartment%20Tycoon.txt'
 	},
-	['6220133106'] = {
+	[6220133106] = {
 		Name = 'Police Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Police%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Police%20Tycoon.txt'
 	},
-	['5534174456'] = {
+	[5534174456] = {
 		Name = 'Tropical Resort Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tropical%20Resort%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tropical%20Resort%20Tycoon.txt'
 	},
-	['8647122680'] = {
+	[8647122680] = {
 		Name = 'Super Car Tycoon!',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Car%20Tycoon!.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Car%20Tycoon!.txt'
 	},
-	['6538660276'] = {
+	[6538660276] = {
 		Name = 'Super Villain Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Villain%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Villain%20Tycoon.txt'
 	},
-	['5310443220'] = {
+	[5310443220] = {
 		Name = 'GOD TYCOON',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GOD%20TYCOON.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GOD%20TYCOON.txt'
 	},
-	['2340851751'] = {
+	[2340851751] = {
 		Name = 'SpiderMan Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/SpiderMan%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/SpiderMan%20Tycoon.txt'
 	},
-	['8504215216'] = {
+	[8504215216] = {
 		Name = 'My Bee Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Bee%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Bee%20Tycoon.txt'
 	},
-	['3605598334'] = {
+	[3605598334] = {
 		Name = 'SCP Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/SCP%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/SCP%20Tycoon.txt'
 	},
-	['8458060781'] = {
+	[8458060781] = {
 		Name = 'Evil Genius Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Evil%20Genius%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Evil%20Genius%20Tycoon.txt'
 	},
-	['10456811278'] = {
+	[10456811278] = {
 		Name = 'Milk Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Milk%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Milk%20Tycoon.txt'
 	},
-	['7632911345'] = {
+	[7632911345] = {
 		Name = 'Firefighter Simulator',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Firefighter%20Simulator.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Firefighter%20Simulator.txt'
 	},
-	['6772424226'] = {
+	[6772424226] = {
 		Name = '2 Player Millionaire Tycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Millionaire%20Tycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Millionaire%20Tycoon.txt'
 	},
-	['9898710720'] = {
+	[9898710720] = {
 		Name = 'Money Tycoon!',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Money%20Tycoon!.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Money%20Tycoon!.txt'
 	},
-	['10660791703'] = {
-		Name = 'cart ride around nothing',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/cart%20ride%20around%20nothing.txt'))
+	[10660791703] = {
+		Name = 'Cart ride around nothing',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/cart%20ride%20around%20nothing.txt'
 	},
-	['9912491609'] = {
+	[9912491609] = {
 		Name = 'How far can you jump',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/How%20far%20can%20you%20jump.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/How%20far%20can%20you%20jump.txt'
 	},
-	['10681346822'] = {
+	[10681346822] = {
 		Name = 'Roblox but every second you get +1 Jump Power',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20but%20every%20second%20you%20get%20+1%20Jump%20Power.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20but%20every%20second%20you%20get%20+1%20Jump%20Power.txt'
 	},
-	['6447164733'] = {
+	[6447164733] = {
 		Name = 'Climb Block Stairs',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%20Block%20Stairs.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%20Block%20Stairs.txt'
 	},
-	['10617080113'] = {
+	[10617080113] = {
 		Name = 'The Impossible Obby',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/The%20Impossible%20Obby.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/The%20Impossible%20Obby.txt'
 	},
-	['7180042682'] = {
+	[7180042682] = {
 		Name = 'MilitaryTycoon',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/MilitaryTycoon.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/MilitaryTycoon.txt'
 	},
-	['6938764986'] = {
+	[6938764986] = {
 		Name = 'AirPlane Simulator',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/AirPlane%20Simulator.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/AirPlane%20Simulator.txt'
 	},
-	['10809467765'] = {
+	[10809467765] = {
 		Name = 'Zipline Obby',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zipline%20Obby.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zipline%20Obby.txt'
 	},
-	['10526921593'] = {
+	[10526921593] = {
 		Name = 'CHAIR RACING',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/CHAIR%20RACING.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/CHAIR%20RACING.txt'
 	},
-	['7952502098'] = {
+	[7952502098] = {
 		Name = 'Impossible Glass Bridge Obby! (Squid Game)',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20Glass%20Bridge%20Obby!%20(Squid%20Game).txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20Glass%20Bridge%20Obby!%20(Squid%20Game).txt'
 	},
-	['7502726087'] = {
+	[7502726087] = {
 		Name = 'Be a Hero',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Be%20a%20Hero.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Be%20a%20Hero.txt'
 	},
-	['10738647949'] = {
+	[10738647949] = {
 		Name = 'Roblox But You Get Taller Every Second',
-		Script = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20But%20You%20Get%20Taller%20Every%20Second.txt'))
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20But%20You%20Get%20Taller%20Every%20Second.txt'
 	}
 }
-repeat wait() until game:IsLoaded()
-local found = false
-for key, value in pairs(Games) do
-    if key == tostring(game.PlaceId) or key == tostring(game.GameId) then
-		print("Running: ", value.Name)
-        value.Script() found = true
-        break
+
+repeat task.wait()until game:IsLoaded()local Found
+for _,v in pairs(Games)do
+    if _==game.PlaceId or _==game.GameId then
+        Found=true print("Running:",v.Name)loadstring(game:HttpGet(v.Script))()break
     end
 end
-if found == false then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() end
+if not Found then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() end
