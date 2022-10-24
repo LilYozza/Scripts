@@ -5,6 +5,7 @@ local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 
+-->Base Variables<--
 local Tycoon, SCollect
 local Tycoons = Workspace:FindFirstChild("Tycoons")
 local Plots = Workspace:FindFirstChild("Plots")
@@ -13,13 +14,21 @@ local Plots = Workspace:FindFirstChild("Plots")
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t) end
 local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v.Values.Owner.Value==Player then Tycoon=v break end end if not Tycoon then for _,v in pairs(Plots:GetDescendants()) do if v:IsA("TouchTransmitter") then FireTouch(0,v.Parent) break end end end end GetTycoon()
 
+--Waiting For Data<--
+repeat GetTycoon()task.wait()until Tycoon
+
 --> Return Functions <--
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
-local function GetPrice(p) for _,v in pairs(p:GetDescendants()) do if v.Name=="PriceLabel" then if v.Text:match("Free!") then return "0" else return v.Text end end end end
+
+-->Post Variables<--
+local Values=Tycoon:FindFirstChild("Values")
+local Buttons=Tycoon:FindFirstChild("Buttons")
+local MainItems=Tycoon:FindFirstChild("MainItems")
+local CashButton=MainItems:FindFirstChild("CashButton")
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
-    spawn (function() if not Tycoon then GetTycoon() end local MainItems=Tycoon:FindFirstChild("MainItems") local CashButton=MainItems:FindFirstChild("CashButton") while shared.toggle1 do FireTouch(1,CashButton.ButtonPart)task.wait() end end)
+    spawn (function()while shared.toggle1 do FireTouch(1,CashButton.ButtonPart)end end)
 end)
 
 Auto:Toggle("Smart Collect",function(bool)
@@ -27,22 +36,41 @@ Auto:Toggle("Smart Collect",function(bool)
     spawn (function() SCollect=shared.toggle11 end)
 end)
 
-Auto:Toggle("Auto Buy",function(bool)
+Auto:Toggle("Cash Buy",function(bool)
     shared.toggle2 = bool
-    spawn (function() if not Tycoon then GetTycoon() end local MainItems=Tycoon:FindFirstChild("MainItems") local CashButton=MainItems:FindFirstChild("CashButton") local Buttons=Tycoon:FindFirstChild("Buttons") local Values=Tycoon:FindFirstChild("Values")
+    spawn (function()
         while shared.toggle2 do
             for _,v in pairs(Buttons:GetChildren()) do
-                if not GetPrice(v):match("Subs") and fromSuffixString(GetPrice(v.ButtonPart)) <= Player.leaderstats.Cash.Value + Values.CashStore.Value and SCollect and v.ButtonPart.Transparency==0 then FireTouch(1,CashButton.ButtonPart) end
-                if not GetPrice(v):match("Subs") and fromSuffixString(GetPrice(v.ButtonPart)) <= Player.leaderstats.Cash.Value and v.ButtonPart.Transparency==0 then FireTouch(1,v.ButtonPart) end
+                if shared.toggle2 and v:FindFirstChild("ButtonPart") and v.ButtonPart.Transparency==0 then
+                    local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
+                    if price=="Free!"then price="0"end
+                    if not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value + Values.CashStored.Value and SCollect then FireTouch(0.3,CashButton.ButtonPart) end
+                    if not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value then FireTouch(0.3,v.ButtonPart) print("Brought",v) end
+                end
             end task.wait()
         end
     end)
 end)
 
-Auto:Toggle("Sabotage",function(bool)
+Auto:Toggle("Sub Buy",function(bool)
+    shared.toggle2 = bool
+    spawn (function()
+        while shared.toggle2 do
+            for _,v in pairs(Buttons:GetChildren()) do
+                if shared.toggle2 and v:FindFirstChild("ButtonPart") and v.ButtonPart.Transparency==0 then
+                    local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
+                    if price:match("Subs") then 
+                        if fromSuffixString(price:split("Subs")[1]) <= Player.leaderstats.Subscribers.Value then FireTouch(0.3,v.ButtonPart) print("Brought",v) end
+                    end
+                end
+            end task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Sabotage(GP)",function(bool)
     shared.toggle3 = bool
     spawn (function()
-        if not Tycoon then GetTycoon() end
         while shared.toggle3 do
             for key, value in pairs(Tycoons:GetDescendants()) do
                 if value.Name == "ProximityPrompt" and value:FindFirstAncestor("OwnerOnlyDoor") and (value.Parent.Position - Player.character:WaitForChild("HumanoidRootPart").Position).magnitude < 25 and value:FindFirstAncestor("OwnerOnlyDoor").Parent.Parent:FindFirstChild("Values"):FindFirstChild("Owner").Value ~= Player then fireproximityprompt(value) task.wait() end
