@@ -45,7 +45,7 @@ Auto:Toggle("Cash Buy",function(bool)
                     local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
                     if price=="Free!"then price="0"end
                     if not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value + Values.CashStored.Value and SCollect then FireTouch(0.3,CashButton.ButtonPart) end
-                    if not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value then FireTouch(0.3,v.ButtonPart) print("Brought",v) end
+                    if not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value then FireTouch(0.3,v.ButtonPart)end
                 end
             end task.wait()
         end
@@ -60,7 +60,7 @@ Auto:Toggle("Sub Buy",function(bool)
                 if shared.toggle2 and v:FindFirstChild("ButtonPart") and v.ButtonPart.Transparency==0 then
                     local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
                     if price:match("Subs") then 
-                        if fromSuffixString(price:split("Subs")[1]) <= Player.leaderstats.Subscribers.Value then FireTouch(0.3,v.ButtonPart) print("Brought",v) end
+                        if fromSuffixString(price:split("Subs")[1]) <= Player.leaderstats.Subscribers.Value then FireTouch(0.3,v.ButtonPart)end
                     end
                 end
             end task.wait()
