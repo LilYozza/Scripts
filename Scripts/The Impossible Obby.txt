@@ -18,7 +18,7 @@ Auto:Toggle("Auto Complete",function(bool)
     spawn (function()
         while shared.toggle1 do
             for _=Player.leaderstats.Stage.Value,#Checkpoints:GetChildren()-2,1 do
-                if shared.toggle1 and Player.leaderstats.Stage.Value==#Checkpoints:GetChildren()-1 then
+                if shared.toggle1 and Player.leaderstats.Stage.Value~=#Checkpoints:GetChildren()-1 then
                     Touch(Checkpoints:FindFirstChild(_+1),0.1)
                 end
             end
