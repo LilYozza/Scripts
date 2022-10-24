@@ -298,6 +298,10 @@ local Games = {
 	[10979991953] = {
 		Name = 'Max Speed Update 3',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Max%20Speed%20Update%203.txt'
+	},
+	[8884334497] = {
+		Name = 'Mining Clicker Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mining%20Clicker%20Simulator.txt'
 	}
 }
 
