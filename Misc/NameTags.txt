@@ -2,13 +2,13 @@ if shared.Misc5 then
     local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
     
     local function AddTag(player)
-        if shared.Misc5 and player.Character:WaitForChild("Head") and not player.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+        if shared.Misc5 and not player.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
         CreateTag((Color3.new(255, 0, 0)), player) end
     end
     
     for _,v in pairs(game.Players:GetChildren()) do
     	v.CharacterAdded:Connect(function()AddTag(v)end)
-        if player.Character:WaitForChild("Head") and not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+        if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
             CreateTag((Color3.new(255, 0, 0)), v)
         end
     end

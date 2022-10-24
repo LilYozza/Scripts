@@ -119,7 +119,7 @@ Misc:Toggle("NameTags",function(bool)
     spawn(function()
         if shared.Misc5 then NameTag() else
             for _,v in pairs(Players:GetChildren()) do
-                if v.Character:WaitForChild("Head") and v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
                     v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
                 end
             end
