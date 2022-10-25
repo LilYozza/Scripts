@@ -7,14 +7,14 @@ if shared.Misc5 then
     end
     
     for _,v in pairs(game.Players:GetChildren()) do
-    	v.CharacterAdded:Connect(function()AddTag(v)end)
+    	P1Connection = v.CharacterAdded:Connect(function()AddTag(v)end)
         if v.Character:WaitForChild("Head",5) and not v.Character.Head:FindFirstChild("BillboardGui") then
             CreateTag((Color3.new(255, 0, 0)), v)
         end
     end
     
-    game.Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function()
+    P2Connection = game.Players.PlayerAdded:Connect(function(player)
+        P3Connection = player.CharacterAdded:Connect(function()
             AddTag(player)
         end)
     end) 
