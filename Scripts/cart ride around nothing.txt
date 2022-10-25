@@ -55,12 +55,12 @@ Auto:Toggle("Auto Start",function(bool)
     spawn (function()
         while shared.toggle1 do
             for _,v in pairs(Carts:GetChildren())do
-                if shared.toggle1 and table.find(CartT, v.Name) and not v.Values.IsOn.Value then
+                if shared.toggle1 and table.find(CartT, v.Name) and v:FindFirstChild("Values")and not v.Values.IsOn.Value then
                     local o=nil if v.Name==CartT[2] then o=v.Car3.Walls.GeneratorWall.ProximityPrompt else o=v.Car2.Walls.GeneratorWall.ProximityPrompt end
                     fireproximityprompt(o)task.wait()
                 end
             end
-        	task.wait(2)
+        	task.wait(1)
         end
     end)
 end)
@@ -70,12 +70,12 @@ Auto:Toggle("Auto Stop",function(bool)
     spawn (function()
         while shared.toggle1 do
             for _,v in pairs(Carts:GetChildren())do
-                if shared.toggle1 and table.find(CartT, v.Name) and v.Values.IsOn.Value then
+                if shared.toggle1 and table.find(CartT, v.Name)and v:FindFirstChild("Values") and v.Values.IsOn.Value then
                     local o=nil if v.Name==CartT[2] then o=v.Car3.Walls.GeneratorWall.ProximityPrompt else o=v.Car2.Walls.GeneratorWall.ProximityPrompt end
                     fireproximityprompt(o)
                 end
             end
-        	task.wait(2)
+        	task.wait(1)
         end
     end)
 end)
@@ -139,7 +139,7 @@ local function AddPlayer(player)
         table.insert(PlayerList, player.DisplayName)
         DropList:Refresh(PlayerList)
     end
-    if not player.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
+    if not player.Character:WaitForChild("Head",5) and not player.Character.Head:FindFirstChild("BillboardGui") then
     CreateTag((Color3.new(255, 0, 0)), player) end
 end
 
@@ -157,7 +157,7 @@ local function GetPlayers()
             table.insert(PlayerList, v.DisplayName)
             DropList:Refresh(PlayerList)
             v.CharacterAdded:Connect(function()AddPlayer(v)end)
-            if not v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then 
+            if not v.Character:WaitForChild("Head",5) and not v.Character.Head:FindFirstChild("BillboardGui") then 
                 CreateTag((Color3.new(255, 0, 0)), v)
             end
         end
