@@ -23,10 +23,9 @@ GPlayers:Toggle("NameTags",function(bool)
     shared.Misc5 = bool
     spawn(function()
         if shared.Misc5 then NameTag() else
-            if P1Connection then P1Connection:Disconnect()P2Connection:Disconnect()P3Connection:Disconnect()end
+            if P1Connection then P1Connection:Disconnect()end if P2Connection then P2Connection:Disconnect()end if P3Connection then P3Connection:Disconnect()end
             for _,v in pairs(Players:GetChildren()) do
                 if v.Character:WaitForChild("Head",5) and v.Character.Head:FindFirstChild("BillboardGui") then
-                    print("Removing Tag From",v)
                     v.Character.Head:FindFirstChild("BillboardGui"):Destroy()
                 end
             end
