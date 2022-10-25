@@ -11,6 +11,13 @@ local Misc = w:CreateFolder("Misc")
 local PlayerSelect_M
 local PlayerList_M={}
 
+local FlingLabel=GPlayers:Label("Inv Fling: OFF",{
+    TextSize = 20;
+    TextColor = Color3.fromRGB(255,0,0);
+    BgColor = Color3.fromRGB(0,0,0);
+    
+})
+
 GPlayers:Toggle("NameTags",function(bool)
     shared.Misc5 = bool
     spawn(function()
@@ -47,13 +54,6 @@ GPlayers:Button("TeleportTo",function()
         if PlayerSelect_M then Player.Character:WaitForChild("HumanoidRootPart").CFrame=PlayerSelect_M.Character:WaitForChild("HumanoidRootPart").CFrame end
     end)
 end)
-
-local FlingLabel=GPlayers:Label("Inv Fling: OFF",{
-    TextSize = 20;
-    TextColor = Color3.fromRGB(255,0,0);
-    BgColor = Color3.fromRGB(0,0,0);
-    
-})
 
 isON,isFlingOn=false
 F1Connection,F2Connection,F3Connection=nil
