@@ -4,32 +4,31 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
+
+local isRebirth
 local Stages = workspace:FindFirstChild("Stages")
-local rebirth = workspace:FindFirstChild("Play Now!")
+local rebirth = workspace:FindFirstChild("Restart Obby")
 
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-
-local function Rebirth()
-    for _, v in pairs(rebirth:GetDescendants()) do
-        if v:IsA("TouchTransmitter") then
-            Touch(v.Parent)break
-        end
-    end
-end
+local function Rebirth()for _, v in pairs(rebirth:GetChildren()) do if v:FindFirstChildWhichIsA("TouchTransmitter") then Touch(v)break end end end
 
 Auto:Toggle("Auto Complete",function(bool)
     shared.toggle1 = bool
     spawn (function()
-        for _=Player.leaderstats.Stage.Value+1, #Stages:GetChildren(), 1 do
-            if not shared.toggle1 then break end
-            Touch(Stages:FindFirstChild(_):FindFirstChild("Spawn"),0.5)
-        end
-        if shared.toggle2 and Player.leaderstats.Stage.Value >= 524 then Rebirth() end
+        local s,e=pcall(function()
+        while shared.toggle1 do
+            for _=Player.leaderstats.Stage.Value+1, #Stages:GetChildren(), 1 do
+                if not shared.toggle1 then break end
+                if _ ~= Player.leaderstats.Stage.Value+1 then break end
+                Touch(Stages:FindFirstChild(_):FindFirstChild("Spawn"),0.1)
+            end
+            if isRebirth and Player.leaderstats.Stage.Value >= #Stages:GetChildren()-2 then Rebirth() end
+        end task.wait()end)
     end)
 end)
 
 Auto:Toggle("Auto Rebirth",function(bool)
-    shared.toggle2 = bool
+    shared.toggle2 = bool isRebirth=shared.toggle2
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
