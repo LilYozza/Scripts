@@ -23,12 +23,12 @@ GPlayers:Toggle("NameTags",function(bool)
     spawn(function()
         if shared.Misc5 then NameTag() else
             for _,v in pairs(Players:GetChildren()) do
-                if v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui") then
-                    v.Character:WaitForChild("Head"):FindFirstChild("BillboardGui"):Destroy()
+                if v.Character:WaitForChild("Head",5) and v.Character.Head:FindFirstChild("BillboardGui") then
+                    v.Head:FindFirstChild("BillboardGui"):Destroy()
                 end
             end
         end
-        wait()
+        task.wait()
     end)
 end)
 

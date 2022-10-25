@@ -139,7 +139,7 @@ local function AddPlayer(player)
         table.insert(PlayerList, player.DisplayName)
         DropList:Refresh(PlayerList)
     end
-    if not player.Character:WaitForChild("Head",5) and not player.Character.Head:FindFirstChild("BillboardGui") then
+    if player.Character:WaitForChild("Head",5) and not player.Character.Head:FindFirstChild("BillboardGui") then
     CreateTag((Color3.new(255, 0, 0)), player) end
 end
 
@@ -157,7 +157,7 @@ local function GetPlayers()
             table.insert(PlayerList, v.DisplayName)
             DropList:Refresh(PlayerList)
             v.CharacterAdded:Connect(function()AddPlayer(v)end)
-            if not v.Character:WaitForChild("Head",5) and not v.Character.Head:FindFirstChild("BillboardGui") then 
+            if v.Character:WaitForChild("Head",5) and not v.Character.Head:FindFirstChild("BillboardGui") then 
                 CreateTag((Color3.new(255, 0, 0)), v)
             end
         end
