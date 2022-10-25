@@ -26,8 +26,7 @@ GPlayers:Toggle("NameTags",function(bool)
             if P1Connection then P1Connection:Disconnect()P2Connection:Disconnect()P3Connection:Disconnect()end
             for _,v in pairs(Players:GetChildren()) do
                 if v.Character:WaitForChild("Head",5) and v.Character.Head:FindFirstChild("BillboardGui") then
-                    print("Removing From",v)
-                    v.Head:FindFirstChild("BillboardGui"):Destroy()
+                    v.Character.Head:FindFirstChild("BillboardGui"):Destroy()
                 end
             end
         end
