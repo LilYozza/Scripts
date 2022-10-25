@@ -2,67 +2,59 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local Virtual=game:GetService("VirtualUser")
 
 local Auto = w:CreateFolder("Auto")
 local Item = w:CreateFolder("Items")
 
-local Tycoon, TCollect, ItemSelect
-local PName = {}
-local Tycoons = workspace:FindFirstChild("Tycoons")
-local ProtectionBlocks = workspace:FindFirstChild("ProtectionBlocks")
-local suffixes = {"K", "M", "B", "T", "Q"}
+local Tycoon, TCollect, ItemSelect, TycoonSelect
+local PName,Items,TycoonList = {},{},{}
+local Tycoons = Workspace:FindFirstChild("Tycoons")
+local ProtectionBlocks = Workspace:FindFirstChild("ProtectionBlocks")
 local Swords = {"Final Hero", "Darkheart", "ClassicSword", "StarterSword", "SCAR"}
-local Items = {}
 
-
+-->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+
+-->Getting Data<--
+    -->Tables<--
+local function GetTycoons()for _,v in pairs(Tycoons:GetChildren())do table.insert(TycoonList, v.Name)end if TycoonList then table.sort(TycoonList,function(a, b)return a:byte() < b:byte() end) end end GetTycoons()
+local function UpdateItems()if Items then table.clear(Items)end for _,v in pairs(Tycoons:GetDescendants())do if v:IsA("TouchTransmitter")and v:FindFirstAncestor("Giver")and not v:FindFirstAncestor("Essentials") and not table.find(Items, v.Parent.Parent.Name) then table.insert(Items, v.Parent.Parent.Name)end end if Items then table.sort(Items, function(a, b) return a:byte() < b:byte() end) end end UpdateItems()
+    -->Variables<--
+local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Owner.Value==Player then Tycoon=v break end end end GetTycoon()
+
+-->Return Functions<--
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
-local function UpdateItems()
-    if Items ~= nil then table.clear(Items) end
-    for _, v in pairs(Tycoons:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Giver") and not v:FindFirstAncestor("Essentials") and not table.find(Items, v.Parent.Parent.Name) then
-            table.insert(Items, v.Parent.Parent.Name)
+
+local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    TycoonSelect = SItem
+end)
+
+Auto:Button("Claim Tycoon",function(bool)
+    spawn(function()
+        for _,v in pairs(Tycoons:GetChildren())do
+            if v.Name==TycoonSelect and v.Owner.Value==nil then Touch(v.Entrance:GetChildren()[1].Head) Tycoon=v break end
         end
-    end
-    if Items ~= nil then table.sort(Items, function(a, b) return a:byte() < b:byte() end) end
-end UpdateItems()
-local function GetTycoon()
-    for key, value in pairs(Tycoons:GetDescendants()) do
-        if value.Name == "Owner" and value.Value == Player then
-            Tycoon = value.Parent
-            PName = Tycoon.Name:split(" ")
-            PName = string.gsub(Tycoon.Name, PName[#PName], "").."worker"
-            break
-        end
-    end
-end
-local function ClaimTycoon()
-    if Tycoon == nil then
-        for key, value in pairs(Tycoon:GetDescendants()) do
-            if value.Name == "Owner" and value.Value == nil then
-                for i, part in pairs(value.Parent:FindFirstChild("Entrance")) do
-                    if part.Name == "Head" then
-                        Touch(Part)
-                        Tycoon = value.Parent
-                        break
-                    end
-                end
-            end
-        end
-    end
-end
+    end)
+end)
+
+repeat task.wait()until Tycoon
+
+-->Post Variables<--
+    -->Player Tycoon<--
+local Essentials=Tycoon:FindFirstChild("Essentials")
+local Buttons=Tycoon:FindFirstChild("Buttons")
+
+    -->Tycoon Worker<--
+local TycoonWorker=Tycoons:FindFirstChild(Tycoon.TeamColor.Value.Name.." worker")
+local TWEssentials=TycoonWorker:FindFirstChild("Essentials")
+local TWMine=TWEssentials:FindFirstChild("Mine")
 
 Auto:Toggle("Auto Click",function(bool)
     shared.toggle1 = bool
     spawn (function()
-        if Tycoon == nil then GetTycoon() end
         while shared.toggle1 do
-            for key, value in pairs(Tycoons:FindFirstChild(PName):GetDescendants()) do
-                if value:isA("ClickDetector") and value:FindFirstAncestor("Mine") and shared.toggle1 and value:FindFirstAncestor("Essentials").Parent.Name:match(Tycoon.Name:split(" ")[1]) then
-                    fireclickdetector(value)task.wait()break
-                end    
-            end
-            wait()
+            if TWMine then fireclickdetector(TWMine.Button.ClickDetector)task.wait()end task.wait()
         end
     end)
 end)
@@ -70,15 +62,7 @@ end)
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle2 = bool
     spawn (function()
-        if Tycoon == nil then GetTycoon() end
-        while shared.toggle2 do
-            for key, value in pairs(Tycoon:GetDescendants()) do
-                if value.Name == "Giver" and value:FindFirstAncestor("Essentials") and shared.toggle2 then
-                    Touch(value)task.wait()
-                end
-            end
-            task.wait(1)
-        end
+        while shared.toggle2 do Touch(Essentials.Giver,1)task.wait()end
     end)
 end)
 Auto:Toggle("Smart Collect",function(bool)
@@ -89,19 +73,13 @@ end)
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle3 = bool
     spawn (function()
-        if Tycoon == nil then GetTycoon() end
         while shared.toggle3 do
-            for _, v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Transparency == 0 then
-                    if TCollect and v.Parent.Parent:FindFirstChild("Price").Value <= fromSuffixString(Player.leaderstats.Blocks.Value) + Tycoon:FindFirstChild("CurrencyToCollect").Value then
-                        Touch(Tycoon:FindFirstChild("Essentials"):FindFirstChild("Giver"),1)
-                    end
-                    if v.Parent.Parent:FindFirstChild("Price").Value <= fromSuffixString(Player.leaderstats.Blocks.Value) then
-                        Touch(v.Parent,1)
-                    end
+            for _,v in pairs(Buttons:GetChildren())do
+                if v:FindFirstChild("Head")and v.Head.Transparency==0 then
+                    if TCollect and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
+                    if v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(v.Head,0.3)end
                 end
-            end
-        	task.wait()
+            end task.wait()
         end
     end)
 end)
@@ -109,7 +87,18 @@ end)
 Auto:Toggle("Auto Heal",function(bool)
     shared.toggle4 = bool
     spawn (function()
+        local Tool
         while shared.toggle4 do
+            if Player.Character:WaitForChild("Humanoid").Health<=50 then
+                repeat for _,v in pairs(Tycoons:GetDescendants())do
+                    if v.Name=="Giver"and v:FindFirstAncestor("MedkitGiver") then Touch(v) end
+                end task.wait(0.5)until Player.Backpack:WaitForChild("Medkit")
+            end local Medkit=Player.Backpack:WaitForChild("Medkit")
+            if Player.Character:FindFirstChildWhichIsA("Tool") then Tool=Player.Character:FindFirstChildWhichIsA("Tool")end
+            repeat Player.Character:WaitForChild("Humanoid"):EquipTool(Medkit)
+            Virtual:ClickButton1(Vector2.new(0, 0), Workspace.CurrentCamera.CFrame)task.wait(1)until Player.Character:WaitForChild("Humanoid").Health > 50
+            if Tool then Player.Character:WaitForChild("Humanoid"):EquipTool(Medkit)end
+            --[[
             if Player.character:WaitForChild("Humanoid").Health <= 50 then
                 for key, value in pairs(Tycoons:GetDescendants()) do
                     if value.Name == "Giver" and value:FindFirstAncestor("MedkitGiver") then
@@ -129,7 +118,8 @@ Auto:Toggle("Auto Heal",function(bool)
                     end
                 end
             end
-        	wait()
+            --]]
+        	task.wait()
         end
     end)
 end)
@@ -137,7 +127,7 @@ end)
 Auto:Button("Remove Doors",function()
     if ProtectionBlocks then ProtectionBlocks:Destroy() end
     for key, value in pairs(Tycoons:GetDescendants()) do
-        if value.Name == "OwnerOnlyDoor" then
+        if value.Name=="OwnerOnlyDoor" and value:FindFirstAncestor("PurchasedObjects") then
             value:Destroy()
         end
     end
