@@ -88,8 +88,8 @@ local Games = {
 		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Carnival%20of%20Terror%20Obby!.txt'
 	},
 	[5809883124] = {
-		Name = "Easy 500 Stages Obby [⭐NEW STAGES⭐]",
-		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20500%20Stages%20Obby%20%5B%E2%AD%90NEW%20STAGES%E2%AD%90%5D.txt'
+		Name = 'Easy 800 Stages Obby [NEW STAGES]'
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20800%20Stages%20Obby%20[NEW%20STAGES].txt'
 	},
 	[6496746583] = {
 		Name = "Escape The World Obby 🌎 [Mega Easy]",
@@ -104,7 +104,7 @@ local Games = {
 		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bulked%20Up.txt'
 	},
 	[6939849554] = {
-		Name = "Cart Ride Tycoon thru a Cave 2",
+		Name = "cart Ride Tycoon thru a Cave 2",
 		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Tycoon%20thru%20a%20Cave%202.txt'
 	},
 	[281489669] = {
