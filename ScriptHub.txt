@@ -104,7 +104,7 @@ local Games = {
 		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bulked%20Up.txt'
 	},
 	[6939849554] = {
-		Name = "cart Ride Tycoon thru a Cave 2",
+		Name = "Cart Ride Tycoon thru a Cave 2",
 		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Tycoon%20thru%20a%20Cave%202.txt'
 	},
 	[281489669] = {
@@ -248,7 +248,7 @@ local Games = {
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Money%20Tycoon!.txt'
 	},
 	[10660791703] = {
-		Name = 'Cart ride around nothing',
+		Name = 'cart ride around nothing',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/cart%20ride%20around%20nothing.txt'
 	},
 	[9912491609] = {
