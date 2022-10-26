@@ -14,7 +14,7 @@ Auto:Toggle("(Semi)Auto Complete",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
-            for _=Player.leaderstats.Stage.Value+1,500,1 do
+            for _=Player.leaderstats.Stage.Value+1,800,1 do
                 if not shared.toggle1 then break end
                 if not Stages:FindFirstChild(Player.leaderstats.Stage.Value+1) then print("Here") Player.character:WaitForChild("HumanoidRootPart").CFrame = Stages:FindFirstChild(Player.leaderstats.Stage.Value).CFrame + Vector3.new(0, 6, 0) end
                 Touch(Stages:WaitForChild(Player.leaderstats.Stage.Value+1))
