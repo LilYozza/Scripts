@@ -308,7 +308,6 @@ local Games = {
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Clicker%20Simulator.txt'
 	}
 }
-
 repeat task.wait()until game:IsLoaded()local Found
 for _,v in pairs(Games)do
     if _==game.PlaceId or _==game.GameId then
