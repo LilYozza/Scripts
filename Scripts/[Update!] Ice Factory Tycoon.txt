@@ -1,0 +1,162 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Tycoon, isGate
+local Tycoons=Workspace:FindFirstChild("Tycoons")
+
+-->Non Return Function<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Claim.Sign.Label.Text ~= "Unclaimed Tycoon" then if v.Claim.Sign.Label.Text:split("'s Tycoon!")[1]==Player.Name then Tycoon=v break end end end end GetTycoon()
+
+-->Return Functions<--
+local function GetDistance(p)return (Player.Character:WaitForChild("HumanoidRootPart").Position-p.Position).Magnitude end
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+Auto:Button("Claim Tycoon",function()
+    spawn(function()
+        for _,v in pairs(Tycoons:GetChildren())do
+            if not Tycoon and v.Claim.Sign.Label.Text == "Unclaimed Tycoon" then
+                Touch(v.Claim) Tycoon=v MoveTo(v.Claim,Vector3.new(0,0,0)) break
+            end
+        end
+    end)
+end)
+
+repeat task.wait()until Tycoon
+
+-->Post Variables<--
+local IceCounter=Tycoon:FindFirstChild("IceCounter")
+local PackageButton=Tycoon:FindFirstChild("PackageButton")
+local ProductionButton=Tycoon:FindFirstChild("ProductionButton")
+local Purchases=Tycoon:FindFirstChild("Purchases")
+local Upgraders=Purchases:FindFirstChild("Upgraders")
+local IceCream=Purchases:FindFirstChild("IceCream")
+local Utilities=Purchases:FindFirstChild("Purchases")
+
+Auto:Toggle("Auto Package",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            local Counter=IceCounter.Counter.Amount.Text
+            if not isGate and Counter ~= "0" then
+                if GetDistance(PackageButton) > 7 then MoveTo(PackageButton,Vector3.new(0,0,0))end
+                fireproximityprompt(PackageButton.ProximityPrompt)task.wait()
+            end task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Gate",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            local CountDown=ProductionButton.Countdown.Count.Text
+            if CountDown=="0" then
+                if GetDistance(ProductionButton) > 7 then MoveTo(ProductionButton,Vector3.new(0,0,0))end
+                isGate=true fireproximityprompt(ProductionButton.ProximityPrompt)task.wait()isGate=false
+            end task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Upgraders",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            for _,v in pairs(Upgraders:GetChildren())do
+                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui")then
+                    local price=v.BillboardGui.Price.Text
+                    if price:match("Million")then price=price:split("ill")[1]end
+                    if not price:match("R$ ") and fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then Touch(v)end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto IceCream",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            for _,v in pairs(IceCream:GetChildren())do
+                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui")then
+                    local price=v.BillboardGui.Price.Text
+                    if price:match("FREE")then price="0"end
+                    if price:match("Million")then price=price:split("ill")[1]end
+                    if not price:match("R$ ") and fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then Touch(v)end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Utilities",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            for _,v in pairs(Utilities:GetChildren())do
+                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui")then
+                    local price=v.BillboardGui.Price.Text
+                    if price:match("illion")then price=price:split("ill")[1]end
+                    if not price:match("R$ ") and fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then Touch(v)end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            if Purchases:FindFirstChild("Rebirther")then 
+                local price=Purchases.Rebirther.BillboardGui.Price.Text
+                if fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then
+                    Touch(Purchases.Rebirther)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local Obbies=Workspace:FindFirstChild("Obbies")
+local EasyObby=Obbies:FindFirstChild("EasyObby")
+local HardObby=Obbies:FindFirstChild("HardObby")
+
+Auto:Toggle("Easy Obby",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do Touch(EasyObby.Reward)
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Hard Obby",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do Touch(HardObby.Reward)
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Button("Remove KillParts",function()
+    spawn(function()
+        for _,v in pairs(Obbies:GetChildren())do
+            if v:FindFirstChild("Lava")then v.Lava:Destroy()end
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
