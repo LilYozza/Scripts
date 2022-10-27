@@ -12,19 +12,20 @@ local Plots = Workspace:FindFirstChild("Plots")
 
 --> Non Return Functions <--
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t) end
-local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v.Values.Owner.Value==Player then Tycoon=v break end end if not Tycoon then for _,v in pairs(Plots:GetDescendants()) do if v:IsA("TouchTransmitter") then FireTouch(0,v.Parent) break end end end end GetTycoon()
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTycoon() for _,v in pairs(Tycoons:GetChildren()) do if v.Values.Owner.Value==Player then Tycoon=v break end end if not Tycoon then for _,v in pairs(Plots:GetDescendants()) do if v:IsA("TouchTransmitter") then FireTouch(0,v.Parent) MoveTo(v.Parent,Vector3.new(0,0,0)) break end end end end GetTycoon()
 
---Waiting For Data<--
+-->Waiting For Data<--
 repeat GetTycoon()task.wait()until Tycoon
 
 --> Return Functions <--
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
 -->Post Variables<--
-local Values=Tycoon:FindFirstChild("Values")
-local Buttons=Tycoon:FindFirstChild("Buttons")
-local MainItems=Tycoon:FindFirstChild("MainItems")
-local CashButton=MainItems:FindFirstChild("CashButton")
+local Values=Tycoon:WaitForChild("Values")
+local Buttons=Tycoon:WaitForChild("Buttons")
+local MainItems=Tycoon:WaitForChild("MainItems")
+local CashButton=MainItems:WaitForChild("CashButton")
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
