@@ -27,20 +27,21 @@ Auto:Toggle("Auto Collect",function(bool)
 end)
 
 Auto:Toggle("Smart Collect",function(bool)
-    SCollect = bool
+    shared.ToggleSC=bool SCollect = shared.ToggleSC
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
-    shared.toggle1 = bool
+    shared.toggle2 = bool
     spawn (function()
-        while shared.toggle1 do
+        while shared.toggle2 do
+            local s,e=pcall(function()
             for _,v in pairs(ButtonsFolder:GetChildren()) do
-                if not v:FindFirstChild("Gamepass") and shared.toggle1 and v:FindFirstChild("Price") then
+                if not v:FindFirstChild("Gamepass") and shared.toggle2 and v:FindFirstChild("Price") then
                     if v.Price.Value <= fromSuffixString(Player.leaderstats.Cash.Value)+Tycoon.Cash.Value and SCollect then Touch(Collector.CollectPart,0.3) end
                     if v.Price.Value <= fromSuffixString(Player.leaderstats.Cash.Value) then Touch(v.Touch.TouchPart,0.3) end
                 end
             end
-        	task.wait()
+        	task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
@@ -48,16 +49,16 @@ end)
 Auto:Button("Give Items",function()
     spawn(function()
         for _,v in pairs(Tycoons:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Gear") then Touch(v.Parent,0.3) end
+            if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Gear") then Touch(v.Parent) end
         end
     end)
 end)
 
 Auto:Button("Remove Doors",function()
     spawn(function()
-        for _,v in pairs(Tycoons:GetChildren()) do
-            if v:FindFirstChild("PurchasesFolder") and v:FindFirstChild("PurchasesFolder"):FindFirstChild("Lasers") then
-                v:FindFirstChild("PurchasesFolder"):FindFirstChild("Lasers"):Destroy()
+        for _,v in pairs(Tycoons:GetDescendants())do
+            if v.Name=="Lasers" and v.Parent.Name=="PurchasesFolder" and not v:FindFirstAncestor(Tycoon.Name) then
+                for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end
             end
         end
     end)
