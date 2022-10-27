@@ -39,6 +39,9 @@ local Upgraders=Purchases:WaitForChild("Upgraders")
 local IceCream=Purchases:WaitForChild("IceCream")
 local Utilities=Purchases:WaitForChild("Utilities")
 
+-->Count Down Timer Fix<--
+ProductionButton.Countdown.Count.Text="0"
+
 Auto:Button("Remove GP Btn's",function()
     spawn(function()
         for _,v in pairs(Purchases:GetDescendants())do
