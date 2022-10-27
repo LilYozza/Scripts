@@ -22,7 +22,7 @@ local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} fo
 
 --Checking/Getting Data
 local function GetTeam()for _,v in pairs(Tycoons:GetChildren())do if v.Name:lower():match(Player.Team.Name:lower()) then return v end end end
-local function GetTycoon() if GetTeam()then PTeam = GetTeam()end for _,v in pairs(PTeam:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end
+local function GetTycoon()for _,v in pairs(PTeam:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end
 local function GetTycoons()for _,v in pairs(Tycoons:GetChildren())do for i,p in pairs(v:GetChildren())do if v:FindFirstChild("TeamName")then local TColor if v:FindFirstChild("TeamName").Value:match(" ")then TColor=v.TeamName.Value:split(" ")[2]:lower()else TColor=v:FindFirstChild("TeamName").Value end if p.Name:match(TColor)then table.insert(TycoonList, p.Name)end end end end if TycoonList then table.sort(TycoonList, function(a, b) return a:byte() < b:byte() end)end end GetTycoons()
 
 local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
@@ -31,14 +31,20 @@ end)
 
 Auto:Button("Claim Tycoon",function()
     spawn(function()
-        if not Tycoon then for _,v in pairs(Tycoons:GetChildren())do for i,p in pairs(v:GetChildren())do if p.Name==TycoonSelect and p.Owner.Value==nil then Touch(p.Gate.Head)MoveTo(p.Gate.Head,Vector3.new(0,0,0)) Tycoon=p break end end end end
+        if not Tycoon then for _,v in pairs(Tycoons:GetChildren())do for i,p in pairs(v:GetChildren())do if p.Name==TycoonSelect and p.Owner.Value==nil then Touch(p.Gate.Head)MoveTo(p.Gate.Head,Vector3.new(0,0,0)) Tycoon=p PTeam=GetTeam()break end end end end
     end)
 end)
 
-repeat GetTycoon()task.wait()until Tycoon and PTeam
+repeat PTeam = GetTeam()task.wait()until PTeam
+repeat GetTycoon()task.wait()until Tycoon
 
 -->Post Variables<--
 local Buttons=Tycoon:WaitForChild("Buttons")
+
+Auto:Button("Home",function()
+    spawn(function()MoveTo(PTeam.Essentials.Spawn,Vector3.new(0,0,0))
+    end)
+end)
 
 
 Auto:Toggle("Auto Clicker",function(bool)
@@ -71,7 +77,8 @@ Auto:Toggle("Auto Buy",function(bool)
             local s,e=pcall(function()
             for _,v in pairs(Buttons:GetChildren())do
                 if shared.toggle4 and v:FindFirstChild("Head") and v.Head.Transparency==0 and v:FindFirstChild("Price")then
-                    if SCollect and v.Price.Value <= Player.leaderstats.Cash.Value+fromSuffixString(Tycoon:FindFirstChild("Cash to collect: $0").Head.SurfaceGui.TextLabel.Text:split("$")[2]) then Touch(PTeam.Essentials.Giver)Touch(PTeam.Essentials.Giver2,0.3)end
+                    local CashToCollect=Tycoon:FindFirstChild("Cash to collect: $0").Head.SurfaceGui.TextLabel.Text if CashToCollect=="Cash"then CashToCollect="0"end
+                    if SCollect and v.Price.Value <= Player.leaderstats.Cash.Value+fromSuffixString(CashToCollect:split("$")[2]) then Touch(PTeam.Essentials.Giver)Touch(PTeam.Essentials.Giver2,0.3)end
                     if v.Price.Value <= Player.leaderstats.Cash.Value then Touch(v.Head)end
                 end
             end task.wait()end)task.wait()if not s then print(e)end
