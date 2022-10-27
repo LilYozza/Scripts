@@ -31,13 +31,13 @@ end)
 repeat task.wait()until Tycoon
 
 -->Post Variables<--
-local IceCounter=Tycoon:FindFirstChild("IceCounter")
-local PackageButton=Tycoon:FindFirstChild("PackageButton")
-local ProductionButton=Tycoon:FindFirstChild("ProductionButton")
-local Purchases=Tycoon:FindFirstChild("Purchases")
-local Upgraders=Purchases:FindFirstChild("Upgraders")
-local IceCream=Purchases:FindFirstChild("IceCream")
-local Utilities=Purchases:FindFirstChild("Utilities")
+local IceCounter=Tycoon:WaitForChild("IceCounter")
+local PackageButton=Tycoon:WaitForChild("PackageButton")
+local ProductionButton=Tycoon:WaitForChild("ProductionButton")
+local Purchases=Tycoon:WaitForChild("Purchases")
+local Upgraders=Purchases:WaitForChild("Upgraders")
+local IceCream=Purchases:WaitForChild("IceCream")
+local Utilities=Purchases:WaitForChild("Utilities")
 
 Auto:Button("Remove GP Btn's",function()
     spawn(function()
