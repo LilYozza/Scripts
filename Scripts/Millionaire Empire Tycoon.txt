@@ -78,13 +78,6 @@ Auto:Button("Remove OwnerDoors",function()
             end
         end
     end)
---[[
-    spawn(function()
-        for _,v in pairs(Tycoons:GetDescendants()) do
-            if v.Name == "OwnerOnlyDoor" then v:Destroy() end
-        end
-    end)
-    ]]--
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

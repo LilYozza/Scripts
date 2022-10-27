@@ -2,6 +2,7 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local CoreGui=game:GetService("CoreGui")
 
 local Auto = w:CreateFolder("Auto")
 
@@ -9,6 +10,11 @@ local Auto = w:CreateFolder("Auto")
 local Tycoon, NilTycoon, SCollect
 local Tycoons=Workspace:WaitForChild("Tycoons")
 local Button=Player.PlayerGui.Spinner.SpinnerNormal.Reward.Claim
+
+-->Remove Prompts<--
+if CoreGui:FindFirstChild("PurchasePrompt")then CoreGui.PurchasePrompt.Enabled=false end
+if Player.PlayerGui.NewUI:FindFirstChild('BuyCash')then Player.PlayerGui.NewUI.BuyCash:Destroy()end
+if Player.PlayerGui:FindFirstChild("Purchasing Screen")then Player.PlayerGui:FindFirstChild("Purchasing Screen"):Destroy()end
 
 -- Non Return Functions
 local function Touch(p,t) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -35,42 +41,70 @@ Auto:Toggle("Auto Collect",function(bool)
 end)
 
 Auto:Toggle("Smart Collect",function(bool)
-    SCollect=bool
+    shared.ToggleSC=bool
+    SCollect=shared.ToggleSC
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
-    shared.toggle1 = bool
+    shared.toggle2 = bool
     spawn (function()
-        while shared.toggle1 do
+        while shared.toggle2 do
+            local s,e=pcall(function()
             for _,v in pairs(Buttons:GetChildren())do
                 for key,value in pairs(v:GetChildren())do
-                    if value.Transparency==0 and not value.Info.Price.Main.Text:match("R") then
+                    if shared.toggle2 and value.Transparency==0 and not value.Info.Price.Main.Text:match("R") then
                         if Player.PlayerStats.Money.Value+Values.Money.Value >= value.Price.Value and SCollect then Touch(CashCollect.CollectArea,0.3) end
                         if Player.PlayerStats.Money.Value >= value.Price.Value then Touch(value,0.3) end
                     end
                 end
             end
-        	task.wait()
+        	task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
 
 Auto:Toggle("Auto Creates",function(bool)
-    shared.toggle1 = bool
+    shared.toggle3 = bool
     spawn (function()
-        while shared.toggle1 do
-            for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if v.Parent.Parent:FindFirstChild("isGroupBox").Value==true then Touch(v.Parent,1) task.wait() firesignal(Button['MouseButton1Click']) end end end
-        	task.wait()
-        end
+        if Player:IsInGroup(10446127)then
+            while shared.toggle3 do
+                for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if shared.toggle3 and v.Parent.Parent:FindFirstChild("isGroupBox").Value==true then Touch(v.Parent) task.wait() firesignal(Button['MouseButton1Click']) end end end
+            	task.wait()if Player.PlayerGui:FindFirstChild('Spinner') then Player.PlayerGui.Spinner.Enabled=false end
+            end
+        else print(Player,"Is Not In The Group")end
     end)
 end)
 
+
+Auto:Toggle("VIP Creates",function(bool)
+    shared.toggle4 = bool
+    spawn (function()
+        if Player:IsInGroup(10446127)then
+            while shared.toggle4 do
+                for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if shared.toggle4 and v.Parent.Parent:FindFirstChild("isGroupBox").Value==false then Touch(v.Parent) task.wait() firesignal(Button['MouseButton1Click']) end end end
+            	task.wait()if Player.PlayerGui:FindFirstChild('Spinner') then Player.PlayerGui.Spinner.Enabled=false end
+            end
+        else print(Player,"Is Not In The Group")end
+    end)
+end)
+
+
 Auto:Button("Get Items",function()
-    spawn(function()for _,v in pairs(Tycoons:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="Get" then Touch(v.Parent,0.3) end end end)
+    spawn(function()for _,v in pairs(Tycoons:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Name=="Get" then Touch(v.Parent) end end end)
 end)
 
 Auto:Button("Remove Doors",function()
-    spawn(function() for _,v in pairs(Tycoons:GetChildren()) do if v:FindFirstChild("Builds") then for key,value in pairs(v.Builds:GetDescendants()) do if value.Name:match("Laser") then value:Destroy() end end end end end)
+        spawn(function()
+        for _,v in pairs(Tycoons:GetDescendants())do
+            if v.Name=="Lasers" and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
+                for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end
+            end
+            if v.Name=="Laser1" and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
+                if v:FindFirstChild("Laser") and v.Laser:FindFirstChild("TouchInterest") then v.Laser.TouchInterest:Destroy()end
+            end
+        end
+    end)
+    --spawn(function() for _,v in pairs(Tycoons:GetChildren()) do if v:FindFirstChild("Builds") then for key,value in pairs(v.Builds:GetDescendants()) do if value.Name:match("Laser") then value:Destroy() end end end end end)
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
