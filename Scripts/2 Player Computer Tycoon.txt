@@ -3,13 +3,18 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local CoreGui=game:GetService("CoreGui")
 
 local Auto = w:CreateFolder("Auto")
 
 
-local Tycoon, SCollect
+local Tycoon, TycoonSelect, SCollect
+local TycoonList={}
 local Tycoon1=Workspace:FindFirstChild("tycoon1"):FindFirstChild("Tycoons")
 local Tycoon2=Workspace:FindFirstChild("tycoon2"):FindFirstChild("Tycoons")
+
+-->Remove Prompts<--
+if CoreGui:FindFirstChild("PurchasePrompt")then CoreGui.PurchasePrompt.Enabled=false end
 
 --Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -20,13 +25,25 @@ local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} fo
 local function GetOwner(t)for _,v in pairs(t:GetChildren())do if v.Owner.Value==Player then return v end end end
 
 
-local function GetTycoon()local O1=GetOwner(Tycoon1) local O2=GetOwner(Tycoon2)if O1 then Tycoon=O1 end if O2 then Tycoon=O2 end
-    if not Tycoon then 
-        for _,v in pairs(Tycoon1:GetChildren())do if not v.Owner.Value then Tycoon=v break end end
-        if not Tycoon then for _,v in pairs(Tycoon2:GetChildren())do if not v.Owner.Value then Tycoon=v break end end end
-        MoveTo(Tycoon.Entrance.Claim.Head,Vector3.new(0,0,0))
-    end
-end GetTycoon()
+local function GetTycoon()local O1=GetOwner(Tycoon1) local O2=GetOwner(Tycoon2)if O1 then Tycoon=O1 end if O2 then Tycoon=O2 end if not Tycoon then for _,v in pairs(Tycoon1:GetChildren())do if not v.Owner.Value then Tycoon=v break end end end end GetTycoon()
+local function GetTycoons()for _,v in pairs(Tycoon1:GetChildren())do if not table.find(TycoonList,v.Name.."1")then table.insert(TycoonList,v.Name.."1") end end for _,v in pairs(Tycoon2:GetChildren())do if not table.find(TycoonList,v.Name.."2")then table.insert(TycoonList,v.Name.."2") end end if TycoonList then table.sort(TycoonList, function(a, b) return a:byte() < b:byte() end) end end GetTycoons()
+
+local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem)
+    TycoonSelect = SItem
+end)
+Auto:Button("Claim Tycoon",function()
+    spawn (function()
+        if TycoonSelect:match("1")then for _,v in pairs(Tycoon1:GetChildren())do if not Tycoon and v.Name==TycoonSelect:gsub("1","") and v.Owner.Value==nil then Touch(v.Entrance.Claim.Head)MoveTo(v.Essentials.Spawn,Vector3.new(0,4,0)) Tycoon=v end end
+        else for _,v in pairs(Tycoon2:GetChildren())do if not Tycoon and v.Name==TycoonSelect:gsub("2","") and v.Owner.Value==nil then Touch(v.Entrance.Claim.Head)MoveTo(v.Essentials.Spawn,Vector3.new(0,4,0)) Tycoon=v end end end       
+    end)
+end)
+
+repeat GetTycoon()task.wait()until Tycoon
+
+
+Auto:Button("Home",function()
+    spawn (function()MoveTo(Tycoon.Essentials.Spawn,Vector3.new(0,4,0))end)
+end)
 
 --Post Variables
 local Essentials=Tycoon:FindFirstChild("Essentials")
@@ -38,41 +55,45 @@ Auto:Toggle("Auto Collect",function(bool)
 end)
 
 Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle1 = bool SCollect=shared.toggle1
+    shared.toggleSC = bool SCollect=shared.toggleSC
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
+            local s,e=pcall(function()
             for _,v in pairs(Buttons:GetChildren())do
                 if shared.toggle2 and v:FindFirstChild("Buton") and not v:FindFirstChild("Gamepass")and v.Buton.Transparency==0 then
                     local price=fromSuffixString(v.Buton.BillboardGui.price.Text)
                     if Player.leaderstats.Cash.Value+Tycoon.CurrencyToCollect.Value>=price and SCollect then Touch(Essentials.Giver)end
                     if Player.leaderstats.Cash.Value>=price then Touch(v.Buton,0.3)end
                 end
-            end
-            task.wait()
+            end task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
 
 Auto:Toggle("Auto Rebirth",function(bool) --WIP
-    shared.toggle1 = bool
+    shared.toggle3 = bool
     spawn (function()
-        while shared.toggle1 do
+        while shared.toggle3 do
             task.wait()
         end
     end)
 end)
 
+Auto:Button("Give Items",function()
+    spawn(function()
+        for _,v in pairs(Tycoon1:GetDescendants())do if v:IsA("TouchTransmitter")and v.Parent.Name=="dokun"and v:FindFirstAncestor("PurchasedObjects")then Touch(v.Parent)end end
+        for _,v in pairs(Tycoon2:GetDescendants())do if v:IsA("TouchTransmitter")and v.Parent.Name=="dokun"and v:FindFirstAncestor("PurchasedObjects")then Touch(v.Parent)end end
+    end)
+end)
+
 Auto:Button("Remove Doors",function()
     spawn(function()
-        for key, value in pairs(workspace:GetDescendants()) do
-            if value.Name == "OwnerOnlyDoor" or value.Name == "Earth" then
-                value:Destroy()
-            end
-        end
+        for _,v in pairs(Tycoon1:GetDescendants())do if v.Name=="OwnerOnlyDoor" and v.Parent.Name=="PurchasedObjects" and not v:FindFirstAncestor(Tycoon.Name) then for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end end if v.Name=="kat1" and v:FindFirstAncestor("PurchasedObjects") and not v:FindFirstAncestor(Tycoon.Name) then if v:FindFirstChild("TouchInterest") then v.TouchInterest:Destroy()end end end
+        for _,v in pairs(Tycoon2:GetDescendants())do if v.Name=="OwnerOnlyDoor" and v.Parent.Name=="PurchasedObjects" and not v:FindFirstAncestor(Tycoon.Name) then for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end end if v.Name=="kat1" and v:FindFirstAncestor("PurchasedObjects") and not v:FindFirstAncestor(Tycoon.Name) then if v:FindFirstChild("TouchInterest") then v.TouchInterest:Destroy()end end end
     end)
 end)
 
