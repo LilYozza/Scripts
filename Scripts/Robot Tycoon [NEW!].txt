@@ -1,0 +1,106 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local PlayerGui=Player.PlayerGui
+local RemoteFunctions=game:GetService("ReplicatedStorage").RemoteFunctions
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Tycoon, PlayerSelect
+local PlayerList={}
+local Tycoons=Workspace:FindFirstChild("Tycoons")
+
+-->Remove Purchase Prompts<--
+if PlayerGui.MainGui:FindFirstChild("BuyCashAlert")then PlayerGui.MainGui:FindFirstChild("BuyCashAlert"):Destroy()end
+
+-->Waiting For Data<--
+repeat Tycoon=Tycoons:FindFirstChild(Player.Team.Name:gsub(" ",""))task.wait()until Tycoon
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function Kill(p)local A_1 = p.Character:WaitForChild("Humanoid",1)local Tool = Player.Backpack:FindFirstChildWhichIsA('Tool') or Player.Character:FindFirstChildWhichIsA('Tool')Player.Character:WaitForChild("Humanoid"):EquipTool(Tool)task.wait()local A_2 = "100"local A_3 = 10 local Event = Tool.Handle.RemoteEvent Event:FireServer(A_1, A_2, A_3)Player.Character:WaitForChild("Humanoid"):UnequipTools()end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+-->Post Variables<--
+local Buttons=Tycoon:FindFirstChild("Buttons")
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleB=bool
+    spawn(function()
+        while shared.ToggleB do
+            for _,v in pairs(Buttons:GetChildren())do
+                if shared.ToggleB and v:FindFirstChild("Head") and v.Head.Transparency==0 then
+                    if v.Price.Value <= Player.leaderstats.Coins.Value then Touch(v.Head,0.3)end
+                end
+            end task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleU1=bool
+    local Upgrades=PlayerGui.MainGui.RobotUpgrades.Main.HalfFrame.Upgrades
+    spawn(function()
+        while shared.ToggleU1 do
+            for _,v in pairs(Upgrades:GetDescendants())do
+                if shared.ToggleU1 and v:IsA("ImageButton") then firesignal(v['MouseButton1Click'])task.wait()end
+            end task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Swords",function(bool)
+    shared.ToggleU2=bool
+    local Upgrades=PlayerGui.MainGui.SwordsShop.Main.SwordFrame
+    spawn(function()
+        while shared.ToggleU2 do
+            for _,v in pairs(Upgrades:GetDescendants())do
+                if shared.ToggleU2 and v:IsA("TextButton") then firesignal(v['MouseButton1Click']) task.wait()end
+                task.wait()
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rewards",function(bool)
+    shared.ToggleU2=bool
+    spawn(function()
+        while shared.ToggleU2 do
+            RemoteFunctions.RewardClaimed:InvokeServer()
+            for _=1,9,1 do RemoteFunctions.PlaytimeRewardClaimed:InvokeServer(_)task.wait()end task.wait(10)
+        end
+    end)
+end)
+
+local DropList = Auto:Dropdown("Select Player",PlayerList,true,function(SItem)
+    for _,v in pairs(game.Players:GetChildren())do
+        if SItem ~= "All" then
+            if  v.DisplayName==SItem then PlayerSelect = v break end
+        else PlayerSelect = "All" end
+    end
+end)
+
+Auto:Button("Kill",function()
+    spawn(function()
+        for _,v in pairs(Players:GetChildren())do
+            if v~=Player then
+                if PlayerSelect=="All" then Kill(v)
+                elseif PlayerSelect ~="All" and PlayerSelect==v then Kill(v)break end
+            end
+        end
+    end)
+end)
+
+local function AddPlayer(player)if not table.find(PlayerList,player.DisplayName) then table.insert(PlayerList, player.DisplayName)DropList:Refresh(PlayerList)end end
+local function RemovePlayer(player)if table.find(PlayerList,player.DisplayName) then RemoveItem(PlayerList, player.DisplayName)DropList:Refresh(PlayerList)end end
+local function GetPlayers()if not PlayerList[1] then table.insert(PlayerList, "All")for _,v in pairs(Players:GetChildren())do table.insert(PlayerList, v.DisplayName)DropList:Refresh(PlayerList)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end end GetPlayers()
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
