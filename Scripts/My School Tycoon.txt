@@ -77,15 +77,82 @@ Auto:Toggle("Auto Quest",function(bool)
     end)
 end)
 
-Misc:Toggle("Anti AFK",function(bool)
-    shared.Misc1 = bool
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+local Tycoon, SCollect, Collection
+local Tycoons = workspace:FindFirstChild("SchoolPlots")
+
+local function GetTycoon() for _,v in pairs(Tycoons:GetDescendants()) do if v:IsA("ObjectValue") and v.Value == Player then Tycoon = v.Parent end end end GetTycoon()
+local function GetCollector()for _,v in pairs(Tycoon:FindFirstChild("PurchasedObjects"):GetDescendants()) do if v:IsA("TouchTransmitter") and v:FindFirstAncestor("01 Giver") then Collection = v.Parent end end end GetCollector()
+local function GetPlayerMoney(player) for _,v in pairs(player.leaderstats:GetDescendants()) do if v.Name:match("Money") then return v end end end
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+
+
+function BuyMethod(obj)
+    for _,v in pairs(obj:GetDescendants()) do
+        if v:IsA("TouchTransmitter") and v.Parent.Transparency == 0 then
+            if SCollect and v.Parent.Parent:FindFirstChild("Price").Value <= GetPlayerMoney(Player).Value + Tycoon:FindFirstChild("Money").Value and Collection then Touch(Collection,0.3) end
+            if v.Parent.Parent:FindFirstChild("Price").Value <= GetPlayerMoney(Player).Value then Touch(v.Parent) end wait()
+        end
+    end
+end
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
     spawn (function()
-        if shared.Misc1 then
-            game:GetService("Players").LocalPlayer.Idled:connect(function()
-            virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            wait(1)
-            virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-            end)
+        while shared.toggle1 do
+            if not Collection then GetCollector() end
+            if Collection then Touch(Collection,1)end
+        	task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle2 = bool
+    SCollect = shared.toggle2
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        while shared.toggle3 do
+            if not Collection then GetCollector() end
+                BuyMethod(Tycoon:FindFirstChild("Buttons"))
+                BuyMethod(Tycoon:FindFirstChild("Classes"))
+        	wait()
+        end
+    end)
+end)
+Auto:Toggle("Auto Clean",function(bool)
+    shared.toggle4 = bool
+    spawn (function()
+        while shared.toggle4 do
+            for _,v in pairs(Tycoon:FindFirstChild("Essentials"):FindFirstChild("CleaningFunctionality"):GetDescendants()) do
+                if v:IsA("ProximityPrompt") then
+                    local back = Player.character:WaitForChild("HumanoidRootPart").CFrame
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = v.Parent.CFrame
+                    task.wait(0.5) fireproximityprompt(v) wait(1)
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+                end
+            end
+            wait()
+        end
+    end)
+end)
+Auto:Toggle("Auto Quest",function(bool)
+    shared.toggle5 = bool
+    spawn (function()
+        while shared.toggle5 do
+            local Event = game:GetService("ReplicatedStorage").MissionHandling Event:InvokeServer("New Mission")
+            local Event = game:GetService("ReplicatedStorage").MissionHandling Event:InvokeServer("Collect Reward")
+        	task.wait(15)
         end
     end)
 end)
