@@ -37,12 +37,20 @@ local ProductionButton=Tycoon:FindFirstChild("ProductionButton")
 local Purchases=Tycoon:FindFirstChild("Purchases")
 local Upgraders=Purchases:FindFirstChild("Upgraders")
 local IceCream=Purchases:FindFirstChild("IceCream")
-local Utilities=Purchases:FindFirstChild("Purchases")
+local Utilities=Purchases:FindFirstChild("Utilities")
+
+Auto:Button("Remove GP Btn's",function()
+    spawn(function()
+        for _,v in pairs(Purchases:GetDescendants())do
+            if v.Name:match("Gamepass")then v:Destroy()end
+        end
+    end)
+end)
 
 Auto:Toggle("Auto Package",function(bool)
-    shared.Toggle=bool
+    shared.Toggle1=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.Toggle1 do
             local Counter=IceCounter.Counter.Amount.Text
             if not isGate and Counter ~= "0" then
                 if GetDistance(PackageButton) > 7 then MoveTo(PackageButton,Vector3.new(0,0,0))end
@@ -53,11 +61,11 @@ Auto:Toggle("Auto Package",function(bool)
 end)
 
 Auto:Toggle("Auto Gate",function(bool)
-    shared.Toggle=bool
+    shared.Toggle2=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.Toggle2 do
             local CountDown=ProductionButton.Countdown.Count.Text
-            if CountDown=="0" then
+            if CountDown=="0"or CountDown=="-1"or CountDown=="1"or CountDown=="2" then
                 if GetDistance(ProductionButton) > 7 then MoveTo(ProductionButton,Vector3.new(0,0,0))end
                 isGate=true fireproximityprompt(ProductionButton.ProximityPrompt)task.wait()isGate=false
             end task.wait()
@@ -66,59 +74,62 @@ Auto:Toggle("Auto Gate",function(bool)
 end)
 
 Auto:Toggle("Auto Upgraders",function(bool)
-    shared.Toggle=bool
+    shared.Toggle3=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.Toggle3 do
+            local s,e=pcall(function()
             for _,v in pairs(Upgraders:GetChildren())do
-                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui")then
+                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui") and shared.Toggle3 then
                     local price=v.BillboardGui.Price.Text
                     if price:match("Million")then price=price:split("ill")[1]end
                     if not price:match("R$ ") and fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then Touch(v)end
                 end
             end
-            task.wait()
+            task.wait()end)task.wait()
         end
     end)
 end)
 
 Auto:Toggle("Auto IceCream",function(bool)
-    shared.Toggle=bool
+    shared.Toggle4=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.Toggle4 do
+            local s,e=pcall(function()
             for _,v in pairs(IceCream:GetChildren())do
-                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui")then
+                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui") and shared.Toggle4 then
                     local price=v.BillboardGui.Price.Text
                     if price:match("FREE")then price="0"end
                     if price:match("Million")then price=price:split("ill")[1]end
                     if not price:match("R$ ") and fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then Touch(v)end
                 end
             end
-            task.wait()
+            task.wait()end)task.wait()
         end
     end)
 end)
 
 Auto:Toggle("Auto Utilities",function(bool)
-    shared.Toggle=bool
+    shared.Toggle5=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.Toggle5 do
+            local s,e=pcall(function()
             for _,v in pairs(Utilities:GetChildren())do
-                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui")then
+                if v:FindFirstChildWhichIsA("BasePart") and v:FindFirstChild("BillboardGui") and shared.Toggle5 then
                     local price=v.BillboardGui.Price.Text
                     if price:match("illion")then price=price:split("ill")[1]end
                     if not price:match("R$ ") and fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then Touch(v)end
                 end
             end
-            task.wait()
+            task.wait()end)task.wait()
         end
     end)
 end)
 
 Auto:Toggle("Auto Rebirth",function(bool)
-    shared.Toggle=bool
+    shared.Toggle6=bool
     spawn(function()
-        while shared.Toggle do
-            if Purchases:FindFirstChild("Rebirther")then 
+        while shared.Toggle6 do
+            if Purchases:FindFirstChild("Rebirther") and shared.Toggle6 then 
                 local price=Purchases.Rebirther.BillboardGui.Price.Text
                 if fromSuffixString(price) <= fromSuffixString(Player.leaderstats.Money.Value)then
                     Touch(Purchases.Rebirther)
@@ -134,18 +145,18 @@ local EasyObby=Obbies:FindFirstChild("EasyObby")
 local HardObby=Obbies:FindFirstChild("HardObby")
 
 Auto:Toggle("Easy Obby",function(bool)
-    shared.Toggle=bool
+    shared.Toggle7=bool
     spawn(function()
-        while shared.Toggle do Touch(EasyObby.Reward)
+        while shared.Toggle7 do Touch(EasyObby.Reward)
             task.wait(1)
         end
     end)
 end)
 
 Auto:Toggle("Hard Obby",function(bool)
-    shared.Toggle=bool
+    shared.Toggle8=bool
     spawn(function()
-        while shared.Toggle do Touch(HardObby.Reward)
+        while shared.Toggle8 do Touch(HardObby.Reward)
             task.wait(1)
         end
     end)
