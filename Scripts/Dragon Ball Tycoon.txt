@@ -76,7 +76,7 @@ end)
 
 Auto:Button("Remove Doors",function()
     spawn(function()
-        for _,v in pairs(Tycoons:getDescendants())do
+        for _,v in pairs(Tycoons:GetDescendants())do
             if v.Name=="OwnerOnlyDoor" and v.Parent.Name=="PurchasedObjects" and not v:FindFirstAncestor(Tycoon.Name) then
                 for i,p in pairs(v:getDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end
             end
