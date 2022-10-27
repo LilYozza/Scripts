@@ -2,22 +2,43 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local CoreGui=game:GetService("CoreGui")
 
 local Auto = w:CreateFolder("Auto")
 
-local Tycoon, NilTycoon, SCollect, PTeam
-local Tycoons = workspace:FindFirstChild("berezaa's Tycoon Kit")
-repeat task.wait()until Player.Team
+local Tycoon, TycoonSelect, SCollect, PTeam
+local TycoonList={}
+local Tycoons = Workspace:FindFirstChild("berezaa's Tycoon Kit")
+
+-->Disable Prompt Purchases<--
+if CoreGui:FindFirstChild("PurchasePrompt")then CoreGui.PurchasePrompt.Enabled=false end
 
 --Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
 --Checking/Getting Data
 local function GetTeam()for _,v in pairs(Tycoons:GetChildren())do if v.Name:lower():match(Player.Team.Name:lower()) then return v end end end
-local function GetTycoon()for _,v in pairs(PTeam:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end
-local function ClaimTycoon()for _,v in pairs(Tycoons:GetDescendants())do if v:FindFirstChild("Owner") and v.Owner.Value==nil then return v end end end
-PTeam=GetTeam()if PTeam then GetTycoon()else NilTycoon=ClaimTycoon()Touch(NilTycoon.Gate.Head)MoveTo(NilTycoon.Gate.Head,Vector3.new(0,4,0))task.wait(1)PTeam=GetTeam()GetTycoon()end
+local function GetTycoon() if GetTeam()then PTeam = GetTeam()end for _,v in pairs(PTeam:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end
+local function GetTycoons()for _,v in pairs(Tycoons:GetChildren())do for i,p in pairs(v:GetChildren())do if v:FindFirstChild("TeamName")then local TColor if v:FindFirstChild("TeamName").Value:match(" ")then TColor=v.TeamName.Value:split(" ")[2]:lower()else TColor=v:FindFirstChild("TeamName").Value end if p.Name:match(TColor)then table.insert(TycoonList, p.Name)end end end end if TycoonList then table.sort(TycoonList, function(a, b) return a:byte() < b:byte() end)end end GetTycoons()
+
+local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    TycoonSelect = SItem
+end)
+
+Auto:Button("Claim Tycoon",function()
+    spawn(function()
+        if not Tycoon then for _,v in pairs(Tycoons:GetChildren())do for i,p in pairs(v:GetChildren())do if p.Name==TycoonSelect and p.Owner.Value==nil then Touch(p.Gate.Head)MoveTo(p.Gate.Head,Vector3.new(0,0,0)) Tycoon=p break end end end end
+    end)
+end)
+
+repeat GetTycoon()task.wait()until Tycoon and PTeam
+
+-->Post Variables<--
+local Buttons=Tycoon:WaitForChild("Buttons")
 
 
 Auto:Toggle("Auto Clicker",function(bool)
@@ -46,20 +67,14 @@ end)
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle4 = bool
     spawn (function()
-        if not Tycoon then GetTycoon() end
         while shared.toggle4 do
-            for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Transparency == 0 and v.Parent.Parent:FindFirstChild("Price") and shared.toggle4 then
-                    if SCollect and v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value + tonumber(Tycoon:FindFirstChild("Cash to collect: $0"):FindFirstChild("Head"):FindFirstChild("SurfaceGui"):FindFirstChild("TextLabel").Text:split("$")[2])  then
-                        Touch(PTeam.Essentials.Giver)Touch(PTeam.Essentials.Giver2,1)
-                    end
-                    if v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value then
-                        Touch(v.Parent,0.5)
-                    end
-                    
+            local s,e=pcall(function()
+            for _,v in pairs(Buttons:GetChildren())do
+                if shared.toggle4 and v:FindFirstChild("Head") and v.Head.Transparency==0 and v:FindFirstChild("Price")then
+                    if SCollect and v.Price.Value <= Player.leaderstats.Cash.Value+fromSuffixString(Tycoon:FindFirstChild("Cash to collect: $0").Head.SurfaceGui.TextLabel.Text:split("$")[2]) then Touch(PTeam.Essentials.Giver)Touch(PTeam.Essentials.Giver2,0.3)end
+                    if v.Price.Value <= Player.leaderstats.Cash.Value then Touch(v.Head)end
                 end
-            end
-        	task.wait()
+            end task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
@@ -79,12 +94,8 @@ end)
 Auto:Button("Give Items",function()
     spawn(function()
         for _,v in pairs(Tycoons:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Name:match("Staff") then
-                Touch(v.Parent)
-            end
-            if v:IsA("TouchTransmitter") and v.Parent.Name:match("Broom") then
-                Touch(v.Parent)
-            end
+            if v:IsA("TouchTransmitter") and v.Parent.Name:match("Staff") then Touch(v.Parent)end
+            if v:IsA("TouchTransmitter") and v.Parent.Name:match("Broom") then Touch(v.Parent)end
         end
     end)
 end)
