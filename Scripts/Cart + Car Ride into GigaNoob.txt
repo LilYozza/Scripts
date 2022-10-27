@@ -1,0 +1,55 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local AreaSelect
+local Areas={"Start-Carts", "Start-Cars", "Half Way!", "Winners!"}
+local Building=Workspace:FindFirstChild("Building")
+local Winners=Building:FindFirstChild("Winners")
+local HalfWay=Building:FindFirstChild("HalfWay")
+local Baseplate=Building:FindFirstChild("Baseplate")
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+local AreaDropList = Auto:Dropdown("Select Area",Areas,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    AreaSelect = SItem
+end)
+
+Auto:Button("TeleportTo",function()
+    spawn(function()
+        if AreaSelect=="Start-Cars"then MoveTo(Baseplate['Blue Spawn - Car'],Vector3.new(0,0,0))end
+        if AreaSelect=="Start-Carts"then MoveTo(Baseplate['Blue Spawn - Cart'],Vector3.new(0,0,0))end
+        if AreaSelect=="Half Way!"then MoveTo(HalfWay['Green Spawn'],Vector3.new(0,0,0))end
+        if AreaSelect=="Winners!"then MoveTo(Winners['Red Spawn'],Vector3.new(0,0,0))end
+    end)
+end)
+
+Auto:Button("Give Items",function()
+    spawn(function()
+        local Givers_Winners=Winners:WaitForChild("Givers_Winners",10)
+        for _,v in pairs(Givers_Winners:GetChildren())do
+            if v:FindFirstChild("Giver")then Touch(v.Giver)end
+        end
+    end)
+end)
+
+Auto:Button("Give Paths",function()
+    spawn(function()
+        local Givers_Winners=Winners:WaitForChild("Givers_Winners",10)
+        local Paths=Givers_Winners:WaitForChild("Paths",10)
+        for _,v in pairs(Paths:GetChildren())do
+            if v:FindFirstChild("Brick")then Touch(v.Brick)end
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

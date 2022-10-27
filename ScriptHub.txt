@@ -322,6 +322,10 @@ local Games = {
 	[10828925984] = {
 		Name = 'Robot Tycoon [NEW!]',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Robot%20Tycoon%20[NEW!].txt'
+	},
+	[5275822877] = {
+		Name = 'Cart + Car Ride into GigaNoob',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20+%20Car%20Ride%20into%20GigaNoob.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
