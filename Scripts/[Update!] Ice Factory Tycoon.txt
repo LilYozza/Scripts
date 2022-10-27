@@ -42,6 +42,10 @@ local Utilities=Purchases:WaitForChild("Utilities")
 -->Count Down Timer Fix<--
 ProductionButton.Countdown.Count.Text="0"
 
+Auto:Button("Home",function()
+    spawn(function()MoveTo(Tycoon.Claim,Vector3.new(0,0,0))end)
+end)
+
 Auto:Button("Remove GP Btn's",function()
     spawn(function()
         for _,v in pairs(Purchases:GetDescendants())do
