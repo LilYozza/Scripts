@@ -3,6 +3,7 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 local CoreGui=game:GetService("CoreGui")
+local Events = game:GetService("ReplicatedStorage").Remotes
 
 local Auto = w:CreateFolder("Auto")
 
@@ -26,7 +27,25 @@ local function GetTycoon()
         if v.Values.Owner.Value==Player then Tycoon=v break end 
         if v.Values.Owner.Value==nil and NilTycoon==nil then NilTycoon=v end end end
     if Tycoon==nil then Tycoon=NilTycoon Touch(Tycoon.Important.Door,0) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Important.Door.CFrame end end
-repeat GetTycoon()task.wait()until Tycoon~=nil
+
+
+local TycoonDropList = Auto:Dropdown("Select Tycoon",Tycoons:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    TycoonSelect = SItem
+end)
+
+Auto:Button("Claim Tycoon",function()
+    spawn(function()
+        for _,v in pairs(Tycoons:GetChildren())do
+            if not Tycoon and v.Name==TycoonSelect and v.Values.Owner.Value==nil then Touch(v.Important.Door) MoveTo(v.Important.Door,Vector3.new(0,3,0)) Tycoon=v break end
+        end
+    end)
+end)
+
+
+repeat GetTycoon()task.wait()until Tycoon
+
+
+
 
 --Post Variables
 local Buttons=Tycoon:FindFirstChild("Buttons")
@@ -65,27 +84,34 @@ end)
 
 Auto:Toggle("Auto Creates",function(bool)
     shared.toggle3 = bool
-    spawn (function()
+    spawn (function()local s,e=pcall(function()
         if Player:IsInGroup(10446127)then
             while shared.toggle3 do
                 for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if shared.toggle3 and v.Parent.Parent:FindFirstChild("isGroupBox").Value==true then Touch(v.Parent) task.wait() firesignal(Button['MouseButton1Click']) end end end
             	task.wait()if Player.PlayerGui:FindFirstChild('Spinner') then Player.PlayerGui.Spinner.Enabled=false end
             end
         else print(Player,"Is Not In The Group")end
-    end)
+    end)task.wait()end)task.wait()if not s then print(e)end
 end)
 
 
 Auto:Toggle("VIP Creates",function(bool)
     shared.toggle4 = bool
-    spawn (function()
+    spawn (function()local s,e=pcall(function()
         if Player:IsInGroup(10446127)then
             while shared.toggle4 do
                 for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if shared.toggle4 and v.Parent.Parent:FindFirstChild("isGroupBox").Value==false then Touch(v.Parent) task.wait() firesignal(Button['MouseButton1Click']) end end end
             	task.wait()if Player.PlayerGui:FindFirstChild('Spinner') then Player.PlayerGui.Spinner.Enabled=false end
             end
         else print(Player,"Is Not In The Group")end
-    end)
+    end)task.wait()end)task.wait()if not s then print(e)end
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool) --WIP
+    shared.toggle3 = bool
+    spawn (function()local s,e=pcall(function()
+        Events.Rebirth:FireServer()
+    end)task.wait()end)task.wait()if not s then print(e)end
 end)
 
 
@@ -99,7 +125,7 @@ Auto:Button("Remove Doors",function()
             if v.Name=="Lasers" and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
                 for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end
             end
-            if v.Name=="Laser1" and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
+            if v.Name:match("Laser") and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
                 if v:FindFirstChild("Laser") and v.Laser:FindFirstChild("TouchInterest") then v.Laser.TouchInterest:Destroy()end
             end
         end
