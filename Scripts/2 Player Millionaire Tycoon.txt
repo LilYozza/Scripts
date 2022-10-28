@@ -19,6 +19,7 @@ if Player.PlayerGui:FindFirstChild("Purchasing Screen")then Player.PlayerGui:Fin
 
 -- Non Return Functions
 local function Touch(p,t) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 
 --Getting Data
 local function GetTycoon() 
@@ -26,8 +27,8 @@ local function GetTycoon()
         if v:FindFirstChild("Values"):FindFirstChild("Owner") then
         if v.Values.Owner.Value==Player then Tycoon=v break end 
         if v.Values.Owner.Value==nil and NilTycoon==nil then NilTycoon=v end end end
-    if Tycoon==nil then Tycoon=NilTycoon Touch(Tycoon.Important.Door,0) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Important.Door.CFrame end end
-
+    --if Tycoon==nil then Tycoon=NilTycoon Touch(Tycoon.Important.Door,0) Player.Character:WaitForChild("HumanoidRootPart").CFrame=Tycoon.Important.Door.CFrame end end
+end
 
 local TycoonDropList = Auto:Dropdown("Select Tycoon",Tycoons:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     TycoonSelect = SItem
@@ -44,15 +45,12 @@ end)
 
 repeat GetTycoon()task.wait()until Tycoon
 
-
-
-
 --Post Variables
-local Buttons=Tycoon:FindFirstChild("Buttons")
-local Important=Tycoon:FindFirstChild("Important")
-local CashCollect=Important:FindFirstChild("CashCollect")
-local Values=Tycoon:FindFirstChild("Values")
-local Boxes=Workspace:FindFirstChild("Boxes")
+local Buttons=Tycoon:WaitForChild("Buttons")
+local Important=Tycoon:WaitForChild("Important")
+local CashCollect=Important:WaitForChild("CashCollect")
+local Values=Tycoon:WaitForChild("Values")
+local Boxes=Workspace:WaitForChild("Boxes")
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
@@ -109,7 +107,7 @@ end)
 
 Auto:Toggle("Auto Rebirth",function(bool) --WIP
     shared.toggle3 = bool
-    spawn (function()local s,e=pcall(function()
+    spawn (function()local s,e=pcall(function() task.wait(5)
         Events.Rebirth:FireServer()
     end)task.wait()end)task.wait()if not s then print(e)end
 end)
