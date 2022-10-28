@@ -82,27 +82,31 @@ end)
 
 Auto:Toggle("Auto Creates",function(bool)
     shared.toggle3 = bool
-    spawn (function()local s,e=pcall(function()
+    spawn (function()
         if Player:IsInGroup(10446127)then
             while shared.toggle3 do
+                local s,e=pcall(function()
                 for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if shared.toggle3 and v.Parent.Parent:FindFirstChild("isGroupBox").Value==true then Touch(v.Parent) task.wait() firesignal(Button['MouseButton1Click']) end end end
             	task.wait()if Player.PlayerGui:FindFirstChild('Spinner') then Player.PlayerGui.Spinner.Enabled=false end
+                end)task.wait()if not s then print(e)end
             end
         else print(Player,"Is Not In The Group")end
-    end)task.wait()end)task.wait()if not s then print(e)end
+    end)task.wait()
 end)
 
 
 Auto:Toggle("VIP Creates",function(bool)
     shared.toggle4 = bool
-    spawn (function()local s,e=pcall(function()
+    spawn (function()
         if Player:IsInGroup(10446127)then
             while shared.toggle4 do
+                local s,e=pcall(function()
                 for _,v in pairs(Boxes:GetDescendants()) do if v:IsA("TouchTransmitter") then if shared.toggle4 and v.Parent.Parent:FindFirstChild("isGroupBox").Value==false then Touch(v.Parent) task.wait() firesignal(Button['MouseButton1Click']) end end end
             	task.wait()if Player.PlayerGui:FindFirstChild('Spinner') then Player.PlayerGui.Spinner.Enabled=false end
+                end)task.wait()if not s then print(e)end
             end
         else print(Player,"Is Not In The Group")end
-    end)task.wait()end)task.wait()if not s then print(e)end
+    end)task.wait()
 end)
 
 Auto:Toggle("Auto Rebirth",function(bool) --WIP
@@ -118,17 +122,17 @@ Auto:Button("Get Items",function()
 end)
 
 Auto:Button("Remove Doors",function()
-        spawn(function()
+    spawn(function()
         for _,v in pairs(Tycoons:GetDescendants())do
+            local s,e=pcall(function()
             if v.Name=="Lasers" and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
                 for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end
             end
             if v.Name:match("Laser") and v.Parent.Name=="Builds" and not v:FindFirstAncestor(Tycoon.Name) then
-                if v:FindFirstChild("Laser") and v.Laser:FindFirstChild("TouchInterest") then v.Laser.TouchInterest:Destroy()end
-            end
+                if v:FindFirstChild("Laser") then print("Removing",v) v:FindFirstChild("Laser"):Destroy() end
+            end end)
         end
     end)
-    --spawn(function() for _,v in pairs(Tycoons:GetChildren()) do if v:FindFirstChild("Builds") then for key,value in pairs(v.Builds:GetDescendants()) do if value.Name:match("Laser") then value:Destroy() end end end end end)
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
