@@ -39,6 +39,7 @@ Auto:Toggle("Auto Buy",function(bool)
     shared.toggle2 = bool
     spawn (function()
         while shared.toggle2 do
+            local s,e=pcall(function()
             if Buttons~=nil then
                 for _,v in pairs(Buttons:GetDescendants()) do
                     if shared.toggle2 and v.Name=="Head" and v.Transparency==0 and not v:FindFirstAncestor("GoldifyButton") and not v:FindFirstAncestor("gamepass_button") then
@@ -54,7 +55,7 @@ Auto:Toggle("Auto Buy",function(bool)
                         if fromSuffixString(v.BillboardGui.Frame.ImageLabel.PriceText.Text) <= Player.leaderstats.Cash.Value then FireTouch(0.3,v.Head) end
                     end
                 end
-            end task.wait()
+            end task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
