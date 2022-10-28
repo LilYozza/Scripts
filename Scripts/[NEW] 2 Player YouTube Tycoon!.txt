@@ -81,6 +81,7 @@ end)
 
 Auto:Button("Give Items",function()
     spawn(function()
+        local s,e=pcall(function()
         for _,v in pairs(Tycoons:GetDescendants())do
             if v.Name=="Giver"and v:FindFirstChildWhichIsA("TouchTransmitter")then
                 Touch(v)
@@ -90,7 +91,7 @@ Auto:Button("Give Items",function()
             if v.Name=="Giver"and v:FindFirstChildWhichIsA("TouchTransmitter")then
                 Touch(v)
             end
-        end
+        end end)
     end)
 end)
 
