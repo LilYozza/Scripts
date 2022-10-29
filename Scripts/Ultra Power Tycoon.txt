@@ -3,14 +3,18 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-local Auto=w:CreateFolder("Auto")
-local Tycoon,SCollect,TycoonSelect
-local Tycoons=Workspace:FindFirstChild("Tycoons")
-local Blacklist={"LegendaryGear", "VoidShield"}
+local Auto = w:CreateFolder("Auto")
+
+local PlayerList={}
+local Tycoon, SCollect, Collection1, Collection2, TycoonSelect
+local Tycoons = Workspace:FindFirstChild("Tycoons")
+local Blacklist = {"LegendaryGear", "VoidShield"}
 
 
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Name==Player.Team.Name then Tycoon=v break end end end
+local function GetPlayers()for _,v in pairs(Players:GetPlayers())do if not table.find(PlayerList,v.Name) then table.insert(PlayerList,v.Name) end end end GetPlayers()
+
 
 local TycoonDropList = Auto:Dropdown("Select Tycoon",Tycoons:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     TycoonSelect = SItem
@@ -19,7 +23,7 @@ end)
 Auto:Button("Claim Tycoon",function()
     spawn(function()
         for _,v in pairs(Tycoons:GetChildren())do
-            if not Tycoon and TycoonSelect==v.Name and v.isim.Value=="Nope"then
+            if not Tycoon and TycoonSelect==v.Name and not table.find(PlayerList,v.isim.Value)then
                 Touch(v.Door.ActDoor)MoveTo(v.Spawn.Vector3.new(0,0,0))Tycoon=v break
             end
         end
@@ -27,7 +31,7 @@ Auto:Button("Claim Tycoon",function()
 end)
 
 -->Waiting For Data<--
-repeat GetTycoon()task.wait()until Tycoon
+repeat GetTycoon()GetPlayers()task.wait()until Tycoon
 
 -->Post Variables<--
 local CashRegister=Tycoon:FindFirstChild("CashRegister")
