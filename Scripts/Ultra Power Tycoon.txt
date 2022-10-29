@@ -67,8 +67,8 @@ end)
 Auto:Button("Give Items",function() --fix Robux Items
     spawn(function()
         for _,v in pairs(Tycoons:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Gear") and not table.find(Blacklist, v.Parent.Parent.Name) then
-                Touch(v.Parent,0.2)
+            if v:IsA("TouchTransmitter") and v.Parent.Parent.Name:match("Gear") and not table.find(Blacklist, v.Parent.Parent.Name) then
+                Touch(v.Parent)
             end
         end
     end)
