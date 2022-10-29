@@ -3,57 +3,59 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-local Auto = w:CreateFolder("Auto")
-local P = {}
-local Tycoon, NilTycoon, SCollect, Collection1, Collection2
-local Tycoons = Workspace:FindFirstChild("Tycoons")
-local Blacklist = {"LegendaryGear", "VoidShield"}
+local Auto=w:CreateFolder("Auto")
+local Tycoon,SCollect,TycoonSelect
+local Tycoons=Workspace:FindFirstChild("Tycoons")
+local Blacklist={"LegendaryGear", "VoidShield"}
 
-for _,v in pairs(game.Players:GetChildren()) do
-    table.insert(P, v.Name)
-end
 
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-local function GetTycoon()
-    for _,v in pairs(Tycoons:GetDescendants()) do
-        if v.Name:match("isim") and v.Value == Player.Name then Tycoon = v.Parent end
-        if v.Name:match("isim") and not table.find(P, v.Value) then NilTycoon = v.Parent end
-    end
-    print(NilTycoon)
-    if not Tycoon then Tycoon = NilTycoon end
-    for _,v in pairs(Tycoon:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Door") then Touch(v.Parent) end
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("CashRegister") then Collection = v.Parent end
-    end
-end GetTycoon()
+local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Name==Player.Team.Name then Tycoon=v break end end end
 
-Auto:Toggle("Auto Collect",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            if not Tycoon then GetTycoon() end Touch(Collection,1)
-        	wait()
+local TycoonDropList = Auto:Dropdown("Select Tycoon",Tycoons:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    TycoonSelect = SItem
+end)
+
+Auto:Button("Claim Tycoon",function()
+    spawn(function()
+        for _,v in pairs(Tycoons:GetChildren())do
+            if not Tycoon and TycoonSelect==v.Name and v.isim.Value=="Nope"then
+                Touch(v.Door.ActDoor)MoveTo(v.Spawn.Vector3.new(0,0,0))Tycoon=v break
+            end
         end
     end)
 end)
 
+-->Waiting For Data<--
+repeat GetTycoon()task.wait()until Tycoon
+
+-->Post Variables<--
+local CashRegister=Tycoon:FindFirstChild("CashRegister")
+
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function()
+        while shared.toggle1 do Touch(CashRegister.Ching) if Tycoon:FindFirstChild("UltimaPad")then print("Touching 2") Touch(Tycoon.UltimaPad.CashRegister2.Ching)end
+        task.wait(1)end
+    end)
+end)
+
 Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle2 = bool
-    SCollect = shared.toggle2
+    shared.toggle2 = bool SCollect = shared.toggle2
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle3 = bool
     spawn (function()
-        while shared.toggle3 do
-            if not Tycoon then GetTycoon() end
+        while shared.toggle3 do local s,e=pcall(function()
             for _,v in pairs(Tycoon:GetDescendants()) do 
-                if v:IsA("TouchTransmitter") and v.Parent:FindFirstChild("Cost") and shared.toggle3 then
-                    if SCollect and v.Parent:FindFirstChild("Cost").Value <= Player.leaderstats.Cash.Value + Collection.Parent:FindFirstChild("Cash").Value then Touch(Collection,0.3) end
+                if v:IsA("TouchTransmitter") and v.Parent:FindFirstChild("Cost") and shared.toggle3 then local CashToCollect2=0
+                    if Tycoon:FindFirstChild("UltimaPad")then CashToCollect2=Tycoon.UltimaPad.CashRegister2.Cash.Value end
+                    if SCollect and v.Parent:FindFirstChild("Cost").Value <= Player.leaderstats.Cash.Value+CashRegister.Cash.Value+CashToCollect2 then Touch(CashRegister.Ching) if Tycoon:FindFirstChild("UltimaPad")then Touch(Tycoon.UltimaPad.CashRegister2.Ching)end end
                     if v.Parent:FindFirstChild("Cost").Value <= Player.leaderstats.Cash.Value then Touch(v.Parent,0.3) end
                 end
-            end
-        	wait()
+            end task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
@@ -61,20 +63,26 @@ end)
 Auto:Button("Give Items",function() --fix Robux Items
     spawn(function()
         for _,v in pairs(Tycoons:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Parent.Name:match("Gear") and not table.find(Blacklist, v.Parent.Parent.Name) then
+            if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Gear") and not table.find(Blacklist, v.Parent.Parent.Name) then
                 Touch(v.Parent,0.2)
             end
         end
     end)
 end)
 
-Auto:Button("Remove OwnerDoors",function()
+Auto:Button("Remove Doors",function()
     spawn(function()
-        print("here")
-        for _,v in pairs(Tycoons:GetDescendants()) do
-            if v.Name == "ActDoor" then v:Destroy() print("Removed") end
+        for _,v in pairs(Tycoons:GetChildren())do
+            local s,e=pcall(function()
+            if v:FindFirstChild("Door") and v.Door:FindFirstChild("ActDoor") and v.Name~=Tycoon.Name then
+                if v.Door.ActDoor:FindFirstChild("TouchInterest")then v.Door.ActDoor.TouchInterest:Destroy()end
+                for i,p in pairs(v.Door:GetChildren())do 
+                    if p.Name:match("Laser")and p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end 
+                end
+            end end)
         end
     end)
 end)
+
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
