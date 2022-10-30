@@ -2,27 +2,43 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local Remotes = game:GetService("ReplicatedStorage").Signals.Remotes
 
 local Auto = w:CreateFolder("Auto")
+
+local isKnifing, MinZombies
+
+-->Disable CFrame Event<--
+if Player.Character:FindFirstChild("UpdateCFrame")then Player.Character.UpdateCFrame:Destroy()end 
+Player.CharacterAdded:Connect(function()if isKnifing and  Player.Character:WaitForChild("UpdateCFrame",10)then Player.Character.UpdateCFrame:Destroy()end end)
 
 -->Base Variables<--
 local Tycoon=Player.Tycoon.Value
 local Tycoons=Workspace:FindFirstChild("Tycoons")
+local Zombies=Workspace:FindFirstChild("Zombies")
+local CarePackages=Workspace:FindFirstChild("CarePackages")
+
+--"Poison","Vanguard","Frigid"
+local ZombieBlackList={}
 
 -->Waiting For Data<--
 repeat Tycoon=Player.Tycoon.Value task.wait()until Tycoon
 
 -->Post Variables<--
 local Buttons=Tycoon:WaitForChild("Buttons")
+local Purchased=Tycoon:FindFirstChild("Purchased")
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function Timer(t)task.wait(t) return true end
 
 -->Return Functions<--
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
-
+Auto:Button("Home",function()
+    spawn(function()Remotes.Events.TeleportHome:FireServer()end)
+end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.ToggleAB=bool
@@ -40,22 +56,82 @@ Auto:Toggle("Auto Buy",function(bool)
 end)
 
 Auto:Toggle("Auto Package",function(bool)
-    shared.Toggle1=bool
+    shared.ToggleAP=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.ToggleAP do local e,s=pcall(function()
+            for _,v in pairs(CarePackages:GetChildren())do
+                if v:FindFirstChild("Base")then 
+                    local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                    repeat MoveTo(v.Base,Vector3.new(0,0,0))fireproximityprompt(v.Base.ProximityPrompt)task.wait()until not shared.ToggleAP or not v end
+                    Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+            end
+            task.wait()end)task.wait()
+        end
+    end)
+end)
+
+local MeleeWeapons={"Knife","Katana"}
+local MeleeWeaponsDropList = Auto:Dropdown("Select Weapon",MeleeWeapons,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    WeaponSelect = SItem
+end)
+
+
+Auto:Toggle("Auto Knife",function(bool)
+    shared.ToggleAK=bool
+    spawn(function() isKnifing=shared.ToggleAK
+        while shared.ToggleAK do 
+            local s,e=pcall(function()
+            local Knife=Player.Backpack:FindFirstChild(WeaponSelect)or Player.Character:FindFirstChild(WeaponSelect)
+            for _,v in pairs(Zombies:GetChildren())do
+                if Knife and shared.ToggleAK and not table.find(ZombieBlackList,v.Name) and v:FindFirstChild("Mob")and v:FindFirstChild("Head")and v:FindFirstChild("HumanoidRootPart") and Player.Character:WaitForChild("Humanoid").Health >0 then
+                    if not Player.Character:FindFirstChild(WeaponSelect) then Player.Character:WaitForChild("Humanoid"):EquipTool(Knife)end
+                    local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                    local TimeOut spawn(function()TimeOut=Timer(10)end)
+                    repeat task.wait() 
+                    Player.Character:WaitForChild("HumanoidRootPart").CFrame=v:FindFirstChild("HumanoidRootPart").CFrame+Vector3.new(0,-7,0)
+                    Knife.MeleeHit:FireServer(v:FindFirstChild("Mob"),v.Head)
+                    until v:FindFirstChild("Mob").Health <=0 or not shared.ToggleAK or TimeOut or Player.Character:WaitForChild("Humanoid").Health <=0
+                    task.wait()Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+                end
+            end
+            end)if not s then print(e)end task.wait()
+        end 
+    end)
+end)
+
+
+Auto:Toggle("Auto Refill",function(bool)
+    local p=Tycoon.Purchased.Sentry01.Base.ReloadAttachment.ProximityPrompt
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            MoveTo(p.Parent)
+            fireproximityprompt(p)task.wait(1)
             task.wait()
         end
     end)
 end)
 
-local p=Tycoon.Purchased.Sentry01.Base.ReloadAttachment.ProximityPrompt
+local Speed = Auto:Slider("Minimum Zombies",{
+    ['default'] = 20;
+    ['min'] = 0;
+    ['max'] = 100;
+    ['precise'] = true;
+},function(value)
+    MinZombies=value
+end)
 
-Auto:Toggle("Auto Refill",function(bool)
-    shared.ToggleAR=bool
+
+Auto:Toggle("Auto Nuke",function(bool)
+    shared.ToggleAN=bool
     spawn(function()
-        while shared.ToggleAR do
-            fireproximityprompt(p)
-            task.wait()
+        while shared.ToggleAN do local Btn local s,e=pcall(function()
+            if Purchased:FindFirstChild("AirControlTower01") then Btn=Tycoon.Purchased.AirControlTower01.Radio.Button.ProximityPrompt end
+            if Btn and MinZombies <= #Zombies:GetChildren() and Btn.ObjectText=="$5,000" then
+                local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                repeat MoveTo(Btn.Parent,Vector3.new(0,0,0)) fireproximityprompt(Btn)task.wait()until Btn.ObjectText~="$5,000" or not shared.ToggleAN
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+            end task.wait()end)task.wait()
         end
     end)
 end)
