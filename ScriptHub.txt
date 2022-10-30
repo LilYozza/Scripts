@@ -338,6 +338,10 @@ local Games = {
 	[5670292785] = {
 		Name = '[SUPER TANK UPDATE] Undead Defense Tycoon',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[SUPER%20TANK%20UPDATE]%20Undead%20Defense%20Tycoon.txt'
+	},
+	[5740246170] = {
+		Name = 'Tower Simulator (BETA!)',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tower%20Simulator%20(BETA!).txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

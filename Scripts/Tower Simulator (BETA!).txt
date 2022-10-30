@@ -1,0 +1,127 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Tower
+local seagolls=Workspace:FindFirstChild("seagolls")
+local Sidegolls=Workspace:FindFirstChild("Sidegolls")
+
+local ClickBlackList={"PromptBaloon"}
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTower()for _,v in pairs(Workspace:GetChildren())do if v.Name=="Tower"and v:FindFirstChild("Owner")and v.Owner.Value==Player then Tower=v break end end end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+Auto:Button("Claim",function()
+    spawn(function()if not Tower then for _,v in pairs(Workspace:GetChildren())do if v.Name=="Tower" and v:FindFirstChild("Owner")and v.Owner.Value==nil then fireclickdetector(v.ClickDetector) Tower=v MoveTo(v.Concrete,Vector3.new(0,4,0))break end end end end)
+end)
+
+-->Waiting For Data<--
+repeat GetTower()task.wait()until Tower
+
+Auto:Button("Home",function()
+    spawn(function()MoveTo(Tower.Concrete,Vector3.new(0,4,0))end)
+end)
+
+-->Post Variables<--
+local ClickToBuild=Tower:WaitForChild("ClickDetector")
+local PurchaseUpgradeButtonRight=Tower:WaitForChild("PurchaseUpgradeButtonRight")
+local PurchaseUpgradeButtonLeft=Tower:WaitForChild("PurchaseUpgradeButtonLeft")
+
+Auto:Toggle("Auto Build",function(bool)
+    shared.ToggleAB=bool
+    spawn(function() while shared.ToggleAB do fireclickdetector(ClickToBuild)task.wait()end
+    end)
+end)
+
+Auto:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleAU=bool
+    spawn(function() 
+        while shared.ToggleAU do local s,e=pcall(function()
+            if PurchaseUpgradeButtonLeft.Head.Price.Value <= Player.PlayerData.CurrentBricks.Value then Touch(PurchaseUpgradeButtonLeft.Head)end
+            if PurchaseUpgradeButtonRight.Head.Price.Value <= Player.PlayerData.CurrentBricks.Value then Touch(PurchaseUpgradeButtonRight.Head)end
+        task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+Auto:Toggle("Auto Delivery",function(bool)
+    shared.ToggleAD=bool
+    spawn(function() while shared.ToggleAD do local s,e=pcall(function()
+        for _,v in pairs(Workspace:GetChildren())do
+            if v.Name:match("FurnitureDelivery") and v:FindFirstChild("ClickDetector")then
+                fireclickdetector(v.ClickDetector)
+            end
+        end
+    task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+Auto:Toggle("Auto Seagoll",function(bool) --IDK WHAT IT DOES ???? LOL
+    shared.ToggleAS=bool
+    spawn(function() while shared.ToggleAS do local s,e=pcall(function()
+        for _,v in pairs(Workspace:GetChildren())do
+            if v.Name=="seagoll" and v:FindFirstChild("ClickDetector") and v:FindFirstChild("Body")then
+                Touch(v.Body)fireclickdetector(v.ClickDetector)
+            end
+        end
+        for _,v in pairs(seagolls:GetChildren())do
+            if v:FindFirstChild("ClickDetector")and v:FindFirstChild("Body")then
+                Touch(v.Body)fireclickdetector(v.ClickDetector)
+            end
+        end
+        for _,v in pairs(Sidegolls:GetChildren())do
+            if v:FindFirstChild("ClickDetector")and v:FindFirstChild("Body")then
+                Touch(v.Body)fireclickdetector(v.ClickDetector)
+            end
+        end 
+    task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+Auto:Toggle("Collect Bricks",function(bool) --IDK WHAT IT DOES ???? LOL
+    shared.ToggleCB=bool
+    spawn(function() while shared.ToggleCB do local s,e=pcall(function()
+        for _,v in pairs(Workspace:GetChildren())do
+            if v.Name=="Brick" and v:FindFirstChild("ClickDetector")then
+                fireclickdetector(v.ClickDetector)
+            end
+        end
+    task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+Auto:Toggle("Auto UBO",function(bool) --IDK WHAT IT DOES ???? LOL
+    shared.ToggleUBO=bool
+    spawn(function() while shared.ToggleUBO do local s,e=pcall(function()
+        for _,v in pairs(Workspace:GetChildren())do
+            if v.Name=="UBO" and v:FindFirstChild("ClickDetector")then
+                fireclickdetector(v.ClickDetector)
+            end
+        end
+    task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+Auto:Toggle("Fire All",function(bool) --IDK WHAT IT DOES ???? LOL
+    shared.ToggleUBO=bool
+    spawn(function() while shared.ToggleUBO do local s,e=pcall(function()
+        for _,v in pairs(Workspace:GetChildren())do
+            if not table.find(ClickBlackList, v.Name)and v:FindFirstChild("ClickDetector")then
+                fireclickdetector(v.ClickDetector)
+            if v:FindFirstChild("Body")and v.Body:FindFirstChild("TouchInterest")then Touch(v.Body)end
+            end
+        end
+    task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
