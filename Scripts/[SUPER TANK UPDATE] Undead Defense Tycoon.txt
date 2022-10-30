@@ -16,7 +16,11 @@ Player.CharacterAdded:Connect(function()if isKnifing and  Player.Character:WaitF
 local Tycoon=Player.Tycoon.Value
 local Tycoons=Workspace:FindFirstChild("Tycoons")
 local Zombies=Workspace:FindFirstChild("Zombies")
+local Vehicles=Workspace:FindFirstChild("Vehicles")
 local CarePackages=Workspace:FindFirstChild("CarePackages")
+
+-->Heli Fix<--
+Vehicles.ChildAdded:Connect(function(object) if object:WaitForChild("Owner",5) and object.Owner.Value==Player and object:WaitForChild("Propellers",5)then  object.Seats.PassengerSeat.ProximityAttachment:Destroy()end end)
 
 --"Poison","Vanguard","Frigid"
 local ZombieBlackList={}
@@ -71,7 +75,7 @@ Auto:Toggle("Auto Package",function(bool)
     end)
 end)
 
-local MeleeWeapons={"Knife","Katana"}
+local MeleeWeapons={"Knife","Machete","Katana","Plasma Sword"}
 local MeleeWeaponsDropList = Auto:Dropdown("Select Weapon",MeleeWeapons,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     WeaponSelect = SItem
 end)
@@ -84,16 +88,17 @@ Auto:Toggle("Auto Knife",function(bool)
             local s,e=pcall(function()
             local Knife=Player.Backpack:FindFirstChild(WeaponSelect)or Player.Character:FindFirstChild(WeaponSelect)
             for _,v in pairs(Zombies:GetChildren())do
-                if Knife and shared.ToggleAK and not table.find(ZombieBlackList,v.Name) and v:FindFirstChild("Mob")and v:FindFirstChild("Head")and v:FindFirstChild("HumanoidRootPart") and Player.Character:WaitForChild("Humanoid").Health >0 then
+                local s1,e1=pcall(function()
+                if Knife and shared.ToggleAK and not table.find(ZombieBlackList,v.Name) and v:FindFirstChild("Mob")and v:FindFirstChild("Head")and v:FindFirstChild("HumanoidRootPart") and Player.Character:WaitForChild("HumanoidRootPart",10)and Player.Character:WaitForChild("Humanoid",10).Health >0 then
                     if not Player.Character:FindFirstChild(WeaponSelect) then Player.Character:WaitForChild("Humanoid"):EquipTool(Knife)end
-                    local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                    local back=Player.Character:WaitForChild("HumanoidRootPart",10).CFrame
                     local TimeOut spawn(function()TimeOut=Timer(10)end)
                     repeat task.wait() 
-                    Player.Character:WaitForChild("HumanoidRootPart").CFrame=v:FindFirstChild("HumanoidRootPart").CFrame+Vector3.new(0,-7,0)
+                    Player.Character:WaitForChild("HumanoidRootPart",10).CFrame=v:FindFirstChild("HumanoidRootPart").CFrame+Vector3.new(0,-7,0)
                     Knife.MeleeHit:FireServer(v:FindFirstChild("Mob"),v.Head)
-                    until v:FindFirstChild("Mob").Health <=0 or not shared.ToggleAK or TimeOut or Player.Character:WaitForChild("Humanoid").Health <=0
-                    task.wait()Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
-                end
+                    until v:FindFirstChild("Mob").Health <=0 or not shared.ToggleAK or TimeOut or Player.Character:WaitForChild("Humanoid",10).Health <=0
+                    task.wait()Player.Character:WaitForChild("HumanoidRootPart",10).CFrame=back
+                end end) if not s1 then print(e1)end
             end
             end)if not s then print(e)end task.wait()
         end 
