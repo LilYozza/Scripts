@@ -6,7 +6,7 @@ local Remotes = game:GetService("ReplicatedStorage").Signals.Remotes
 
 local Auto = w:CreateFolder("Auto")
 
-local isKnifing, MinZombies
+local isKnifing, MinZombies, isTag
 
 -->Disable CFrame Event<--
 if Player.Character:FindFirstChild("UpdateCFrame")then Player.Character.UpdateCFrame:Destroy()end 
@@ -29,6 +29,7 @@ local Buttons=Tycoon:WaitForChild("Buttons")
 local Purchased=Tycoon:FindFirstChild("Purchased")
 
 -->Non Return Functions<--
+local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.Name TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 local function Timer(t)task.wait(t) return true end
@@ -62,7 +63,7 @@ Auto:Toggle("Auto Package",function(bool)
             for _,v in pairs(CarePackages:GetChildren())do
                 if v:FindFirstChild("Base")then 
                     local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
-                    repeat MoveTo(v.Base,Vector3.new(0,0,0))fireproximityprompt(v.Base.ProximityPrompt)task.wait()until not shared.ToggleAP or not v end
+                    repeat MoveTo(v.Base,Vector3.new(0,0,0))fireproximityprompt(v.Base.ProximityPrompt)task.wait()until not shared.ToggleAP or not v end task.wait(1)
                     Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
             end
             task.wait()end)task.wait()
@@ -134,6 +135,26 @@ Auto:Toggle("Auto Nuke",function(bool)
             end task.wait()end)task.wait()
         end
     end)
+end)
+
+local ZombieConnection
+Auto:Toggle("Zombie ESP",function(bool)
+    shared.ToggleESP=bool isTag=shared.ToggleESP
+    spawn(function()local s,e=pcall(function()
+        if shared.ToggleESP then
+            ZombieConnection=Zombies.ChildAdded:Connect(function(object) if object:WaitForChild("Head",5)then CreateTag((Color3.new(0, 0, 255)), object)end end)
+
+            for _,v in pairs(Zombies:GetChildren())do
+                if v:FindFirstChild("Head") and not v.Head:FindFirstChild("BillboardGui")then CreateTag((Color3.new(0, 0, 255)), v)end
+            end
+            
+        else
+            if ZombieConnection then ZombieConnection:Disconnect()end
+            for _,v in pairs(Zombies:GetChildren())do
+                if v:FindFirstChild("Head") and v.Head:FindFirstChild("BillboardGui")then v.Head.BillboardGui:Destroy() end
+            end
+        end
+    end)if not s then print(e)end end)
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
