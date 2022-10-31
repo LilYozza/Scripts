@@ -1,0 +1,78 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Tycoon
+local Tycoons=Workspace:FindFirstChild("Tycoon")
+local Plot=Tycoons:FindFirstChild("Plot")
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTycoon() for _,v in pairs(Plot:GetChildren())do if v:FindFirstChild("Owner")and v.Owner.Value==Player then Tycoon=v break end end end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+-->Waiting For Data<--
+repeat GetTycoon()task.wait()until Tycoon
+
+-->Post Variables<--
+local Essencial=Tycoon:WaitForChild("Essencial")
+local DropParts=Tycoon:WaitForChild("DropParts")
+local Buttons_E=Tycoon:WaitForChild("Buttons_E")
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do local s,e=pcall(function()
+            for _,v in pairs(DropParts:GetDescendants())do
+                if v:IsA("BasePart")then v.CanCollide=false v.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame end
+            end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Deposit",function(bool)
+    shared.ToggleAD=bool
+    spawn(function()
+        while shared.ToggleAD do if fromSuffixString(Player.leaderstats.Part.Value) >0 then Touch(Buttons_E.Put.Head,0.1)end task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Merge",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do Touch(Buttons_E.Merge.Head,5)
+        end
+    end)
+end)
+
+Auto:Toggle("Dropper +1",function(bool)
+    shared.ToggleD1=bool
+    spawn(function()
+        while shared.ToggleD1 do
+            local price=Buttons_E.Add.Head.Attachment.BillboardGui.Price.Text
+            if fromSuffixString(price)<=fromSuffixString(Player.leaderstats.Money.Value)then Touch(Buttons_E.Add.Head)end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rate",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            local price=Buttons_E.Upgrade.Head.Attachment.BillboardGui.Price.Text
+            if fromSuffixString(price)<=fromSuffixString(Player.leaderstats.Money.Value)then Touch(Buttons_E.Upgrade.Head)end
+            task.wait()
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

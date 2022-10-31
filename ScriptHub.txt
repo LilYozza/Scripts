@@ -346,6 +346,10 @@ local Games = {
 	[10726371567] = {
 		Name = 'Find The Simpsons [154]',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Find%20The%20Simpsons%20[154].txt'
+	},
+	[10977918334] = {
+		Name = '[NEW] Merge Droppers!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[NEW]%20Merge%20Droppers!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
