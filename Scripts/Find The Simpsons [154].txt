@@ -1,0 +1,37 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local PartSelect
+local Creatures=Workspace:FindFirstChild("Creatures")
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+local TycoonDropList = Auto:Dropdown("Select Part",Creatures:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    PartSelect = SItem
+end)
+
+Auto:Button("Move To",function()
+    spawn(function()if PartSelect then MoveTo(Creatures:FindFirstChild(PartSelect),Vector3.new(0,4,0))end
+    end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            for _,v in pairs(Creatures:GetChildren())do if shared.Toggle then Touch(v,0.1) end end task.wait()
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

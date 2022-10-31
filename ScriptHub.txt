@@ -342,6 +342,10 @@ local Games = {
 	[5740246170] = {
 		Name = 'Tower Simulator (BETA!)',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tower%20Simulator%20(BETA!).txt'
+	},
+	[10726371567] = {
+		Name = 'Find The Simpsons [154]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Find%20The%20Simpsons%20[154].txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
