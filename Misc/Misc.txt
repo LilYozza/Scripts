@@ -11,6 +11,9 @@ local Misc = w:CreateFolder("Misc")
 local PlayerSelect_M
 local PlayerList_M={}
 
+-->Exploit Fix<--
+if not pcall(function() return syn.protect_gui end) then syn = {}syn.protect_gui = function(A_1)A_1.Parent = CoreGui end end
+
 local FlingLabel=GPlayers:Label("Inv Fling: OFF",{
     TextSize = 20;
     TextColor = Color3.fromRGB(255,0,0);
