@@ -4,7 +4,7 @@ if shared.Misc5 then
         GUI.Name="PlayerTag"
         GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)
         GUI.AlwaysOnTop = true 
-        GUI.Size = UDim2.new(3,100,1, 50)
+        GUI.Size = UDim2.new(0,100,0, 50)
         TextLabel = Instance.new("TextLabel", GUI)
         TextLabel.Text =  player.DisplayName 
         TextLabel.BackgroundTransparency = 1 
