@@ -9,7 +9,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Tycoon, InUse, SelectType, SelectUpgradeType
+local Tycoon,SelectType,SelectUpgradeType
 local MinAmtDepo=1
 local Juego=Workspace:FindFirstChild("Juego")
 local SlotsInGame=Juego:FindFirstChild("SlotsInGame")
@@ -80,12 +80,12 @@ Auto:Toggle("Auto Deposit",function(bool)
     shared.ToggleAD=bool
     spawn(function()
         while shared.ToggleAD do local s,e=pcall(function()
-            if not InUse and Ki.Text and fromSuffixString(Ki.Text)>=MinAmtDepo then local InUse=true
+            if Ki.Text and fromSuffixString(Ki.Text)>=MinAmtDepo then
                 local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame 
                 MoveTo(StandSensei.Circle,Vector3.new(0,3,0))
                 local TimeOut spawn(function()TimeOut=Timer(10)end)
                 repeat Player.Character:WaitForChild("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)task.wait(1) until fromSuffixString(Ki.Text)<=0 or not shared.ToggleAD or TimeOut 
-                Player.Character:WaitForChild("HumanoidRootPart").CFrame=back InUse=false
+                --Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
             end
             task.wait()end)task.wait()if not s then print(e)end
         end
