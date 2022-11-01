@@ -10,7 +10,6 @@ local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
 local Tycoon,SelectType,SelectUpgradeType
-local MinAmtDepo=1
 local Juego=Workspace:FindFirstChild("Juego")
 local SlotsInGame=Juego:FindFirstChild("SlotsInGame")
 
@@ -72,21 +71,11 @@ Auto:Toggle("Auto Collect",function(bool)
     end)
 end)
 
-local MinAmtSlider = Auto:Slider("Minimum Deposit",{['default']=0;['min'] = 0;['max']=1000000000;['precise']=true;},function(value)
-    MinAmtDepo=value
-end)
-
 Auto:Toggle("Auto Deposit",function(bool)
     shared.ToggleAD=bool
     spawn(function()
         while shared.ToggleAD do local s,e=pcall(function()
-            if Ki.Text and fromSuffixString(Ki.Text)>=MinAmtDepo then
-                local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame 
-                MoveTo(StandSensei.Circle,Vector3.new(0,3,0))
-                local TimeOut spawn(function()TimeOut=Timer(10)end)
-                repeat Player.Character:WaitForChild("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)task.wait(1) until fromSuffixString(Ki.Text)<=0 or not shared.ToggleAD or TimeOut 
-                --Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
-            end
+            if Ki.Text and fromSuffixString(Ki.Text)>=0 then Touch(Usables.Sensei,0.3)end
             task.wait()end)task.wait()if not s then print(e)end
         end
     end)
@@ -116,9 +105,17 @@ Auto:Toggle("Auto Fusion",function(bool)
     shared.ToggleAF=bool
     spawn(function()
         while shared.ToggleAF do local s,e=pcall(function()
-            for _=1,fromSuffixString(PlayerData.Rebirths.Text)+5,1 do
-                if GetCount(_)>=2 then
-                    Touch(Usables.Fusionador,0.3)
+            for _=1,6,1 do
+                if GetCount(_)>=2 then Touch(Usables.Fusionador,0.3)print("Fusing x2")end
+            end
+            if fromSuffixString(PlayerData.Rebirths.Text)+6 then
+                for _=7,7+6,1 do
+                    if GetCount(_)>=3 then Touch(Usables.Fusionador,0.3)print("Fusing x3")end
+                end
+            end
+            if fromSuffixString(PlayerData.Rebirths.Text)+6 then
+                for _=13,13+6,1 do
+                    if GetCount(_)>=4 then Touch(Usables.Fusionador,0.3)print("Fusing x4")end
                 end
             end
             --if GetCount(1)>=2 or GetCount(2)>=2 or GetCount(3)>=2 or GetCount(4)>=2 or GetCount(5)>=2 or GetCount(6)>=2 or GetCount(7)>=2 or GetCount(8)>=2 or GetCount(9)>=2 then Touch(Usables.Fusionador,0.3)end
