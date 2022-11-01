@@ -1,4 +1,4 @@
-if shared.Toggle then --################## LINE TO EDIT##################--
+if shared.Misc5 then
     local function CreateTag(c,player)
         GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head"))
         GUI.Name="PlayerTag"
@@ -14,7 +14,7 @@ if shared.Toggle then --################## LINE TO EDIT##################--
     end
     local function AddTag(player)
         local Color=Color3.new(255, 0, 0)
-        if shared.Toggle and player.Character:WaitForChild("Head",5) and not player.Character.Head:FindFirstChild("PlayerTag") then --################## LINE TO EDIT##################--
+        if shared.Misc5 and player.Character:WaitForChild("Head",5) and not player.Character.Head:FindFirstChild("PlayerTag") then
         --if player.Team and Player.TeamColor then Color=Player.TeamColor.Color end --<<CAN IMPLEMENT TEAM COLOR IF NEEDED
         CreateTag(Color, player)end
     end
