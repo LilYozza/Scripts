@@ -350,6 +350,10 @@ local Games = {
 	[10977918334] = {
 		Name = '[NEW] Merge Droppers!',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[NEW]%20Merge%20Droppers!.txt'
+	},
+	[10920409126] = {
+		Name = 'Anime Fusion Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Fusion%20Tycoon.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
