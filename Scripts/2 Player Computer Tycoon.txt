@@ -19,13 +19,12 @@ if CoreGui:FindFirstChild("PurchasePrompt")then CoreGui.PurchasePrompt.Enabled=f
 --Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTycoon()for _,v in pairs(Tycoon1:GetChildren())do if v:FindFirstChild("Owner")and v.Owner.Value==Player then Tycoon=v break end end if not Tycoon then for _,v in pairs(Tycoon2:GetChildren())do if v:FindFirstChild("Owner")and v.Owner.Value==Player then Tycoon=v break end end end end
 
 --Return Functions
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
-local function GetOwner(t)for _,v in pairs(t:GetChildren())do if v.Owner.Value==Player then return v end end end
 
-
-local function GetTycoon()local O1=GetOwner(Tycoon1) local O2=GetOwner(Tycoon2)if O1 then Tycoon=O1 end if O2 then Tycoon=O2 end if not Tycoon then for _,v in pairs(Tycoon1:GetChildren())do if not v.Owner.Value then Tycoon=v break end end end end GetTycoon()
+-->Getting Table Data<--
 local function GetTycoons()for _,v in pairs(Tycoon1:GetChildren())do if not table.find(TycoonList,v.Name.."1")then table.insert(TycoonList,v.Name.."1") end end for _,v in pairs(Tycoon2:GetChildren())do if not table.find(TycoonList,v.Name.."2")then table.insert(TycoonList,v.Name.."2") end end if TycoonList then table.sort(TycoonList, function(a, b) return a:byte() < b:byte() end) end end GetTycoons()
 
 local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem)
@@ -38,8 +37,8 @@ Auto:Button("Claim Tycoon",function()
     end)
 end)
 
+-->Waiting For Data<--
 repeat GetTycoon()task.wait()until Tycoon
-
 
 Auto:Button("Home",function()
     spawn (function()MoveTo(Tycoon.Essentials.Spawn,Vector3.new(0,4,0))end)
