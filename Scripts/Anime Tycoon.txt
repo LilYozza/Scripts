@@ -2,81 +2,166 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local Virtual=game:GetService("VirtualUser")
+local Remotes=game:GetService("ReplicatedStorage").Remotes
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local Auto = w:CreateFolder("Auto")
 
-local Tycoon, NilTycoon, SCollect, Collection
-local Tycoons = workspace:FindFirstChild("Tycoons")
+-->Base Variables<--
+local Tycoon,SelectType,SelectUpgradeType
+local Juego=Workspace:FindFirstChild("Juego")
+local SlotsInGame=Juego:FindFirstChild("SlotsInGame")
 
+-->Tables<--
+local PlayerData={}
+local UpgradeTable={"+16 Per","+160 Per"}
+local TypeTable={"+1 Ninja","+6 Ninja","+20 Ninja","+50 Ninja"}
+
+local Random=Workspace:FindFirstChild("Random")
+local Pelotitas=Random:FindFirstChild("Pelotitas")
+
+-->Non Return Functions<--
+local function Timer(t)task.wait(t)return true end
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTycoon()for _,v in pairs(SlotsInGame:GetChildren())do if v:FindFirstChild("Duenio") and v.Duenio.Value==Player.UserId then Tycoon=v break end end end
+local function GetLeaderstats()local t={Coins,Heroes,Rebirths}local p=Player.PlayerGui.LeaderBoard.LeaderBoard.Fondo.ScrollingFrame for _,v in pairs(p:GetChildren())do if v.Name=="Slot"and v.Nombre.Text==Player.Name then t.Coins=v.TopCoins t.Heroes=v.Ninjas t.Rebirths=v.Rebirths return t end end end
 
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
-local function GetTycoon()
-    for _,v in pairs(Tycoons:GetDescendants()) do
-        if v.Name == "Owner" and v.Value == Player.Name then Tycoon = v.Parent end
-        if v.Name == "Owner" and v.Value == "None" and not NilTycoon then NilTycoon = v.Parent end
-    end
-    if not Tycoon then Tycoon = NilTycoon
-        for _,v in pairs(Tycoon:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Door") then
-                firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait()
-                Player.character:WaitForChild("HumanoidRootPart").CFrame = v:FindFirstAncestor("Essential"):FindFirstChild("SpawnLocation").CFrame + Vector3.new(0,6,0)
-            end
-        end
-    end
-    for _,v in pairs(Tycoon:GetDescendants()) do if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Collect") then Collection = v.Parent end end
-end GetTycoon()
+-->Waiting for Data<--
+repeat GetTycoon()task.wait()until Tycoon
+repeat PlayerData=GetLeaderstats()task.wait()until PlayerData
+
+-->Post Variables<--
+local DropArea=Pelotitas:FindFirstChild(Tycoon.Name)
+local Mapa=Tycoon:FindFirstChild("Mapa")
+local StandSensei=Mapa:FindFirstChild("StandSensei")
+local Fusion=Tycoon:FindFirstChild("Fusion")
+local NewSpots=Tycoon:FindFirstChild("NewSpots")
+local Usables=Tycoon:FindFirstChild("Usables")
+local SpawnNinjaRegala2=Tycoon:FindFirstChild("SpawnNinjaRegala2")
+local NpcsCombateTemp=Tycoon:FindFirstChild("NpcsCombateTemp")
+
+-->Player Variables<--
+local PGUI=Player.PlayerGui
+local Ki=PGUI.Bot.Abajo.F.Num
+local Coins=PGUI.Top.F.Coins
+
+-->Fix Prompt Spam<--
+if PGUI:FindFirstChild("NewNotiInMid") then PGUI.NewNotiInMid.Enabled=false end
+
+-->Post Function<--
+local function GetCount(Type)local count=0 for _,v in pairs(NewSpots:GetChildren())do if v:FindFirstChild("TipoNum") and v.TipoNum.Value==Type then count=count+1 end end return count end
+local function CheckPrice(btn)local price=btn.Gui.Num.Text if fromSuffixString(price) <= fromSuffixString(Coins.Text)then return true end task.wait()end
 
 Auto:Toggle("Auto Collect",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            if not Tycoon then GetTycoon() end
-            Touch(Collection,0.1)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do local s,e=pcall(function()
+            for _,v in pairs(DropArea:GetChildren())do
+                if shared.ToggleAC and v:FindFirstChild("Ki")then
+                    v.Ki.CanCollide=false v.Ki.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                end
+            end
+            task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
 
-Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle1 = bool
-    SCollect = shared.toggle1
+Auto:Toggle("Auto Deposit",function(bool)
+    shared.ToggleAD=bool
+    spawn(function()
+        while shared.ToggleAD do local s,e=pcall(function()
+            if Ki.Text and fromSuffixString(Ki.Text)>=0 then Touch(Usables.Sensei,0.3)end
+            task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+local SelectBuyList = Auto:Dropdown("Select Type",TypeTable,true,function(SItem)
+    for _,v in pairs(TypeTable)do
+        if v==SItem then SelectType=Usables:FindFirstChild("Comprar"..v:split(" ")[1]:split("+")[2])end
+    end
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        while shared.toggle1 do
-            if not Tycoon then GetTycoon() end
-            for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Transparency == 0 and not v.Parent.Parent:FindFirstChild("Gamepass") then
-                    if SCollect and v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("CashToCollect").Value then
-                       Touch(Collection,0.5)
-                    end
-                    if v.Parent.Parent:FindFirstChild("Price").Value <= Player.leaderstats.Cash.Value then
-                        Touch(v.Parent,0.5)
-                    end
+    shared.ToggleN=bool
+    spawn(function()while shared.ToggleN do if SelectType and CheckPrice(SelectType) then Touch(SelectType,0.3)end task.wait()end end)
+end)
+
+local SelectUpgradeList = Auto:Dropdown("Select Type",UpgradeTable,true,function(SItem)
+    if SItem=="+16 Per"then SelectUpgradeType=Usables:FindFirstChild("1ki") else SelectUpgradeType=Usables:FindFirstChild("10ki")end
+end)
+
+Auto:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleAU=bool
+    spawn(function()while shared.ToggleAU do if SelectUpgradeType and CheckPrice(SelectUpgradeType) then Touch(SelectUpgradeType,0.3)end task.wait()end end)
+end)
+
+Auto:Toggle("Auto Fusion",function(bool)
+    shared.ToggleAF=bool
+    spawn(function()
+        while shared.ToggleAF do local s,e=pcall(function()
+            for _=1,6,1 do
+                if GetCount(_)>=2 then Touch(Usables.Fusionador,0.3)print("Fusing x2")end
+            end
+            if fromSuffixString(PlayerData.Rebirths.Text)+6 then
+                for _=7,11,1 do
+                    if GetCount(_)>=3 then Touch(Usables.Fusionador,0.3)print("Fusing x3")end
                 end
             end
-        	wait(0.5)
-        end
-    end)
-end)
-Auto:Button("Give Items",function()
-    spawn(function()
-        for _,v in pairs(Tycoons:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("Tool") then
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0) firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1) wait()
+            if fromSuffixString(PlayerData.Rebirths.Text)+6 then
+                for _=12,12+6,1 do
+                    if GetCount(_)>=4 then Touch(Usables.Fusionador,0.3)print("Fusing x4")end
+                end
             end
+            --if GetCount(1)>=2 or GetCount(2)>=2 or GetCount(3)>=2 or GetCount(4)>=2 or GetCount(5)>=2 or GetCount(6)>=2 or GetCount(7)>=2 or GetCount(8)>=2 or GetCount(9)>=2 then Touch(Usables.Fusionador,0.3)end
+            task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
 
-Auto:Button("Remove Doors",function()
-    spawn (function()
-        for _,v in pairs(Tycoons:GetDescendants()) do
-            if v.Name == "OwnerOnlyDoor" then v:Destroy() end
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do Remotes.Pasante:FireServer("Rebirthear")task.wait(10)end
+    end)
+end)
+
+Auto:Toggle("Claim Hero",function(bool)
+    shared.ToggleAU=bool
+    spawn(function()
+        while shared.ToggleAU do
+            local texto=SpawnNinjaRegala2.Gui.TEXTO
+            if texto and texto.Text=="REDEEM FREE HEROE" then
+                for _,v in pairs(SpawnNinjaRegala2:GetChildren())do
+                    if v:FindFirstChild("TouchInterest")then Touch(v,0.3)end
+                end
+            end
+            task.wait()
         end
     end)
 end)
+
+Auto:Toggle("Auto Raid",function(bool)
+    shared.Toggle11=bool
+    spawn(function()
+        while shared.Toggle11 do local s,e=pcall(function()
+            if NpcsCombateTemp and #NpcsCombateTemp:GetChildren()>0 then
+                for _,v in pairs(NpcsCombateTemp:GetChildren())do
+                    if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid")then
+                        repeat v:FindFirstChild("HumanoidRootPart").CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame+Vector3.new(0,0,3)VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)task.wait()until not shared.Toggle11 or v:FindFirstChild("Humanoid").Health <=0
+                    end
+                end
+            end
+            task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Button("AFK",function()spawn(function()MoveTo(StandSensei.Circle,Vector3.new(0,3,0))end)end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
