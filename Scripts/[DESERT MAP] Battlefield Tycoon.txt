@@ -154,7 +154,8 @@ Auto:Toggle("Lock Position",function(bool)
         while shared.ToggleLP do local s,e=pcall(function()
             --print(Tycoon.Framework:GetChildren()[1].SpawnLocation)
             repeat task.wait() until #Tycoon.Framework:GetChildren()>0 and Tycoon.Framework:GetChildren()[1].SpawnLocation
-            repeat MoveTo(Tycoon.Framework:GetChildren()[1].SpawnLocation,Vector3.new(0,2.8,0))task.wait()until not shared.ToggleLP
+            local lockPoint=Tycoon.Framework:GetChildren()[1].SpawnLocation.CFrame+Vector3.new(0,2.8,0)
+            repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=lockPoint task.wait()until not shared.ToggleLP
             task.wait()end)task.wait()if not s then print(e)end
         end
     end)
