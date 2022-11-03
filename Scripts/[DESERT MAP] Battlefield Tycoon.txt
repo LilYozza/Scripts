@@ -18,7 +18,7 @@ if Player.PlayerGui:FindFirstChild("CurrencyShop")then Player.PlayerGui.Currency
 
 -->Non Return Functions<--
 local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player:WaitForChild("HumanoidRootPart")) GUI.StudsOffsetWorldSpace = Vector3.new(0,5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.Name TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function Touch(p,t)repeat task.wait()until Player.Character:WaitForChild("HumanoidRootPart")firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end
 
@@ -36,9 +36,9 @@ local Enemies=Tycoon:WaitForChild("Enemies")
 
 local function CountBtns()
     local count=0
-    for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetChildren())do
+    for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetChildren())do local s1,e1=pcall(function()
         if not v:FindFirstChild("Gamepass")then count=count+1 end
-    end 
+    end) end 
     return count
 end
 
@@ -47,23 +47,24 @@ local PlayerMoney=Player.PlayerGui.Interfaceleft.LeftStatPanel.Currency.currency
 local function RefreshVariables()Buttons=Tycoon:WaitForChild("Buttons")Models=Tycoon:WaitForChild("Models")Enemies=Tycoon:WaitForChild("Enemies")PlayerMoney=Player.PlayerGui.Interfaceleft.LeftStatPanel.Currency.currency end
 
 -->Check For Tycoon Change/Renewed
---Tycoon.Framework.ChildAdded:Connect(function()
---    spawn(function()local Count isLoading=true task.wait(10)repeat Count=CountBtns() print("Count MAIN",Count) task.wait(1)until Count>0 and Player.PlayerGui.Interfaceleft.LeftStatPanel.Currency.currency.Text~="0000"
---    RefreshVariables()print("########Renewed Variables########") isLoading=false end)
---end)
+Tycoon.Framework.ChildAdded:Connect(function()
+    spawn(function() repeat GetTycoon()task.wait()until Tycoon local Count isLoading=true task.wait(10)repeat Count=CountBtns() task.wait(1)until Count>0 and Player.PlayerGui.Interfaceleft.LeftStatPanel.Currency.currency.Text~="0000"
+    RefreshVariables() isLoading=false end)
+end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.ToggleAB=bool
     spawn(function()
         while shared.ToggleAB do local s,e=pcall(function() if not Buttons then RefreshVariables()end
-            for _,v in pairs(Buttons:GetChildren())do
+            if #Tycoon:FindFirstChild("Buttons"):GetChildren()>0 then
+            for _,v in pairs(Buttons:GetChildren())do local s1,e1=pcall(function()
                 if shared.ToggleAB and v:FindFirstChild("Outer") and v.Outer.Transparency==0 and v:FindFirstChild("Cost") and not v:FindFirstChild("Gamepass")then
                     --Value Check
                     if v.Button.BrickColor~=BrickColor.new("Slime green")then
                         if v.Cost.Value<=fromSuffixString(PlayerMoney.Text) then Touch(v.Outer,0.3)end
                     end
-                end 
-            end if Player.PlayerGui:FindFirstChild("CurrencyShop")then Player.PlayerGui.CurrencyShop.Enabled=false end
+                end end)
+            end if Player.PlayerGui:FindFirstChild("CurrencyShop")then Player.PlayerGui.CurrencyShop.Enabled=false end end
             task.wait()end)task.wait()if not s then print(e)end
         end
     end)
@@ -73,7 +74,8 @@ Auto:Toggle("Auto Soldiers",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do local s,e=pcall(function()if not Buttons then RefreshVariables()end
-            for _,v in pairs(Buttons:GetChildren())do
+            if #Tycoon:FindFirstChild("Buttons"):GetChildren()>0 then
+            for _,v in pairs(Buttons:GetChildren())do local s1,e1=pcall(function()
                 if shared.ToggleAS and v:FindFirstChild("Outer") and v.Outer.Transparency==0 and v:FindFirstChild("Cost") and not v:FindFirstChild("Gamepass")then
                     
                     if v.Name:match("Support")and fromSuffixString(PlayerMoney.Text)>=800 then
@@ -91,8 +93,8 @@ Auto:Toggle("Auto Soldiers",function(bool)
                     if v.Name:match("Machine Gun")and fromSuffixString(PlayerMoney.Text)>=600 then
                         Remotes.clientPurchase:InvokeServer(v, Categories["Machine Gun"]["Light Machinegun"])
                     end 
-                end
-            end if Player.PlayerGui:FindFirstChild("CurrencyShop")then Player.PlayerGui.CurrencyShop.Enabled=false end
+                end end)
+            end if Player.PlayerGui:FindFirstChild("CurrencyShop")then Player.PlayerGui.CurrencyShop.Enabled=false end end
             task.wait()end)task.wait()if not s then print(e)end
         end
     end)
@@ -102,11 +104,12 @@ Auto:Toggle("Auto Upgrade",function(bool)
     shared.ToggleAU=bool
     spawn(function()
         while shared.ToggleAU do local s,e=pcall(function()if not Models then RefreshVariables()end
-            for _,v in pairs(Models:GetChildren())do
+            if #Tycoon:FindFirstChild("Models"):GetChildren()>0 then
+            for _,v in pairs(Models:GetChildren())do local s1,e1=pcall(function()
                 if shared.ToggleAU and v:FindFirstChild("PP") and v:FindFirstChild("Upgrade") and v.Upgrade.Value<3 then
                     Remotes.upgradeUnit:InvokeServer(v)task.wait(0.3)
-                end
-            end task.wait()end)task.wait()if not s then print(e)end
+                end end)
+            end end task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
@@ -135,10 +138,23 @@ Auto:Toggle("Auto Rebirth",function(bool)
     shared.ToggleAR=bool
     spawn(function()
         while shared.ToggleAR do local s,e=pcall(function()if not Buttons then RefreshVariables()end
+            if #Tycoon:FindFirstChild("Buttons"):GetChildren()>0 then
             local Count1=CountBtns()
             if Count1==0 and not isLoading then
                 Remotes.loadMap:InvokeServer(Tycoon.Framework:GetChildren()[1].Name, true)
-            end
+            end end
+            task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Lock Position",function(bool)
+    shared.ToggleLP=bool
+    spawn(function()
+        while shared.ToggleLP do local s,e=pcall(function()
+            --print(Tycoon.Framework:GetChildren()[1].SpawnLocation)
+            repeat task.wait() until #Tycoon.Framework:GetChildren()>0 and Tycoon.Framework:GetChildren()[1].SpawnLocation
+            repeat MoveTo(Tycoon.Framework:GetChildren()[1].SpawnLocation,Vector3.new(0,2.8,0))task.wait()until not shared.ToggleLP
             task.wait()end)task.wait()if not s then print(e)end
         end
     end)
