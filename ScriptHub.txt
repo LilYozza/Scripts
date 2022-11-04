@@ -362,6 +362,10 @@ local Games = {
 	[10984838211] = {
 		Name = '[DESERT MAP] Battlefield Tycoon',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[DESERT%20MAP]%20Battlefield%20Tycoon.txt'
+	},
+	[10951003026] = {
+		Name = 'Bee Empire Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bee%20Empire%20Tycoon.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

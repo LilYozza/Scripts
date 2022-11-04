@@ -1,0 +1,192 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local ReplicatedStorage=game:GetService("ReplicatedStorage")
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+
+local Tycoon=Player.Tycoon.Value
+local Tycoons=Workspace:FindFirstChild("Tycoons")
+local HoneyFolder=Workspace:FindFirstChild("HoneyFolder")
+local Flowers=Workspace:FindFirstChild("Flowers")
+
+-->Tables<--
+local TypeTable={"+1 Bee","+5 Bees","+25 Bees"}
+local BeeTypes={"Pumpkin Bee","Honey Bee","Flower Bee","Water Bee","Robot Bee", "Forest Bee", "Iron Bee", "Gold Bee", "Diamond Bee", "Emerald Bee", "Rainbow Bee", "Soldier Bee", "Ninja Bee", "Ice Bee", "Demon Bee", "Galactic Bee"}
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) 
+    local suffixes = {"K", "M", "B", "T", "Q"} 
+    local found = false 
+    if s == "0" then return 0 end 
+    if s:match("$") then s = string.gsub(s, '%$', "") end 
+    if s:match(",") then s = string.gsub(s, '%,', "") end 
+    if s:match("+") then s = string.gsub(s, '%+', "") end
+    s=string.sub(s, 1, -2)..string.sub(s, -1, -1):upper()
+    for i, value in ipairs(suffixes) do
+        if s:match(value) then found = true end 
+    end 
+    if found == false then return tonumber(s) end
+    local n, suffix = string.match(s, "(.*)(%a)$") 
+    if n and suffix then 
+        local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) 
+    end 
+    return tonumber(s) 
+end
+
+-->Waiting For Data<--
+repeat Tycoon=Player.Tycoon.Value task.wait()until Tycoon
+
+-->Getting Player Data<--
+local PlayerData={Bees,Cash,Honeys,HoneyDrops}
+local function GetPlayerData()for _,v in pairs(Player.leaderstats:GetChildren())do if v.Name:match("Bees")then PlayerData.Bees=v end if v.Name:match("Cash")then PlayerData.Cash=v end if v.Name:match("Honeys")then PlayerData.Honeys=v end end PlayerData.HoneyDrops=Player.PlayerGui.Main.Honey.Count end
+repeat GetPlayerData()task.wait()until PlayerData.Bees and PlayerData.Cash and PlayerData.Honeys and PlayerData.HoneyDrops
+
+-->Post Variables<--
+local Essentials=Tycoon:FindFirstChild("Essentials")
+local Buttons=Tycoon:FindFirstChild("Buttons")
+local Floors=Tycoon:FindFirstChild("Floors")
+
+local DepositePollens=Buttons:FindFirstChild("Deposite Pollens")
+local Merge=Buttons:FindFirstChild("Merge")
+local DepositeHoneys=Buttons:FindFirstChild("Deposite Honeys")
+local SellRate for _,v in pairs(Buttons:GetChildren())do if v.Name:match("Sell Rate")then SellRate=v break end end
+
+local SelectType=Buttons:FindFirstChild("+1 Bee")
+
+local Backpack=Player.PlayerGui.Main.Backpack
+-->Post Functions<--
+local function GetCount(floorNum,Type)
+    local count=0 
+    if Floors:FindFirstChild(tostring(floorNum)) and Floors:FindFirstChild(tostring(floorNum)):FindFirstChild("Bees") then
+        for _,v in pairs(Floors:FindFirstChild(tostring(floorNum)).Bees:GetChildren())do 
+            if #v:GetChildren()>0 and v:GetChildren()[1].Name==Type then 
+                count=count+1 
+            end 
+        end 
+    end 
+    return count 
+end
+local function CheckPrice(btn)local price=btn.LabelUI.LabelPrice.Text if price:match("color")then price=price:split(">")[2]:split("</")[1] end if fromSuffixString(price)<=fromSuffixString(PlayerData.Cash.Value) then return true end end
+
+--[[
+local CollectBack
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        if shared.ToggleAC then
+            CollectBack=Essentials.AutoCollect.CFrame
+            Essentials.AutoCollect.CFrame= Essentials.AutoCollect.CFrame+Vector3.new(0,6,0)
+        else
+            Essentials.AutoCollect.CFrame=CollectBack
+        end
+    end)
+end)
+]]--
+Auto:Button("Home",function()
+    spawn(function()MoveTo(Tycoon.SpawnLocation,Vector3.new(0,2,0))end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do 
+            for _,v in pairs(HoneyFolder:GetChildren())do
+                if v:IsA("BasePart")then v.CFrame=Player.Character:WaitForChild("HumanoidRootPart").CFrame end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Deposit Honey",function(bool)
+    shared.ToggleAD=bool
+    spawn(function()
+        while shared.ToggleAD do local s,e=pcall(function()
+            if fromSuffixString(PlayerData.HoneyDrops.Text)>0 then Touch(DepositeHoneys.Button,0.3)end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+local SelectBuyList = Auto:Dropdown("+1 Bee",TypeTable,true,function(SItem)
+    SelectType=Buttons:FindFirstChild(SItem)
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do local s,e=pcall(function()
+            if SelectType and CheckPrice(SelectType.Button) then Touch(SelectType.Button,0.3)end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleAU=bool
+    spawn(function()
+        while shared.ToggleAU do local s,e=pcall(function()
+            if SellRate and CheckPrice(SellRate.Button)then Touch(SellRate.Button,0.3)end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Merge",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do local s,e=pcall(function()
+            for i=1, #Floors:GetChildren()-1, 1 do
+                for _,v in pairs(BeeTypes)do
+                    --print("Floor:",i)print("Bee:",v)print("Count:",GetCount(i,v))
+                    if GetCount(i,v)>=3 then Touch(Merge.Button,0.3)print("Merging",v)end
+                end task.wait()
+            end
+            task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+--########## TO DO CHECK IF FLOWER IS READY
+Auto:Toggle("Auto Harvest ",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do local s,e=pcall(function()
+            for _,v in pairs(Flowers:GetChildren())do
+                if shared.ToggleAH and v.Model.Leaf.BrickColor==BrickColor.new('Institutional white') then
+                    ReplicatedStorage.Common["_packages"]["_Index"]["sleitnick_knit@1.4.7"].knit.Services.FlowerService.RE.CollectFlower:FireServer(v.Name)task.wait(0.1)
+                end
+            end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Deposit Pollen",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do local s,e=pcall(function()
+            if Backpack.Visible==true and Backpack.Count.Text:match("/") and fromSuffixString(Backpack.Count.Text:split("/")[1])>0 then
+                Touch(DepositePollens.Button,0.3)
+            end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+if Workspace:FindFirstChild("Candies")then local Candies= Workspace:FindFirstChild("Candies") Auto:Toggle("Collect Candy",function(bool)
+    shared.ToggleCC=bool
+    spawn(function()
+        while shared.ToggleCC do local s,e=pcall(function()
+            for _,v in pairs(Candies:GetChildren())do
+                if shared.ToggleCC and v.Model:FindFirstChild("Head").Transparency==0 then
+                    ReplicatedStorage.Common["_packages"]["_Index"]["sleitnick_knit@1.4.7"].knit.Services.CandyService.RE.CollectCandy:FireServer(v.Name)task.wait(0.1)
+                end
+            end task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)end
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
