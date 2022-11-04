@@ -37,13 +37,7 @@ local Buttons=Tycoon:WaitForChild("Buttons")
 local Models=Tycoon:WaitForChild("Models")
 local Enemies=Tycoon:WaitForChild("Enemies")
 
-local function CountBtns()
-    local count=0
-    for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetChildren())do
-        if not v:FindFirstChild("Gamepass")then count=count+1 end
-    end 
-    return count
-end
+local function CountBtns()local count=0 for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetChildren())do if not v:FindFirstChild("Gamepass")then count=count+1 end end return count end
 
 -->Player Data<--
 local PlayerMoney=Player.PlayerGui.Interfaceleft.LeftStatPanel.Currency.currency
@@ -54,6 +48,13 @@ local function RefreshVariables()Buttons=Tycoon:WaitForChild("Buttons")Models=Ty
 --    spawn(function() repeat GetTycoon()task.wait()until Tycoon local Count isLoading=true task.wait(10)repeat Count=CountBtns() task.wait(1)until Count>0 and Player.PlayerGui.Interfaceleft.LeftStatPanel.Currency.currency.Text~="0000"
 --    RefreshVariables() isLoading=false end)
 --end)
+
+Auto:Button("Home",function()
+    spawn(function()
+        repeat task.wait() until #Tycoon.Framework:GetChildren()>0 and Tycoon.Framework:GetChildren()[1].SpawnLocation
+        MoveTo(Tycoon.Framework:GetChildren()[1].SpawnLocation,Vector3.new(0,2.8,0))
+    end)
+end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.ToggleAB=bool
@@ -160,9 +161,7 @@ Auto:Toggle("Lock Position",function(bool)
     shared.ToggleLP=bool
     spawn(function()
         while shared.ToggleLP do local s,e=pcall(function()
-            --print(Tycoon.Framework:GetChildren()[1].SpawnLocation)
-            repeat task.wait() until #Tycoon.Framework:GetChildren()>0 and Tycoon.Framework:GetChildren()[1].SpawnLocation
-            local lockPoint=Tycoon.Framework:GetChildren()[1].SpawnLocation.CFrame+Vector3.new(0,2.8,0)
+            local lockPoint=Player.Character:WaitForChild("HumanoidRootPart").CFrame
             repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=lockPoint task.wait()until not shared.ToggleLP
             task.wait()end)task.wait()if not s then print(e)end
         end
