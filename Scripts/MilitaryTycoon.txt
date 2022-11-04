@@ -35,6 +35,7 @@ if Player.PlayerGui:FindFirstChild("Store") then Player.PlayerGui.Store.Enabled=
 if CoreGui:FindFirstChild("PurchasePrompt")then CoreGui.PurchasePrompt.Enabled=false end
 
 --Non Return Functions
+local function CreateTag(c,p)GUI = Instance.new("BillboardGui", p)GUI.Name="Tag" GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)GUI.AlwaysOnTop = true GUI.Size = UDim2.new(0,100,0, 50)TextLabel = Instance.new("TextLabel", GUI)TextLabel.Text =  p.Name TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0)end
 local function MoveTo(p,t)local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+Vector3.new(0,3,0) task.wait(t) Player.Character:WaitForChild("HumanoidRootPart").CFrame=back end
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function GetTycoon()for _,v in pairs(PlayerTycoons:GetChildren())do if v.TycoonVals.Owner.Value==Player then Tycoon=v break end end end
@@ -148,6 +149,19 @@ Auto:Button("Control Points",function()
                 repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=v.Hitbox.CFrame task.wait()until v.Hitbox.Owner.Value==Player or not Player.Character:FindFirstChild("HumanoidRootPart")
             end
         end Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+    end)
+end)
+
+local MissileConnection
+Auto:Toggle("Show Missiles",function(bool)
+    shared.toggleSM = bool
+    spawn (function()
+        if shared.toggleSM then
+            MissileConnection = Workspace.ChildAdded:Connect(function(v)
+            if v.Name=="F18Missile" then CreateTag(Color3.new(0, 0, 255),v)end
+            end)
+        elseif MissileConnection then MissileConnection:Disconnect()
+        end
     end)
 end)
 
