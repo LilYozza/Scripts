@@ -14,7 +14,7 @@ local Lobbies=Workspace:FindFirstChild("Lobbies")
 local CoreGui=game:GetService("CoreGui")
 
 -->Ads Removal<--
-if Player.PlayerGui.Main:FindFirstChild("NotEnoughWebs") then game:GetService("Players").ActuallySaltylol.PlayerGui.Main.NotEnoughWebs:Destroy()end
+if Player.PlayerGui.Main:FindFirstChild("NotEnoughWebs") then Player.PlayerGui.Main.NotEnoughWebs:Destroy()end
 if CoreGui:FindFirstChild("PurchasePrompt") then CoreGui.PurchasePrompt.Enabled=false end
 
 -->Non Return Functions<--
