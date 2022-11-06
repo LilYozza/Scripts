@@ -378,6 +378,10 @@ local Games = {
 	[8482713490] = {
 		Name = 'Forgotten Memories',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Forgotten%20Memories.txt'
+	},
+	[6828235261] = {
+		Name = 'FNAF Coop',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FNAF%20Coop.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
