@@ -1,6 +1,132 @@
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main") StatusWindow=library:CreateWindow("Status")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local mouse = game.Players.LocalPlayer:GetMouse()
 
 local Auto = w:CreateFolder("Auto")
+local StatusFolder=StatusWindow:CreateFolder("Status")
+local Options=StatusWindow:CreateFolder("Options")
+
+-->Base Variables<--
+local TopGen,BottomGen,ShowTags,InstantPromptOn
+local WorkspaceUtilities=Workspace:WaitForChild("WorkspaceUtilities")
+
+local VentsLever=WorkspaceUtilities:WaitForChild("VentsLever")
+local Curtains=WorkspaceUtilities:WaitForChild("Curtains")
+--local Marionette=Workspace:WaitForChild("Marionette")
+
+-->Tables<--
+local PromptTable={TopGenPrompt,BottomGenPrompt,VentPrompt,CurtainPrompt}
+
+-->Finding Data<--
+local function GetGenerators()for _,v in pairs(WorkspaceUtilities:GetChildren())do if v.Name=="Generator"and v:FindFirstChild("Properties")then if v.Properties.Location.Value=="North" then BottomGen=v end if v.Properties.Location.Value=="West" then TopGen=v end end end end
+repeat GetGenerators()task.wait()until TopGen and BottomGen
+
+local function GetPrompts()
+    if not PromptTable.TopGenPrompt or not PromptTable.BottomGen or not PromptTable.VentPrompt or not PromptTable.CurtainPrompt then
+        --PromptTable.TopGenPrompt=
+    end
+end
+
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function CreateTag(p,str)GUI = Instance.new("BillboardGui", p)GUI.Name="Tag" GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)GUI.AlwaysOnTop = true GUI.Size = UDim2.new(0,100,0, 50)TextLabel = Instance.new("TextLabel", GUI)TextLabel.Text =str TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = Color3.new(0, 255, 0) TextLabel.Size = UDim2.new(1,0,1,0)end
+
+
+-->Return Functions<--
+local function GetBoolGen(b)if b then return "OFF" else return "ON" end end
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+-->Status Window<--
+-->===========================Top Generator(West)========================================<--
+local TopGeneratorLabel=StatusFolder:Label("Top Generator: ...",{
+TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+TopGeneratorLabel:Refresh("Top Generator: "..GetBoolGen(TopGen.Properties.Shutdown.Value))
+if ShowTags and TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,"Turn On TopGen")end
+-->Connecting Listener<--
+local TopGeneratorLabel=TopGen.Properties.Shutdown.Changed:Connect(function()
+    TopGeneratorLabel:Refresh("Top Generator: "..GetBoolGen(TopGen.Properties.Shutdown.Value))
+    if ShowTags and TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,"Turn On TopGen")
+    else if TopGen.DoorClose:FindFirstChild("Tag")then TopGen.DoorClose.Tag:Destroy()end end
+end)
+-->======================================================================================<--
+
+-->===================Bottom Generator(South)(North)=====================================<--
+local BottomGeneratorLabel=StatusFolder:Label("Bottom Generator: ...",{
+TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+BottomGeneratorLabel:Refresh("Bottom Generator: "..GetBoolGen(TopGen.Properties.Shutdown.Value))
+if ShowTags and BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,"Turn On BottomGen")end
+-->Connecting Listener<--
+local SouthGenConnection=BottomGen.Properties.Shutdown.Changed:Connect(function()
+    BottomGeneratorLabel:Refresh("Bottom Generator: "..GetBoolGen(BottomGen.Properties.Shutdown.Value))
+    if ShowTags and BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,"Turn On BottomGen")
+    else if BottomGen.DoorClose:FindFirstChild("Tag")then BottomGen.DoorClose.Tag:Destroy()end end
+end)
+-->======================================================================================<--
+
+-->==============================Ventilation=============================================<--
+local VentilationLabel=StatusFolder:Label("Ventilation: ...",{
+TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+VentilationLabel:Refresh("Ventilation: "..GetBoolGen(VentsLever.Properties.Shutdown.Value))
+if ShowTags and VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,"Turn On Vent")end
+-->Connecting Listener<--
+local VentilationConnection=VentsLever.Properties.Shutdown.Changed:Connect(function()
+    VentilationLabel:Refresh("Ventilation: "..GetBoolGen(VentsLever.Properties.Shutdown.Value))
+    if ShowTags and VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,"Turn On Vent")
+    else if VentsLever.InteractPart:FindFirstChild("Tag")then VentsLever.InteractPart.Tag:Destroy()end end
+end)
+-->======================================================================================<--
+
+--[[
+local PuppetCFrame=CFrame.new(-78.157402, 0.0721008182, -165.951859, -1, 0, 0, 0, 1, 0, 0, 0, -1)
+-->==============================The Puppet==============================================<--
+local PuppetLabel=StatusFolder:Label("The Puppet: ...",{
+TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+if Marionette.RootPart.CFrame==PuppetCFrame then PuppetLabel:Refresh("The Puppet: HIDDEN")else PuppetLabel:Refresh("The Puppet: SHOWN")end
+if Marionette.RootPart.CFrame~=PuppetCFrame and not Curtains.InteractPart:FindFirstChild("Tag") then CreateTag(Curtains.InteractPart,"Close Curtains")end
+-->Connecting Listener<--
+local PuppetConnection=Marionette.RootPart.Changed:Connect(function()
+    print("Changed")
+    if Marionette.RootPart.CFrame~=PuppetCFrame then
+        PuppetLabel:Refresh("The Puppet: SHOWN")
+        if not Curtains.InteractPart:FindFirstChild("Tag") then CreateTag(Curtains.InteractPart,"Close Curtains")end
+    elseif Marionette.RootPart.CFrame==PuppetCFrame then
+        PuppetLabel:Refresh("The Puppet: HIDDEN")
+        if Curtains.InteractPart:FindFirstChild("Tag") then Curtains.InteractPart.Tag:Destroy()end 
+    end
+end)
+-->======================================================================================<--
+--]]
+
+local F1Connection = mouse.KeyDown:connect(function(k)
+    if k=="e" and InstantPromptOn then
+        
+    end
+end)
+
+Options:Toggle("Show Tags",function(bool)
+    shared.ToggleST=bool
+    spawn(function()
+        if shared.ToggleST then ShowTags=true
+            if TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,"Turn On TopGen")end
+            if BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,"Turn On BottomGen")end
+            if VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,"Turn On Vent")end
+        else ShowTags=false
+            for _,v in pairs(Workspace:GetDescendants())do
+                if v:IsA("TextLabel")and v.Parent.Name=="Tag" then v.Parent:Destroy()end
+            end
+        end
+    end)
+end)
+
+--[[
+Options:Toggle("Inst Prompt",function(bool)
+    shared.ToggleIP=bool InstantPromptOn=bool
+end)
+--]]
 
 Auto:Button("Other",function()
     spawn(function()
