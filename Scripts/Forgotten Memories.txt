@@ -11,7 +11,7 @@ local StatusFolder=StatusWindow:CreateFolder("Status")
 local Options=StatusWindow:CreateFolder("Options")
 
 -->Base Variables<--
-local TopGen,BottomGen,ShowTags,InstantPromptOn,AreaSelect
+local TopGen,BottomGen,ShowTags,InstantPromptOn,AreaSelect,MarionetteIsIn
 local Spawns=Workspace:WaitForChild("Spawns")
 local WorkspaceUtilities=Workspace:WaitForChild("WorkspaceUtilities")
 
@@ -90,7 +90,7 @@ end)
 -->==============================The Puppet==============================================<--
 local InBox=CFrame.new(-78.157402, 0.0721008182, -165.951859, -1, 0, 0, 0, 1, 0, 0, 0, -1)
 local Marionette=Workspace:WaitForChild("Marionette")
- if Marionette then local PuppetLabel=StatusFolder:Label("The Puppet: IN BOX",{
+ if Marionette then MarionetteIsIn=true local PuppetLabel=StatusFolder:Label("The Puppet: IN BOX",{
 TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
 
 -->Connecting Listener<--
@@ -145,7 +145,7 @@ Options:Toggle("Show Tags",function(bool)
             if TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,StatusColors,"Turn On TopGen")end
             if BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,StatusColors,"Turn On BottomGen")end
             if VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,StatusColors,"Turn On Vent")end
-            if Workspace:FindFirstChild("Marionette")and Workspace.Marionette.RootPart.CFrame~=InBox and not Curtains.InteractPart:FindFirstChild("Tag")then CreateTag(Curtains.InteractPart,StatusColors,"Puppet Missing")end
+            if Workspace:FindFirstChild("Marionette")and Workspace.Marionette.RootPart.CFrame~=InBox and not Curtains.InteractPart:FindFirstChild("Tag") or not Workspace:FindFirstChild("Marionette") and MarionetteIsIn and not Curtains.InteractPart:FindFirstChild("Tag")then CreateTag(Curtains.InteractPart,StatusColors,"Puppet Missing")end
         else ShowTags=false
             for _,v in pairs(Workspace:GetDescendants())do
                 if v:IsA("TextLabel")and v.Parent.Name=="Tag" then v.Parent:Destroy()end
