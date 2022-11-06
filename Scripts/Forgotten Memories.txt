@@ -19,7 +19,6 @@ local VentsLever=WorkspaceUtilities:WaitForChild("VentsLever")
 local Curtains=WorkspaceUtilities:WaitForChild("Curtains")
 local BatteryPositions=WorkspaceUtilities:WaitForChild("BatteryPositions")
 local GoldenFreddySpawnPositions=WorkspaceUtilities:WaitForChild("GoldenFreddySpawnPositions")
---local Marionette=Workspace:WaitForChild("Marionette")
 
 -->Tables<--
 local AreaTeleports={Office,TopGenerator,BottomGenerator,Arcade}
@@ -88,6 +87,28 @@ local VentilationConnection=VentsLever.Properties.Shutdown.Changed:Connect(funct
 end)
 -->======================================================================================<--
 
+-->==============================The Puppet==============================================<--
+local InBox=CFrame.new(-78.157402, 0.0721008182, -165.951859, -1, 0, 0, 0, 1, 0, 0, 0, -1)
+local Marionette=Workspace:WaitForChild("Marionette")
+ if Marionette then local PuppetLabel=StatusFolder:Label("The Puppet: IN BOX",{
+TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+
+-->Connecting Listener<--
+local PuppetConnection1=Workspace.ChildRemoved:Connect(function(obj)
+    if obj.Name=="Marionette" and not Workspace:FindFirstChild("Marionette")then
+        PuppetLabel:Refresh("The Puppet: MISSING")
+        if ShowTags and not Curtains.InteractPart:FindFirstChild("Tag")then CreateTag(Curtains.InteractPart,StatusColors,"Puppet Missing")end
+    end
+end)
+
+local PuppetConnection2=Workspace.ChildAdded:Connect(function(obj)task.wait()
+    if obj.Name=="Marionette" and obj:FindFirstChild("RootPart") and obj.RootPart.CFrame==InBox then
+        PuppetLabel:Refresh("The Puppet: IN BOX")
+        if Curtains.InteractPart:FindFirstChild("Tag") then Curtains.InteractPart.Tag:Destroy()end
+    end
+end)end
+-->======================================================================================<--
+
 --[[
 local PuppetCFrame=CFrame.new(-78.157402, 0.0721008182, -165.951859, -1, 0, 0, 0, 1, 0, 0, 0, -1)
 -->==============================The Puppet==============================================<--
@@ -124,6 +145,7 @@ Options:Toggle("Show Tags",function(bool)
             if TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,StatusColors,"Turn On TopGen")end
             if BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,StatusColors,"Turn On BottomGen")end
             if VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,StatusColors,"Turn On Vent")end
+            if Workspace:FindFirstChild("Marionette")and Workspace.Marionette.RootPart.CFrame~=InBox and not Curtains.InteractPart:FindFirstChild("Tag")then CreateTag(Curtains.InteractPart,StatusColors,"Puppet Missing")end
         else ShowTags=false
             for _,v in pairs(Workspace:GetDescendants())do
                 if v:IsA("TextLabel")and v.Parent.Name=="Tag" then v.Parent:Destroy()end
