@@ -1,0 +1,140 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+-->Resource Window<--
+local Res=library:CreateWindow("Resources")
+local Main=Res:CreateFolder("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function TouchPart(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+-->Player Data<--
+local PBag=Player.PlayerGui.HudGui.Frame.LeftFrame.BagBg.TextLabel
+
+-->Resource Window<--
+local FlingLabel=Main:Label("TEXT",{
+    TextSize = 20;
+    TextColor = Color3.fromRGB(255,0,0);
+    BgColor = Color3.fromRGB(0,0,0);
+    
+})
+
+local DiamondConnection
+Auto:Toggle("Diamond Rain",function(bool)
+    shared.ToggleDR=bool
+    spawn(function()
+        if shared.ToggleDR then
+            DiamondConnection=Workspace.ChildAdded:Connect(function(obj)
+                for _,v in pairs(Workspace:GetChildren())do if v:FindFirstChild("baoshi") and v.baoshi:FindFirstChild("TouchInterest") then Touch(v.baoshi,0.3) end end
+                if obj:FindFirstChild("baoshi") and obj.baoshi:FindFirstChild("TouchInterest")then
+                    Touch(obj.baoshi)
+                end
+            end)
+        else
+            if DiamondConnection then DiamondConnection:Disconnect()end
+        end
+    end)
+end)
+
+--[[
+Auto:Toggle("Auto Mine",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do local s,e=pcall(function()
+            for _,v in pairs(Workspace:GetChildren())do
+                if shared.ToggleAM and v:FindFirstChild("mine") and #v.mine:GetChildren()>0 then
+                    for i,p in pairs(v.mine:GetChildren())do
+                        if shared.ToggleAM and p:IsA("BasePart")then p.CanCollide=false p.CFrame=Player.Character:WaitForChild("true_Collider").CFrame task.wait(0.5) end
+                        --if shared.ToggleAM and p:IsA("BasePart")then TouchPart(p,Player.Character:WaitForChild("thorn_collider")) end
+                    end
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+--]]
+
+Auto:Toggle("Auto Mine",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do local s,e=pcall(function()
+            for _,v in pairs(Workspace:GetChildren())do
+                if shared.ToggleAM and fromSuffixString(PBag.Text:split("/")[1])<fromSuffixString(PBag.Text:split("/")[2]) and v:FindFirstChild("mine") and #v.mine:GetChildren()>0 then
+                    for i,p in pairs(v.mine:GetChildren())do
+                        --if shared.ToggleAM and p:IsA("BasePart")then for j,k in pairs(p:GetChildren())do k:Destroy() end p.Transparency=1 p.CanCollide=false p.CFrame=Player.Character:WaitForChild("true_Collider").CFrame task.wait(0.2) end
+                        if shared.ToggleAM and p:IsA("BasePart")then for j,k in pairs(p:GetChildren())do k:Destroy() end p.Transparency=1  TouchPart(p,Player.Character:WaitForChild("thorn_collider")) end
+                    end
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Better Mine",function(bool)
+    shared.ToggleBM=bool
+    spawn(function()
+        while shared.ToggleBM do local s,e=pcall(function()
+            for _,v in pairs(Workspace:GetChildren())do
+                if shared.ToggleBM and fromSuffixString(PBag.Text:split("/")[1])<fromSuffixString(PBag.Text:split("/")[2]) and v:FindFirstChild("brick") and #v.brick:GetChildren()>0 then
+                    for i,p in pairs(v.brick:GetChildren())do
+                        --if shared.ToggleBM and p:IsA("BasePart")then for j,k in pairs(p:GetChildren())do k:Destroy() end p.Transparency=1 p.CanCollide=false p.CFrame=Player.Character:WaitForChild("true_Collider").CFrame end
+                        if shared.ToggleBM and p:IsA("BasePart")then for j,k in pairs(p:GetChildren())do k:Destroy() end p.Transparency=1  TouchPart(p,Player.Character:WaitForChild("thorn_collider")) end
+                    end
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do local s,e=pcall(function()
+            for _,v in pairs(Workspace:GetChildren())do
+                if shared.ToggleAC and v:FindFirstChild("collection") and #v.collection:GetChildren()>0 then
+                    for i,p in pairs(v.collection:GetChildren())do
+                        --if shared.ToggleAC and p:IsA("BasePart")then p.CanCollide=false p.CFrame=Player.Character:WaitForChild("true_Collider").CFrame end
+                        if shared.ToggleAC and p:IsA("BasePart")then p.Transparency=1 TouchPart(p,Player.Character:WaitForChild("collider")) end
+                    end
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+local AntColliderConnection
+Auto:Button("Better Ant",function()
+    spawn(function()Player.Character:WaitForChild("thorn_collider").Size=Vector3.new(50,9,9)
+        AntColliderConnection=Player.Character:WaitForChild("thorn_collider").Changed:Connect(function(ChangedProperty)
+            if ChangedProperty=="Size" then Player.Character:WaitForChild("thorn_collider").Size=Vector3.new(50,9,9) print("Changed Back")end
+        end)
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+
+--[[
+for _=1,100,1 do
+local args = {
+    [1] = "gacha_pet",
+    [2] = {
+        ["3"] = 1000
+    }
+}
+game:GetService("ReplicatedStorage").RemoteFunction:InvokeServer(unpack(args)) end
+--]]
