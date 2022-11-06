@@ -6,57 +6,48 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 local Tycoon, SCollect
-local TycoonKit = workspace:FindFirstChild("Zednov's Tycoon Kit")
-local Tycoons = TycoonKit:FindFirstChild("Tycoons")
+local TycoonKit=workspace:FindFirstChild("Zednov's Tycoon Kit")
+local Tycoons=TycoonKit:FindFirstChild("Tycoons")
 
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+-->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v:FindFirstChild("Owner") and v.Owner.Value==Player then Tycoon=v break end end end GetTycoon()
 
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
-function GetTycoon()
-    for _,v in pairs(Tycoons:GetDescendants()) do
-        if v:IsA("ObjectValue") and v.Value == Player then
-            Tycoon = v.Parent
-        end
-    end
-end GetTycoon()
+-->Waiting For Data<--
+repeat GetTycoon()task.wait()until Tycoon
+
+-->Post Variables<--
+local Essentials=Tycoon:FindFirstChild("Essentials")
+local Buttons=Tycoon:FindFirstChild("Buttons")
+
+Auto:Button("Home",function()
+    spawn (function()MoveTo(Essentials.Spawn,Vector3.new(0,2,0))end)
+end)
 
 Auto:Toggle("Auto Collect",function(bool)
-    shared.toggle1 = bool
-    spawn (function()
-        if not Tycoon then GetTycoon() end
-        while shared.toggle1 do
-            for _,v in pairs(Tycoon:FindFirstChild("Essentials"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Giver") and shared.toggle1 then
-                    Touch(v.Parent,1)break
-                end
-            end
-        	task.wait()
-        end
-    end)
+    shared.toggleAC = bool
+    spawn (function()while shared.toggleAC do Touch(Essentials.Giver,1)end end)
 end)
+
 Auto:Toggle("Smart Collect",function(bool)
-    shared.toggle2 = bool
-    SCollect = shared.toggle2
+    shared.toggle2 = bool SCollect = shared.toggle2
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle3 = bool
     spawn (function()
-        if not Tycoon then GetTycoon() end
-        while shared.toggle3 do
-            for _,v in pairs(Tycoon:FindFirstChild("Buttons"):GetDescendants()) do
-                if v:IsA("TouchTransmitter") and v.Parent.Transparency == 0 and shared.toggle3 and not v.Parent.Parent:FindFirstChild("Gamepass") then
-                    if SCollect and v.Parent.Parent:FindFirstChild("Price").Value <= fromSuffixString(Player.leaderstats.Cash.Value) + Tycoon:FindFirstChild("CurrencyToCollect").Value then
-                        Touch(Tycoon.Essentials.Giver)
-                    end
-                    if v.Parent.Parent:FindFirstChild("Price").Value <= fromSuffixString(Player.leaderstats.Cash.Value) then
-                        Touch(v.Parent,0.5)
-                    end
-                    
+        while shared.toggle3 do local s,e=pcall(function()
+            for _,v in pairs(Buttons:GetChildren())do
+                if v:FindFirstChild("Head") and v.Head.Transparency==0 and v:FindFirstChild("Price") and not v:FindFirstChild("Gamepass")then
+                    if SCollect and v.Price.Value<=fromSuffixString(Player.leaderstats.Cash.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver)end
+                    if v.Price.Value<=fromSuffixString(Player.leaderstats.Cash.Value)then Touch(v.Head,0.3)end
                 end
             end
-        	wait()
+        	task.wait()end)task.wait()if not s then print(e)end
         end
     end)
 end)
@@ -64,16 +55,15 @@ end)
 Auto:Toggle("Auto Rebirth",function(bool)
     shared.toggle1 = bool
     spawn (function()
-        if not Tycoon then GetTycoon() end
         while shared.toggle1 do
-        	wait()
+        	task.wait()
         end
     end)
 end)
 
 Auto:Button("Give Items(WIP)",function()
     spawn(function()
-        for _,v in pairs(workspace:GetDescendants()) do
+        for _,v in pairs(Workspace:GetDescendants()) do
             if v:IsA("ClickDetector") and not v:FindFirstAncestor("CameraSystem2") then
                 fireclickdetector(v)    
             end
