@@ -1,0 +1,85 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local carts=Workspace:FindFirstChild("carts")
+local PlayerSelect="All"
+
+-->Tables<--
+local PlayerList={"All"}
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+Auto:Button("Op Cart",function()
+    spawn(function()local s,e=pcall(function()
+        local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
+        if PCart then 
+            for _,v in pairs(PCart.Parent:GetDescendants())do
+                if v.Name=="gray" and v:IsA("BasePart")then v.Transparency=1 v.Size=Vector3.new(10,1,1)end
+            end
+            repeat fireclickdetector(PCart.Parent.Up.Click)task.wait()until PCart.Parent.Speed.Value>=550
+        end end)if not s then print(e)end
+    end)
+end)
+
+local PlayerDropList = Auto:Dropdown("All",PlayerList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    PlayerSelect = SItem
+end)
+
+Auto:Toggle("Speed Up",function(bool)
+    shared.ToggleSU=bool
+    spawn(function()
+        while shared.ToggleSU do local s,e=pcall(function()
+            local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
+            if PlayerSelect=="All"then
+                for _,v in pairs(carts:GetDescendants())do
+                    if shared.ToggleSU and v.Parent~=PCart.Parent and v.Name=="Up" and v:FindFirstChild("Click")then
+                        fireclickdetector(v.Click)
+                    end
+                end
+            end
+            task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Speed Down",function(bool)
+    shared.ToggleSD=bool
+    spawn(function()
+        while shared.ToggleSD do local s,e=pcall(function()
+            local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
+            if PlayerSelect=="All"then
+                for _,v in pairs(carts:GetDescendants())do
+                    if shared.ToggleSD and v.Parent~=PCart.Parent and v.Name=="Down" and v:FindFirstChild("Click")then
+                        fireclickdetector(v.Click)
+                    end
+                end
+            end
+            task.wait()end)task.wait()if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Button("Break",function()
+    spawn(function()
+    if PlayerSelect=="All"then
+        local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
+        for _,v in pairs(carts:GetDescendants())do
+            if v.Name=="On" and v.Parent~=PCart.Parent and  v:FindFirstChild("Click")then
+                fireclickdetector(v.Click)
+            end
+        end
+    end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
