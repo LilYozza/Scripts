@@ -6,7 +6,8 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
 
-local Auto = w:CreateFolder("Features")
+local Features = w:CreateFolder("Features")
+local Auto=w:CreateFolder("Auto")
 local StatusFolder=StatusWindow:CreateFolder("Status")
 local Options=StatusWindow:CreateFolder("Options")
 
@@ -18,10 +19,10 @@ local WorkspaceUtilities=Workspace:WaitForChild("WorkspaceUtilities")
 local VentsLever=WorkspaceUtilities:WaitForChild("VentsLever")
 local Curtains=WorkspaceUtilities:WaitForChild("Curtains")
 local BatteryPositions=WorkspaceUtilities:WaitForChild("BatteryPositions")
-local GoldenFreddySpawnPositions=WorkspaceUtilities:WaitForChild("GoldenFreddySpawnPositions")
+local GoldenFreddySpawnPositions=WorkspaceUtilities:WaitForChild("GoldenFreddySpawnPositions",1)
 
 -->Tables<--
-local AreaTeleports={Office,TopGenerator,BottomGenerator,Arcade}
+local AreaTeleports={Office,TopGenerator,BottomGenerator,Arcade,ACurtians}
 --local PromptTable={TopGenPrompt,BottomGenPrompt,VentPrompt,CurtainPrompt}
 
 -->Colors<--
@@ -32,17 +33,19 @@ local GoldenFreddySpawnColors=Color3.new(212,175,55)
 -->Finding Data<--
 local function GetGenerators()for _,v in pairs(WorkspaceUtilities:GetChildren())do if v.Name=="Generator"and v:FindFirstChild("Properties")then if v.Properties.Location.Value=="North" then BottomGen=v end if v.Properties.Location.Value=="West" then TopGen=v end end end end
 repeat GetGenerators()task.wait()until TopGen and BottomGen
+local function GetInteract(p)for _,v in pairs(p:GetChildren())do if v.Name=="InteractPart" and v:FindFirstChild("Type")and v.Type.Value=="Generator" then return v end end end
 
 AreaTeleports.Office=Spawns:FindFirstChild("SpawnLocation")
-AreaTeleports.TopGenerator=TopGen:FindFirstChild("InteractPart")
-AreaTeleports.BottomGenerator=BottomGen:FindFirstChild("InteractPart")
+AreaTeleports.TopGenerator=GetInteract(TopGen)
+AreaTeleports.BottomGenerator=GetInteract(BottomGen)
 AreaTeleports.Arcade=VentsLever:FindFirstChild("InteractPart")
+AreaTeleports.ACurtians=Curtains:FindFirstChild("InteractPart")
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 local function CreateTag(p,color,str)GUI = Instance.new("BillboardGui", p)GUI.Name="Tag" GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)GUI.AlwaysOnTop = true GUI.Size = UDim2.new(0,100,0, 50)TextLabel = Instance.new("TextLabel", GUI)TextLabel.Text =str TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = color TextLabel.Size = UDim2.new(1,0,1,0)end
-
+local function Timer(t)task.wait(t)return true end
 
 -->Return Functions<--
 local function GetBoolGen(b)if b then return "OFF" else return "ON" end end
@@ -109,26 +112,6 @@ local PuppetConnection2=Workspace.ChildAdded:Connect(function(obj)task.wait()
 end)end
 -->======================================================================================<--
 
---[[
-local PuppetCFrame=CFrame.new(-78.157402, 0.0721008182, -165.951859, -1, 0, 0, 0, 1, 0, 0, 0, -1)
--->==============================The Puppet==============================================<--
-local PuppetLabel=StatusFolder:Label("The Puppet: ...",{
-TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
-if Marionette.RootPart.CFrame==PuppetCFrame then PuppetLabel:Refresh("The Puppet: HIDDEN")else PuppetLabel:Refresh("The Puppet: SHOWN")end
-if Marionette.RootPart.CFrame~=PuppetCFrame and not Curtains.InteractPart:FindFirstChild("Tag") then CreateTag(Curtains.InteractPart,"Close Curtains")end
--->Connecting Listener<--
-local PuppetConnection=Marionette.RootPart.Changed:Connect(function()
-    print("Changed")
-    if Marionette.RootPart.CFrame~=PuppetCFrame then
-        PuppetLabel:Refresh("The Puppet: SHOWN")
-        if not Curtains.InteractPart:FindFirstChild("Tag") then CreateTag(Curtains.InteractPart,"Close Curtains")end
-    elseif Marionette.RootPart.CFrame==PuppetCFrame then
-        PuppetLabel:Refresh("The Puppet: HIDDEN")
-        if Curtains.InteractPart:FindFirstChild("Tag") then Curtains.InteractPart.Tag:Destroy()end 
-    end
-end)
--->======================================================================================<--
---]]
 
 --[[
 local F1Connection = mouse.KeyDown:connect(function(k)
@@ -153,7 +136,7 @@ Options:Toggle("Show Tags",function(bool)
         end
     end)
 end)
-
+--###################################################Options#################################################
 Options:Toggle("Batteries",function(bool)
     shared.ToggleB=bool
     spawn(function()
@@ -183,13 +166,13 @@ Options:Toggle("Inst Prompt",function(bool)
     shared.ToggleIP=bool InstantPromptOn=bool
 end)
 --]]
---###################################################AUTO#################################################
+--###################################################Features#################################################
 --TODO
     
-Auto:Toggle("Full Bright",function(bool)shared.Auto1 = bool spawn (function()FullBright()end)end)
+Features:Toggle("Full Bright",function(bool)shared.Features1 = bool spawn (function()FullBright()end)end)
 
 P1Connection,P2Connection,P3Connection=nil
-Auto:Toggle("PlayerNames",function(bool)
+Features:Toggle("PlayerNames",function(bool)
     shared.Misc5 = bool
     spawn(function()
         if shared.Misc5 then NameTag() else
@@ -204,15 +187,15 @@ Auto:Toggle("PlayerNames",function(bool)
     end)
 end)
 
-local AreaList={"Office","TopGenerator","BottomGenerator","Arcade"}
-local AreaDropList = Auto:Dropdown("Select Area",AreaList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local AreaList={"Office","TopGenerator","BottomGenerator","Arcade","ACurtians"}
+local AreaDropList = Features:Dropdown("Select Area",AreaList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     --AreaSelect = SItem
     for _,v in pairs(AreaTeleports)do
         if SItem==_ then AreaSelect=v end
     end
 end)
 
-Auto:Button("Teleport",function()
+Features:Button("Teleport",function()
     spawn(function()
         if AreaSelect then
             MoveTo(AreaSelect,Vector3.new(0,0,0))
@@ -220,9 +203,55 @@ Auto:Button("Teleport",function()
     end)
 end)
 
-Auto:Button("Other",function()
+Features:Button("Other",function()
     spawn(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/GMWJKIHGJIWNHIOWNHIUJHYW536363/Reapers-Hub/reaperrr/Free%20Script.lua"))()
+    end)
+end)
+
+--###################################################Auto#################################################
+local TopGenDoorClosed=CFrame.new(-386.319855, 4.73568058, -43.5324287, -1, 0, 0, 0, 1, 0, 0, 0, -1)
+local BottomGenClosed=CFrame.new(-400.641541, 4.7356801, -14.1896229, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+local function CompleteAction(p,inter,offset)
+    -->Set TimeOut Timer<--
+    local TimeOut spawn(function()TimeOut=Timer(10)end)
+    -->Move Player<--
+    local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+    Player.Character:WaitForChild("HumanoidRootPart").CFrame=inter.CFrame+offset task.wait(0.5)
+
+    if p.Name=="Generator" and p:FindFirstChild("DoorModel")and p.DoorModel.Body.CFrame==TopGenDoorClosed or p.Name=="Generator" and p:FindFirstChild("DoorModel")and p.DoorModel.Body.CFrame==BottomGenClosed then
+        repeat 
+           spawn(function()repeat Workspace.Camera.CFrame = CFrame.lookAt(Workspace.Camera.CFrame.Position, inter.Position)task.wait()until not p.DoorModel.Body.CFrame==TopGenDoorClosed and not p.DoorModel.Body.CFrame==BottomGenClosed or TimeOut end)
+            keypress(0x45)task.wait()keyrelease(0x45)task.wait(1)
+        until not p.DoorModel.Body.CFrame==TopGenDoorClosed and not p.DoorModel.Body.CFrame==BottomGenClosed or TimeOut
+    end
+    -->Hold Prompt Until Finish<--
+        -->Waiting For Prompt<--
+    local FTime=0
+    if p.Name~="Curtains"then
+        repeat 
+            spawn(function()repeat Workspace.Camera.CFrame = CFrame.lookAt(Workspace.Camera.CFrame.Position, inter.Position)task.wait()until p.Properties.Shutdown.Value==false or TimeOut task.wait()end)
+            if FTime==0 then FTime=1 task.wait(1)end
+            task.wait()keypress(0x45) until p.Properties.Shutdown.Value==false or TimeOut task.wait()keyrelease(0x45)
+        
+    else
+        repeat 
+            spawn(function()repeat Workspace.Camera.CFrame = CFrame.lookAt(Workspace.Camera.CFrame.Position, inter.Position)task.wait()until p.LeftCurtain.Position.X<-75 or TimeOut end)
+            if FTime==0 then FTime=1 task.wait(1)end
+            task.wait()keypress(0x45) until p.LeftCurtain.Position.X<-75 or TimeOut task.wait()keyrelease(0x45)
+    end
+    Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+end
+
+Auto:Toggle("Auto Player",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do local s,e=pcall(function()
+            if shared.ToggleAP and TopGen.Properties.Shutdown.Value==true then CompleteAction(TopGen,AreaTeleports.TopGenerator,Vector3.new(0,0,2))end
+            if shared.ToggleAP and BottomGen.Properties.Shutdown.Value==true then CompleteAction(BottomGen,AreaTeleports.BottomGenerator,Vector3.new(2,0,-3))end
+            if shared.ToggleAP and VentsLever.Properties.Shutdown.Value==true then CompleteAction(VentsLever,AreaTeleports.Arcade,Vector3.new(0,0,2))end
+            if shared.ToggleAP and Curtains.LeftCurtain.Position.X>=-75 then CompleteAction(Curtains,AreaTeleports.ACurtians,Vector3.new(0,0,2)) end
+        task.wait()end)task.wait()if not s then print(e)end end
     end)
 end)
 
