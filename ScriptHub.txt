@@ -375,7 +375,7 @@ local Games = {
 		Name = 'FALL [Impossible]',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FALL%20[Impossible].txt'
 	},
-	[11208231865] = {
+	[3240343305] = {
 		Name = 'Forgotten Memories',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Forgotten%20Memories.txt'
 	},
