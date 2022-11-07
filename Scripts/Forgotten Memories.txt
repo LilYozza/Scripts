@@ -5,6 +5,7 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 local mouse = game.Players.LocalPlayer:GetMouse()
+local RunService = game:GetService("RunService")
 
 local Features = w:CreateFolder("Features")
 local Auto=w:CreateFolder("Auto")
@@ -22,6 +23,8 @@ local BatteryPositions=WorkspaceUtilities:WaitForChild("BatteryPositions")
 local GoldenFreddySpawnPositions=WorkspaceUtilities:WaitForChild("GoldenFreddySpawnPositions",1)
 
 -->Tables<--
+local EnemiesObj={}
+local Enemies={"Freddy","Bonnie","Chica","Foxy","GoldenFreddy"}
 local AreaTeleports={Office,TopGenerator,BottomGenerator,Arcade,ACurtians}
 --local PromptTable={TopGenPrompt,BottomGenPrompt,VentPrompt,CurtainPrompt}
 
@@ -30,10 +33,20 @@ local StatusColors=Color3.new(0,255,0)
 local BatteryColors=Color3.new(0,0,255)
 local GoldenFreddySpawnColors=Color3.new(212,175,55)
 
+-->Positions<--
+local SafePos=CFrame.new(-85.8436737, 3.98599339, -109.1772, 0.999791741, 2.45751917e-08, -0.0204065964, -2.29302195e-08, 1, 8.08437761e-08, 0.0204065964, -8.03590083e-08, 0.999791741)
+
 -->Finding Data<--
 local function GetGenerators()for _,v in pairs(WorkspaceUtilities:GetChildren())do if v.Name=="Generator"and v:FindFirstChild("Properties")then if v.Properties.Location.Value=="North" then BottomGen=v end if v.Properties.Location.Value=="West" then TopGen=v end end end end
 repeat GetGenerators()task.wait()until TopGen and BottomGen
 local function GetInteract(p)for _,v in pairs(p:GetChildren())do if v.Name=="InteractPart" and v:FindFirstChild("Type")and v.Type.Value=="Generator" then return v end end end
+local function GetEnemies()
+    for _,v in pairs(Workspace:GetChildren())do
+        if table.find(Enemies, v.Name) and not table.find(EnemiesObj, v.Name)then
+            table.insert(EnemiesObj, v)
+        end
+    end
+end GetEnemies()
 
 AreaTeleports.Office=Spawns:FindFirstChild("SpawnLocation")
 AreaTeleports.TopGenerator=GetInteract(TopGen)
@@ -49,6 +62,12 @@ local function Timer(t)task.wait(t)return true end
 
 -->Return Functions<--
 local function GetBoolGen(b)if b then return "OFF" else return "ON" end end
+local function GetDistance(p1,p2)return(p1.Position-p2.Position).magnitude end
+
+-->Remove Some JumpScares
+Workspace.ChildAdded:Connect(function(obj)
+    if obj.Name:match("Jump")then obj:Destroy()end
+end)
 
 -->Status Window<--
 -->===========================Top Generator(West)========================================<--
@@ -211,7 +230,7 @@ end)
 
 --###################################################Auto#################################################
 local TopGenDoorClosed=CFrame.new(-386.319855, 4.73568058, -43.5324287, -1, 0, 0, 0, 1, 0, 0, 0, -1)
-local BottomGenClosed=CFrame.new(-400.641541, 4.7356801, -14.1896229, 0, 0, 1, 0, 1, -0, -1, 0, 0)
+local BottomGenClosed=CFrame.new(-400.641541, 4.7356801, -14.1896219, -1.1920929e-07, 0, 1.00000012, 0, 1, 0, -1.00000012, 0, -1.1920929e-07)
 local function CompleteAction(p,inter,offset)
     -->Set TimeOut Timer<--
     local TimeOut spawn(function()TimeOut=Timer(10)end)
@@ -221,9 +240,9 @@ local function CompleteAction(p,inter,offset)
 
     if p.Name=="Generator" and p:FindFirstChild("DoorModel")and p.DoorModel.Body.CFrame==TopGenDoorClosed or p.Name=="Generator" and p:FindFirstChild("DoorModel")and p.DoorModel.Body.CFrame==BottomGenClosed then
         repeat 
-           spawn(function()repeat Workspace.Camera.CFrame = CFrame.lookAt(Workspace.Camera.CFrame.Position, inter.Position)task.wait()until not p.DoorModel.Body.CFrame==TopGenDoorClosed and not p.DoorModel.Body.CFrame==BottomGenClosed or TimeOut end)
+           spawn(function()repeat Workspace.Camera.CFrame = CFrame.lookAt(Workspace.Camera.CFrame.Position, inter.Position)task.wait()until p.DoorModel.Body.CFrame~=TopGenDoorClosed and p.DoorModel.Body.CFrame~=BottomGenClosed or TimeOut end)
             keypress(0x45)task.wait()keyrelease(0x45)task.wait(1)
-        until not p.DoorModel.Body.CFrame==TopGenDoorClosed and not p.DoorModel.Body.CFrame==BottomGenClosed or TimeOut
+        until p.DoorModel.Body.CFrame~=TopGenDoorClosed and p.DoorModel.Body.CFrame~=BottomGenClosed or TimeOut
     end
     -->Hold Prompt Until Finish<--
         -->Waiting For Prompt<--
@@ -248,10 +267,30 @@ Auto:Toggle("Auto Player",function(bool)
     spawn(function()
         while shared.ToggleAP do local s,e=pcall(function()
             if shared.ToggleAP and TopGen.Properties.Shutdown.Value==true then CompleteAction(TopGen,AreaTeleports.TopGenerator,Vector3.new(0,0,2))end
-            if shared.ToggleAP and BottomGen.Properties.Shutdown.Value==true then CompleteAction(BottomGen,AreaTeleports.BottomGenerator,Vector3.new(2,0,-3))end
+            if shared.ToggleAP and BottomGen.Properties.Shutdown.Value==true then CompleteAction(BottomGen,AreaTeleports.BottomGenerator,Vector3.new(2,0,0))end
             if shared.ToggleAP and VentsLever.Properties.Shutdown.Value==true then CompleteAction(VentsLever,AreaTeleports.Arcade,Vector3.new(0,0,2))end
             if shared.ToggleAP and Curtains.LeftCurtain.Position.X>=-75 then CompleteAction(Curtains,AreaTeleports.ACurtians,Vector3.new(0,0,2)) end
         task.wait()end)task.wait()if not s then print(e)end end
+    end)
+end)
+
+Auto:Toggle("Avoid Enemies",function(bool)
+    shared.ToggleAE=bool
+    spawn(function()
+        while shared.ToggleAE do local s,e=pcall(function()
+            if Player.Character:FindFirstChild("HumanoidRootPart")then
+                for _,v in pairs(EnemiesObj)do
+                    if shared.ToggleAE and v:FindFirstChild("Head") and GetDistance(Player.Character:WaitForChild("HumanoidRootPart"),v.Head)<=15 then
+                        local TimeOut spawn(function()TimeOut=Timer(10)end)
+                        local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                        Player.Character:WaitForChild("HumanoidRootPart").CFrame=SafePos
+                        task.wait(5)
+                        Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+                    end
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end
+        end
     end)
 end)
 
