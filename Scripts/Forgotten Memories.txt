@@ -163,7 +163,7 @@ Options:Toggle("GFred Spawns",function(bool)
             end
         end
     end)
-end)end
+end)
 
 --###################################################Features#################################################
 
@@ -250,7 +250,7 @@ Auto:Toggle("Avoid Enemies",function(bool)
         task.wait()end)task.wait()if not s then print(e)end
         end
     end)
-end)
+end)end
 
 Other:Button("Other",function()spawn(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/GMWJKIHGJIWNHIOWNHIUJHYW536363/Reapers-Hub/reaperrr/Free%20Script.lua"))()end)end)
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
