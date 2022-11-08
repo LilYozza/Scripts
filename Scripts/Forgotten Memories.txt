@@ -1,19 +1,24 @@
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main") StatusWindow=library:CreateWindow("Status")
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()
+
+w = library:CreateWindow("Main") 
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
-local mouse = game.Players.LocalPlayer:GetMouse()
-local RunService = game:GetService("RunService")
 
 local Features = w:CreateFolder("Features")
 local Auto=w:CreateFolder("Auto")
+local Other=w:CreateFolder("Other")
+
+-->Base Variables<--
+if game.PlaceId ~= 8482713490 then
+StatusWindow=library:CreateWindow("Status")
 local StatusFolder=StatusWindow:CreateFolder("Status")
 local Options=StatusWindow:CreateFolder("Options")
 
--->Base Variables<--
-local TopGen,BottomGen,ShowTags,InstantPromptOn,AreaSelect,MarionetteIsIn
+local ShowTags=true
+local TopGen,BottomGen,InstantPromptOn,AreaSelect,MarionetteIsIn
 local Spawns=Workspace:WaitForChild("Spawns")
 local WorkspaceUtilities=Workspace:WaitForChild("WorkspaceUtilities")
 
@@ -26,7 +31,6 @@ local GoldenFreddySpawnPositions=WorkspaceUtilities:WaitForChild("GoldenFreddySp
 local EnemiesObj={}
 local Enemies={"Freddy","Bonnie","Chica","Foxy","GoldenFreddy"}
 local AreaTeleports={Office,TopGenerator,BottomGenerator,Arcade,ACurtians}
---local PromptTable={TopGenPrompt,BottomGenPrompt,VentPrompt,CurtainPrompt}
 
 -->Colors<--
 local StatusColors=Color3.new(0,255,0)
@@ -40,13 +44,7 @@ local SafePos=CFrame.new(-85.8436737, 3.98599339, -109.1772, 0.999791741, 2.4575
 local function GetGenerators()for _,v in pairs(WorkspaceUtilities:GetChildren())do if v.Name=="Generator"and v:FindFirstChild("Properties")then if v.Properties.Location.Value=="North" then BottomGen=v end if v.Properties.Location.Value=="West" then TopGen=v end end end end
 repeat GetGenerators()task.wait()until TopGen and BottomGen
 local function GetInteract(p)for _,v in pairs(p:GetChildren())do if v.Name=="InteractPart" and v:FindFirstChild("Type")and v.Type.Value=="Generator" then return v end end end
-local function GetEnemies()
-    for _,v in pairs(Workspace:GetChildren())do
-        if table.find(Enemies, v.Name) and not table.find(EnemiesObj, v.Name)then
-            table.insert(EnemiesObj, v)
-        end
-    end
-end GetEnemies()
+local function GetEnemies()for _,v in pairs(Workspace:GetChildren())do if table.find(Enemies, v.Name) and not table.find(EnemiesObj, v.Name)then table.insert(EnemiesObj, v)end end end GetEnemies()
 
 AreaTeleports.Office=Spawns:FindFirstChild("SpawnLocation")
 AreaTeleports.TopGenerator=GetInteract(TopGen)
@@ -65,14 +63,15 @@ local function GetBoolGen(b)if b then return "OFF" else return "ON" end end
 local function GetDistance(p1,p2)return(p1.Position-p2.Position).magnitude end
 
 -->Remove Some JumpScares
+--[[
 Workspace.ChildAdded:Connect(function(obj)
     if obj.Name:match("Jump")then obj:Destroy()end
 end)
+--]]
 
 -->Status Window<--
 -->===========================Top Generator(West)========================================<--
-local TopGeneratorLabel=StatusFolder:Label("Top Generator: ...",{
-TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+local TopGeneratorLabel=StatusFolder:Label("Top Generator: ...",{TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
 TopGeneratorLabel:Refresh("Top Generator: "..GetBoolGen(TopGen.Properties.Shutdown.Value))
 if ShowTags and TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,StatusColors,"Turn On TopGen")end
 -->Connecting Listener<--
@@ -84,8 +83,7 @@ end)
 -->======================================================================================<--
 
 -->===================Bottom Generator(South)(North)=====================================<--
-local BottomGeneratorLabel=StatusFolder:Label("Bottom Generator: ...",{
-TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+local BottomGeneratorLabel=StatusFolder:Label("Bottom Generator: ...",{TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
 BottomGeneratorLabel:Refresh("Bottom Generator: "..GetBoolGen(TopGen.Properties.Shutdown.Value))
 if ShowTags and BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,StatusColors,"Turn On BottomGen")end
 -->Connecting Listener<--
@@ -97,8 +95,7 @@ end)
 -->======================================================================================<--
 
 -->==============================Ventilation=============================================<--
-local VentilationLabel=StatusFolder:Label("Ventilation: ...",{
-TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+local VentilationLabel=StatusFolder:Label("Ventilation: ...",{TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
 VentilationLabel:Refresh("Ventilation: "..GetBoolGen(VentsLever.Properties.Shutdown.Value))
 if ShowTags and VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,StatusColors,"Turn On Vent")end
 -->Connecting Listener<--
@@ -112,8 +109,7 @@ end)
 -->==============================The Puppet==============================================<--
 local InBox=CFrame.new(-78.157402, 0.0721008182, -165.951859, -1, 0, 0, 0, 1, 0, 0, 0, -1)
 local Marionette=Workspace:WaitForChild("Marionette")
- if Marionette then MarionetteIsIn=true local PuppetLabel=StatusFolder:Label("The Puppet: IN BOX",{
-TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
+if Marionette then MarionetteIsIn=true local PuppetLabel=StatusFolder:Label("The Puppet: IN BOX",{TextSize=20;TextColor=Color3.fromRGB(0,255,0);BgColor=Color3.fromRGB(0,0,0);})
 
 -->Connecting Listener<--
 local PuppetConnection1=Workspace.ChildRemoved:Connect(function(obj)
@@ -131,27 +127,16 @@ local PuppetConnection2=Workspace.ChildAdded:Connect(function(obj)task.wait()
 end)end
 -->======================================================================================<--
 
-
---[[
-local F1Connection = mouse.KeyDown:connect(function(k)
-    if k=="e" and InstantPromptOn then
-        
-    end
-end)
---]]
-
-Options:Toggle("Show Tags",function(bool)
+Options:Toggle("Hide Tags",function(bool)
     shared.ToggleST=bool
     spawn(function()
-        if shared.ToggleST then ShowTags=true
+        if shared.ToggleST then ShowTags=false
+            for _,v in pairs(Workspace:GetDescendants())do if v:IsA("TextLabel")and v.Parent.Name=="Tag" then v.Parent:Destroy()end end
+        else ShowTags=true
             if TopGen.Properties.Shutdown.Value==true and not TopGen.DoorClose:FindFirstChild("Tag") then CreateTag(TopGen.DoorClose,StatusColors,"Turn On TopGen")end
             if BottomGen.Properties.Shutdown.Value==true and not BottomGen.DoorClose:FindFirstChild("Tag") then CreateTag(BottomGen.DoorClose,StatusColors,"Turn On BottomGen")end
             if VentsLever.Properties.Shutdown.Value==true and not VentsLever.InteractPart:FindFirstChild("Tag") then CreateTag(VentsLever.InteractPart,StatusColors,"Turn On Vent")end
             if Workspace:FindFirstChild("Marionette")and Workspace.Marionette.RootPart.CFrame~=InBox and not Curtains.InteractPart:FindFirstChild("Tag") or not Workspace:FindFirstChild("Marionette") and MarionetteIsIn and not Curtains.InteractPart:FindFirstChild("Tag")then CreateTag(Curtains.InteractPart,StatusColors,"Puppet Missing")end
-        else ShowTags=false
-            for _,v in pairs(Workspace:GetDescendants())do
-                if v:IsA("TextLabel")and v.Parent.Name=="Tag" then v.Parent:Destroy()end
-            end
         end
     end)
 end)
@@ -178,55 +163,28 @@ Options:Toggle("GFred Spawns",function(bool)
             end
         end
     end)
-end)
+end)end
 
---[[
-Options:Toggle("Inst Prompt",function(bool)
-    shared.ToggleIP=bool InstantPromptOn=bool
-end)
---]]
 --###################################################Features#################################################
---TODO
-    
+
 Features:Toggle("Full Bright",function(bool)shared.Features1 = bool spawn (function()FullBright()end)end)
 
 P1Connection,P2Connection,P3Connection=nil
-Features:Toggle("PlayerNames",function(bool)
-    shared.Misc5 = bool
+Features:Toggle("PlayerNames",function(bool) shared.Misc5 = bool
     spawn(function()
         if shared.Misc5 then NameTag() else
             if P1Connection then P1Connection:Disconnect()end if P2Connection then P2Connection:Disconnect()end if P3Connection then P3Connection:Disconnect()end
-            for _,v in pairs(Players:GetChildren()) do
-                if v.Character:WaitForChild("Head",5) and v.Character.Head:FindFirstChild("PlayerTag") then
-                    v.Character.Head:FindFirstChild("PlayerTag"):Destroy()
-                end
-            end 
-        end
-        task.wait()
+            for _,v in pairs(Players:GetChildren()) do if v.Character:WaitForChild("Head",5) and v.Character.Head:FindFirstChild("PlayerTag") then v.Character.Head:FindFirstChild("PlayerTag"):Destroy()end end 
+        end task.wait()
     end)
 end)
 
 local AreaList={"Office","TopGenerator","BottomGenerator","Arcade","ACurtians"}
 local AreaDropList = Features:Dropdown("Select Area",AreaList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    --AreaSelect = SItem
-    for _,v in pairs(AreaTeleports)do
-        if SItem==_ then AreaSelect=v end
-    end
+    for _,v in pairs(AreaTeleports)do if SItem==_ then AreaSelect=v end end
 end)
 
-Features:Button("Teleport",function()
-    spawn(function()
-        if AreaSelect then
-            MoveTo(AreaSelect,Vector3.new(0,0,0))
-        end
-    end)
-end)
-
-Features:Button("Other",function()
-    spawn(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GMWJKIHGJIWNHIOWNHIUJHYW536363/Reapers-Hub/reaperrr/Free%20Script.lua"))()
-    end)
-end)
+Features:Button("Teleport",function()spawn(function()if AreaSelect then MoveTo(AreaSelect,Vector3.new(0,0,0))end end)end)
 
 --###################################################Auto#################################################
 local TopGenDoorClosed=CFrame.new(-386.319855, 4.73568058, -43.5324287, -1, 0, 0, 0, 1, 0, 0, 0, -1)
@@ -259,7 +217,8 @@ local function CompleteAction(p,inter,offset)
             if FTime==0 then FTime=1 task.wait(1)end
             task.wait()keypress(0x45) until p.LeftCurtain.Position.X<-75 or TimeOut task.wait()keyrelease(0x45)
     end
-    Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+    --Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+    Player.Character:WaitForChild("HumanoidRootPart").CFrame=SafePos
 end
 
 Auto:Toggle("Auto Player",function(bool)
@@ -283,8 +242,7 @@ Auto:Toggle("Avoid Enemies",function(bool)
                     if shared.ToggleAE and v:FindFirstChild("Head") and GetDistance(Player.Character:WaitForChild("HumanoidRootPart"),v.Head)<=15 then
                         local TimeOut spawn(function()TimeOut=Timer(10)end)
                         local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
-                        Player.Character:WaitForChild("HumanoidRootPart").CFrame=SafePos
-                        task.wait(5)
+                        Player.Character:WaitForChild("HumanoidRootPart").CFrame=SafePos task.wait(5)
                         Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
                     end
                 end
@@ -294,4 +252,114 @@ Auto:Toggle("Avoid Enemies",function(bool)
     end)
 end)
 
+Other:Button("Other",function()spawn(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/GMWJKIHGJIWNHIOWNHIUJHYW536363/Reapers-Hub/reaperrr/Free%20Script.lua"))()end)end)
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+
+if game.PlaceId==8482713490 then 
+local Remotes = game:GetService("ReplicatedStorage").Remotes
+
+MatchMaking=library:CreateWindow("Match Making")
+
+local Lobby=MatchMaking:CreateFolder("Lobby")
+local Custom=MatchMaking:CreateFolder("Custom")
+local Instant=MatchMaking:CreateFolder("Instant")
+local Troll=MatchMaking:CreateFolder("Troll")
+
+-->Variables<--
+
+-->Tables<--
+local Animatronic_Levels={Freddy,GoldenFreddy,Foxy,Chica,Marionette,Bonnie}
+local Config={Night,PlayerCount,Difficulty,Privacy}
+local ConfigCustom={PlayerCount,Animatronic_Levels,Privacy}
+
+-->Option Variables<--
+local ConfigNight=1
+local ConfigPlayerCount=1
+local ConfigDifficulty="NORMAL"
+local ConfigPrivacy="PRIVATE"
+
+Animatronic_Levels.Freddy=5
+Animatronic_Levels.GoldenFreddy=5
+Animatronic_Levels.Foxy=5
+Animatronic_Levels.Chica=5
+Animatronic_Levels.Marionette=5
+Animatronic_Levels.Bonnie=5
+
+-->Option Tables<--
+local NightTable={"Night: 1","Night: 2","Night: 3","Night: 4","Night: 5"}
+local PlayerCountTable={"Players: 1","Players: 2","Players: 3","Players: 4"}
+local DifficultyTable={"Normal","Hard","Nightmare"}
+local PrivacyTable={"Private","Public"}
+
+-->Functions<--
+local function CreateMatch(tbl)
+    local A_2 ={["NIGHT"] = tbl.Night,["OWNER"] = Player.Name,["PLAYERCOUNT"] = tbl.PlayerCount,["PRIVACY"] = tbl.Privacy,["DIFFICULTY"] = tbl.Difficulty}
+    Remotes.ClientInvoke:InvokeServer("Create Game", A_2)
+end
+
+local function CreateCustomMatch(tbl)
+    local A_2 ={
+    	["NIGHT"] = 6,["OWNER"] = Player.Name,["PLAYERCOUNT"] = tbl.PlayerCount,
+    	["ANIMATRONIC_LEVELS"] = 
+        {["Freddy"] = tbl.Animatronic_Levels.Freddy,["GoldenFreddy"] = tbl.Animatronic_Levels.GoldenFreddy,["Foxy"] = tbl.Animatronic_Levels.Foxy,["Chica"] = tbl.Animatronic_Levels.Chica,["Marionette"] = tbl.Animatronic_Levels.Marionette,["Bonnie"] = tbl.Animatronic_Levels.Bonnie}, 
+    	["DIFFICULTY"] = "CUSTOM NIGHT",["PRIVACY"] = tbl.Privacy}
+    Remotes.ClientInvoke:InvokeServer("Create Game", A_2)
+end
+
+-->Titles<--
+--====================================MATCH============================================
+local NightList = Lobby:Dropdown("Night: 1",NightTable,true,function(SItem)ConfigNight=tonumber(SItem:split(" ")[2])end)
+local PlayerCountList = Lobby:Dropdown("Players: 1",PlayerCountTable,true,function(SItem)ConfigPlayerCount=tonumber(SItem:split(" ")[2])end)
+local DifficultyList = Lobby:Dropdown("Normal",DifficultyTable,true,function(SItem)ConfigDifficulty=SItem:upper()end)
+local PrivacyList = Lobby:Dropdown("Private",PrivacyTable,true,function(SItem)ConfigPrivacy=SItem:upper()end)
+Lobby:Button("Create",function()
+    spawn(function()
+        if ConfigNight and ConfigPlayerCount and ConfigDifficulty and ConfigPrivacy then
+            Config.Night=ConfigNight Config.PlayerCount=ConfigPlayerCount Config.Difficulty=ConfigDifficulty Config.Privacy=ConfigPrivacy
+            CreateMatch(Config)
+        end
+    end)
+end)
+--=====================================================================================
+
+
+--====================================CUSTOM MATCH=====================================
+local CPlayerCountList = Custom:Dropdown("Players: 1",PlayerCountTable,true,function(SItem)ConfigPlayerCount=tonumber(SItem:split(" ")[2])end)
+local FreddyBox = Custom:Box('Freddy:',{['default']=5;['type']='number';['min']=0;['max']=20;['flag']=Animatronic_Levels.Freddy;['location']={};},function()end)
+local GoldenFreddyBox = Custom:Box('GoldenFreddy:',{['default']=5;['type']='number';['min']=0;['max']=20;['flag']=Animatronic_Levels.GoldenFreddy;['location']={};},function()end)
+local FoxyBox = Custom:Box('Foxy:',{['default']=5;['type']='number';['min']=0;['max']=20;['flag']=Animatronic_Levels.Foxy;['location']={};},function()end)
+local ChicaBox = Custom:Box('Chica:',{['default']=5;['type']='number';['min']=0;['max']=20;['flag']=Animatronic_Levels.Chica;['location']={};},function()end)
+local MarionetteBox = Custom:Box('Marionette:',{['default']=5;['type']='number';['min']=0;['max']=20;['flag']=Animatronic_Levels.Marionette;['location']={};},function()end)
+local BonnieBox = Custom:Box('Bonnie:',{['default']=5;['type']='number';['min']=0;['max']=20;['flag']=Animatronic_Levels.Bonnie;['location']={};},function()end)
+local CPrivacyList = Custom:Dropdown("Private",PrivacyTable,true,function(SItem)ConfigPrivacy=SItem:upper()end)
+Custom:Button("Create",function()
+    spawn(function()
+        if ConfigPlayerCount and ConfigPrivacy then
+        ConfigCustom.PlayerCount=ConfigPlayerCount ConfigCustom.Animatronic_Levels=Animatronic_Levels ConfigCustom.Privacy=ConfigPrivacy
+        CreateCustomMatch(ConfigCustom)
+        end
+    end)
+end)
+
+
+--=====================================================================================
+
+Instant:Button("6/20",function()
+    spawn(function()
+        Animatronic_Levels.Freddy=20 Animatronic_Levels.GoldenFreddy=20 Animatronic_Levels.Foxy=20 Animatronic_Levels.Chica=20 Animatronic_Levels.Marionette=20 Animatronic_Levels.Bonnie=20
+        ConfigCustom.PlayerCount=1 ConfigCustom.Animatronic_Levels=Animatronic_Levels ConfigCustom.Privacy="PRIVATE"
+        CreateCustomMatch(ConfigCustom)
+    end)
+end)
+
+--#########################WIP####################################
+local HostPlayer = Troll:Dropdown("Select Host",PrivacyTable,true,function(SItem)
+    ConfigPrivacy=SItem:upper()
+end)
+local TargetPlayer = Troll:Dropdown("Select Player",PrivacyTable,true,function(SItem)
+    ConfigPrivacy=SItem:upper()
+end)
+--################################################################
+
+
+end
