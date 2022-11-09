@@ -1,22 +1,24 @@
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
-local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))
 
 --======================================FUNCTION IMPORTS=====================================--
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
 local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))()
 local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))()
+local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))()
 --===========================================================================================--
 
 --======================================FUNCTION USAGE=======================================--
 -->ESP<--       [Table]=ESPFuncTbl      [Functions]=UpdateESP,RemoveESP,CreateESP
 -->Chams<--     [Table]=ChamsFuncTbl    [Functions]=UpdateChams,RemoveChams,CreateChams
 -->InvFling<--  [Table]=InvFlingFuncTbl [Functions]=FlingOn,FlingOff
+-->Fly<--       [Table]=FlyFuncTbl      [Functions]=Fly
 --===========================================================================================--
-local virtual=game:GetService("VirtualUser")
+local Virtual=game:GetService("VirtualUser")
 local Run = game:GetService("RunService")
 local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
+local Player=Players.LocalPlayer
+local mouse = Player:GetMouse()
 
 local GPlayers = w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
@@ -100,6 +102,7 @@ Misc:Button("Sword Aura",function()
     end)
 end)
 
+--============================================Fly==========================================--
 Fly1Connection,Fly2Connection=nil
 Misc:Toggle("Fly",function(bool)
     isFly = bool
@@ -108,6 +111,7 @@ Misc:Toggle("Fly",function(bool)
         if not isFly and Fly1Connection then Fly1Connection:Disconnect() Fly2Connection:Disconnect()end
     end)
 end)
+--===========================================================================================--
 
 Misc:Toggle("Full Bright",function(bool)
     shared.Misc2 = bool
@@ -128,7 +132,6 @@ end)
 Misc:Toggle("Teleport",function(bool)
     shared.Misc4 = bool
     spawn(function()
-        local mouse = Player:GetMouse()
         mouse.KeyDown:Connect(function(key)
             if key == "q" and shared.Misc4 then
                 if mouse.Target then
@@ -140,11 +143,7 @@ Misc:Toggle("Teleport",function(bool)
 end)
 
 local Speed = Misc:Slider("Walk Speed",{
-    ['default'] = 16;
-    ['min'] = 0;
-    ['max'] = 200;
-    ['precise'] = true;
-},function(value)
+    ['default'] = 16;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
     game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
     local Players = game:GetService("Players")
 end)
@@ -180,7 +179,6 @@ Run:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function(
 	end
 end)
 
-
 spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
     while true do
         for _, v in next, Players:GetPlayers() do
@@ -190,8 +188,4 @@ spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
     end
 end))end)
 
-
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-wait(1)
-virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)end)
+Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)end)
