@@ -39,6 +39,7 @@ ESPFuncTbl.UpdateESP=function(Plr)
 			Find.Frame.Health.TextColor3 = PickColor
 			--Find.Frame.Pos.TextColor3 = PickColor
 			local GetChar = Plr.Character
+			print(GetChar)print(Player.Character)
 			if Player.Character and GetChar then
 			    print("Pass1")
 				local Find2 = layer.Character:FindFirstChild("HumanoidRootPart")
