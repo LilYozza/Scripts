@@ -7,7 +7,9 @@ local maxspeed = 50
 local speed = 0
 local flying = true
 
-local function Fly()
+FlyFuncTbl={Fly}
+
+FlyFuncTbl.Fly=function()
     
     local torso = plr.Character.HumanoidRootPart
     local bg = Instance.new("BodyGyro", torso)
