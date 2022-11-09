@@ -1,156 +1,193 @@
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
 
-local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
+--======================================FUNCTION IMPORTS=====================================--
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
+local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))()
+local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))()
+local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))()
+--===========================================================================================--
 
+--======================================FUNCTION USAGE=======================================--
+-->ESP<--       [Table]=ESPFuncTbl      [Functions]=UpdateESP,RemoveESP,CreateESP
+-->Chams<--     [Table]=ChamsFuncTbl    [Functions]=UpdateChams,RemoveChams,CreateChams
+-->InvFling<--  [Table]=InvFlingFuncTbl [Functions]=FlingOn,FlingOff
+-->Fly<--       [Table]=FlyFuncTbl      [Functions]=Fly
+--===========================================================================================--
+local Virtual=game:GetService("VirtualUser")
 local Run = game:GetService("RunService")
-local CoreGui = game:GetService("CoreGui")
+local Players=game:GetService("Players")
+local Player=Players.LocalPlayer
+local mouse = Player:GetMouse()
 
-ESPFuncTbl={UpdateESP,RemoveESP,CreateESP}
-local MyChar = Player.Character
+local GPlayers = w:CreateFolder("Players")
+local Misc = w:CreateFolder("Misc")
 
-local ESPFolder=CoreGui:FindFirstChild("ESP Stuff")
-if not ESPFolder then ESPFolder=Instance.new("Folder",CoreGui)ESPFolder.Name="ESP Stuff"end
+local PlayerSelect_M
+local PlayerList_M={}
 
-local PlayerESP=ESPFolder:FindFirstChild("PlayerESP")
-local ItemESP=ESPFolder:FindFirstChild("ItemESP")
+-->Exploit Fix<--
+if not pcall(function() return syn.protect_gui end) then syn = {}syn.protect_gui = function(A_1)A_1.Parent = CoreGui end end
 
-if not PlayerESP then PlayerESP=Instance.new("Folder",ESPFolder)PlayerESP.Name="PlayerESP"end
-if not ItemESP then ItemESP=Instance.new("Folder",ESPFolder)ItemESP.Name="ItemESP"end
+-->Functions<--
+local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do if v.Name==character.Name then return v end end end
 
-local function FindESP(Obj)
-	for i, v in next, ItemESP:GetChildren() do
-		if v.className == "ObjectValue" then
-			if v.Value == Obj then
-				return v.Parent
-			end
+--========================================PLAYER ESP========================================--
+local isESP local PlayerESPConnections={}
+GPlayers:Toggle("Player ESP",function(bool)
+    shared.ToggleESP = bool isESP=shared.ToggleESP
+    spawn(function()
+        for _,v in pairs(Players:GetChildren())do
+            if v~=Player then
+            PlayerESPConnections[_]=v.CharacterAdded:Connect(function(character)
+                local plr=ReturnPlayer(character)
+                if isESP then ESPFuncTbl.RemoveESP(plr)ESPFuncTbl.CreateESP(plr)end end)
+            if isESP then ESPFuncTbl.RemoveESP(v)ESPFuncTbl.CreateESP(v)else ESPFuncTbl.RemoveESP(v)end end end
+    if not isESP then for _,v in pairs(PlayerESPConnections)do if v then v:Disconnect()end end end 
+    end)
+end)
+--===========================================================================================--
+
+--=======================================PLAYER CHAMS=======================================--
+local isCham local PlayerCHAMConnections={}
+GPlayers:Toggle("Player Chams",function(bool)
+    shared.ToggleCHAM = bool isCham=shared.ToggleCHAM
+    spawn(function()
+        for _,v in pairs(Players:GetChildren())do
+            if v~=Player then
+            PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
+                local plr=ReturnPlayer(character)
+                if isCham then ChamsFuncTbl.RemoveChams(plr)ChamsFuncTbl.CreateChams(plr)end end)
+            if isCham then ChamsFuncTbl.RemoveChams(v)ChamsFuncTbl.CreateChams(v)else ChamsFuncTbl.RemoveChams(v)end end end
+    if not isCham then for _,v in pairs(PlayerCHAMConnections)do if v then v:Disconnect()end end end 
+    end)
+end)
+--===========================================================================================--
+
+--========================================INVIS FLING========================================--
+isON,F1Connection,F2Connection,F3Connection=nil
+GPlayers:Toggle("InvFling",function(bool)
+    shared.ToggleInvFling = bool isFlingOn=shared.ToggleInvFling
+    spawn(function()
+        if isFlingOn then InvFlingFuncTbl.FlingOn()
+        else InvFlingFuncTbl.FlingOff()
+        	if F1Connection then F1Connection:Disconnect() F2Connection:Disconnect() F3Connection:Disconnect()end
+        end
+    end)
+end)
+--===========================================================================================--
+
+--====================================DropDown Player List===================================--
+local DropList = GPlayers:Dropdown("Select Player",PlayerList_M,true,function(SItem)
+    for _,v in pairs(Players:GetChildren())do if  v.DisplayName==SItem then PlayerSelect_M = v break end end
+end)
+--===========================================================================================--
+
+--===================================Player List Controller==================================--
+local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
+local function AddPlayer(player)if not table.find(PlayerList_M,player.DisplayName) then table.insert(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
+local function RemovePlayer(player)if table.find(PlayerList_M,player.DisplayName) then RemoveItem(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
+local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
+--===========================================================================================--
+
+GPlayers:Button("TeleportTo",function()
+    spawn (function()
+        if PlayerSelect_M then Player.Character:WaitForChild("HumanoidRootPart").CFrame=PlayerSelect_M.Character:WaitForChild("HumanoidRootPart").CFrame end
+    end)
+end)
+
+
+Misc:Button("Sword Aura",function()
+    spawn (function()
+        local credit='guardscripts'local url=('https://raw.githubusercontent.com/%s/myscripts/main/scriptinit.lua'):format(credit)init=loadstring(game:HttpGet(url,true))
+        getgenv().xscriptId='NDA5MzBy'init()
+    end)
+end)
+
+--============================================Fly==========================================--
+Fly1Connection,Fly2Connection=nil
+Misc:Toggle("Fly",function(bool)
+    isFly = bool
+    spawn (function()
+        Fly()
+        if not isFly and Fly1Connection then Fly1Connection:Disconnect() Fly2Connection:Disconnect()end
+    end)
+end)
+--===========================================================================================--
+
+Misc:Toggle("Full Bright",function(bool)
+    shared.Misc2 = bool
+    spawn (function()FullBright()end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+    shared.Misc3 = bool
+    spawn (function()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if shared.Misc3 then
+                Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+    shared.Misc4 = bool
+    spawn(function()
+        mouse.KeyDown:Connect(function(key)
+            if key == "q" and shared.Misc4 then
+                if mouse.Target then
+                    Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+                end
+            end
+        end)
+    end)
+end)
+
+local Speed = Misc:Slider("Walk Speed",{
+    ['default'] = 16;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+    local Players = game:GetService("Players")
+end)
+
+Misc:Button("3rd Person",function()
+    game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+    Player.CameraMaxZoomDistance = 150
+    Player.CameraMinZoomDistance = 0
+end)
+
+Misc:DestroyGui()
+
+--========================================CONNECTIONS========================================--
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        AddPlayer(player)
+        if isESP and player then ESPFuncTbl.RemoveESP(player)ESPFuncTbl.CreateESP(player)end
+        if isCham and player then ChamsFuncTbl.RemoveChams(player)ChamsFuncTbl.CreateChams(player)end
+    end)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    RemovePlayer(player)
+    ESPFuncTbl.RemoveESP(player)
+    ChamsFuncTbl.RemoveESP(player)
+end)
+--===========================================================================================--
+Run:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
+	for _, v in next, Players:GetPlayers() do
+		if v ~= MyPlr then
+			ESPFuncTbl.UpdateESP(v)
 		end
 	end
+end)
 
-	return nil
-end
+spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
+    while true do
+        for _, v in next, Players:GetPlayers() do
+            ChamsFuncTbl.UpdateChams(v)
+            Run.RenderStepped:wait()
+        end
+    end
+end))end)
 
-ESPFuncTbl.UpdateESP=function(Plr)
-	if Plr ~= nil then
-		local Find = PlayerESP:FindFirstChild("ESP Crap_" .. Plr.Name)
-		if Find then
-			local PickColor = Color3.new(255,0,0)
-			Find.Frame.Names.TextColor3 = PickColor
-			Find.Frame.Dist.TextColor3 = Color3.new(0,0,255)
-			Find.Frame.Health.TextColor3 = Color3.new(0,255,0)
-			local GetChar = Plr.Character
-			if MyChar and GetChar then
-				local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
-				local Find3 = GetChar:FindFirstChild("HumanoidRootPart")
-				local Find4 = GetChar:FindFirstChildOfClass("Humanoid")
-				
-				Find.Frame.Names.Visible = true
-				Find.Frame.Dist.Visible = true
-				Find.Frame.Health.Visible = true
-				
-				if Find2 and Find3 then
-					local pos = Find3.Position
-					local Dist = (Find2.Position - pos).magnitude
-					Find.Frame.Dist.Text = "Distance: " .. string.format("%.0f", Dist)
-					if Find4 then
-						Find.Frame.Health.Text = "Health: " .. string.format("%.0f", Find4.Health)
-					else
-						Find.Frame.Health.Text = ""
-					end
-				end
-			end
-		end
-	end
-end
-
-ESPFuncTbl.RemoveESP=function(Obj)
-	if Obj ~= nil then
-		local IsPlr = Obj:IsA("Player")
-		local UseFolder = ItemESP
-		if IsPlr then UseFolder = PlayerESP end
-
-		local FindESP = ((IsPlr) and UseFolder:FindFirstChild("ESP Crap_" .. Obj.Name)) or FindESP(Obj)
-		if FindESP then
-			FindESP:Destroy()
-		end
-	end
-end
-
-ESPFuncTbl.CreateESP=function(Obj)
-	if Obj ~= nil then
-		local IsPlr = Obj:IsA("Player")
-		local UseFolder = ItemESP
-		local GetChar = ((IsPlr) and Obj.Character) or Obj
-		local Head = GetChar:FindFirstChild("Head")
-		local t = tick()
-		if IsPlr then UseFolder = PlayerESP end
-		if Head == nil then
-			repeat
-				Head = GetChar:FindFirstChild("Head")
-				task.wait()
-			until Head ~= nil or (tick() - t) >= 10
-		end
-		if Head == nil then return end
-		
-		local bb = Instance.new("BillboardGui")
-		bb.Adornee = Head
-		bb.ExtentsOffset = Vector3.new(0, 1, 0)
-		bb.AlwaysOnTop = true
-		bb.Size = UDim2.new(0, 5, 0, 5)
-		bb.StudsOffset = Vector3.new(0, 3, 0)
-		bb.Name = "ESP Crap_" .. Obj.Name
-		bb.Parent = UseFolder
-		
-		local frame = Instance.new("Frame", bb)
-		frame.ZIndex = 10
-		frame.BackgroundTransparency = 1
-		frame.Size = UDim2.new(1, 0, 1, 0)
-		
-		local TxtName = Instance.new("TextLabel", frame)
-		TxtName.Name = "Names"
-		TxtName.ZIndex = 10
-		TxtName.Text = Obj.Name
-		TxtName.BackgroundTransparency = 1
-		TxtName.Position = UDim2.new(0, 0, 0, -45)
-		TxtName.Size = UDim2.new(1, 0, 10, 0)
-		TxtName.Font = "ArialBold"
-		TxtName.TextSize = 15 
-		TxtName.TextStrokeTransparency = 0.5
-
-		local TxtDist = nil
-		local TxtHealth = nil
-		if IsPlr then
-			TxtDist = Instance.new("TextLabel", frame)
-			TxtDist.Name = "Dist"
-			TxtDist.ZIndex = 10
-			TxtDist.Text = ""
-			TxtDist.BackgroundTransparency = 1
-			TxtDist.Position = UDim2.new(0, 0, 0, -32)
-			TxtDist.Size = UDim2.new(1, 0, 10, 0)
-			TxtDist.Font = "ArialBold"
-			TxtDist.TextSize = 15 
-			TxtDist.TextStrokeTransparency = 0.5
-
-			TxtHealth = Instance.new("TextLabel", frame)
-			TxtHealth.Name = "Health"
-			TxtHealth.ZIndex = 10
-			TxtHealth.Text = ""
-			TxtHealth.BackgroundTransparency = 1
-			TxtHealth.Position = UDim2.new(0, 0, 0, -19)
-			TxtHealth.Size = UDim2.new(1, 0, 10, 0)
-			TxtHealth.Font = "ArialBold"
-			TxtHealth.TextSize = 15 
-			TxtHealth.TextStrokeTransparency = 0.5
-		else
-			local ObjVal = Instance.new("ObjectValue", bb)
-			ObjVal.Value = Obj
-		end
-		
-		local PickColor = Color3.new(255,0,0)
-		TxtName.TextColor3 = PickColor
-
-		if IsPlr then
-			TxtDist.TextColor3 = Color3.new(0,0,255)
-			TxtHealth.TextColor3 = Color3.new(0,255,0)
-		end
-	end
-end
+Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)end)
