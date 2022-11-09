@@ -3,12 +3,14 @@ local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYo
 local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))
 
 --======================================FUNCTION IMPORTS=====================================--
-local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fixing/RUNNINGTEST.txt'))()
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
+local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))()
 local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))()
 --===========================================================================================--
 
 --======================================FUNCTION USAGE=======================================--
 -->ESP<--       [Table]=ESPFuncTbl      [Functions]=UpdateESP,RemoveESP,CreateESP
+-->Chams<--     [Table]=ChamsFuncTbl    [Functions]=UpdateChams,RemoveChams,CreateChams
 -->InvFling<--  [Table]=InvFlingFuncTbl [Functions]=FlingOn,FlingOff
 --===========================================================================================--
 local virtual=game:GetService("VirtualUser")
@@ -43,8 +45,22 @@ GPlayers:Toggle("Player ESP",function(bool)
 end)
 --===========================================================================================--
 
---========================================INVIS FLING========================================--
+--=======================================PLAYER CHAMS=======================================--
+local isCham local PlayerCHAMConnections={}
+GPlayers:Toggle("Player Chams",function(bool)
+    shared.ToggleCHAM = bool isCham=shared.ToggleCHAM
+    spawn(function()
+        for _,v in pairs(Players:GetChildren())do
+            PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
+                local plr=ReturnPlayer(character)
+                if isCham then ChamsFuncTbl.RemoveESP(plr)ChamsFuncTbl.CreateESP(plr)end end)
+            if isCham then ChamsFuncTbl.RemoveESP(v)ChamsFuncTbl.CreateESP(v)else ChamsFuncTbl.RemoveESP(v)end end
+    if not isCham then for _,v in pairs(PlayerCHAMConnections)do if v then v:Disconnect()end end end 
+    end)
+end)
+--===========================================================================================--
 
+--========================================INVIS FLING========================================--
 isON,F1Connection,F2Connection,F3Connection=nil
 GPlayers:Toggle("InvFling",function(bool)
     shared.ToggleInvFling = bool isFlingOn=shared.ToggleInvFling
@@ -55,28 +71,20 @@ GPlayers:Toggle("InvFling",function(bool)
         end
     end)
 end)
-
 --===========================================================================================--
 
-
-
-
-
-
+--====================================DropDown Player List===================================--
 local DropList = GPlayers:Dropdown("Select Player",PlayerList_M,true,function(SItem)
-    for _,v in pairs(Players:GetChildren())do
-        if  v.DisplayName==SItem then
-            PlayerSelect_M = v break
-        end
-    end
+    for _,v in pairs(Players:GetChildren())do if  v.DisplayName==SItem then PlayerSelect_M = v break end end
 end)
+--===========================================================================================--
 
----------------------------Player List Controller---------------------------
+--===================================Player List Controller==================================--
 local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
 local function AddPlayer(player)if not table.find(PlayerList_M,player.DisplayName) then table.insert(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function RemovePlayer(player)if table.find(PlayerList_M,player.DisplayName) then RemoveItem(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
-----------------------------------------------------------------------------
+--===========================================================================================--
 
 GPlayers:Button("TeleportTo",function()
     spawn (function()
@@ -154,12 +162,14 @@ Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         AddPlayer(player)
         if isESP and player then ESPFuncTbl.RemoveESP(player)ESPFuncTbl.CreateESP(player)end
+        if isCham and player then ChamsFuncTbl.RemoveChams(player)ChamsFuncTbl.CreateChams(player)end
     end)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
     RemovePlayer(player)
-    if isESP then ESPFuncTbl.RemoveESP(player)end
+    ESPFuncTbl.RemoveESP(player)
+    ChamsFuncTbl.RemoveESP(player)
 end)
 --===========================================================================================--
 Run:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
@@ -169,6 +179,16 @@ Run:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function(
 		end
 	end
 end)
+
+local succ, out = coroutine.resume(coroutine.create(function()
+    while true do
+        for _, v in next, Players:GetPlayers() do
+            ChamsFuncTbl.UpdateChams(v)
+            Run.RenderStepped:wait()
+        end
+    end
+end))
+
 
 game:GetService("Players").LocalPlayer.Idled:connect(function()
 virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)

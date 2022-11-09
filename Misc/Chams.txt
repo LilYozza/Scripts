@@ -4,11 +4,10 @@ local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 
--->Base Variables<--
 local Run = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
--->Tables<--
+ChamsFuncTbl={UpdateChams,RemoveChams,CreateChams}
 local MyChar = Player.Character
 
 local ChamsFolder=CoreGui:FindFirstChild("Chams")
@@ -21,16 +20,11 @@ if not PlayerChams then PlayerChams=Instance.new("Folder",ChamsFolder)PlayerCham
 if not ItemChams then ItemChams=Instance.new("Folder",ChamsFolder)ItemChams.Name="ItemChams"end
 
 local function FindCham(Obj)
-	for i, v in next, ItemChams:GetChildren() do
-		if v.className == "ObjectValue" then
-			if v.Value == Obj then
-				return v.Parent
-			end
-		end
-	end
-
+	for i, v in next, ItemChams:GetChildren() do if v.className == "ObjectValue" then
+	    if v.Value == Obj then return v.Parent end end end
 	return nil
 end
+
 local function GetSizeOfObject(Obj)
 	if Obj:IsA("BasePart") then
 		return Obj.Size
@@ -38,7 +32,8 @@ local function GetSizeOfObject(Obj)
 		return Obj:GetExtentsSize()
 	end
 end
-local function RemoveChams(Obj)
+
+ChamsFuncTbl.RemoveChams=function(Obj)
 	if Obj ~= nil then
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
@@ -50,7 +45,8 @@ local function RemoveChams(Obj)
 		end
 	end task.wait()
 end
-local function CreateChams(Obj)
+
+ChamsFuncTbl.CreateChams=function(Obj)
 	if Obj ~= nil then
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
@@ -88,7 +84,8 @@ local function CreateChams(Obj)
 		end
 	end
 end
-local function UpdateChams(Obj)
+
+ChamsFuncTbl.UpdateChams=function(Obj)
 	if Obj == nil then return end
 
 	if Obj:IsA("Player") then
@@ -105,7 +102,6 @@ local function UpdateChams(Obj)
 				if (MyTor.Position - GetTor.Position).magnitude > 2048 then
 					Trans = 1
 				else
-					--local MyCharStuff = MyChar:GetDescendants()
 					local Ray = Ray.new(MyCam.CFrame.p, (GetTor.Position - MyCam.CFrame.p).unit * 2048)
 					local part = workspace:FindPartOnRayWithIgnoreList(Ray, {MyChar})
 					if part ~= nil then
@@ -128,57 +124,4 @@ local function UpdateChams(Obj)
 			end
 		end
 	end
-end
-
-
-spawn(function()
-    local s,e=pcall(function()
-        for _,v in pairs(game.Players:GetChildren())do
-            if v~=game.Players.LocalPlayer then
-                PlayerConnections[_]=v.CharacterAdded:Connect(function()
-                    if isCham then
-                        RemoveChams(player)
-                        CreateChams(player)
-                        end
-                end)
-                if isCham then RemoveChams(v)CreateChams(v)
-                else
-                    for _,v in pairs(PlayerConnections)do
-                        if v then v:Disconnect()end
-                    end
-                    RemoveChams(v)
-                end
-            end
-        end
-    end)if not s then print(e)end
-end)
-
-if not SpawnPCon then
-    SpawnPCon = Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function()
-            if isCham and player then
-                repeat task.wait()until player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head")
-                RemoveChams(player)
-                CreateChams(player)
-                print("Added Chams On:",player)
-            end
-        end)
-    end)
-end
-
-if not DespawnPCon then
-    DespawnPCon=game.Players.PlayerRemoving:Connect(function(plr)
-        RemoveChams(plr)
-    end)
-end
-if not UpdateCham then
-UpdateCham=true
-    local succ, out = coroutine.resume(coroutine.create(function()
-        while true do
-        	for _, v in next, Players:GetPlayers() do
-            	UpdateChams(v)
-            	Run.RenderStepped:wait()
-        	end
-        end
-    end))
 end
