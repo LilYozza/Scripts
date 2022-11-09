@@ -1,0 +1,182 @@
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local isCham
+local Run = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+-->Tables<--
+local PlayerConnections={}
+
+local MyChar = Player.Character
+
+local ChamsFolder=CoreGui:FindFirstChild("Chams")
+if not ChamsFolder then ChamsFolder=Instance.new("Folder",CoreGui)ChamsFolder.Name="Chams"end
+
+local PlayerChams=ChamsFolder:FindFirstChild("PlayerChams")
+local ItemChams=ChamsFolder:FindFirstChild("ItemChams")
+
+if not PlayerChams then PlayerChams=Instance.new("Folder",ChamsFolder)PlayerChams.Name="PlayerChams"end
+if not ItemChams then ItemChams=Instance.new("Folder",ChamsFolder)ItemChams.Name="ItemChams"end
+
+local function FindCham(Obj)
+	for i, v in next, ItemChams:GetChildren() do
+		if v.className == "ObjectValue" then
+			if v.Value == Obj then
+				return v.Parent
+			end
+		end
+	end
+
+	return nil
+end
+local function GetSizeOfObject(Obj)
+	if Obj:IsA("BasePart") then
+		return Obj.Size
+	elseif Obj:IsA("Model") then
+		return Obj:GetExtentsSize()
+	end
+end
+local function RemoveChams(Obj)
+	if Obj ~= nil then
+		local IsPlr = Obj:IsA("Player")
+		local UseFolder = ItemChams
+		if IsPlr then UseFolder = PlayerChams end
+
+		local FindC = UseFolder:FindFirstChild(tostring(Obj)) or FindCham(Obj)
+		if FindC then
+			FindC:Destroy()
+		end
+	end task.wait()
+end
+local function CreateChams(Obj)
+	if Obj ~= nil then
+		local IsPlr = Obj:IsA("Player")
+		local UseFolder = ItemChams
+		local Crap = nil
+		local GetTor = nil
+		local t = tick()
+		if IsPlr then
+			Obj =  Obj.Character
+			UseFolder = PlayerChams
+		end
+		if Obj == nil then return end
+		GetTor = Obj:FindFirstChild("HumanoidRootPart") or Obj:WaitForChild("HumanoidRootPart")
+		if IsPlr then Crap = Obj:GetChildren() else Crap = Obj:GetDescendants() end
+
+		local FindC = ((IsPlr) and UseFolder:FindFirstChild(Obj.Name)) or FindCham(Obj)
+		if not FindC then
+			FindC = Instance.new("Folder", UseFolder)
+			FindC.Name = Obj.Name
+			local ObjVal = Instance.new("ObjectValue", FindC)
+			ObjVal.Value = Obj
+		end
+
+		for _, P in next, Crap do
+			if P:IsA("PVInstance") and P.Name ~= "HumanoidRootPart" then
+				local Box = Instance.new("BoxHandleAdornment")
+				Box.Size = GetSizeOfObject(P)
+				Box.Name = "Cham"
+				Box.Adornee = P
+				Box.AlwaysOnTop = true
+				Box.ZIndex = 5
+				Box.Transparency = 0
+				Box.Color3 = Color3.new(255,0,0)
+				Box.Parent = FindC
+			end
+		end
+	end
+end
+local function UpdateChams(Obj)
+	if Obj == nil then return end
+
+	if Obj:IsA("Player") then
+		local Find = PlayerChams:FindFirstChild(Obj.Name)
+		local GetChar = Obj.Character
+
+		local Trans = 0
+		if GetChar and MyChar then
+			local GetHead = GetChar:FindFirstChild("Head")
+			local GetTor = GetChar:FindFirstChild("HumanoidRootPart")
+			local MyHead = MyChar:FindFirstChild("Head")
+			local MyTor = MyChar:FindFirstChild("HumanoidRootPart")
+			if GetHead and GetTor and MyHead and MyTor then
+				if (MyTor.Position - GetTor.Position).magnitude > 2048 then
+					Trans = 1
+				else
+					--local MyCharStuff = MyChar:GetDescendants()
+					local Ray = Ray.new(MyCam.CFrame.p, (GetTor.Position - MyCam.CFrame.p).unit * 2048)
+					local part = workspace:FindPartOnRayWithIgnoreList(Ray, {MyChar})
+					if part ~= nil then
+						if part:IsDescendantOf(GetChar) then
+							Trans = 0.9
+						else
+							Trans = 0
+						end
+					end
+				end
+			end
+		end
+
+		if Find then
+			for i, v in next, Find:GetChildren() do
+				if v.className ~= "ObjectValue" then
+					v.Color3 = Color3.new(255,0,0)
+					v.Transparency = Trans
+				end
+			end
+		end
+	end
+end
+
+
+spawn(function()
+    local s,e=pcall(function()
+        for _,v in pairs(game.Players:GetChildren())do
+            if v~=game.Players.LocalPlayer then
+                PlayerConnections[_]=v.CharacterAdded:Connect(function()
+                    if isCham then
+                        RemoveChams(player)
+                        CreateChams(player)
+                        end
+                end)
+                if isCham then RemoveChams(v)CreateChams(v)
+                else
+                    for _,v in pairs(PlayerConnections)do
+                        if v then v:Disconnect()end
+                    end
+                    RemoveChams(v)
+                end
+            end
+        end
+    end)if not s then print(e)end
+end)
+
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        if isCham and player then
+            repeat task.wait()until player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head")
+            RemoveChams(player)
+            CreateChams(player)
+            print("Added Chams On:",player)
+        end
+    end)
+end)
+
+game.Players.PlayerRemoving:Connect(function(plr)
+    RemoveChams(plr)
+end)
+
+local succ, out = coroutine.resume(coroutine.create(function()
+    while true do
+    	for _, v in next, Players:GetPlayers() do
+        	UpdateChams(v)
+        	Run.RenderStepped:wait()
+    	end
+    end
+end))
