@@ -53,8 +53,8 @@ GPlayers:Toggle("Player Chams",function(bool)
         for _,v in pairs(Players:GetChildren())do
             PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
                 local plr=ReturnPlayer(character)
-                if isCham then ChamsFuncTbl.RemoveESP(plr)ChamsFuncTbl.CreateESP(plr)end end)
-            if isCham then ChamsFuncTbl.RemoveESP(v)ChamsFuncTbl.CreateESP(v)else ChamsFuncTbl.RemoveESP(v)end end
+                if isCham then ChamsFuncTbl.RemoveChams(plr)ChamsFuncTbl.CreateChams(plr)end end)
+            if isCham then ChamsFuncTbl.RemoveChams(v)ChamsFuncTbl.CreateChams(v)else ChamsFuncTbl.RemoveChams(v)end end
     if not isCham then for _,v in pairs(PlayerCHAMConnections)do if v then v:Disconnect()end end end 
     end)
 end)
@@ -180,14 +180,15 @@ Run:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function(
 	end
 end)
 
-local succ, out = coroutine.resume(coroutine.create(function()
+
+spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
     while true do
         for _, v in next, Players:GetPlayers() do
             ChamsFuncTbl.UpdateChams(v)
             Run.RenderStepped:wait()
         end
     end
-end))
+end))end)
 
 
 game:GetService("Players").LocalPlayer.Idled:connect(function()
