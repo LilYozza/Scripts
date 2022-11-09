@@ -54,7 +54,7 @@ GPlayers:Toggle("Player Chams",function(bool)
     shared.ToggleCHAM = bool isCham=shared.ToggleCHAM
     spawn(function()
         for _,v in pairs(Players:GetChildren())do
-            if v~=player then
+            if v~=Player then
             PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
                 local plr=ReturnPlayer(character)
                 if isCham then ChamsFuncTbl.RemoveChams(plr)ChamsFuncTbl.CreateChams(plr)end end)
