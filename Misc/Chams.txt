@@ -10,8 +10,6 @@ local Run = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
 -->Tables<--
-local PlayerConnections={}
-
 local MyChar = Player.Character
 
 local ChamsFolder=CoreGui:FindFirstChild("Chams")
@@ -156,27 +154,32 @@ spawn(function()
     end)if not s then print(e)end
 end)
 
-
-Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function()
-        if isCham and player then
-            repeat task.wait()until player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head")
-            RemoveChams(player)
-            CreateChams(player)
-            print("Added Chams On:",player)
-        end
+if not SpawnPCon then
+    SpawnPCon = Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function()
+            if isCham and player then
+                repeat task.wait()until player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head")
+                RemoveChams(player)
+                CreateChams(player)
+                print("Added Chams On:",player)
+            end
+        end)
     end)
-end)
+end
 
-game.Players.PlayerRemoving:Connect(function(plr)
-    RemoveChams(plr)
-end)
-
-local succ, out = coroutine.resume(coroutine.create(function()
-    while true do
-    	for _, v in next, Players:GetPlayers() do
-        	UpdateChams(v)
-        	Run.RenderStepped:wait()
-    	end
-    end
-end))
+if not DespawnPCon then
+    DespawnPCon=game.Players.PlayerRemoving:Connect(function(plr)
+        RemoveChams(plr)
+    end)
+end
+if not UpdateCham then
+UpdateCham=true
+    local succ, out = coroutine.resume(coroutine.create(function()
+        while true do
+        	for _, v in next, Players:GetPlayers() do
+            	UpdateChams(v)
+            	Run.RenderStepped:wait()
+        	end
+        end
+    end))
+end
