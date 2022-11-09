@@ -1,20 +1,20 @@
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
-
-local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
-
-local Players=game:GetService("Players") local Player=Players.LocalPlayer local virtual=game:GetService("VirtualUser")
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
-local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))
 local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))
 
 --======================================FUNCTION IMPORTS=====================================--
-local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fixing/RUNNINGTEST.txt'))()--===========================================================================================--
---======================================FUNCTION USAGE=======================================--
--->ESP<-- [Table]=ESPFuncTbl [Functions]=UpdateESP,RemoveESP,CreateESP
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fixing/RUNNINGTEST.txt'))()
+local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))()
 --===========================================================================================--
+
+--======================================FUNCTION USAGE=======================================--
+-->ESP<--       [Table]=ESPFuncTbl      [Functions]=UpdateESP,RemoveESP,CreateESP
+-->InvFling<--  [Table]=InvFlingFuncTbl [Functions]=FlingOn,FlingOff
+--===========================================================================================--
+local virtual=game:GetService("VirtualUser")
 local Run = game:GetService("RunService")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
 
 local GPlayers = w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
@@ -28,46 +28,39 @@ if not pcall(function() return syn.protect_gui end) then syn = {}syn.protect_gui
 -->Functions<--
 local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do if v.Name==character.Name then return v end end end
 
-local FlingLabel=GPlayers:Label("Inv Fling: OFF",{
-    TextSize = 20;
-    TextColor = Color3.fromRGB(255,0,0);
-    BgColor = Color3.fromRGB(0,0,0);
-    
-})
---[[
-P1Connection,P2Connection,P3Connection=nil
-GPlayers:Toggle("PlayerNames",function(bool)
-    shared.Misc5 = bool
-    spawn(function()
-        if shared.Misc5 then NameTag() else
-            if P1Connection then P1Connection:Disconnect()end if P2Connection then P2Connection:Disconnect()end if P3Connection then P3Connection:Disconnect()end
-            for _,v in pairs(Players:GetChildren()) do
-                if v.Character:WaitForChild("Head",5) and v.Character.Head:FindFirstChild("PlayerTag") then
-                    v.Character.Head:FindFirstChild("PlayerTag"):Destroy()
-                end
-            end 
-        end
-        task.wait()
-    end)
-end)
---]]
-local isESP
-local PlayerESPConnections={}
+--========================================PLAYER ESP========================================--
+local isESP local PlayerESPConnections={}
 GPlayers:Toggle("Player ESP",function(bool)
     shared.ToggleESP = bool isESP=shared.ToggleESP
+    spawn(function()
         for _,v in pairs(Players:GetChildren())do
             PlayerESPConnections[_]=v.CharacterAdded:Connect(function(character)
                 local plr=ReturnPlayer(character)
-                if isESP then ESPFuncTbl.RemoveESP(plr)ESPFuncTbl.CreateESP(plr)end
-            end)
-            if isESP then ESPFuncTbl.RemoveESP(v)ESPFuncTbl.CreateESP(v)else ESPFuncTbl.RemoveESP(v)end
-        end
-    if not isESP then
-        for _,v in pairs(PlayerESPConnections)do
-            if v then v:Disconnect()end
-        end
-    end
+                if isESP then ESPFuncTbl.RemoveESP(plr)ESPFuncTbl.CreateESP(plr)end end)
+            if isESP then ESPFuncTbl.RemoveESP(v)ESPFuncTbl.CreateESP(v)else ESPFuncTbl.RemoveESP(v)end end
+    if not isESP then for _,v in pairs(PlayerESPConnections)do if v then v:Disconnect()end end end 
+    end)
 end)
+--===========================================================================================--
+
+--========================================INVIS FLING========================================--
+
+isON,F1Connection,F2Connection,F3Connection=nil
+GPlayers:Toggle("InvFling",function(bool)
+    shared.ToggleInvFling = bool isFlingOn=shared.ToggleInvFling
+    spawn(function()
+        if isFlingOn then InvFlingFuncTbl.FlingOn()
+        else InvFlingFuncTbl.FlingOff()
+        	if F1Connection then F1Connection:Disconnect() F2Connection:Disconnect() F3Connection:Disconnect()end
+        end
+    end)
+end)
+
+--===========================================================================================--
+
+
+
+
 
 
 local DropList = GPlayers:Dropdown("Select Player",PlayerList_M,true,function(SItem)
@@ -91,43 +84,6 @@ GPlayers:Button("TeleportTo",function()
     end)
 end)
 
-isON,isFlingOn=false
-F1Connection,F2Connection,F3Connection=nil
-GPlayers:Button("InvFling",function()
-    spawn(function()
-        if isFlingOn then isFlingOn=false FlingLabel:Refresh("Inv Fling: OFF") else isFlingOn=true FlingLabel:Refresh("Inv Fling: ON") end
-        if isFlingOn then 
-            InvFling()
-        elseif isON then
-            local ch = game.Players.LocalPlayer.Character
-            local prt=Instance.new("Model", workspace)
-            local z1 =  Instance.new("Part", prt)
-            z1.Name="Torso"
-            z1.CanCollide = false
-            z1.Anchored = true
-            local z2  =Instance.new("Part", prt)
-            z2.Name="Head"
-            z2.Anchored = false
-            z2.CanCollide = true
-            local z3 =Instance.new("Humanoid", prt)
-            z3.Name="Humanoid"
-            z1.Position = Vector3.new(0,9999,0)
-            z2.Position = Vector3.new(0,9991,0)
-            game.Players.LocalPlayer.Character=prt task.wait(5)
-            --game.Players.LocalPlayer.Character=ch
-            local poop = nil
-        	repeat task.wait() poop = game.Players.LocalPlayer.Character:FindFirstChild("Head") until poop ~= nil
-        	local function Cleanup()
-                for _,v in pairs(Workspace:GetChildren())do
-                    if v.Name=="Model"and v:FindFirstChild("Torso")and v:FindFirstChild("Head")and v:FindFirstChild("Humanoid") and #v:GetChildren()==3 then
-                        v:Destroy()
-                    end
-                end
-        	end Cleanup() isON=false
-        	if F1Connection then F1Connection:Disconnect() F2Connection:Disconnect() F3Connection:Disconnect()end
-        end
-    end)
-end)
 
 Misc:Button("Sword Aura",function()
     spawn (function()
