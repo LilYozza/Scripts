@@ -7,7 +7,11 @@ local maxspeed = 50
 local speed = 0
 local flying = true
 
-local function Fly()
+FlyFuncTbl={Init,FlyOn,FlyOff}
+FlyConTbl={Fly1Connection,Fly2Connection}
+
+FlyFuncTbl.FlyOff=function()flying=false end
+FlyFuncTbl.FlyOn=function()
     
     local torso = plr.Character.HumanoidRootPart
     local bg = Instance.new("BodyGyro", torso)
@@ -40,7 +44,7 @@ local function Fly()
     end
     
     bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
-    until not flying or not isFly
+    until not flying
     ctrl = {f = 0, b = 0, l = 0, r = 0}
     lastctrl = {f = 0, b = 0, l = 0, r = 0}
     speed = 0
@@ -49,31 +53,33 @@ local function Fly()
     plr.Character.Humanoid.PlatformStand = false
 end
 
-Fly1Connection = mouse.KeyDown:connect(function(key)
-    if key:lower() == "e" then
-        if flying then flying = false
-        elseif isFly then
-            flying = true
-            Fly()
+FlyFuncTbl.Init=function()
+    FlyConTbl.Fly1Connection = mouse.KeyDown:connect(function(key)
+        if key:lower() == "e" then
+            if flying then flying = false
+            else 
+                flying = true
+                FlyFuncTbl.FlyOn()
+            end
+        elseif key:lower() == "w" then
+            ctrl.f = 1
+        elseif key:lower() == "s" then
+            ctrl.b = -1
+        elseif key:lower() == "a" then
+            ctrl.l = -1
+        elseif key:lower() == "d" then
+            ctrl.r = 1
         end
-    elseif key:lower() == "w" then
-        ctrl.f = 1
-    elseif key:lower() == "s" then
-        ctrl.b = -1
-    elseif key:lower() == "a" then
-        ctrl.l = -1
-    elseif key:lower() == "d" then
-        ctrl.r = 1
-    end
-end)
-Fly2Connection = mouse.KeyUp:connect(function(key)
-    if key:lower() == "w" then
-        ctrl.f = 0
-    elseif key:lower() == "s" then
-        ctrl.b = 0
-    elseif key:lower() == "a" then
-        ctrl.l = 0
-    elseif key:lower() == "d" then
-        ctrl.r = 0
-    end
-end)
+    end)
+    FlyConTbl.Fly2Connection = mouse.KeyUp:connect(function(key)
+        if key:lower() == "w" then
+            ctrl.f = 0
+        elseif key:lower() == "s" then
+            ctrl.b = 0
+        elseif key:lower() == "a" then
+            ctrl.l = 0
+        elseif key:lower() == "d" then
+            ctrl.r = 0
+        end
+    end)
+end

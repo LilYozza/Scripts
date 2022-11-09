@@ -9,10 +9,10 @@ local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/
 --===========================================================================================--
 
 --======================================FUNCTION USAGE=======================================--
--->ESP<--       [Table]=ESPFuncTbl      [Functions]=UpdateESP,RemoveESP,CreateESP
--->Chams<--     [Table]=ChamsFuncTbl    [Functions]=UpdateChams,RemoveChams,CreateChams
--->InvFling<--  [Table]=InvFlingFuncTbl [Functions]=FlingOn,FlingOff
--->Fly<--       [Table]=FlyFuncTbl      [Functions]=Fly
+-->ESP<--       [Table]=ESPFuncTbl              [Functions]=UpdateESP,RemoveESP,CreateESP
+-->Chams<--     [Table]=ChamsFuncTbl            [Functions]=UpdateChams,RemoveChams,CreateChams
+-->InvFling<--  [Table]=InvFlingFuncTbl         [Functions]=FlingOn,FlingOff
+-->Fly<--       [Table]=FlyFuncTbl,FlyConTbl    [Functions]=Init,FlyOn,FlyOff                   [Connections]=Fly1Connection,Fly2Connection
 --===========================================================================================--
 local Virtual=game:GetService("VirtualUser")
 local Run = game:GetService("RunService")
@@ -65,7 +65,7 @@ end)
 --===========================================================================================--
 
 --========================================INVIS FLING========================================--
-isON,F1Connection,F2Connection,F3Connection=nil
+F1Connection,F2Connection,F3Connection=nil
 GPlayers:Toggle("InvFling",function(bool)
     shared.ToggleInvFling = bool isFlingOn=shared.ToggleInvFling
     spawn(function()
@@ -105,12 +105,11 @@ Misc:Button("Sword Aura",function()
 end)
 
 --============================================Fly==========================================--
-Fly1Connection,Fly2Connection=nil
 Misc:Toggle("Fly",function(bool)
-    isFly = bool
+    shared.ToggleFly = bool
     spawn (function()
-        Fly()
-        if not isFly and Fly1Connection then Fly1Connection:Disconnect() Fly2Connection:Disconnect()end
+        if shared.ToggleFly then FlyFuncTbl.Init()else FlyFuncTbl.FlyOff()
+        if FlyConTbl.Fly1Connection then FlyConTbl.Fly1Connection:Disconnect() FlyConTbl.Fly2Connection:Disconnect()end
     end)
 end)
 --===========================================================================================--
