@@ -39,10 +39,8 @@ ESPFuncTbl.UpdateESP=function(Plr)
 			Find.Frame.Health.TextColor3 = PickColor
 			--Find.Frame.Pos.TextColor3 = PickColor
 			local GetChar = Plr.Character
-			print(GetChar)print(Player.Character)
-			if Player.Character and GetChar then
-			    print("Pass1")
-				local Find2 = layer.Character:FindFirstChild("HumanoidRootPart")
+			if MyChar and GetChar then
+				local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
 				local Find3 = GetChar:FindFirstChild("HumanoidRootPart")
 				local Find4 = GetChar:FindFirstChildOfClass("Humanoid")
 				
@@ -51,7 +49,6 @@ ESPFuncTbl.UpdateESP=function(Plr)
 				Find.Frame.Health.Visible = true
 				
 				if Find2 and Find3 then
-				    print("Pass2")
 					local pos = Find3.Position
 					local Dist = (Find2.Position - pos).magnitude
 					Find.Frame.Dist.Text = "Distance: " .. string.format("%.0f", Dist)
