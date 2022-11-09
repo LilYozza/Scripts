@@ -35,9 +35,8 @@ ESPFuncTbl.UpdateESP=function(Plr)
 		if Find then
 			local PickColor = Color3.new(255,0,0)
 			Find.Frame.Names.TextColor3 = PickColor
-			Find.Frame.Dist.TextColor3 = PickColor
-			Find.Frame.Health.TextColor3 = PickColor
-			--Find.Frame.Pos.TextColor3 = PickColor
+			Find.Frame.Dist.TextColor3 = Color3.new(0,0,255)
+			Find.Frame.Health.TextColor3 = Color3.new(0,255,0)
 			local GetChar = Plr.Character
 			if MyChar and GetChar then
 				local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
