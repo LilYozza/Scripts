@@ -108,7 +108,7 @@ end)
 Misc:Toggle("Fly",function(bool)
     shared.ToggleFly = bool
     spawn (function()
-        if shared.ToggleFly then FlyFuncTbl.Init()else FlyFuncTbl.FlyOff()
+        if shared.ToggleFly then FlyFuncTbl.Init()else FlyFuncTbl.FlyOff()end
         if FlyConTbl.Fly1Connection then FlyConTbl.Fly1Connection:Disconnect() FlyConTbl.Fly2Connection:Disconnect()end
     end)
 end)
