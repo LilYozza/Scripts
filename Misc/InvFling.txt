@@ -2,7 +2,7 @@
 local mouse = game.Players.LocalPlayer:GetMouse()
 local groot = nil
 
-InvFlingFuncTbl={FlingOff}
+InvFlingFuncTbl={FlingOn,FlingOff}
 
 InvFlingFuncTbl.FlingOff=function()
     local ch = game.Players.LocalPlayer.Character
@@ -32,8 +32,9 @@ InvFlingFuncTbl.FlingOff=function()
     end Cleanup() 
 end
 
+InvFlingFuncTbl.FlingOn=function()
 F1Connection = mouse.KeyDown:connect(function(k)
-	if k == "z" and isFlingOn and not isON then
+	if k == "z" then
 	   isON=true
         local ch = game.Players.LocalPlayer.Character
         local prt=Instance.new("Model", workspace)
@@ -160,8 +161,9 @@ F1Connection = mouse.KeyDown:connect(function(k)
         
         Fly()
     
-    elseif k == "x" and isFlingOn and isON then
+    elseif k == "x"  then
     	InvFlingFuncTbl.FlingOff()
     end
 end)
+end
 
