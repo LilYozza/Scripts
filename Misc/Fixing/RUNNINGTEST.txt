@@ -2,11 +2,9 @@
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
--->Base Variables<--
 local Run = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
--->Tables<--
 ESPFuncTbl={UpdateESP,RemoveESP,CreateESP}
 local MyChar = Player.Character
 
@@ -48,18 +46,7 @@ ESPFuncTbl.UpdateESP=function(Plr)
 				if Find2 and Find3 then
 					local pos = Find3.Position
 					local Dist = (Find2.Position - pos).magnitude
-					if Dist > 2048 then
-						Find.Frame.Names.Visible = false
-						Find.Frame.Dist.Visible = false
-						Find.Frame.Health.Visible = false
-						return
-					else
-						Find.Frame.Names.Visible = true
-						Find.Frame.Dist.Visible = true
-						Find.Frame.Health.Visible = true
-					end
 					Find.Frame.Dist.Text = "Distance: " .. string.format("%.0f", Dist)
-					--Find.Frame.Pos.Text = "(X: " .. string.format("%.0f", pos.X) .. ", Y: " .. string.format("%.0f", pos.Y) .. ", Z: " .. string.format("%.0f", pos.Z) .. ")"
 					if Find4 then
 						Find.Frame.Health.Text = "Health: " .. string.format("%.0f", Find4.Health)
 					else
@@ -163,59 +150,3 @@ ESPFuncTbl.CreateESP=function(Obj)
 		end
 	end
 end
-
-
---[[
-local isESP
-    spawn(function()
-        local s,e=pcall(function()
-            for _,v in pairs(game.Players:GetChildren())do
-                if v~=game.Players.LocalPlayer then
-                    PlayerConnections[_]=v.CharacterAdded:Connect(function()
-                        if isESP then
-                            RemoveESP(player)
-                            CreateESP(player)
-                            end
-                    end)
-                    if isESP then RemoveESP(v)CreateESP(v)
-                    else
-                        for _,v in pairs(PlayerConnections)do
-                            if v then v:Disconnect()end
-                        end
-                        RemoveESP(v)
-                    end
-                end
-            end
-        end)if not s then print(e)end
-    end)
-
-
-if not SpawnPCon then
-    SpawnPCon = Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function()
-            if isESP and player then
-                repeat task.wait()until player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head")
-                RemoveESP(player)
-                CreateESP(player)
-                print("Added ESP On:",player)
-            end
-        end)
-    end)
-end
-
-if not DespawnPCon then
-    DespawnPCon=game.Players.PlayerRemoving:Connect(function(plr)
-        RemoveESP(plr)
-    end)
-end
-
-local succ, out = coroutine.resume(coroutine.create(function()
-    while true do
-        for _, v in next, Players:GetPlayers() do
-            UpdateESP(v)
-            Run.RenderStepped:wait()
-        end
-    end
-end))
-
---]]
