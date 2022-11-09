@@ -43,6 +43,11 @@ ESPFuncTbl.UpdateESP=function(Plr)
 				local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
 				local Find3 = GetChar:FindFirstChild("HumanoidRootPart")
 				local Find4 = GetChar:FindFirstChildOfClass("Humanoid")
+				
+				Find.Frame.Names.Visible = true
+				Find.Frame.Dist.Visible = true
+				Find.Frame.Health.Visible = true
+				
 				if Find2 and Find3 then
 					local pos = Find3.Position
 					local Dist = (Find2.Position - pos).magnitude
