@@ -1,10 +1,20 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
 local Players=game:GetService("Players") local Player=Players.LocalPlayer local virtual=game:GetService("VirtualUser")
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
 local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))
 local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))
-local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))
 
+--======================================FUNCTION IMPORTS=====================================--
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fixing/RUNNINGTEST.txt'))()--===========================================================================================--
+--======================================FUNCTION USAGE=======================================--
+-->ESP<-- [Table]=ESPFuncTbl [Functions]=UpdateESP,RemoveESP,CreateESP
+--===========================================================================================--
+local Run = game:GetService("RunService")
 
 local GPlayers = w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
@@ -15,13 +25,16 @@ local PlayerList_M={}
 -->Exploit Fix<--
 if not pcall(function() return syn.protect_gui end) then syn = {}syn.protect_gui = function(A_1)A_1.Parent = CoreGui end end
 
+-->Functions<--
+local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do if v.Name==character.Name then return v end end end
+
 local FlingLabel=GPlayers:Label("Inv Fling: OFF",{
     TextSize = 20;
     TextColor = Color3.fromRGB(255,0,0);
     BgColor = Color3.fromRGB(0,0,0);
     
 })
-
+--[[
 P1Connection,P2Connection,P3Connection=nil
 GPlayers:Toggle("PlayerNames",function(bool)
     shared.Misc5 = bool
@@ -37,14 +50,25 @@ GPlayers:Toggle("PlayerNames",function(bool)
         task.wait()
     end)
 end)
-
-PlayerConnections={} SpawnPCon,DespawnPCon,isCham,UpdateCham=nil 
-GPlayers:Toggle("Player Chams",function(bool)
-    shared.MiscPC = bool isCham=shared.MiscPC
-    spawn(function()
-        Chams()
-    end)
+--]]
+local isESP
+local PlayerESPConnections={}
+GPlayers:Toggle("Player ESP",function(bool)
+    shared.ToggleESP = bool isESP=shared.ToggleESP
+        for _,v in pairs(Players:GetChildren())do
+            PlayerESPConnections[_]=v.CharacterAdded:Connect(function(character)
+                local plr=ReturnPlayer(character)
+                if isESP then ESPFuncTbl.RemoveESP(plr)ESPFuncTbl.CreateESP(plr)end
+            end)
+            if isESP then ESPFuncTbl.RemoveESP(v)ESPFuncTbl.CreateESP(v)else ESPFuncTbl.RemoveESP(v)end
+        end
+    if not isESP then
+        for _,v in pairs(PlayerESPConnections)do
+            if v then v:Disconnect()end
+        end
+    end
 end)
+
 
 local DropList = GPlayers:Dropdown("Select Player",PlayerList_M,true,function(SItem)
     for _,v in pairs(Players:GetChildren())do
@@ -59,8 +83,6 @@ local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table
 local function AddPlayer(player)if not table.find(PlayerList_M,player.DisplayName) then table.insert(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function RemovePlayer(player)if table.find(PlayerList_M,player.DisplayName) then RemoveItem(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
-Players.PlayerAdded:Connect(function(player)player.CharacterAdded:Connect(function()AddPlayer(player)end)end)
-Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
 ----------------------------------------------------------------------------
 
 GPlayers:Button("TeleportTo",function()
@@ -170,6 +192,27 @@ Misc:Button("3rd Person",function()
 end)
 
 Misc:DestroyGui()
+
+--========================================CONNECTIONS========================================--
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        AddPlayer(player)
+        if isESP and player then ESPFuncTbl.RemoveESP(player)ESPFuncTbl.CreateESP(player)end
+    end)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    RemovePlayer(player)
+    if isESP then ESPFuncTbl.RemoveESP(player)end
+end)
+--===========================================================================================--
+Run:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
+	for _, v in next, Players:GetPlayers() do
+		if v ~= MyPlr then
+			ESPFuncTbl.UpdateESP(v)
+		end
+	end
+end)
 
 game:GetService("Players").LocalPlayer.Idled:connect(function()
 virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
