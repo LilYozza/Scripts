@@ -108,8 +108,8 @@ ESPFuncTbl.CreateESP=function(Obj)
 		TxtName.BackgroundTransparency = 1
 		TxtName.Position = UDim2.new(0, 0, 0, -45)
 		TxtName.Size = UDim2.new(1, 0, 10, 0)
-		TxtName.Font = "SourceSansBold"
-		TxtName.TextSize = 13
+		TxtName.Font = "ArialBold"
+		TxtName.TextSize = 15 
 		TxtName.TextStrokeTransparency = 0.5
 
 		local TxtDist = nil
@@ -122,8 +122,8 @@ ESPFuncTbl.CreateESP=function(Obj)
 			TxtDist.BackgroundTransparency = 1
 			TxtDist.Position = UDim2.new(0, 0, 0, -35)
 			TxtDist.Size = UDim2.new(1, 0, 10, 0)
-			TxtDist.Font = "SourceSansBold"
-			TxtDist.TextSize = 13
+			TxtDist.Font = "ArialBold"
+			TxtDist.TextSize = 15 
 			TxtDist.TextStrokeTransparency = 0.5
 
 			TxtHealth = Instance.new("TextLabel", frame)
@@ -133,8 +133,8 @@ ESPFuncTbl.CreateESP=function(Obj)
 			TxtHealth.BackgroundTransparency = 1
 			TxtHealth.Position = UDim2.new(0, 0, 0, -25)
 			TxtHealth.Size = UDim2.new(1, 0, 10, 0)
-			TxtHealth.Font = "SourceSansBold"
-			TxtHealth.TextSize = 13
+			TxtHealth.Font = "ArialBold"
+			TxtHealth.TextSize = 15 
 			TxtHealth.TextStrokeTransparency = 0.5
 		else
 			local ObjVal = Instance.new("ObjectValue", bb)
