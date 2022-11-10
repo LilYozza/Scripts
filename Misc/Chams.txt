@@ -2,8 +2,6 @@
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-local Auto = w:CreateFolder("Auto")
-
 local Run = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 

@@ -2,6 +2,7 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local LocalPromptNetwork=game:GetService("ReplicatedStorage").LocalPromptNetwork
 
 --Event Variable Checks
 if Workspace:FindFirstChild("CollectibleDiamonds")then CollectibleDiamonds=Workspace:FindFirstChild("CollectibleDiamonds") Auto = w:CreateFolder("Auto")end
@@ -20,6 +21,15 @@ local function GetSeat(p)if p:FindFirstChild("Seat")then for _,v in pairs(p:GetC
 
 --Trigger Functions
 local function CollectCandy()task.wait(4)for _,v in pairs(DroppedCandyFolder:GetChildren())do Touch(v,0.4)end return true end
+
+local isCandy
+DroppedCandyFolder.ChildAdded:Connect(function(obj)
+    repeat task.wait()until obj:FindFirstChild("TouchInterest")
+    if isCandy and obj:FindFirstChild("TouchInterest")then
+        local TimeOut spawn(function()task.wait(5)TimeOut=true end)
+        repeat Touch(obj)task.wait()until not obj or TimeOut
+    end
+end)
 
 
 if CollectibleDiamonds then Auto:Toggle("Auto Diamonds",function(bool)
@@ -55,20 +65,23 @@ if AppleBobbing then CandyHunt:Toggle("Auto Apples",function(bool)
 end)end
 
 if TrickorTreatDoors then CandyHunt:Toggle("Auto Doors",function(bool)
-    shared.toggle1 = bool
+    shared.toggle1 = bool isCandy=shared.toggle1
     spawn (function()
         while shared.toggle1 do
-            local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
             local s,e=pcall(function()
+            local back=Player.Character:WaitForChild("HumanoidRootPart").CFrame
             for _,v in pairs(TrickorTreatDoors:GetChildren())do
-                if shared.toggle1 and v:FindFirstChild("Doorbell") then local c spawn(function()c=CollectCandy()end)
-                    local doorpos=v.Door.CFrame local count=0
-                    repeat MoveTo(v.Doorbell,Vector3.new(0,-7,0)) if doorpos==v.Door.CFrame and count<=8 then fireproximityprompt(v.Doorbell.Attachment.ProximityPrompt) count=count+1 end task.wait()until c or not shared.toggle1
+                if shared.toggle1 and v:FindFirstChild("Doorbell") then
+                    local doorpos=v.Door.CFrame local TimeOut spawn(function()task.wait(5)TimeOut=true end)
+                    spawn(function()repeat if v.Door.CFrame==doorpos then
+                        LocalPromptNetwork.PromptShown:FireServer(v.Doorbell.Attachment.ProximityPrompt,Enum.ProximityPromptInputType.Keyboard)
+                        fireproximityprompt(v.Doorbell.Attachment.ProximityPrompt)task.wait(1)end until v.Door.CFrame~=doorpos or not shared.toggle1 or TimeOut end)
+                    repeat MoveTo(v.Doorbell,Vector3.new(0,-7,0))task.wait()until TimeOut or not shared.toggle1
                 end
             end
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
             if not s then print(e) end
-            end)Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
-            task.wait()
+            end)task.wait()
         end
     end)
 end)end
