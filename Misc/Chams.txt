@@ -49,14 +49,12 @@ ChamsFuncTbl.CreateChams=function(Obj)
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
 		local Crap = nil
-		local GetTor = nil
 		local t = tick()
 		if IsPlr then
 			Obj =  Obj.Character
 			UseFolder = PlayerChams
 		end
 		if Obj == nil then return end
-		GetTor = Obj:FindFirstChild("HumanoidRootPart") or Obj:WaitForChild("HumanoidRootPart")
 		if IsPlr then Crap = Obj:GetChildren() else Crap = Obj:GetDescendants() end
 
 		local FindC = ((IsPlr) and UseFolder:FindFirstChild(Obj.Name)) or FindCham(Obj)
