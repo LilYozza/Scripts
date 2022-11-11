@@ -4,8 +4,28 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
+local Other = w:CreateFolder("Other")
 
-Auto:Button("Execute Script",function()
+-->Grouping Runways<--
+local LineTable={"Runway Mark","Runway Mark Edge","Touchdown Mark"}
+local RunewayLines=Workspace:FindFirstChild("RunewayLines")
+if not RunewayLines then RunewayLines=Instance.new("Model",game.Workspace)RunewayLines.Name="RunewayLines"end
+for _,v in pairs(Workspace:GetDescendants())do
+    if v:IsA("BasePart")and v.BrickColor==BrickColor.new('Lily white')or v:IsA("BasePart")and table.find(LineTable,v.Name)then
+        if v:FindFirstAncestor("Runway")or v:FindFirstAncestor("Airport")or v:FindFirstAncestor("Runway and Taxiway")or v:FindFirstAncestor("GROUND")or v:FindFirstAncestor("Main")then
+            v.Parent=RunewayLines
+        end
+    end
+end
+
+Auto:Toggle("Runway",function(bool)
+    shared.ToggleR=bool
+    spawn(function()
+        if shared.ToggleR then ChamsFuncTbl.CreateChams(RunewayLines)else ChamsFuncTbl.RemoveChams(RunewayLines)end
+    end)
+end)
+
+Other:Button("Execute Script",function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Marco8642/science/main/airplane%20simulator", true))()
 end)
 
