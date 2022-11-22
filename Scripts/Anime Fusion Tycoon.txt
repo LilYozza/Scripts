@@ -31,9 +31,10 @@ local function GetLeaderstats()local t={Coins,Heroes,Rebirths}local p=Player.Pla
 
 -->Return Functions<--
 local function fromSuffixString(s)
-    local suffixes = {"K", "M", "B", "T", "Q"} 
+    local suffixes = {"K", "M", "B", "T", "Q","n"} 
     found = false 
     if s == "0" then return 0 end
+    if s:match("Qn") then s = string.gsub(s, 'Q', "") end
     if s:match("d") then s = string.gsub(s, 'd', "") end
     if s:match("$") then s = string.gsub(s, '%$', "") end 
     if s:match(",") then s = string.gsub(s, '%,', "") end 
