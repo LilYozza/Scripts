@@ -36,12 +36,12 @@ local function fromSuffixString(s)
     if s:match("d") then s = string.gsub(s, 'd', "") end
     if s:match("$") then s = string.gsub(s, '%$', "") end 
     if s:match(",") then s = string.gsub(s, '%,', "") end 
-    if s:match("+") then s = string.gsub(s, '%+', "") end 
+    if s:match("+") then s = string.gsub(s, '%+', "") end
     for i, value in ipairs(suffixes) do 
         if s:match(value) then found = true end 
     end 
     if found == false then return tonumber(s) end
-    local n, suffix = string.match(s, "(.*)(%a)$") 
+    local n, suffix = string.match(s, "(.*)(%a)$")
     if n and suffix then 
         local i = table.find(suffixes, suffix) or 0 
         return tonumber(n) * math.pow(10, i * 3) 
@@ -134,26 +134,7 @@ Auto:Toggle("Auto Egg",function(bool)
         while shared.ToggleAE do local s,e=pcall(function()
             local Storage=PetStorage.Text
             if fromSuffixString(EggPrice.Text)<=fromSuffixString(Coins.Text)then
-                if Storage:split("/")[1]<Storage:split("/")[2] then
-                    Remotes.Pets:FireServer("Buy1")task.wait(0.3)
-                end
-            end
-        task.wait()end)task.wait()if not s then print(e)end end 
-    end)
-end)
-
-local SelectUpgradeType=Usables:FindFirstChild("1ki")
-local SelectUpgradeList = Auto:Dropdown("+16 Per",UpgradeTable,true,function(SItem)
-    if SItem=="+16 Per"then SelectUpgradeType=Usables:FindFirstChild("1ki") else SelectUpgradeType=Usables:FindFirstChild("10ki")end
-end)
-
-Auto:Toggle("Auto Shine",function(bool)
-    shared.ToggleAE=bool
-    spawn(function()
-        while shared.ToggleAE do local s,e=pcall(function()
-            local Storage=PetStorage.Text
-            if fromSuffixString(EggPrice.Text)<=fromSuffixString(Coins.Text)then
-                if Storage:split("/")[1]<Storage:split("/")[2] then
+                if tonumber(Storage:split("/")[1])<tonumber(Storage:split("/")[2])then
                     Remotes.Pets:FireServer("Buy1")task.wait(0.3)
                 end
             end
