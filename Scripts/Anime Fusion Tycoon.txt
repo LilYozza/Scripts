@@ -9,7 +9,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Tycoon,SelectType,SelectUpgradeType
+local Tycoon
 local Juego=Workspace:FindFirstChild("Juego")
 local SlotsInGame=Juego:FindFirstChild("SlotsInGame")
 
@@ -29,7 +29,25 @@ local function GetTycoon()for _,v in pairs(SlotsInGame:GetChildren())do if v:Fin
 local function GetLeaderstats()local t={Coins,Heroes,Rebirths}local p=Player.PlayerGui.LeaderBoard.LeaderBoard.Fondo.ScrollingFrame for _,v in pairs(p:GetChildren())do if v.Name=="Slot"and v.Nombre.Text==Player.Name then t.Coins=v.TopCoins t.Heroes=v.Ninjas t.Rebirths=v.Rebirths return t end end end
 
 -->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+local function fromSuffixString(s)
+    local suffixes = {"K", "M", "B", "T", "Q"} 
+    found = false 
+    if s == "0" then return 0 end
+    if s:match("d") then s = string.gsub(s, 'd', "") end
+    if s:match("$") then s = string.gsub(s, '%$', "") end 
+    if s:match(",") then s = string.gsub(s, '%,', "") end 
+    if s:match("+") then s = string.gsub(s, '%+', "") end 
+    for i, value in ipairs(suffixes) do 
+        if s:match(value) then found = true end 
+    end 
+    if found == false then return tonumber(s) end
+    local n, suffix = string.match(s, "(.*)(%a)$") 
+    if n and suffix then 
+        local i = table.find(suffixes, suffix) or 0 
+        return tonumber(n) * math.pow(10, i * 3) 
+    end 
+    return tonumber(s) 
+end
 
 -->Waiting for Data<--
 repeat GetTycoon()task.wait()until Tycoon
@@ -44,18 +62,23 @@ local NewSpots=Tycoon:FindFirstChild("NewSpots")
 local Usables=Tycoon:FindFirstChild("Usables")
 local SpawnNinjaRegala2=Tycoon:FindFirstChild("SpawnNinjaRegala2")
 local NpcsCombateTemp=Tycoon:FindFirstChild("NpcsCombateTemp")
+local GuisActivables=Tycoon:FindFirstChild("GuisActivables")
 
 -->Player Variables<--
 local PGUI=Player.PlayerGui
 local Ki=PGUI.Bot.Abajo.F.Num
-local Coins=PGUI.Top.F.Coins
+local Coins=PGUI.Top.F.Coins.Coins
+
+-->Pet Data<--
+local PetsUi=PGUI.Gui.PetsInv
+local PetStorage=PetsUi.Menu:WaitForChild("Storage")
 
 -->Fix Prompt Spam<--
 if PGUI:FindFirstChild("NewNotiInMid") then PGUI.NewNotiInMid.Enabled=false end
 
 -->Post Function<--
 local function GetCount(Type)local count=0 for _,v in pairs(NewSpots:GetChildren())do if v:FindFirstChild("TipoNum") and v.TipoNum.Value==Type then count=count+1 end end return count end
-local function CheckPrice(btn)local price=btn.Gui.Num.Text if fromSuffixString(price) <= fromSuffixString(Coins.Text)then return true end task.wait()end
+local function CheckPrice(btn)local price=btn.Gui.Num.Text  if fromSuffixString(price) <= fromSuffixString(Coins.Text)then return true end task.wait()end
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.ToggleAC=bool
@@ -81,7 +104,8 @@ Auto:Toggle("Auto Deposit",function(bool)
     end)
 end)
 
-local SelectBuyList = Auto:Dropdown("Select Type",TypeTable,true,function(SItem)
+local SelectType=Usables:FindFirstChild("Comprar6")
+local SelectBuyList = Auto:Dropdown("+6 Ninja",TypeTable,true,function(SItem)
     for _,v in pairs(TypeTable)do
         if v==SItem then SelectType=Usables:FindFirstChild("Comprar"..v:split(" ")[1]:split("+")[2])end
     end
@@ -92,13 +116,49 @@ Auto:Toggle("Auto Buy",function(bool)
     spawn(function()while shared.ToggleN do if SelectType and CheckPrice(SelectType) then Touch(SelectType,0.3)end task.wait()end end)
 end)
 
-local SelectUpgradeList = Auto:Dropdown("Select Type",UpgradeTable,true,function(SItem)
+--UPDATE REMOVED FUNCTION/FEATURE--
+--[[
+local SelectUpgradeType=Usables:FindFirstChild("1ki")
+local SelectUpgradeList = Auto:Dropdown("+16 Per",UpgradeTable,true,function(SItem)
     if SItem=="+16 Per"then SelectUpgradeType=Usables:FindFirstChild("1ki") else SelectUpgradeType=Usables:FindFirstChild("10ki")end
 end)
-
 Auto:Toggle("Auto Upgrade",function(bool)
     shared.ToggleAU=bool
     spawn(function()while shared.ToggleAU do if SelectUpgradeType and CheckPrice(SelectUpgradeType) then Touch(SelectUpgradeType,0.3)end task.wait()end end)
+end)]]--
+
+local EggPrice=GuisActivables:WaitForChild("Egg1").Gui.Price.Cost
+Auto:Toggle("Auto Egg",function(bool)
+    shared.ToggleAE=bool
+    spawn(function()
+        while shared.ToggleAE do local s,e=pcall(function()
+            local Storage=PetStorage.Text
+            if fromSuffixString(EggPrice.Text)<=fromSuffixString(Coins.Text)then
+                if Storage:split("/")[1]<Storage:split("/")[2] then
+                    Remotes.Pets:FireServer("Buy1")task.wait(0.3)
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end end 
+    end)
+end)
+
+local SelectUpgradeType=Usables:FindFirstChild("1ki")
+local SelectUpgradeList = Auto:Dropdown("+16 Per",UpgradeTable,true,function(SItem)
+    if SItem=="+16 Per"then SelectUpgradeType=Usables:FindFirstChild("1ki") else SelectUpgradeType=Usables:FindFirstChild("10ki")end
+end)
+
+Auto:Toggle("Auto Shine",function(bool)
+    shared.ToggleAE=bool
+    spawn(function()
+        while shared.ToggleAE do local s,e=pcall(function()
+            local Storage=PetStorage.Text
+            if fromSuffixString(EggPrice.Text)<=fromSuffixString(Coins.Text)then
+                if Storage:split("/")[1]<Storage:split("/")[2] then
+                    Remotes.Pets:FireServer("Buy1")task.wait(0.3)
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end end 
+    end)
 end)
 
 Auto:Toggle("Auto Fusion",function(bool)
