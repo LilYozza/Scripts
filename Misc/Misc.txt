@@ -38,11 +38,14 @@ GPlayers:Toggle("Player ESP",function(bool)
     shared.ToggleESP = bool isESP=shared.ToggleESP
     spawn(function()
         for _,v in pairs(Players:GetChildren())do
+            spawn(function()
             if v~=Player then
             PlayerESPConnections[_]=v.CharacterAdded:Connect(function(character)
-                local plr=ReturnPlayer(character)
-                if isESP then ESPFuncTbl.RemoveESP(plr)ESPFuncTbl.CreateESP(plr)end end)
-            if isESP then ESPFuncTbl.RemoveESP(v)ESPFuncTbl.CreateESP(v)else ESPFuncTbl.RemoveESP(v)end end end
+                    local plr=ReturnPlayer(character)
+                    if isESP then ESPFuncTbl.RemoveESP(plr)ESPFuncTbl.CreateESP(plr)end end)
+                if isESP then ESPFuncTbl.RemoveESP(v)ESPFuncTbl.CreateESP(v)else ESPFuncTbl.RemoveESP(v)end end
+            end)
+        end
     if not isESP then for _,v in pairs(PlayerESPConnections)do if v then v:Disconnect()end end end 
     end)
 end)
@@ -54,11 +57,14 @@ GPlayers:Toggle("Player Chams",function(bool)
     shared.ToggleCHAM = bool isCham=shared.ToggleCHAM
     spawn(function()
         for _,v in pairs(Players:GetChildren())do
-            if v~=Player then
-            PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
+            spawn(function()
+                if v~=Player then
+                PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
                 local plr=ReturnPlayer(character)
                 if isCham then ChamsFuncTbl.RemoveChams(plr)ChamsFuncTbl.CreateChams(plr)end end)
-            if isCham then ChamsFuncTbl.RemoveChams(v)ChamsFuncTbl.CreateChams(v)else ChamsFuncTbl.RemoveChams(v)end end end
+                if isCham then ChamsFuncTbl.RemoveChams(v)ChamsFuncTbl.CreateChams(v)else ChamsFuncTbl.RemoveChams(v)end end
+            end)
+        end
     if not isCham then for _,v in pairs(PlayerCHAMConnections)do if v then v:Disconnect()end end end 
     end)
 end)
