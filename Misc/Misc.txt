@@ -14,7 +14,7 @@ local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/
 -->Fly<--       [Table]=FlyFuncTbl,FlyConTbl    [Functions]=Init,FlyOn,FlyOff                   [Connections]=Fly1Connection,Fly2Connection
 --===========================================================================================--
 local Virtual=game:GetService("VirtualUser")
-local Run = game:GetService("RunService")
+local RunService = game:GetService("RunService")
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
 local mouse = Player:GetMouse()
@@ -162,14 +162,19 @@ Players.PlayerAdded:Connect(function(player)
 	end)
 end)
 
+RunService.RenderStepped:Connect(function()
+	UpdateESP()
+end)
+
 --===========================================================================================--
 spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
 		while true do
 			for _, v in next, Players:GetPlayers() do
 				ChamsFuncTbl.UpdateChams(v)
-				Run.RenderStepped:wait()
+				RunService.RenderStepped:wait()
 			end
 		end
 	end))end)
+	
 
 Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)end)

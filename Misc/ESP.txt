@@ -1,4 +1,3 @@
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
@@ -95,7 +94,7 @@ local function AddESP(player)
 	CreateTag(head)
 end
 
-local function UpdateESP()
+function _G.UpdateESP()
 	if not isESP then return end
 	for _,v in pairs(Players:GetPlayers())do
 		if v ~= Player then
@@ -138,8 +137,4 @@ end)
 Players.PlayerRemoving:Connect(function(player)
 	if PlayerCon[player.UserId] then PlayerCon[player.UserId] = {} end
 	RemoveESP(player)
-end)
-
-RunService.RenderStepped:Connect(function()
-	UpdateESP()
 end)
