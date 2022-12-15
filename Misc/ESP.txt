@@ -1,156 +1,145 @@
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
 
-local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
+local isESP = false
+local PlayerCon = {}
 
-local Run = game:GetService("RunService")
-local CoreGui = game:GetService("CoreGui")
+local NameTagColor = Color3.fromRGB(255,0,0)
+local DistanceTagColor = Color3.fromRGB(0,0,255)
+local HealthTagColor = Color3.fromRGB(0,255,0)
 
-ESPFuncTbl={UpdateESP,RemoveESP,CreateESP}
-local MyChar = Player.Character
+local NameTagPosition = UDim2.new(0,0,0,0)
+local DistanceTagPosition = UDim2.new(0,0,0.3,0)
+local HealthTagPosition = UDim2.new(0,0,0.6,0)
 
-local ESPFolder=CoreGui:FindFirstChild("ESP Stuff")
-if not ESPFolder then ESPFolder=Instance.new("Folder",CoreGui)ESPFolder.Name="ESP Stuff"end
-
-local PlayerESP=ESPFolder:FindFirstChild("PlayerESP")
-local ItemESP=ESPFolder:FindFirstChild("ItemESP")
-
-if not PlayerESP then PlayerESP=Instance.new("Folder",ESPFolder)PlayerESP.Name="PlayerESP"end
-if not ItemESP then ItemESP=Instance.new("Folder",ESPFolder)ItemESP.Name="ItemESP"end
-
-local function FindESP(Obj)
-	for i, v in next, ItemESP:GetChildren() do
-		if v.className == "ObjectValue" then
-			if v.Value == Obj then
-				return v.Parent
-			end
-		end
-	end
-
-	return nil
-end
-
-ESPFuncTbl.UpdateESP=function(Plr)
-	if Plr ~= nil then
-		local Find = PlayerESP:FindFirstChild("ESP Crap_" .. Plr.Name)
-		if Find then
-			local PickColor = Color3.new(255,0,0)
-			Find.Frame.Names.TextColor3 = PickColor
-			Find.Frame.Dist.TextColor3 = Color3.new(0,0,255)
-			Find.Frame.Health.TextColor3 = Color3.new(0,255,0)
-			local GetChar = Plr.Character
-			if MyChar and GetChar then
-				local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
-				local Find3 = GetChar:FindFirstChild("HumanoidRootPart")
-				local Find4 = GetChar:FindFirstChildOfClass("Humanoid")
-				
-				Find.Frame.Names.Visible = true
-				Find.Frame.Dist.Visible = true
-				Find.Frame.Health.Visible = true
-				
-				if Find2 and Find3 then
-					local pos = Find3.Position
-					local Dist = (Find2.Position - pos).magnitude
-					Find.Frame.Dist.Text = "Distance: " .. string.format("%.0f", Dist)
-					if Find4 then
-						Find.Frame.Health.Text = "Health: " .. string.format("%.0f", Find4.Health)
-					else
-						Find.Frame.Health.Text = ""
-					end
-				end
-			end
-		end
+local function GetPDistance(player)
+	if not player then return end
+	if player == Player then return 0 end
+	local Playerchar = Player.Character or Player.CharacterAdded:Wait()
+	local char = player.Character or player.CharacterAdded:Wait()
+	if Playerchar and char then
+		return (Playerchar:WaitForChild("HumanoidRootPart").Position - char:WaitForChild("HumanoidRootPart").Position).Magnitude
 	end
 end
 
-ESPFuncTbl.RemoveESP=function(Obj)
-	if Obj ~= nil then
-		local IsPlr = Obj:IsA("Player")
-		local UseFolder = ItemESP
-		if IsPlr then UseFolder = PlayerESP end
+local function CheckPlayer(player)
+	for _,v in pairs(Players:GetPlayers())do
+		if v == player then return true end
+	end
+end
 
-		local FindESP = ((IsPlr) and UseFolder:FindFirstChild("ESP Crap_" .. Obj.Name)) or FindESP(Obj)
-		if FindESP then
-			FindESP:Destroy()
+local function CreateTextLabel(name, parent, color, position)
+	-- Creates Name Tag --
+	local newText = Instance.new("TextLabel")
+	-- Data --
+	newText.Name = name
+	newText.Parent = parent
+	newText.Size = UDim2.new(1,0,0.3,0)
+	newText.Position = position
+	newText.BackgroundTransparency = 1
+	newText.TextScaled = true
+
+	-- Text --
+	newText.Font = Enum.Font.FredokaOne
+	newText.TextColor3 = color
+end
+
+local function CreateTag(part)
+	if part:FindFirstChild("PlayerTag") then return end
+	-- Creates BillBoard --
+	local newBillBoard = Instance.new("BillboardGui")
+	-- Data --
+	newBillBoard.Name = "PlayerTag"
+	newBillBoard.Parent = part
+	newBillBoard.AlwaysOnTop = true
+	newBillBoard.Size = UDim2.new(0, 250,0, 100)
+	newBillBoard.ExtentsOffset = Vector3.new(0,3,0)
+	
+
+	CreateTextLabel("NameTag", newBillBoard, NameTagColor, NameTagPosition)
+	CreateTextLabel("DistanceTag", newBillBoard, DistanceTagColor, DistanceTagPosition)
+	CreateTextLabel("HealthTag", newBillBoard, HealthTagColor, HealthTagPosition)
+
+end
+
+local function RemoveESP(player)
+	local Tag = player.Character.Head:FindFirstChild("PlayerTag") or player.Character:WaitForChild("Head", 5):FindFirstChild("PlayerTag")
+	if Tag then Tag:Destroy()end
+end
+
+local function UpdateTag(player)
+	if not CheckPlayer(player) then RemoveESP(player) return end
+	local Tag = player.Character.Head:FindFirstChild("PlayerTag") or player.Character:WaitForChild("Head", 5):FindFirstChild("PlayerTag")
+	if not Tag then return end
+	
+	local char = player.Character or player.CharacterAdded:Wait()
+	if not char then return end
+	
+	local PlayerName = player.DisplayName
+	local Distance = GetPDistance(player)
+	local Health = char:WaitForChild("Humanoid").Health
+	
+	Tag.NameTag.Text = PlayerName
+	Tag.DistanceTag.Text = "Distance: "..Distance
+	Tag.HealthTag.Text = "Health: "..Health
+
+end
+
+local function AddESP(player)
+	if not CheckPlayer(player) then RemoveESP(player) return end
+	local char = player.Character or player.CharacterAdded:Wait()
+	if not char then return end
+	local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
+	if not head then return end
+	CreateTag(head)
+end
+
+local function UpdateESP()
+	if not isESP then return end
+	for _,v in pairs(Players:GetPlayers())do
+		if v ~= Player then
+			UpdateTag(v)
+		end
+		
+	end
+end
+
+function _G.ESPOn()
+	isESP = true
+	for _,v in pairs(Players:GetPlayers())do
+		if v ~= Player then
+			spawn(function()
+				AddESP(v)
+				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
+			end)
 		end
 	end
 end
 
-ESPFuncTbl.CreateESP=function(Obj)
-	if Obj ~= nil then
-		local IsPlr = Obj:IsA("Player")
-		local UseFolder = ItemESP
-		local GetChar = ((IsPlr) and Obj.Character) or Obj
-		local Head = GetChar:FindFirstChild("Head")
-		local t = tick()
-		if IsPlr then UseFolder = PlayerESP end
-		if Head == nil then
-			repeat
-				Head = GetChar:FindFirstChild("Head")
-				task.wait()
-			until Head ~= nil or (tick() - t) >= 10
-		end
-		if Head == nil then return end
-		
-		local bb = Instance.new("BillboardGui")
-		bb.Adornee = Head
-		bb.ExtentsOffset = Vector3.new(0, 1, 0)
-		bb.AlwaysOnTop = true
-		bb.Size = UDim2.new(0, 5, 0, 5)
-		bb.StudsOffset = Vector3.new(0, 3, 0)
-		bb.Name = "ESP Crap_" .. Obj.Name
-		bb.Parent = UseFolder
-		
-		local frame = Instance.new("Frame", bb)
-		frame.ZIndex = 10
-		frame.BackgroundTransparency = 1
-		frame.Size = UDim2.new(1, 0, 1, 0)
-		
-		local TxtName = Instance.new("TextLabel", frame)
-		TxtName.Name = "Names"
-		TxtName.ZIndex = 10
-		TxtName.Text = Obj.DisplayName
-		TxtName.BackgroundTransparency = 1
-		TxtName.Position = UDim2.new(0, 0, 0, -45)
-		TxtName.Size = UDim2.new(1, 0, 10, 0)
-		TxtName.Font = "ArialBold"
-		TxtName.TextSize = 15 
-		TxtName.TextStrokeTransparency = 0.5
-
-		local TxtDist = nil
-		local TxtHealth = nil
-		if IsPlr then
-			TxtDist = Instance.new("TextLabel", frame)
-			TxtDist.Name = "Dist"
-			TxtDist.ZIndex = 10
-			TxtDist.Text = ""
-			TxtDist.BackgroundTransparency = 1
-			TxtDist.Position = UDim2.new(0, 0, 0, -32)
-			TxtDist.Size = UDim2.new(1, 0, 10, 0)
-			TxtDist.Font = "ArialBold"
-			TxtDist.TextSize = 15 
-			TxtDist.TextStrokeTransparency = 0.5
-
-			TxtHealth = Instance.new("TextLabel", frame)
-			TxtHealth.Name = "Health"
-			TxtHealth.ZIndex = 10
-			TxtHealth.Text = ""
-			TxtHealth.BackgroundTransparency = 1
-			TxtHealth.Position = UDim2.new(0, 0, 0, -19)
-			TxtHealth.Size = UDim2.new(1, 0, 10, 0)
-			TxtHealth.Font = "ArialBold"
-			TxtHealth.TextSize = 15 
-			TxtHealth.TextStrokeTransparency = 0.5
-		else
-			local ObjVal = Instance.new("ObjectValue", bb)
-			ObjVal.Value = Obj
-		end
-		
-		local PickColor = Color3.new(255,0,0)
-		TxtName.TextColor3 = PickColor
-
-		if IsPlr then
-			TxtDist.TextColor3 = Color3.new(0,0,255)
-			TxtHealth.TextColor3 = Color3.new(0,255,0)
+function _G.ESPOff()
+	isESP = false
+	PlayerCon = {}
+	for _,v in pairs(Players:GetPlayers())do
+		if v ~= Player then
+			spawn(function()
+				RemoveESP(v)
+			end)
 		end
 	end
 end
+
+Players.PlayerAdded:Connect(function(player)
+	PlayerCon[player.UserId] = player.CharacterAdded:Connect(function()
+		if isESP == true then AddESP(player)end
+	end)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	if PlayerCon[player.UserId] then PlayerCon[player.UserId] = {} end
+	RemoveESP(player)
+end)
+
+RunService.RenderStepped:Connect(function()
+	UpdateESP()
+end)
