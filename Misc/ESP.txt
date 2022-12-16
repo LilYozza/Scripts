@@ -65,7 +65,7 @@ function _G.ESPOn()
 			spawn(function()
 				if v ~= Player then
 					CreateTag(v)
-					PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
+					PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then CreateTag(v)end end)
 				end
 			end)
 		end
@@ -96,3 +96,6 @@ Players.PlayerRemoving:Connect(function(player)
 	if PlayerCon[player.UserId] then PlayerCon[player.UserId] = {} end
 	RemoveESP(player)
 end)
+
+
+_G.ESPOn()
