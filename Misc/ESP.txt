@@ -1,3 +1,4 @@
+print("Version 1.0.0")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
@@ -100,6 +101,7 @@ function _G.UpdateESP()
 		spawn(function()
 			if v ~= Player then
 				UpdateTag(v)
+				print()
 			end
 		end)
 	end
