@@ -1,4 +1,4 @@
-print("Version 1.0.0")
+print("Version 1.0.1")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
@@ -96,7 +96,7 @@ local function AddESP(player)
 end
 
 function _G.UpdateESP()
-	if not isESP then return end
+	if not isESP then print(isESP) return end
 	for _,v in pairs(Players:GetPlayers())do
 		spawn(function()
 			if v ~= Player then
