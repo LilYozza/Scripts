@@ -1,4 +1,5 @@
-print("Version 1.0.2")
+print("Version 1.0.3")
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
