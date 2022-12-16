@@ -1,4 +1,4 @@
-print("Version 1.0.5")
+print("Version 2.0.5")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -7,22 +7,7 @@ local isESP = false
 local PlayerCon = {}
 
 local NameTagColor = Color3.fromRGB(255,0,0)
-local DistanceTagColor = Color3.fromRGB(0,0,255)
-local HealthTagColor = Color3.fromRGB(0,255,0)
 
-local NameTagPosition = UDim2.new(0,0,0,0)
-local DistanceTagPosition = UDim2.new(0,0,0.3,0)
-local HealthTagPosition = UDim2.new(0,0,0.6,0)
-
-local function GetPDistance(player)
-	if not player then return end
-	if player == Player then return 0 end
-	local Playerchar = Player.Character or Player.CharacterAdded:Wait()
-	local char = player.Character or player.CharacterAdded:Wait()
-	if Playerchar and char then
-		return math.floor((Playerchar:WaitForChild("HumanoidRootPart").Position - char:WaitForChild("HumanoidRootPart").Position).Magnitude + 0.5) 
-	end
-end
 
 local function CheckPlayer(player)
 	for _,v in pairs(Players:GetPlayers())do
@@ -30,37 +15,33 @@ local function CheckPlayer(player)
 	end
 end
 
-local function CreateTextLabel(name, parent, color, position)
-	-- Creates Name Tag --
+local function CreateTag(player)
+    
+    local char = player.Character or player.CharacterAdded:Wait()
+	if not char then return end
+	local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
+	if not head then return end
+    
+	if head:FindFirstChild("PlayerTag") then return end
+	-- Creates BillBoard --
+	local newBillBoard = Instance.new("BillboardGui")
+	-- Data --
+	newBillBoard.Name = "PlayerTag"
+	newBillBoard.Parent = head
+	newBillBoard.AlwaysOnTop = true
+	newBillBoard.ExtentsOffset = Vector3.new(0,2,0)
+
+		-- Creates Name Tag --
 	local newText = Instance.new("TextLabel")
 	-- Data --
-	newText.Name = name
+	newText.Name = player.DisplayName
 	newText.Parent = parent
-	newText.Size = UDim2.new(1,0,0.3,0)
-	newText.Position = position
 	newText.BackgroundTransparency = 1
 	newText.TextScaled = true
 
 	-- Text --
 	newText.Font = Enum.Font.FredokaOne
-	newText.TextColor3 = color
-end
-
-local function CreateTag(part)
-	if part:FindFirstChild("PlayerTag") then return end
-	-- Creates BillBoard --
-	local newBillBoard = Instance.new("BillboardGui")
-	-- Data --
-	newBillBoard.Name = "PlayerTag"
-	newBillBoard.Parent = part
-	newBillBoard.AlwaysOnTop = true
-	newBillBoard.Size = UDim2.new(0, 250,0, 100)
-	newBillBoard.ExtentsOffset = Vector3.new(0,3,0)
-
-
-	CreateTextLabel("NameTag", newBillBoard, NameTagColor, NameTagPosition)
-	CreateTextLabel("DistanceTag", newBillBoard, DistanceTagColor, DistanceTagPosition)
-	CreateTextLabel("HealthTag", newBillBoard, HealthTagColor, HealthTagPosition)
+	newText.TextColor3 = NameTagColor
 
 end
 
@@ -73,46 +54,10 @@ local function RemoveESP(player)
 	if Tag then Tag:Destroy()end
 end
 
-local function UpdateTag(player)
-	if not CheckPlayer(player) then RemoveESP(player) return end
-
-	local char = player.Character or player.CharacterAdded:Wait()
-	if not char then return end
-
-	local Tag = player.Character.Head:FindFirstChild("PlayerTag") or player.Character:WaitForChild("Head", 5):FindFirstChild("PlayerTag")
-	if not Tag then return end
-
-	local PlayerName = player.DisplayName
-	local Distance = GetPDistance(player)
-	local Health = char:WaitForChild("Humanoid").Health
-
-	Tag.NameTag.Text = PlayerName
-	Tag.DistanceTag.Text = "Distance: "..Distance
-	Tag.HealthTag.Text = "Health: "..Health
-
-end
-
 local function AddESP(player)
 	spawn(function()
 		if not CheckPlayer(player) then RemoveESP(player) return end
-		local char = player.Character or player.CharacterAdded:Wait()
-		if not char then return end
-		local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
-		if not head then return end
-		CreateTag(head)
-	end)
-end
-
-local function UpdateESP()
-	pcall(function()
-		if not isESP then return end
-		for _,v in pairs(Players:GetPlayers())do
-			spawn(function()
-				if v ~= Player then
-					UpdateTag(v)
-				end
-			end)
-		end
+		CreateTag(player)
 	end)
 end
 
@@ -153,8 +98,4 @@ end)
 Players.PlayerRemoving:Connect(function(player)
 	if PlayerCon[player.UserId] then PlayerCon[player.UserId] = {} end
 	RemoveESP(player)
-end)
-
-RunService.RenderStepped:Connect(function()
-	UpdateESP()
 end)
