@@ -18,7 +18,7 @@ local function GetPDistance(player)
 	local Playerchar = Player.Character or Player.CharacterAdded:Wait()
 	local char = player.Character or player.CharacterAdded:Wait()
 	if Playerchar and char then
-		return (Playerchar:WaitForChild("HumanoidRootPart").Position - char:WaitForChild("HumanoidRootPart").Position).Magnitude
+		return math.floor((Playerchar:WaitForChild("HumanoidRootPart").Position - char:WaitForChild("HumanoidRootPart").Position).Magnitude + 0.5) 
 	end
 end
 
@@ -54,7 +54,7 @@ local function CreateTag(part)
 	newBillBoard.AlwaysOnTop = true
 	newBillBoard.Size = UDim2.new(0, 250,0, 100)
 	newBillBoard.ExtentsOffset = Vector3.new(0,3,0)
-	
+
 
 	CreateTextLabel("NameTag", newBillBoard, NameTagColor, NameTagPosition)
 	CreateTextLabel("DistanceTag", newBillBoard, DistanceTagColor, DistanceTagPosition)
@@ -71,14 +71,14 @@ local function UpdateTag(player)
 	if not CheckPlayer(player) then RemoveESP(player) return end
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag") or player.Character:WaitForChild("Head", 5):FindFirstChild("PlayerTag")
 	if not Tag then return end
-	
+
 	local char = player.Character or player.CharacterAdded:Wait()
 	if not char then return end
-	
+
 	local PlayerName = player.DisplayName
 	local Distance = GetPDistance(player)
 	local Health = char:WaitForChild("Humanoid").Health
-	
+
 	Tag.NameTag.Text = PlayerName
 	Tag.DistanceTag.Text = "Distance: "..Distance
 	Tag.HealthTag.Text = "Health: "..Health
@@ -97,22 +97,23 @@ end
 function _G.UpdateESP()
 	if not isESP then return end
 	for _,v in pairs(Players:GetPlayers())do
-		if v ~= Player then
-			UpdateTag(v)
-		end
-		
+		spawn(function()
+			if v ~= Player then
+				UpdateTag(v)
+			end
+		end)
 	end
 end
 
 function _G.ESPOn()
 	isESP = true
 	for _,v in pairs(Players:GetPlayers())do
-		if v ~= Player then
-			spawn(function()
+		spawn(function()
+			if v ~= Player then
 				AddESP(v)
 				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
-			end)
-		end
+			end
+		end)
 	end
 end
 
@@ -120,11 +121,11 @@ function _G.ESPOff()
 	isESP = false
 	PlayerCon = {}
 	for _,v in pairs(Players:GetPlayers())do
-		if v ~= Player then
-			spawn(function()
+		spawn(function()
+			if v ~= Player then
 				RemoveESP(v)
-			end)
-		end
+			end
+		end)
 	end
 end
 
