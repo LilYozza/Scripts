@@ -1,4 +1,4 @@
-print("Version 1.0.1")
+print("Version 1.0.2")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
@@ -95,7 +95,7 @@ local function AddESP(player)
 	CreateTag(head)
 end
 
-function _G.UpdateESP()
+local function UpdateESP()
 	if not isESP then print(isESP) return end
 	for _,v in pairs(Players:GetPlayers())do
 		spawn(function()
@@ -140,4 +140,8 @@ end)
 Players.PlayerRemoving:Connect(function(player)
 	if PlayerCon[player.UserId] then PlayerCon[player.UserId] = {} end
 	RemoveESP(player)
+end)
+
+RunService.RenderStepped:Connect(function()
+	UpdateESP()
 end)
