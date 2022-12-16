@@ -17,8 +17,8 @@ local HealthTagPosition = UDim2.new(0,0,0.6,0)
 local function GetPDistance(player)
 	if not player then return end
 	if player == Player then return 0 end
-	local Playerchar = Player.Character or Player.CharacterAdded:Wait()
-	local char = player.Character or player.CharacterAdded:Wait()
+	local Playerchar = Player.Character
+	local char = player.Character
 	if Playerchar and char then
 		pcall(function()
 			return math.floor((Playerchar.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude + 0.5) 
@@ -68,7 +68,7 @@ end
 
 local function RemoveESP(player)
 
-	local char = player.Character or player.CharacterAdded:Wait()
+	local char = player.Character
 	if not char then return end
 
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag")
@@ -78,7 +78,7 @@ end
 local function UpdateTag(player)
 	if not CheckPlayer(player) then RemoveESP(player) return end
 
-	local char = player.Character or player.CharacterAdded:Wait()
+	local char = player.Character
 	if not char then return end
 
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag")
@@ -97,7 +97,7 @@ end
 local function AddESP(player)
 	spawn(function()
 		if not CheckPlayer(player) then RemoveESP(player) return end
-		local char = player.Character or player.CharacterAdded:Wait()
+		local char = player.Character
 		if not char then return end
 		local head = char:FindFirstChild("Head")
 		if not head then return end
