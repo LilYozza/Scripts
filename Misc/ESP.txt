@@ -1,4 +1,4 @@
-print("Version 1.0.4")
+print("Version 1.0.5")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -65,20 +65,20 @@ local function CreateTag(part)
 end
 
 local function RemoveESP(player)
-	
+
 	local char = player.Character or player.CharacterAdded:Wait()
 	if not char then return end
-	
+
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag") or player.Character:WaitForChild("Head", 5):FindFirstChild("PlayerTag")
 	if Tag then Tag:Destroy()end
 end
 
 local function UpdateTag(player)
 	if not CheckPlayer(player) then RemoveESP(player) return end
-	
+
 	local char = player.Character or player.CharacterAdded:Wait()
 	if not char then return end
-	
+
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag") or player.Character:WaitForChild("Head", 5):FindFirstChild("PlayerTag")
 	if not Tag then return end
 
@@ -93,52 +93,60 @@ local function UpdateTag(player)
 end
 
 local function AddESP(player)
-	if not CheckPlayer(player) then RemoveESP(player) return end
-	local char = player.Character or player.CharacterAdded:Wait()
-	if not char then return end
-	local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
-	if not head then return end
-	CreateTag(head)
+	spawn(function()
+		if not CheckPlayer(player) then RemoveESP(player) return end
+		local char = player.Character or player.CharacterAdded:Wait()
+		if not char then return end
+		local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
+		if not head then return end
+		CreateTag(head)
+	end)
 end
 
 local function UpdateESP()
-	if not isESP then return end
-	for _,v in pairs(Players:GetPlayers())do
-		spawn(function()
-			if v ~= Player then
-				UpdateTag(v)
-			end
-		end)
-	end
+	pcall(function()
+		if not isESP then return end
+		for _,v in pairs(Players:GetPlayers())do
+			spawn(function()
+				if v ~= Player then
+					UpdateTag(v)
+				end
+			end)
+		end
+	end)
 end
 
 function _G.ESPOn()
-	isESP = true
-	for _,v in pairs(Players:GetPlayers())do
-		spawn(function()
-			if v ~= Player then
-				AddESP(v)
-				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
-			end
-		end)
-	end
+	pcall(function()
+		isESP = true
+		for _,v in pairs(Players:GetPlayers())do
+			spawn(function()
+				if v ~= Player then
+					AddESP(v)
+					PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
+				end
+			end)
+		end
+	end)
 end
 
 function _G.ESPOff()
-	isESP = false
-	PlayerCon = {}
-	for _,v in pairs(Players:GetPlayers())do
-		spawn(function()
-			if v ~= Player then
-				RemoveESP(v)
-			end
-		end)
-	end
+	pcall(function()
+		isESP = false
+		PlayerCon = {}
+		for _,v in pairs(Players:GetPlayers())do
+			spawn(function()
+				if v ~= Player then
+					RemoveESP(v)
+				end
+			end)
+		end
+	end)
 end
 
 Players.PlayerAdded:Connect(function(player)
 	PlayerCon[player.UserId] = player.CharacterAdded:Connect(function()
-		if isESP == true then AddESP(player)end
+		if isESP == true then spawn(function()AddESP(player)end) end
 	end)
 end)
 
