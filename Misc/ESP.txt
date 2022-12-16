@@ -1,4 +1,4 @@
-print("Version 2.0.5")
+print("Version 1.0.5")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -15,36 +15,6 @@ local function CheckPlayer(player)
 	end
 end
 
-local function CreateTag(player)
-    
-    local char = player.Character or player.CharacterAdded:Wait()
-	if not char then return end
-	local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
-	if not head then return end
-    
-	if head:FindFirstChild("PlayerTag") then return end
-	-- Creates BillBoard --
-	local newBillBoard = Instance.new("BillboardGui")
-	-- Data --
-	newBillBoard.Name = "PlayerTag"
-	newBillBoard.Parent = head
-	newBillBoard.AlwaysOnTop = true
-	newBillBoard.ExtentsOffset = Vector3.new(0,2,0)
-
-		-- Creates Name Tag --
-	local newText = Instance.new("TextLabel")
-	-- Data --
-	newText.Name = player.DisplayName
-	newText.Parent = parent
-	newText.BackgroundTransparency = 1
-	newText.TextScaled = true
-
-	-- Text --
-	newText.Font = Enum.Font.FredokaOne
-	newText.TextColor3 = NameTagColor
-
-end
-
 local function RemoveESP(player)
 
 	local char = player.Character or player.CharacterAdded:Wait()
@@ -54,12 +24,39 @@ local function RemoveESP(player)
 	if Tag then Tag:Destroy()end
 end
 
-local function AddESP(player)
-	spawn(function()
-		if not CheckPlayer(player) then RemoveESP(player) return end
-		CreateTag(player)
-	end)
+local function CreateTag(player)
+
+	if not CheckPlayer(player) then RemoveESP(player) return end
+
+	local char = player.Character or player.CharacterAdded:Wait()
+	if not char then return end
+	local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 10)
+	if not head then return end
+
+	if head:FindFirstChild("PlayerTag") then return end
+	-- Creates BillBoard --
+	local newBillBoard = Instance.new("BillboardGui")
+	-- Data --
+	newBillBoard.Name = "PlayerTag"
+	newBillBoard.Parent = head
+	newBillBoard.AlwaysOnTop = true
+	newBillBoard.ExtentsOffset = Vector3.new(0,2,0)
+
+	-- Creates Name Tag --
+	local newText = Instance.new("TextLabel")
+	-- Data --
+	newText.Name = player.DisplayName
+	newText.Parent = newBillBoard
+	newText.BackgroundTransparency = 1
+	newText.TextScaled = true
+
+	-- Text --
+	newText.Font = Enum.Font.FredokaOne
+	newText.TextColor3 = NameTagColor
+
 end
+
+
 
 function _G.ESPOn()
 	pcall(function()
@@ -67,7 +64,7 @@ function _G.ESPOn()
 		for _,v in pairs(Players:GetPlayers())do
 			spawn(function()
 				if v ~= Player then
-					AddESP(v)
+					CreateTag(v)
 					PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
 				end
 			end)
@@ -91,7 +88,7 @@ end
 
 Players.PlayerAdded:Connect(function(player)
 	PlayerCon[player.UserId] = player.CharacterAdded:Connect(function()
-		if isESP == true then spawn(function()AddESP(player)end) end
+		if isESP == true then spawn(function()CreateTag(player)end) end
 	end)
 end)
 
