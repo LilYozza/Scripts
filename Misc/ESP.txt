@@ -1,4 +1,4 @@
-print("Version 1.0.7")
+print("Version 1.0.6")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -15,14 +15,13 @@ local DistanceTagPosition = UDim2.new(0,0,0.3,0)
 local HealthTagPosition = UDim2.new(0,0,0.6,0)
 
 local function GetPDistance(player)
-	local Playerchar = Player.Character
-	if not Playerchar then return end
-	local char = player.Character
-	if Playerchar and char then
-		pcall(function()
+	pcall(function()
+		local Playerchar = Player.Character
+		local char = player.Character
+		if Playerchar and char then
 			return math.floor((Playerchar.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude + 0.5) 
-		end)
-	end
+		end
+	end)
 end
 
 local function CreateTextLabel(name, parent, color, position)
@@ -78,7 +77,8 @@ local function UpdateTag(player)
 
 	local PlayerName = player.DisplayName
 	local Distance = GetPDistance(player)
-	local Health = char.Humanoid.Health
+	print(Distance)
+	local Health = math.floor(char.Humanoid.Health + 0.5)
 
 	Tag.NameTag.Text = PlayerName
 	Tag.DistanceTag.Text = "Distance: "..Distance
@@ -150,4 +150,5 @@ end)
 
 RunService.RenderStepped:Connect(function()
 	UpdateESP()
+	RunService.RenderStepped:Wait() 
 end)
