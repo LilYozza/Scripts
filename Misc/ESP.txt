@@ -1,10 +1,11 @@
-print("Version 1.0.9")
+print("Version 1.1.0")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
 local isESP = false
 local PlayerCon = {}
+local plist = {}
 
 local NameTagColor = Color3.fromRGB(255,0,0)
 local DistanceTagColor = Color3.fromRGB(0,0,255)
@@ -63,6 +64,9 @@ local function RemoveESP(player)
 
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag")
 	if Tag then Tag:Destroy()end
+	for _,v in pairs(plist)do
+		if v == player then table.remove(plist, _)
+	end
 end
 
 local function UpdateTag(player)
@@ -75,7 +79,6 @@ local function UpdateTag(player)
 
 	local PlayerName = player.DisplayName
 	local Distance = GetPDistance(player)
-	print(Distance)
 	local Health = math.floor(char.Humanoid.Health + 0.5)
 
 	Tag.NameTag.Text = PlayerName
@@ -90,21 +93,20 @@ local function AddESP(player)
 		if not char then return end
 		local head = char:FindFirstChild("Head")
 		if not head then return end
+		table.insert(plist, player)
 		CreateTag(head)
 	end)
 end
 
 local function UpdateESP()
-	pcall(function()
 		if not isESP then return end
-		for _,v in pairs(Players:GetPlayers())do
+		for _,v in pairs(plist)do
 			spawn(function()
 				if v ~= Player then
 					UpdateTag(v)
 				end
 			end)
 		end
-	end)
 end
 
 function _G.ESPOn()
@@ -122,6 +124,7 @@ end
 function _G.ESPOff()
 	isESP = false
 	PlayerCon = {}
+	plist = {}
 	for _,v in pairs(Players:GetPlayers())do
 		spawn(function()
 			if v ~= Player then
