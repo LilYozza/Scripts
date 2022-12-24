@@ -1,4 +1,4 @@
-print("Version 1.1.0")
+print("Version 1.0.9")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -65,7 +65,7 @@ local function RemoveESP(player)
 	local Tag = player.Character.Head:FindFirstChild("PlayerTag")
 	if Tag then Tag:Destroy()end
 	for _,v in pairs(plist)do
-		if v == player then table.remove(plist, _)
+		if v == player then table.remove(plist, _) end
 	end
 end
 
