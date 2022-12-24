@@ -1,4 +1,4 @@
-print("Version 1.0.8")
+print("Version 1.0.9")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -108,31 +108,27 @@ local function UpdateESP()
 end
 
 function _G.ESPOn()
-	pcall(function()
-		isESP = true
-		for _,v in pairs(Players:GetPlayers())do
-			spawn(function()
-				if v ~= Player then
-					AddESP(v)
-					PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
-				end
-			end)
-		end
-	end)
+	isESP = true
+	for _,v in pairs(Players:GetPlayers())do
+		spawn(function()
+			if v ~= Player then
+				AddESP(v)
+				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function()if isESP == true then AddESP(v)end end)
+			end
+		end)
+	end
 end
 
 function _G.ESPOff()
-	pcall(function()
-		isESP = false
-		PlayerCon = {}
-		for _,v in pairs(Players:GetPlayers())do
-			spawn(function()
-				if v ~= Player then
-					RemoveESP(v)
-				end
-			end)
-		end
-	end)
+	isESP = false
+	PlayerCon = {}
+	for _,v in pairs(Players:GetPlayers())do
+		spawn(function()
+			if v ~= Player then
+				RemoveESP(v)
+			end
+		end)
+	end
 end
 
 Players.PlayerAdded:Connect(function(player)
@@ -147,6 +143,8 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 
 RunService.RenderStepped:Connect(function()
-	UpdateESP()
+	if isESP then
+		UpdateESP()
+	end
 	RunService.RenderStepped:Wait() 
 end)
