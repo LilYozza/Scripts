@@ -162,10 +162,6 @@ Players.PlayerAdded:Connect(function(player)
 	end)
 end)
 
-RunService.RenderStepped:Connect(function()
-	UpdateESP()
-end)
-
 --===========================================================================================--
 spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
 		while true do
@@ -175,6 +171,6 @@ spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
 			end
 		end
 	end))end)
-	
+
 
 Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)end)
