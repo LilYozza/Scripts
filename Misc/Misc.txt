@@ -30,8 +30,8 @@ local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do 
 
 --========================================PLAYER ESP========================================--
 GPlayers:Toggle("Player ESP",function(bool)
-	shared.ToggleESP = bool
 	spawn(function()
+		shared.ToggleESP = bool
 		if shared.ToggleESP then
 			_G.ESPOn()
 		else
@@ -163,14 +163,14 @@ Players.PlayerAdded:Connect(function(player)
 end)
 
 --===========================================================================================--
-spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
-		while true do
-			for _, v in next, Players:GetPlayers() do
-				ChamsFuncTbl.UpdateChams(v)
-				RunService.RenderStepped:wait()
-			end
-		end
-	end))end)
+--spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
+--		while true do
+--			for _, v in next, Players:GetPlayers() do
+--				ChamsFuncTbl.UpdateChams(v)
+--
+--			end
+--		end
+--	end))end)
 
 
 Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)end)
