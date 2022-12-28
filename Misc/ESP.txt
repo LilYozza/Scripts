@@ -1,4 +1,4 @@
-print("Version 2.0.2")
+print("Version 2.0.1")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -87,20 +87,22 @@ local function UpdateTag(player)
 end
 
 local function AddESP(player)
-	local char = player.Character
-	if not char then return end
-	local head = char:FindFirstChild("Head")
-	if not head then return end
-	table.insert(plist, player)
-	CreateTag(head)
+		local char = player.Character
+		if not char then return end
+		local head = char:FindFirstChild("Head")
+		if not head then return end
+		table.insert(plist, player)
+		CreateTag(head)
 end
 
 local function UpdateESP()
 	if not isESP then return end
 	for _,v in pairs(plist)do
-		if v ~= Player then
-			UpdateTag(v)
-		end
+		spawn(function()
+			if v ~= Player then
+				UpdateTag(v)
+			end
+		end)
 	end
 end
 
@@ -113,7 +115,7 @@ function _G.ESPOn()
 				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char)
 					char.ChildAdded:Connect(function(part)
 						if part.Name == "Head" then
-							if isESP == true then AddESP(v) end
+							if isESP == true then spawn(function()AddESP(v)end) end
 						end
 					end)
 				end)
@@ -128,9 +130,11 @@ function _G.ESPOff()
 		PlayerCon = {}
 		plist = {}
 		for _,v in pairs(Players:GetPlayers())do
-			if v ~= Player then
-				RemoveESP(v)
-			end
+			spawn(function()
+				if v ~= Player then
+					RemoveESP(v)
+				end
+			end)
 		end
 	end)
 end
@@ -139,10 +143,10 @@ Players.PlayerAdded:Connect(function(player)
 	PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
 		char.ChildAdded:Connect(function(part)
 			if part.Name == "Head" then
-				if isESP == true then AddESP(player) end
+				if isESP == true then spawn(function()AddESP(player)end) end
 			end
 		end)
-
+		
 	end)
 end)
 
