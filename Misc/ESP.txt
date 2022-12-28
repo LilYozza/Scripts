@@ -122,16 +122,18 @@ function _G.ESPOn()
 end
 
 function _G.ESPOff()
-	isESP = false
-	PlayerCon = {}
-	plist = {}
-	for _,v in pairs(Players:GetPlayers())do
-		spawn(function()
-			if v ~= Player then
-				RemoveESP(v)
-			end
-		end)
-	end
+	spawn(function()
+		isESP = false
+		PlayerCon = {}
+		plist = {}
+		for _,v in pairs(Players:GetPlayers())do
+			spawn(function()
+				if v ~= Player then
+					RemoveESP(v)
+				end
+			end)
+		end
+	end)
 end
 
 Players.PlayerAdded:Connect(function(player)
