@@ -1,4 +1,4 @@
-print("Version 1.0.9")
+print("Version 2.0.1")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -147,9 +147,15 @@ Players.PlayerRemoving:Connect(function(player)
 	RemoveESP(player)
 end)
 
-RunService.RenderStepped:Connect(function()
+RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
 	if isESP then
 		UpdateESP()
 	end
-	RunService.RenderStepped:Wait() 
 end)
+
+--RunService.RenderStepped:Connect(function()
+--	if isESP then
+--		UpdateESP()
+--	end
+--	RunService.RenderStepped:Wait() 
+--end)
