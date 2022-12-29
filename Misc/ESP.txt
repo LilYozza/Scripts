@@ -69,84 +69,76 @@ local function RemoveESP(player)
 end
 
 local function UpdateTag(player)
+	if player ~= nil then
+		local char = player.Character
+		local MyChar =Player.Character
+		
+		if char and MyChar then
+			
+			local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
+			local Find3 = char:FindFirstChild("HumanoidRootPart")
+			local Find4 = char:FindFirstChildOfClass("Humanoid")
+			
+			if Find2 and Find3 then
+				local Tag = player.Character.Head:FindFirstChild("PlayerTag")
+				if not Tag then return end
 
-	local char = player.Character
-	if not char then return end
+				local PlayerName = player.DisplayName
+				local Distance = GetPDistance(player)
+				local Health = math.floor(char.Humanoid.Health + 0.5)
 
-	local Tag = player.Character.Head:FindFirstChild("PlayerTag")
-	if not Tag then return end
-
-	local PlayerName = player.DisplayName
-	local Distance = GetPDistance(player)
-	local Health = math.floor(char.Humanoid.Health + 0.5)
-
-	Tag.NameTag.Text = PlayerName
-	Tag.DistanceTag.Text = "Distance: "..Distance
-	Tag.HealthTag.Text = "Health: "..Health
-
+				Tag.NameTag.Text = PlayerName
+				Tag.DistanceTag.Text = "Distance: "..Distance
+				Tag.HealthTag.Text = "Health: "..Health
+			end
+		end
+	end
 end
 
 local function AddESP(player)
-		local char = player.Character
-		if not char then return end
-		local head = char:FindFirstChild("Head")
-		if not head then return end
-		table.insert(plist, player)
-		CreateTag(head)
-end
-
-local function UpdateESP()
-	if not isESP then return end
-	for _,v in pairs(plist)do
-		spawn(function()
-			if v ~= Player then
-				UpdateTag(v)
-			end
-		end)
-	end
+	local char = player.Character
+	if not char then return end
+	local head = char:FindFirstChild("Head")
+	if not head then return end
+	table.insert(plist, player)
+	CreateTag(head)
 end
 
 function _G.ESPOn()
 	isESP = true
 	for _,v in pairs(Players:GetPlayers())do
-		spawn(function()
-			if v ~= Player then
-				AddESP(v)
-				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char)
-					char.ChildAdded:Connect(function(part)
-						if part.Name == "Head" then
-							if isESP == true then spawn(function()AddESP(v)end) end
-						end
-					end)
+		if v ~= Player then
+			AddESP(v)
+			PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char)
+				char.ChildAdded:Connect(function(part)
+					if part.Name == "Head" then
+						if isESP == true then AddESP(v) end
+					end
 				end)
-			end
-		end)
+			end)
+		end
 	end
 end
 
 function _G.ESPOff()
-	spawn(function()
-		isESP = false
-		PlayerCon = {}
-		plist = {}
-		for _,v in pairs(Players:GetPlayers())do
-			spawn(function()
-				if v ~= Player then
-					RemoveESP(v)
-				end
-			end)
+	isESP = false
+	PlayerCon = {}
+	plist = {}
+	for _,v in pairs(Players:GetPlayers())do
+			if v ~= Player then
+		RemoveESP(v)
 		end
-	end)
+	end
 end
 
 Players.PlayerAdded:Connect(function(player)
 	PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
 		char.ChildAdded:Connect(function(part)
 			if part.Name == "Head" then
-				if isESP == true then spawn(function()AddESP(player)end) end
+				if isESP == true then AddESP(player) end
 			end
 		end)
-		
+
 	end)
 end)
 
@@ -157,6 +149,10 @@ end)
 
 RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
 	if isESP then
-		UpdateESP()
+		for _, v in next, Player:GetPlayers() do
+			if v ~= Player then
+				UpdateTag(v)
+			end
+		end
 	end
 end)
