@@ -1,4 +1,4 @@
-print("Version 2.0.2")
+print("Version 2.0.3")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -149,7 +149,7 @@ end)
 
 RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
 	if isESP then
-		for _, v in next, Player:GetPlayers() do
+		for _, v in next, Players:GetPlayers() do
 			if v ~= Player then
 				UpdateTag(v)
 			end
