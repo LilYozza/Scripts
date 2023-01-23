@@ -1,2 +1,147 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+
+local InstantEnabled = false
+local Player = game.Players.LocalPlayer
+local mouse = game.Players.LocalPlayer:GetMouse()
+local PlayerTycoons = Workspace:FindFirstChild("PlayerTycoons")
+
+
+local function GetAncestors(obj)
+    local parent = obj.Parent
+    while (parent) do
+	    parent = parent.Parent
+	    if parent and parent:IsA("BasePart") then return parent end
+    end
+end
+
+
+local function GetDistanceFromPlayer(part)
+    local newPart = GetAncestors(part)
+    if not newPart then return 999 end
+    return (newPart.Position - Player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+end
+
+local function FireClosesPrompts()
+    for _,v in pairs(PlayerTycoons:GetDescendants()) do
+        if v:IsA("ProximityPrompt") and GetDistanceFromPlayer(v) <= 20 then
+            fireproximityprompt(v)
+        end
+    end
+end
+
+local function ChangePartColor(part, color)
+    for _,v in pairs(part:GetDescendants())do
+        if v:IsA("BasePart") and v.Name == "Laser" then
+            v.BrickColor = color
+        end
+    end
+end
+
+local function CreateTextLabel(parent, color, text)
+	-- Creates Name Tag --
+	local newText = Instance.new("TextLabel")
+	-- Data --
+	newText.Name = "Timer"
+	newText.Text = text
+	newText.Parent = parent
+	newText.Size = UDim2.new(1,0,0.3,0)
+	newText.BackgroundTransparency = 1
+	newText.TextScaled = true
+
+	-- Text --
+	newText.Font = Enum.Font.FredokaOne
+	newText.TextColor3 = color
+end
+
+
+local function CreateTag(part, color, text)
+    	-- Creates BillBoard --
+    local p = part:FindFirstChild("PlayerTag")
+    if p then p:Destroy() end
+	local newBillBoard = Instance.new("BillboardGui")
+	-- Data --
+	newBillBoard.Name = "PlayerTag"
+	newBillBoard.Parent = part
+	newBillBoard.AlwaysOnTop = true
+	newBillBoard.Size = UDim2.new(0, 250,0, 100)
+	newBillBoard.ExtentsOffset = Vector3.new(0,3,0)
+	
+	CreateTextLabel(newBillBoard, color, text)
+	
+end
+
+local function DisplayVaultTags()
+    for _,v in pairs(PlayerTycoons:GetChildren())do
+        local Unlocks = v:FindFirstChild("Unlocks")
+        if Unlocks then
+            local VaultRoom1 = Unlocks:FindFirstChild("VaultRoom1")
+            if VaultRoom1 then
+                local Cooldown = VaultRoom1:FindFirstChild("Cooldown")
+                if Cooldown then
+                    local timer = Cooldown:FindFirstChild("SurfaceGui").Frame.Time.text
+                    if timer then
+                        if timer == "READY" then
+                            CreateTag(Cooldown, Color3.fromRGB(0,255,0), "Ready")
+                        else
+                            CreateTag(Cooldown, Color3.fromRGB(255,0,0), "Not Ready")
+                        end
+                    else
+                        local p = Cooldown:FindFirstChild("PlayerTag")
+                        if p then p:Destroy() end
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function LasersDontKill()
+    for _,v in pairs(PlayerTycoons:GetDescendants())do
+        if v.Name == "Door" and v.Parent.Name == "Target" then
+            local TI = v:FindFirstChild("TouchInterest")
+            if TI then TI:Destroy()end
+            ChangePartColor(v.Parent, BrickColor.new("Lime green"))
+        end
+    end
+end
+
+local function RemoveTags()
+    for _,v in pairs(PlayerTycoons:GetDescendants())do
+        if v.Name == "PlayerTag" then
+            v:Destroy()
+        end
+    end
+end
+
+Auto:Toggle("Vault Status", function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do 
+            local s,e=pcall(function()
+                DisplayVaultTags()
+                task.wait(1)
+            end) 
+        task.wait()
+        end
+        if not shared.Toggle then RemoveTags() end
+    end)
+end)
+
+mouse.KeyDown:connect(function(k)
+    --Check if "e" and theres a prompt close enough
+    if k:lower() == "e" and InstantEnabled then
+        FireClosesPrompts()
+    end
+end)
+
+Auto:Toggle("Instant E", function(bool)
+    shared.Toggle1 = bool
+    InstantEnabled =  shared.Toggle1
+end)
+
+Auto:Button("Safe Lasers", function()
+    LasersDontKill()
+end)
+
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
