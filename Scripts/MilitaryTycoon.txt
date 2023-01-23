@@ -82,9 +82,9 @@ local function DisplayVaultTags()
                     local timer = Cooldown:FindFirstChild("SurfaceGui").Frame.Time.text
                     if timer then
                         if timer == "READY" then
-                            CreateTag(Cooldown, Color3.fromRGB(0,255,0), "Ready")
+                            CreateTag(Cooldown, Color3.fromRGB(0,255,255), "Ready")
                         else
-                            CreateTag(Cooldown, Color3.fromRGB(255,0,0), "Not Ready")
+                            CreateTag(Cooldown, Color3.fromRGB(255,0,255), Frame.Time.text)
                         end
                     else
                         local p = Cooldown:FindFirstChild("PlayerTag")
@@ -140,8 +140,16 @@ Auto:Toggle("Instant E", function(bool)
     InstantEnabled =  shared.Toggle1
 end)
 
-Auto:Button("Safe Lasers", function()
-    LasersDontKill()
+Auto:Toggle("Safe Lasers", function(bool)
+    shared.Toggle2=bool
+    spawn(function()
+        while shared.Toggle2 do 
+            local s,e=pcall(function()
+                LasersDontKill()
+                task.wait(1)
+            end) 
+        task.wait()end
+    end)
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
