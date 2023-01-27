@@ -12,12 +12,16 @@ local Auto = w:CreateFolder("Auto")
 local Tycoon
 local Juego=Workspace:FindFirstChild("Juego")
 local SlotsInGame=Juego:FindFirstChild("SlotsInGame")
+--NEW--
+local CenterBASE=Juego:FindFirstChild("CenterBASE")
+local EGGS=CenterBASE:FindFirstChild("EGGS")
 
 -->Tables<--
 local PlayerData={}
-local UpgradeTable={"+16 Per","+160 Per"}
+local EggTbl={}
+--local UpgradeTable={"+16 Per","+160 Per"}
 local TypeTable={"+1 Ninja","+6 Ninja","+15 Ninja","+20 Ninja","+50 Ninja"}
-local PetDeleteTable={"Ulkiorga","Mhina","Chaxla","Eiseka","Geera"}
+local PetDeleteTable={"Vogeto", "Shiny Vogeto"}
 
 local Random=Workspace:FindFirstChild("Random")
 local Pelotitas=Random:FindFirstChild("Pelotitas")
@@ -28,7 +32,6 @@ local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("Humano
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 local function GetTycoon()for _,v in pairs(SlotsInGame:GetChildren())do if v:FindFirstChild("Duenio") and v.Duenio.Value==Player.UserId then Tycoon=v break end end end
 local function GetLeaderstats()local t={Coins,Heroes,Rebirths}local p=Player.PlayerGui.LeaderBoard.LeaderBoard.Fondo.ScrollingFrame for _,v in pairs(p:GetChildren())do if v.Name=="Slot"and v.Nombre.Text==Player.Name then t.Coins=v.TopCoins t.Heroes=v.Ninjas t.Rebirths=v.Rebirths return t end end end
-
 -->Return Functions<--
 local function fromSuffixString(s)
     local suffixes = {"K", "M", "B", "T", "Q","n"} 
@@ -66,6 +69,17 @@ local SpawnNinjaRegala2=Tycoon:FindFirstChild("SpawnNinjaRegala2")
 local NpcsCombateTemp=Tycoon:FindFirstChild("NpcsCombateTemp")
 local GuisActivables=Tycoon:FindFirstChild("GuisActivables")
 
+-->Getting Data<--
+local function GetEggs()
+    for _,v in pairs(EGGS:GetChildren())do
+        if tonumber(v.Name) then
+            table.insert(EggTbl, v)
+        end
+    end
+end GetEggs()
+--table.sort(EggTbl, function(a,b)return (a<b)end)
+
+
 -->Player Variables<--
 local PGUI=Player.PlayerGui
 local Ki=PGUI.Bot.Abajo.F.Num
@@ -83,6 +97,15 @@ if PGUI:FindFirstChild("NewNotiInMid") then PGUI.NewNotiInMid.Enabled=false end
 -->Post Function<--
 local function GetCount(Type)local count=0 for _,v in pairs(NewSpots:GetChildren())do if v:FindFirstChild("TipoNum") and v.TipoNum.Value==Type then count=count+1 end end return count end
 local function CheckPrice(btn)local price=btn.Gui.Num.Text  if fromSuffixString(price) <= fromSuffixString(Coins.Text)then return true end task.wait()end
+local function CheckPetPrice(egg)
+    if egg then
+        local Precio=egg:FindFirstChild("Precio")
+        if Precio then
+            local EggPrice = fromSuffixString(Precio.Gui.Price.Cost.Text)
+            if EggPrice then return EggPrice end
+        end
+    end
+end
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.ToggleAC=bool
@@ -108,8 +131,8 @@ Auto:Toggle("Auto Deposit",function(bool)
     end)
 end)
 
-local SelectType=Usables:FindFirstChild("Comprar6")
-local SelectBuyList = Auto:Dropdown("+6 Ninja",TypeTable,true,function(SItem)
+local SelectType=Usables:FindFirstChild("Comprar15")
+local SelectBuyList = Auto:Dropdown("+15 Ninja",TypeTable,true,function(SItem)
     for _,v in pairs(TypeTable)do
         if v==SItem then SelectType=Usables:FindFirstChild("Comprar"..v:split(" ")[1]:split("+")[2])end
     end
@@ -146,14 +169,14 @@ Auto:Toggle("Auto Egg",function(bool)
     end)
 end)
 
-
+]]--
 Auto:Toggle("Pet Delete",function(bool)
     shared.TogglePD=bool
     spawn(function()
         while shared.TogglePD do local s,e=pcall(function()
             
             if PetList then for _,v in pairs(PetList:GetChildren())do
-                if v:FindFirstChild("PetInfo") and table.find(PetDeleteTable, v.PetInfo.RealName.Value)then
+                if v:FindFirstChild("PetInfo") and not table.find(PetDeleteTable, v.PetInfo.RealName.Value)then
                     local PetId=v.PetInfo.ID.Value
                     Remotes.Pets:FireServer("Delete",PetId)print("Removed")task.wait(0.1)
                 end
@@ -161,7 +184,27 @@ Auto:Toggle("Pet Delete",function(bool)
         task.wait()end)task.wait()if not s then print(e)end end 
     end)
 end)
-]]--
+
+
+local SelctedEgg
+local SelectEggList = Auto:Dropdown("Select Egg",EggTbl,true,function(SItem)
+    for _,v in pairs(EGGS:GetChildren())do
+        if SItem == v.Name then SelectedEgg = v end
+    end
+end)
+
+Auto:Toggle("Auto Egg",function(bool)
+    shared.ToggleAE=bool
+    spawn(function()
+        while shared.ToggleAE do local s,e=pcall(function()
+            if SelectedEgg and shared.ToggleAE then
+                if CheckPetPrice(SelectedEgg)<=fromSuffixString(Coins.Text) then
+                    Remotes.Pets:FireServer("Buy1Especial", SelectedEgg.Name)
+                end
+            end
+        task.wait()end)task.wait()if not s then print(e)end end 
+    end)
+end)
 
 Auto:Toggle("Auto Fusion",function(bool)
     shared.ToggleAF=bool
