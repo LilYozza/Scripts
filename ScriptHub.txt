@@ -386,6 +386,10 @@ local Games = {
 	[9705460681] = {
 		Name = 'The Ants Underground Kingdom',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/The%20Ants%20Underground%20Kingdom.txt'
+	},
+	[11800876530] = {
+		Name = '+1 Blocks Every Second',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/+1%20Blocks%20Every%20Second.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
