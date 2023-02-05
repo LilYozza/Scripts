@@ -2,21 +2,38 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local RemoteEvents = game:GetService("ReplicatedStorage").RemoteEvents
 
 local Signals = {'MouseButton1Down','MouseButton1Up', 'MouseButton1Click', 'Activated'}
 
 local Auto = w:CreateFolder("Auto")
 
+-->Base Variables<--
+local SelectedEgg
+local Eggs = Workspace:FindFirstChild("Eggs")
+
+-->Tables<--
+
 -->UI Vairables<--
 local PlayerGui = Player.PlayerGui
 local ScreenGui = PlayerGui:WaitForChild("ScreenGui")
+
 local Shops = ScreenGui:FindFirstChild("Shops")
 local TowerShop = Shops:FindFirstChild("TowerShop"):FindFirstChild("ScrollingFrame")
 
+local RightBar = ScreenGui:FindFirstChild("RightBar")
+local TimerFrame = RightBar:FindFirstChild("Timer")
+
+-->Getting Data<--
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function PressButton(btn)
+    for i,v in pairs(Signals) do
+        firesignal(btn[v])
+    end    
+end
 
 -->Return Functions<--
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
@@ -40,9 +57,7 @@ Auto:Toggle("Auto Upgrade",function(bool)
                 if v:IsA("Frame")then
                     if GetPrice(v) and GetPrice(v) <= Player.leaderstats.Blocks.Value then
                         local _TextButton = v.Purchase.TextButton
-                        for i,v in pairs(Signals) do
-                            firesignal(_TextButton[v])
-                        end
+                        PressButton(_TextButton)
                     end task.wait()
                 end 
             end
@@ -50,6 +65,37 @@ Auto:Toggle("Auto Upgrade",function(bool)
         end
     end)
 end)
+Auto:Toggle("Auto Gift",function(bool)
+    shared.ToggleAG=bool
+    spawn(function()
+        while shared.ToggleAG do
+            local _timer = TimerFrame:FindFirstChild("TextLabel")
+            if _timer and _timer.Text == "Gift Ready" then
+                local _timerButton = TimerFrame:FindFirstChild("TextButton")
+                if _timerButton then
+                    PressButton(_timerButton)
+                end
+            end
+            task.wait(600)
+        end
+    end)
+end)
+
+local EggList = Auto:Dropdown("Select Egg",Eggs:GetChildren(),true,function(SItem)
+    SelectedEgg = SItem
+end)
+
+Auto:Toggle("Auto Hatch",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            RemoteEvents.EggOpen:InvokeServer(SelectedEgg, "Single")
+            task.wait(0.5)
+        end
+    end)
+end)
+
+
 
 Auto:Button("Other",function()
     spawn(function()
