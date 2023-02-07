@@ -101,7 +101,8 @@ Auto:Toggle("Sub Buy",function(bool)
                         local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
                         if price:match("Subs") then 
                             price = price:split("Subs")[1]:gsub("+","")
-                            if price~= nil and fromSuffixString(price)~=nil and fromSuffixString(price) <= Player.leaderstats.Subscribers.Value then FireTouch(0.3,v.ButtonPart)end
+                            price = price:gsub(" ", "")
+                            if fromSuffixString(price)~=nil and fromSuffixString(price) <= Player.leaderstats.Subscribers.Value then FireTouch(0.3,v.ButtonPart)end
                         end
                     end
                 end task.wait()
