@@ -128,8 +128,15 @@ Auto:Toggle("Rebirth",function(bool)
     spawn (function()
         while shared.toggleAR do
             -- Rebirth Check
-            if _precent and _precent == "100%" then
+            if _precent and _precent.Text == "100%" then
                 Event.Rebirth:FireServer()
+                task.wait(5)
+                Tycoon = nil
+                repeat pcall(function()GetTycoon()task.wait(1)end)task.wait()until Tycoon
+                Values=Tycoon:WaitForChild("Values")
+                Buttons=Tycoon:WaitForChild("Buttons")
+                MainItems=Tycoon:WaitForChild("MainItems")
+                CashButton=MainItems:WaitForChild("CashButton")
             end
             task.wait(0.5)
         end
