@@ -110,13 +110,16 @@ Auto:Toggle("Sub Buy",function(bool)
         end
     end)
 end)
-
+local _precent = Player.PlayerGui.Pantalla.RebirthGui.Bar.TextLabel
 Auto:Toggle("Rebirth",function(bool)
     shared.toggleAR = bool
     spawn (function()
         while shared.toggleAR do
-            Events.Rebirth:FireServer()
-            task.wait(5)
+            -- Rebirth Check
+            if _precent and _precent == "100%" then
+                Events.Rebirth:FireServer()
+            end
+            task.wait()
         end
     end)
 end)
