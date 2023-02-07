@@ -68,6 +68,16 @@ Auto:Toggle("Auto Collect",function(bool)
     spawn (function()while shared.toggle1 do FireTouch(1,CashButton.ButtonPart)end end)
 end)
 
+Auto:Toggle("Auto Sub",function(bool)
+    shared.toggleAS = bool
+    spawn (function()
+        while shared.toggleAS do
+            Event.EditingEvent:FireServer()
+            task.wait()
+        end
+    end)
+end)
+
 Auto:Toggle("Smart Collect",function(bool)
     shared.toggle11 = bool
     spawn (function() SCollect=shared.toggle11 end)
@@ -110,6 +120,8 @@ Auto:Toggle("Sub Buy",function(bool)
         end
     end)
 end)
+
+
 local _precent = Player.PlayerGui.Pantalla.RebirthGui.Bar.TextLabel
 Auto:Toggle("Rebirth",function(bool)
     shared.toggleAR = bool
@@ -117,9 +129,9 @@ Auto:Toggle("Rebirth",function(bool)
         while shared.toggleAR do
             -- Rebirth Check
             if _precent and _precent == "100%" then
-                Events.Rebirth:FireServer()
+                Event.Rebirth:FireServer()
             end
-            task.wait()
+            task.wait(0.5)
         end
     end)
 end)
