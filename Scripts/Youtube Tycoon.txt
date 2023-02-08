@@ -1,0 +1,247 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local Event = game:GetService("ReplicatedStorage").Events
+local Lighting = game:GetService("Lighting")
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Tycoon, Plot, SCollect
+local Tycoons = Workspace:FindFirstChild("Tycoons")
+local Plots = Workspace:FindFirstChild("Plots")
+
+--> Non Return Functions <--
+local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t) end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function TeleportToTycoon()
+    if Tycoon then
+        local _MainItems = Tycoon:FindFirstChild("MainItems")
+        local _Spawn = _MainItems:FindFirstChild("Spawn")
+        if _Spawn then
+            MoveTo(_Spawn, Vector3.new(0,3,0))
+        end
+    end
+end
+local function ClaimTycoon(_plot)
+    if not Tycoon then 
+        if _plot then
+            local _door = _plot:FindFirstChild("Door")
+            if _door then
+                local _MainDoor = _door:FindFirstChild("MainDoor")
+                if _MainDoor then
+                    FireTouch(0, _MainDoor)
+                    return
+                end
+            end
+        else
+            for _,v in pairs(Plots:GetChildren()) do
+                local _door = v:FindFirstChild("Door")
+                if _door then
+                    local _MainDoor = _door:FindFirstChild("MainDoor")
+                    if _MainDoor then
+                        Plot = v
+                        FireTouch(0, _MainDoor)
+                        return
+                    end
+                end
+            end 
+        end
+    end
+end
+local function FindTycoon() 
+    for _,v in pairs(Tycoons:GetChildren()) do 
+        if v.Values.Owner.Value==Player then 
+            Tycoon=v 
+            break 
+        end 
+    end 
+    ClaimTycoon()
+end FindTycoon()
+
+-->Waiting For Data<--
+repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon
+TeleportToTycoon()
+
+
+--> Return Functions <--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+local function GetRichestTycoon()
+    local rtycoon
+    local max = 0
+    for _,v in pairs(Tycoons:GetChildren())do
+        if Tycoon ~= v then
+            local _MainItems = v:FindFirstChild("MainItems")
+            if _MainItems then
+                local _Values = v:FindFirstChild("Values")
+                local _CashButton = _MainItems:FindFirstChild("CashButton")
+                local amt = _Values.CashStored.Value
+                if amt > max then
+                    max = amt
+                    rtycoon = _CashButton.ButtonPart
+                end
+            end
+        end
+    end
+    return rtycoon
+end
+local function GetYoutuber()
+    if Tycoon then
+        return Tycoon.Name:split("_")[3]
+    end
+end
+
+-->Post Variables<--
+local Values=Tycoon:WaitForChild("Values")
+local Buttons=Tycoon:WaitForChild("Buttons")
+local MainItems=Tycoon:WaitForChild("MainItems")
+local CashButton=MainItems:WaitForChild("CashButton")
+
+local Youtuber = GetYoutuber()
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.toggle1 = bool
+    spawn (function()while shared.toggle1 do FireTouch(1,CashButton.ButtonPart)end end)
+end)
+
+Auto:Toggle("Auto Sub",function(bool)
+    shared.toggleAS = bool
+    spawn (function()
+        while shared.toggleAS do
+            Event.EditingEvent:FireServer()
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.toggle11 = bool
+    spawn (function() SCollect=shared.toggle11 end)
+end)
+
+Auto:Toggle("Cash Buy",function(bool)
+    shared.toggle2 = bool
+    spawn (function()
+        while shared.toggle2 do
+            local s,e = pcall(function()
+                for _,v in pairs(Buttons:GetChildren()) do
+                    if shared.toggle2 and v:FindFirstChild("ButtonPart") and v.ButtonPart.Transparency==0 then
+                        local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
+                        if price=="Free!"then price="0"end
+                        if price ~=nil and not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value + Values.CashStored.Value and SCollect then FireTouch(0.3,CashButton.ButtonPart) end
+                        if price ~=nil and not price:match("Subs")and fromSuffixString(price) <= Player.leaderstats.Cash.Value then FireTouch(0.3,v.ButtonPart)end
+                    end
+                end task.wait()
+            end)task.wait() if not s then print(e)end
+        end
+    end)
+end)
+
+Auto:Toggle("Sub Buy",function(bool)
+    shared.toggle2 = bool
+    spawn (function()
+        while shared.toggle2 do
+            local s,e = pcall(function()
+                for _,v in pairs(Buttons:GetChildren()) do
+                    if shared.toggle2 and v:FindFirstChild("ButtonPart") and v.ButtonPart.Transparency==0 then
+                        local price=v.ButtonPart.Gui.Frame.PriceLabel.Text
+                        if price:match("Subs") then 
+                            price = price:split("Subs")[1]:gsub("+","")
+                            price = price:gsub(" ", "")
+                            if fromSuffixString(price)~=nil and fromSuffixString(price) <= Player.leaderstats.Subscribers.Value then FireTouch(0.3,v.ButtonPart)end
+                        end
+                    end
+                end task.wait()
+            end)task.wait() if not s then print(e)end
+        end
+    end)
+end)
+
+
+local _precent = Player.PlayerGui.Pantalla.RebirthGui.Bar.TextLabel
+Auto:Toggle("Rebirth",function(bool)
+    shared.toggleAR = bool
+    spawn (function()
+        while shared.toggleAR do
+            -- Rebirth Check
+            if _precent and _precent.Text == "100%" then
+                Event.Rebirth:FireServer()
+                task.wait(1)
+                Tycoon = nil
+                
+                ClaimTycoon(Plot)task.wait(0.5)
+                Event.Select:FireServer(Youtuber)task.wait(1)
+                local _TycoonSelect = Player.PlayerGui:FindFirstChild("TycoonSelect")
+                if _TycoonSelect then
+                    _TycoonSelect:Destroy()
+                    local _Blur = Lighting:FindFirstChild("Blur")
+                    if _Blur then
+                        _Blur.Enabled = false
+                    end
+                end
+
+                task.wait(1)
+                repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon
+                TeleportToTycoon()
+                Values=Tycoon:WaitForChild("Values")
+                Buttons=Tycoon:WaitForChild("Buttons")
+                MainItems=Tycoon:WaitForChild("MainItems")
+                CashButton=MainItems:WaitForChild("CashButton")
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Toggle("Sabotage(GP)",function(bool)
+    shared.toggle3 = bool
+    spawn (function()
+        while shared.toggle3 do
+            for _,v in pairs(Tycoons:GetChildren())do
+                if v ~= Tycoon then
+                    local _brought = v:FindFirstChild("Bought")
+                    local _ood = _brought:FindFirstChild("OwnerOnlyDoor")
+                    if _ood then
+                        local _MainPart = _ood:FindFirstChild("MainPart")
+                        if _MainPart then
+                            fireproximityprompt(_MainPart.ProximityPrompt)
+                        end
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("AutoSteal(GP)",function(bool)
+    shared.toggle4 = bool
+    spawn (function()
+        while shared.toggle4 do
+            local s,e = pcall(function()
+                local fTycoon = GetRichestTycoon()
+                if fTycoon then
+                    FireTouch(0,fTycoon)
+                end
+                task.wait(1)
+            end)task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Give Items",function()
+    spawn (function()  
+        for _,v in pairs(Tycoons:GetDescendants()) do
+            if v:IsA("TouchTransmitter") and v.Parent.Parent.Name:match("Kit") then FireTouch(0.3,v.Parent) end
+        end
+    end)
+end)
+
+Auto:Button("Delete Doors",function()
+    spawn (function()
+        for key, value in pairs(Tycoons:GetDescendants()) do if value.Name == "Lasers" then value:Destroy() end end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
