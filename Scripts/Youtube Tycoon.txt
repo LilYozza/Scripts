@@ -3,37 +3,67 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 local Event = game:GetService("ReplicatedStorage").Events
+local Lighting = game:GetService("Lighting")
 
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Tycoon, SCollect
+local Tycoon, Plot, SCollect
 local Tycoons = Workspace:FindFirstChild("Tycoons")
 local Plots = Workspace:FindFirstChild("Plots")
 
 --> Non Return Functions <--
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t) end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
-local function GetTycoon() 
+local function TeleportToTycoon()
+    if Tycoon then
+        local _MainItems = Tycoon:FindFirstChild("MainItems")
+        local _Spawn = _MainItems:FindFirstChild("Spawn")
+        if _Spawn then
+            MoveTo(_Spawn, Vector3.new(0,3,0))
+        end
+    end
+end
+local function ClaimTycoon(_plot)
+    if not Tycoon then 
+        if _plot then
+            local _door = _plot:FindFirstChild("Door")
+            if _door then
+                local _MainDoor = _door:FindFirstChild("MainDoor")
+                if _MainDoor then
+                    FireTouch(0, _MainDoor)
+                    return
+                end
+            end
+        else
+            for _,v in pairs(Plots:GetChildren()) do
+                local _door = v:FindFirstChild("Door")
+                if _door then
+                    local _MainDoor = _door:FindFirstChild("MainDoor")
+                    if _MainDoor then
+                        Plot = v
+                        FireTouch(0, _MainDoor)
+                        return
+                    end
+                end
+            end 
+        end
+    end
+end
+local function FindTycoon() 
     for _,v in pairs(Tycoons:GetChildren()) do 
         if v.Values.Owner.Value==Player then 
             Tycoon=v 
             break 
         end 
     end 
-    if not Tycoon then 
-        for _,v in pairs(Plots:GetDescendants()) do 
-            if v:IsA("TouchTransmitter") then 
-                FireTouch(0,v.Parent) 
-                MoveTo(v.Parent,Vector3.new(0,0,0)) 
-                break 
-            end 
-        end 
-    end 
-end GetTycoon()
+    ClaimTycoon()
+end FindTycoon()
 
 -->Waiting For Data<--
-repeat pcall(function()GetTycoon()task.wait(1)end)task.wait()until Tycoon
+repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon
+TeleportToTycoon()
+
 
 --> Return Functions <--
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
@@ -56,12 +86,19 @@ local function GetRichestTycoon()
     end
     return rtycoon
 end
+local function GetYoutuber()
+    if Tycoon then
+        return Tycoon.Name:split("_")[3]
+    end
+end
 
 -->Post Variables<--
 local Values=Tycoon:WaitForChild("Values")
 local Buttons=Tycoon:WaitForChild("Buttons")
 local MainItems=Tycoon:WaitForChild("MainItems")
 local CashButton=MainItems:WaitForChild("CashButton")
+
+local Youtuber = GetYoutuber()
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
@@ -130,9 +167,23 @@ Auto:Toggle("Rebirth",function(bool)
             -- Rebirth Check
             if _precent and _precent.Text == "100%" then
                 Event.Rebirth:FireServer()
-                task.wait(5)
+                task.wait(1)
                 Tycoon = nil
-                repeat pcall(function()GetTycoon()task.wait(1)end)task.wait()until Tycoon
+                
+                ClaimTycoon(Plot)task.wait(0.5)
+                Event.Select:FireServer(Youtuber)task.wait(1)
+                local _TycoonSelect = Player.PlayerGui:FindFirstChild("TycoonSelect")
+                if _TycoonSelect then
+                    _TycoonSelect:Destroy()
+                    local _Blur = Lighting:FindFirstChild("Blur")
+                    if _Blur then
+                        _Blur.Enabled = false
+                    end
+                end
+
+                task.wait(1)
+                repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon
+                TeleportToTycoon()
                 Values=Tycoon:WaitForChild("Values")
                 Buttons=Tycoon:WaitForChild("Buttons")
                 MainItems=Tycoon:WaitForChild("MainItems")
