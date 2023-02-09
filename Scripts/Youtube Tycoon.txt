@@ -8,7 +8,7 @@ local Lighting = game:GetService("Lighting")
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Tycoon, Plot, SCollect
+local Tycoon, SCollect
 local Tycoons = Workspace:FindFirstChild("Tycoons")
 local Plots = Workspace:FindFirstChild("Plots")
 
@@ -41,7 +41,6 @@ local function ClaimTycoon(_plot)
                 if _door then
                     local _MainDoor = _door:FindFirstChild("MainDoor")
                     if _MainDoor then
-                        Plot = v
                         FireTouch(0, _MainDoor)
                         return
                     end
@@ -64,8 +63,30 @@ end FindTycoon()
 repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon
 TeleportToTycoon()
 
-
 --> Return Functions <--
+local function GetDistanceFromPlayer(part)
+    if part:IsA("BasePart") then
+        return (part.Position - Player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+    end
+end
+local function FindClosestPlot()
+    local splot
+    local min = math.huge
+    for _,v in pairs(Plots:GetChildren()) do
+        local _door = v:FindFirstChild("Door")
+        if _door then
+            local _MainDoor = _door:FindFirstChild("MainDoor")
+            if _MainDoor then
+                local _dis = GetDistanceFromPlayer(_MainDoor)
+                if _dis < min then
+                    min = _dis
+                    splot = v
+                end
+            end
+        end
+    end
+    return splot
+end
 local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 local function GetRichestTycoon()
     local rtycoon
@@ -88,9 +109,11 @@ local function GetRichestTycoon()
 end
 local function GetYoutuber()
     if Tycoon then
-        return Tycoon.Name:split("_")[3]
+        return Tycoon.Name:split(Player.Name.."_")[2]
     end
 end
+
+
 
 -->Post Variables<--
 local Values=Tycoon:WaitForChild("Values")
@@ -99,6 +122,44 @@ local MainItems=Tycoon:WaitForChild("MainItems")
 local CashButton=MainItems:WaitForChild("CashButton")
 
 local Youtuber = GetYoutuber()
+
+local function AutoSeat(pc, _max)
+    if Player.leaderstats.Subscribers.Value < _max and Player.Character:WaitForChild("Humanoid").Sit == false then
+        local _seat = pc.Main:FindFirstChild("Seat")
+        _seat:Sit(Player.Character:WaitForChild("Humanoid"))
+    end
+    if Player.leaderstats.Subscribers.Value >= _max and Player.Character:WaitForChild("Humanoid").Sit == true then
+        Player.Character:WaitForChild("Humanoid").Sit = false task.wait(15)
+    end
+end
+
+local _buytime = 45
+local PCTbl = {6250, 75000, 500000, 4000000, 23500000, 100000000}
+
+Auto:Toggle("Auto Play",function(bool)
+    shared.toggleAP = bool
+    spawn (function()
+        local count = _buytime
+        while shared.toggleAP do
+            if Tycoon and Tycoon:FindFirstChild("Bought") then
+                for _,v in pairs(PCTbl)do
+                    local pc = Tycoon.Bought:FindFirstChild("PC".._)
+                    if pc then
+                        AutoSeat(pc, v)
+                    end
+                end
+            end
+            if count <= 0 then
+                count = _buytime
+                for _= 1, 10, 1 do
+                    Player.Character:WaitForChild("Humanoid").Sit = false
+                    task.wait(1)
+                end
+            end
+            task.wait(1) count = count - 1
+        end
+    end)
+end)
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
@@ -160,18 +221,27 @@ end)
 
 
 local _precent = Player.PlayerGui.Pantalla.RebirthGui.Bar.TextLabel
-Auto:Toggle("Rebirth",function(bool)
+Auto:Toggle("Auto Rebirth",function(bool)
     shared.toggleAR = bool
     spawn (function()
         while shared.toggleAR do
+            --Check if Subscribers are over 100M
+            if Player.leaderstats.Subscribers.Value >= 100000000 and Player.Character:WaitForChild("Humanoid").Sit == true then
+                 Player.Character:WaitForChild("Humanoid").Sit = false
+            end
+            
             -- Rebirth Check
             if _precent and _precent.Text == "100%" then
                 Event.Rebirth:FireServer()
-                task.wait(1)
-                Tycoon = nil
+                Tycoon = nil task.wait(1)
                 
-                ClaimTycoon(Plot)task.wait(0.5)
+                local _newPlot = FindClosestPlot()
+                print("Plot:", _newPlot)
+                print("Youtuber:", Youtuber)
+                ClaimTycoon(_newPlot)task.wait(0.5)
+                
                 Event.Select:FireServer(Youtuber)task.wait(1)
+                
                 local _TycoonSelect = Player.PlayerGui:FindFirstChild("TycoonSelect")
                 if _TycoonSelect then
                     _TycoonSelect:Destroy()
