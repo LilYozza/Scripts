@@ -129,12 +129,21 @@ local function AutoSeat(pc, _max)
         _seat:Sit(Player.Character:WaitForChild("Humanoid"))
     end
     if Player.leaderstats.Subscribers.Value >= _max and Player.Character:WaitForChild("Humanoid").Sit == true then
-        Player.Character:WaitForChild("Humanoid").Sit = false task.wait(15)
+        Player.Character:WaitForChild("Humanoid").Sit = false 
+        if pc.Name == "PC1" then task.wait(10)else
+        task.wait(1)end
     end
 end
 
-local _buytime = 45
+local _buytime = 60
 local PCTbl = {6250, 75000, 500000, 4000000, 23500000, 100000000}
+
+local function StandupTimer()
+    for _= 1, 10, 1 do
+        Player.Character:WaitForChild("Humanoid").Sit = false
+        task.wait(1)
+    end
+end
 
 Auto:Toggle("Auto Play",function(bool)
     shared.toggleAP = bool
@@ -147,14 +156,15 @@ Auto:Toggle("Auto Play",function(bool)
                     if pc then
                         AutoSeat(pc, v)
                     end
+                    --if pc.Name == "PC1" then
+                        --task.wait(10)
+                        --StandupTimer()
+                    --end
                 end
             end
             if count <= 0 then
                 count = _buytime
-                for _= 1, 10, 1 do
-                    Player.Character:WaitForChild("Humanoid").Sit = false
-                    task.wait(1)
-                end
+                StandupTimer()
             end
             task.wait(1) count = count - 1
         end
@@ -236,23 +246,24 @@ Auto:Toggle("Auto Rebirth",function(bool)
                 Tycoon = nil task.wait(1)
                 
                 local _newPlot = FindClosestPlot()
-                print("Plot:", _newPlot)
-                print("Youtuber:", Youtuber)
-                ClaimTycoon(_newPlot)task.wait(0.5)
+            
+                repeat ClaimTycoon(_newPlot) task.wait(1) until Player.PlayerGui:FindFirstChild("TycoonSelect") or not shared.toggleAR task.wait(0.5)
+                repeat
+                    Event.Select:FireServer(Youtuber)
+                    task.wait(1)
                 
-                Event.Select:FireServer(Youtuber)task.wait(1)
-                
-                local _TycoonSelect = Player.PlayerGui:FindFirstChild("TycoonSelect")
-                if _TycoonSelect then
-                    _TycoonSelect:Destroy()
-                    local _Blur = Lighting:FindFirstChild("Blur")
-                    if _Blur then
-                        _Blur.Enabled = false
+                    local _TycoonSelect = Player.PlayerGui:FindFirstChild("TycoonSelect")
+                    if _TycoonSelect then
+                        _TycoonSelect:Destroy()
+                        local _Blur = Lighting:FindFirstChild("Blur")
+                        if _Blur then
+                            _Blur.Enabled = false
+                        end
                     end
-                end
+                until not Player.PlayerGui:FindFirstChild("TycoonSelect") or not shared.toggleAR task.wait(0.5)
 
                 task.wait(1)
-                repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon
+                repeat pcall(function()FindTycoon()task.wait(1)end)task.wait()until Tycoon or shared.toggleAR
                 TeleportToTycoon()
                 Values=Tycoon:WaitForChild("Values")
                 Buttons=Tycoon:WaitForChild("Buttons")
