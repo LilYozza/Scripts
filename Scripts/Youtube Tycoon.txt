@@ -112,7 +112,12 @@ local function GetYoutuber()
         return Tycoon.Name:split(Player.Name.."_")[2]
     end
 end
-
+local function StandupTimer()
+    for _= 1, 10, 1 do
+        Player.Character:WaitForChild("Humanoid").Sit = false
+        task.wait(1)
+    end
+end
 
 
 -->Post Variables<--
@@ -130,43 +135,35 @@ local function AutoSeat(pc, _max)
     end
     if Player.leaderstats.Subscribers.Value >= _max and Player.Character:WaitForChild("Humanoid").Sit == true then
         Player.Character:WaitForChild("Humanoid").Sit = false 
-        if pc.Name == "PC1" then task.wait(10)else
-        task.wait(1)end
+        StandupTimer()
     end
 end
 
 local _buytime = 60
 local PCTbl = {6250, 75000, 500000, 4000000, 23500000, 100000000}
 
-local function StandupTimer()
-    for _= 1, 10, 1 do
-        Player.Character:WaitForChild("Humanoid").Sit = false
-        task.wait(1)
-    end
-end
+
 
 Auto:Toggle("Auto Play",function(bool)
     shared.toggleAP = bool
     spawn (function()
         local count = _buytime
         while shared.toggleAP do
-            if Tycoon and Tycoon:FindFirstChild("Bought") then
-                for _,v in pairs(PCTbl)do
-                    local pc = Tycoon.Bought:FindFirstChild("PC".._)
-                    if pc then
-                        AutoSeat(pc, v)
+            local s,e = pcall(function()
+                if Tycoon and Tycoon:FindFirstChild("Bought") then
+                    for _,v in pairs(PCTbl)do
+                        local pc = Tycoon.Bought:FindFirstChild("PC".._)
+                        if pc then
+                            AutoSeat(pc, v)
+                        end
                     end
-                    --if pc.Name == "PC1" then
-                        --task.wait(10)
-                        --StandupTimer()
-                    --end
                 end
-            end
-            if count <= 0 then
-                count = _buytime
-                StandupTimer()
-            end
-            task.wait(1) count = count - 1
+                if count <= 0 then
+                    count = _buytime
+                    StandupTimer()
+                end
+                task.wait(1) count = count - 1
+            end) task.wait() if not s then print(e) end
         end
     end)
 end)
