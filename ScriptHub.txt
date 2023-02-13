@@ -390,6 +390,10 @@ local Games = {
 	[11800876530] = {
 		Name = '+1 Blocks Every Second',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/+1%20Blocks%20Every%20Second.txt'
+	},
+	[11454403177] = {
+		Name = 'Cart Ride Delivery Service',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Delivery%20Service.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

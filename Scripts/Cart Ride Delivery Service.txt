@@ -1,0 +1,190 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Client_PackagePickups
+local Dropoffs = Workspace:FindFirstChild("Dropoffs")
+local Mechanics = Workspace:FindFirstChild("Mechanics")
+local GhostTrack = Mechanics:FindFirstChild("GhostTrack")
+
+for _,v in pairs(Workspace:GetChildren())do
+    if v.Name == "Client_PackagePickups" and #v:GetChildren() > 5 then
+        Client_PackagePickups = v
+    end
+end
+
+local NpcCars = Mechanics:FindFirstChild("NpcCars")
+local _NpcCars = NpcCars:FindFirstChild("NpcCars")
+
+local GhostTrack_ConTbl = {}
+
+local RemoveTbl = {"Bump", "WedgeBump", "Cannons", "Cannon_Projectile", "Hammers", "ThiefCar", ""}
+
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+local function ChangeTrack(_size)
+    for _,v in pairs(Workspace:GetChildren()) do
+        if v.Name == "StraightSegmentL8" and v:FindFirstChild("Part") and v:FindFirstChild("RailCenter")  then
+            for __,_v in pairs(v:GetChildren())do
+                if _v.Name == "Part" and _v:IsA("BasePart") and _v.Orientation == Vector3.new(0, -136.1, 0) then
+                    --print(math.floor(_v.Position.Y), Vector3.new(0,188.985,0).Y)
+                    if math.floor(_v.Position.Y) == math.floor(Vector3.new(0,188.985,0).Y) or _v.Position.Y == Vector3.new(0,188.984,0).Y then
+                        _v.BrickColor = BrickColor.new("Lime green")
+                        _v.Size = _size
+                    end
+                end
+            end
+        end
+    end
+end
+
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+local function RemoveParts(tbl)
+    for _,v in pairs(Workspace:GetDescendants())do
+        if table.find(tbl, v.Name) then v:Destroy()end
+    end
+end
+
+local function GetDistance(p1, p2)
+    return (p1.Position - p2.Position).Magnitude
+end
+
+local function GetClosestPrompt()
+    local _f
+    local _min = math.huge
+    
+    for _,v in pairs(Dropoffs:GetChildren())do
+        local _Prompt = v:FindFirstChild("Prompt")
+        if _Prompt then
+            local _dis = GetDistance(Player.Character:WaitForChild("HumanoidRootPart"), _Prompt)
+            if _dis < _min then
+                _f = _Prompt
+                _min = _dis
+            end
+        end
+    end
+    return _f
+end
+
+local _trackToggle = false
+Auto:Button("Hard Tack",function()
+    spawn(function()
+        if _trackToggle then 
+            _trackToggle = false
+            ChangeTrack(Vector3.new(0.5, 0.5, 35.56))
+        else
+            _trackToggle = true
+            ChangeTrack(Vector3.new(0.5, 0.5, 75.56))
+        end
+    end)
+end)
+
+
+
+
+Auto:Button("Bumps",function()
+    spawn(function()
+        RemoveParts(RemoveTbl)
+        local Cannon_Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
+            if v.Name == "Cannon_Projectile"  then
+                local _p_ = v:WaitForChild("TouchInterest")
+                if _p_ then v:Destroy()end
+            end
+        end)
+    end)
+end)
+
+Auto:Toggle("Ghost Track",function(bool)
+    shared.ToggleGT=bool
+    spawn(function()
+        if shared.ToggleGT then
+            for _,v in pairs(GhostTrack:GetDescendants())do
+                if v:IsA("BasePart") then
+                    GhostTrack_ConTbl[_] = v:GetPropertyChangedSignal("CanCollide"):Connect(function()
+                        v.CanCollide = true
+                    end)
+                    v.CanCollide = true
+                end
+            end
+        else
+            if GhostTrack_ConTbl then
+                for _,v in pairs(GhostTrack_ConTbl)do
+                    v:Disconnect()
+                end
+            end
+        end
+    end)
+end)
+
+local NpcCars_ConTbl
+Auto:Toggle("No Cars",function(bool)
+    shared.ToggleNC=bool
+    spawn(function()
+        if shared.ToggleNC then
+            NpcCars_ConTbl = _NpcCars.ChildAdded:Connect(function(v)
+                local _Body = v:WaitForChild("Body")
+                if _Body then v:Destroy()end
+            end)
+            for _,v in pairs(_NpcCars:GetChildren())do
+                if v:FindFirstChild("Body") then
+                    v:Destroy()
+                end
+            end
+        else
+            if NpcCars_ConTbl then NpcCars_ConTbl:Disconnect()end
+        end
+        task.wait()
+    end)
+end)
+
+Auto:Button("Money",function()
+    spawn(function()
+        local _Vehicle = Player.Character:WaitForChild("Humanoid").SeatPart.Parent
+        if _Vehicle and Client_PackagePickups then
+            local _mainroot = _Vehicle.MainCart:FindFirstChild("Root")
+            local _root = _Vehicle.Cart1:FindFirstChild("Root")
+            if _root then
+                local _mainbackPos = _mainroot.CFrame + Vector3.new(0,10,0)
+                local _backPos = _root.CFrame + Vector3.new(0,10,0)
+                local _prompt = GetClosestPrompt()
+                for _,v in pairs(Client_PackagePickups:GetDescendants())do
+                    if v.Name == "root" and v:IsA("BasePart") then
+                        _root.CFrame = v.CFrame 
+                        task.wait()
+                        _mainroot.CFrame = _prompt.CFrame
+                        _root.CFrame = _prompt.CFrame
+                        for s=1, 100, 1 do 
+                            fireproximityprompt(_prompt.ProximityPrompt)
+                        end
+                    end
+                end
+                for _=1, 100, 1 do
+                    _mainroot.CFrame = _prompt.CFrame
+                    _root.CFrame = _prompt.CFrame
+                    fireproximityprompt(_prompt.ProximityPrompt)
+                    task.wait(0.001)
+                end
+                Player.Character:WaitForChild("Humanoid").Sit = false
+                task.wait()
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame = _prompt.CFrame
+                
+            end
+        end    
+    
+    end)
+end)
+
+
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
