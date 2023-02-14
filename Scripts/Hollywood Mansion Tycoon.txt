@@ -1,0 +1,57 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+--Base Variables
+local SCollect
+local Tycoon = Player:WaitForChild("TycoonWrapperReference").Value.Tycoon
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+-->Post Variables<--
+local Buttons = Tycoon:FindFirstChild("Buttons")
+local TycoonObjects = Tycoon:FindFirstChild("TycoonObjects")
+local till1 = TycoonObjects:FindFirstChild("till1")
+local AmtToCollect = till1.TillModel.BillboardGui.TextLabel
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            Touch(till1.ButtonModel.ButtonModel.Trigger, 1)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.ToggleSC=bool SCollect = shared.ToggleSC
+end)
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+        local s,e = pcall(function()
+            for _,v in pairs(Buttons:GetChildren())do
+                local _Button = v:FindFirstChild("ButtonModel").Trigger
+                if _Button and _Button.Transparency == 0 then
+                    local _Price = v.ButtonModel.BillboardGui.PriceLabel.Text
+                    if Player.leaderstats.Money.Value + fromSuffixString(AmtToCollect.Text) >= fromSuffixString(_Price) and SCollect then Touch(till1.ButtonModel.ButtonModel.Trigger,0.1) end
+                    if Player.leaderstats.Money.Value >= fromSuffixString(_Price) then Touch(_Button, 0.3) end
+                end
+            end            
+            task.wait()
+        end)if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
