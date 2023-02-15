@@ -1,17 +1,29 @@
+--TO ADD
+--Find/Fix Bug when Conveyors go Idle
+--Auto Race
+--Auto Rebirth
+--Auto BuyNext Conveyor
+local RaceCar = "Feeat 500"
+
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
+local Lighting = game:GetService("Lighting")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local MaterialService = ReplicatedStorage.Packages.Knit.Services.MaterialService
 local TycoonService = ReplicatedStorage.Packages.Knit.Services.TycoonService
+local RaceService = ReplicatedStorage.Packages.Knit.Services.RaceService
+local VehicleService = ReplicatedStorage.Packages.Knit.Services.VehicleService
 
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
 local Tycoon
-local Tycoons = Workspace:FindFirstChild("Tycoons")
+local Tycoons = Workspace:WaitForChild("Tycoons")
+local Race = Workspace:WaitForChild("Race")
+local Checkpoints = Race:FindFirstChild("Checkpoints")
 
 -->Getting Data<--
 local function GetTycoon()
@@ -35,14 +47,27 @@ local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} fo
 -->Post Variables<--
 local Model = Tycoon:FindFirstChild("Model")
 local Buttons = Model:FindFirstChild("Buttons")
-local Lines = Model:FindFirstChild("Lines")
+local Lines = Model:WaitForChild("Lines")
 local ParkedCars = Model:FindFirstChild("ParkedCars")
+
+local Spawn = Model:FindFirstChild("Spawn")
+
+local World = Workspace:WaitForChild("World")
+local AirDrops = World:FindFirstChild("AirDrops")
+local Drops = AirDrops:FindFirstChild("Drops")
 
 -->Player Data<--
 local PlayerGui = Player.PlayerGui
 local _Main = PlayerGui.HUD.Main
 local PCash = _Main.Top.Cash.Amount
 local PGems = _Main.Top.Gems.Amount
+
+local Rebirths = PlayerGui:FindFirstChild("Rebirths")
+
+local CloseShopCon = PlayerGui.HUD.Shop:GetPropertyChangedSignal("Visible"):Connect(function()
+    PlayerGui.HUD.Shop.Visible = false
+    Lighting.Blur.Enabled = false
+end)
 
 Auto:Toggle("Auto Refill",function(bool)
     shared.ToggleAR=bool
@@ -57,6 +82,7 @@ Auto:Toggle("Auto Refill",function(bool)
                         for __,_v in pairs(_DropoffGui:GetChildren())do
                             if _v:IsA("TextLabel") then
                                 local _Material = _v.Name
+                                if _v.Text == "" then MaterialService.RF.Collect:InvokeServer(_Material)task.wait() MaterialService.RF.Drop:InvokeServer(v)task.wait()end
                                 local _text = _v.Text:split(": ")[2]:gsub(" ", "")
                                 if tonumber(_text:split("/")[1]) < tonumber(_text:split("/")[2]) then
                                     MaterialService.RF.Collect:InvokeServer(_Material)task.wait()
@@ -91,10 +117,17 @@ Auto:Toggle("Auto Farm",function(bool)
     shared.ToggleAF=bool
     spawn(function()
         while shared.ToggleAF do
+        local s,e = pcall(function()
             for _,v in pairs(Lines:GetChildren())do
-                TycoonService.RF.SpawnCarSegment:InvokeServer(v.Name)
+                local _Conveyor1 = v.Conveyors:FindFirstChild("Conveyor1")
+                if _Conveyor1 and _Conveyor1:FindFirstChild("Worker") then
+                    TycoonService.RF.SpawnCarSegment:InvokeServer(v.Name)
+                elseif _Conveyor1 and not _Conveyor1:FindFirstChild("Worker") then
+                    TycoonService.RF.Upgrade:InvokeServer(v.Name, "Workers")
+                end
             end
             task.wait(1)
+        end)if not s then print(e)end task.wait()
         end
     end)
 end)
@@ -109,9 +142,10 @@ Auto:Toggle("Auto Buy",function(bool)
                 if _pad and _pad.Transparency == 0 then
                     local _price = _pad.InfoGui.CostBox.Cost.Text
                     if _price:match("FREE") then _price = "0" end
-                    if _price:match("GEMs") then _price = "9999999999" end
-                    if _price:match("> ") and _price:match("</") then  _price = _price:split("> ")[2]:split("</")[1] end
-                    --print( fromSuffixString(_price), fromSuffixString(PCash.Text))
+                    if _price:match("GEMS") then _price = "9999999999" end
+                    if _price:match("font>") and _price:match("</") then  _price = _price:split("font>")[2]:split("</")[1] end
+                    if _price:match("Rebirth") then _price = "9999999999" end
+                    --print(_pad, _price, PCash.Text)
                     if fromSuffixString(_price) <= fromSuffixString(PCash.Text) then
                         Touch(_pad, 1)
                     end
@@ -123,15 +157,83 @@ Auto:Toggle("Auto Buy",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto",function(bool)
-    shared.Toggle=bool
+Auto:Toggle("Upgrade Cars",function(bool)
+    shared.ToggleUC=bool
     spawn(function()
-        while shared.Toggle do
-
+        while shared.ToggleUC do
+            for _,v in pairs(Lines:GetChildren())do
+                TycoonService.RF.BuyNextCar:InvokeServer(v.Name)
+            end
+            task.wait(10)
+        end
+    end)
+end)
+Auto:Toggle("Auto Race",function(bool)
+    shared.Toggle_AR=bool
+    spawn(function()
+        while shared.Toggle_AR do
+            if PlayerGui.HUD.Race.JoinPrompt.Visible == true then
+                PlayerGui.HUD.Race.JoinPrompt.Visible = false
+                RaceService.RF.AcceptRace:InvokeServer() task.wait(15)
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame = Race.FinishLine.CFrame
+                VehicleService.RF.SpawnVehicle:InvokeServer(RaceCar, true) task.wait(2)
+                VehicleService.RF.SetDriver:InvokeServer(Player) task.wait(15)
+                --Complete Race and Return Player To Tycoon
+                for __=1,3,1 do
+                    Touch(Race.FinishLine)task.wait()Touch(Race.FinishLine)task.wait()
+                    for _,v in pairs(Checkpoints:GetChildren())do
+                        local _point = Checkpoints:FindFirstChild(_)
+                        if _point then
+                            Touch(_point,0.5)
+                            --print("Touched", _point)
+                        end
+                    end
+                end
+                Touch(Race.FinishLine)task.wait()Touch(Race.FinishLine)task.wait()Touch(Race.FinishLine)task.wait()Touch(Race.FinishLine)task.wait()
+                task.wait(3)Player.Character:WaitForChild("Humanoid").Sit = false task.wait(1)
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame = Spawn.CFrame
+            end
             task.wait()
         end
     end)
 end)
+
+Auto:Toggle("Auto Crate",function(bool)
+    shared.Toggle_AC=bool
+    spawn(function()
+        while shared.Toggle_AC do
+            for _,v in pairs(Drops:GetChildren())do
+                local _Base = v:FindFirstChild("Base")
+                if _Base then
+                    Touch(_Base,1)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleARR=bool
+    spawn(function()
+        while shared.ToggleARR do
+        local s,e = pcall(function()
+            for _,v in pairs(Rebirths:GetChildren())do
+                if v.Name == "RebirthFrame" and v:IsA("Frame") then
+                    local _price = v.Container.Rebirth.ContentContainer:FindFirstChild("Cost")
+                    --print(fromSuffixString(_price.Text))
+                    if _price and fromSuffixString(_price.Text) <= fromSuffixString(PCash.Text) then
+                        TycoonService.RF.Rebirth:InvokeServer()task.wait(2)
+                        TycoonService.RF.Get:InvokeServer()task.wait(10)
+                    end
+                end
+            end
+            task.wait()
+        end)if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
 
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Cxetive/OptixHub/main/loader.lua"))()
 
