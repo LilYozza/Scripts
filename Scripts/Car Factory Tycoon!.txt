@@ -62,7 +62,7 @@ local _Main = PlayerGui.HUD.Main
 local PCash = _Main.Top.Cash.Amount
 local PGems = _Main.Top.Gems.Amount
 
-local Rebirths = PlayerGui:FindFirstChild("Rebirths")
+local Rebirths = PlayerGui:WaitForChild("Rebirths")
 
 local CloseShopCon = PlayerGui.HUD.Shop:GetPropertyChangedSignal("Visible"):Connect(function()
     PlayerGui.HUD.Shop.Visible = false
@@ -184,7 +184,7 @@ Auto:Toggle("Auto Race",function(bool)
                     for _,v in pairs(Checkpoints:GetChildren())do
                         local _point = Checkpoints:FindFirstChild(_)
                         if _point then
-                            Touch(_point,0.5)
+                            Touch(_point,0.1)
                             --print("Touched", _point)
                         end
                     end
@@ -218,13 +218,15 @@ Auto:Toggle("Auto Rebirth",function(bool)
     spawn(function()
         while shared.ToggleARR do
         local s,e = pcall(function()
-            for _,v in pairs(Rebirths:GetChildren())do
-                if v.Name == "RebirthFrame" and v:IsA("Frame") then
-                    local _price = v.Container.Rebirth.ContentContainer:FindFirstChild("Cost")
-                    --print(fromSuffixString(_price.Text))
-                    if _price and fromSuffixString(_price.Text) <= fromSuffixString(PCash.Text) then
-                        TycoonService.RF.Rebirth:InvokeServer()task.wait(2)
-                        TycoonService.RF.Get:InvokeServer()task.wait(10)
+            if Rebirths then
+                for _,v in pairs(Rebirths:GetChildren())do
+                    if v.Name == "RebirthFrame" and v:IsA("Frame") then
+                        local _price = v.Container.Rebirth.ContentContainer:FindFirstChild("Cost")
+                        --print(fromSuffixString(_price.Text))
+                        if _price and fromSuffixString(_price.Text) <= fromSuffixString(PCash.Text) then
+                            TycoonService.RF.Rebirth:InvokeServer()task.wait(2)
+                            TycoonService.RF.Get:InvokeServer()task.wait(10)
+                        end
                     end
                 end
             end
