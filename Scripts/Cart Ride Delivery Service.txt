@@ -22,7 +22,7 @@ local _NpcCars = NpcCars:FindFirstChild("NpcCars")
 
 local GhostTrack_ConTbl = {}
 
-local RemoveTbl = {"Bump", "WedgeBump", "Cannons", "Cannon_Projectile", "Hammers", "ThiefCar", ""}
+local RemoveTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "Meteor_Projectile", "Hammers", "ThiefCar"}
 
 
 -->Non Return Functions<--
@@ -45,9 +45,19 @@ local function ChangeTrack(_size)
     end
 end
 
+local function SafeParts(tbl)
+    for _,v in pairs(tbl)do
+        for __,_v in pairs(Workspace:GetDescendants())do
+            if v == _v.Name then
+                if _v:IsA("Part") then _v.CanCollide = false end
+                if _v:IsA("TouchTransmitter") then _v:Destroy() end
+            end
+        end
+    end
+end
+
 
 -->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 local function RemoveParts(tbl)
     for _,v in pairs(Workspace:GetDescendants())do
         if table.find(tbl, v.Name) then v:Destroy()end
@@ -75,6 +85,27 @@ local function GetClosestPrompt()
     return _f
 end
 
+
+Auto:Button("Easy",function()
+    spawn(function()
+        --RemoveParts(RemoveTbl)
+        SafeParts(RemoveTbl)
+        local Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
+            if v.Name == "Cannon_Projectile"  then
+                local _p_ = v:WaitForChild("TouchInterest")
+                if _p_ then v:Destroy()end
+            end
+            if v.Name == "Meteor_Projectile" then
+                repeat task.wait()until v
+                if v then v:Destroy() end
+            end
+        end)
+    end)
+end)
+
+if game.GameId == 4072288216 then
+else
+    
 local _trackToggle = false
 Auto:Button("Hard Tack",function()
     spawn(function()
@@ -85,21 +116,6 @@ Auto:Button("Hard Tack",function()
             _trackToggle = true
             ChangeTrack(Vector3.new(0.5, 0.5, 75.56))
         end
-    end)
-end)
-
-
-
-
-Auto:Button("Bumps",function()
-    spawn(function()
-        RemoveParts(RemoveTbl)
-        local Cannon_Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
-            if v.Name == "Cannon_Projectile"  then
-                local _p_ = v:WaitForChild("TouchInterest")
-                if _p_ then v:Destroy()end
-            end
-        end)
     end)
 end)
 
@@ -145,6 +161,7 @@ Auto:Toggle("No Cars",function(bool)
         task.wait()
     end)
 end)
+end
 
 Auto:Button("Money",function()
     spawn(function()
