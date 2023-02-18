@@ -22,7 +22,7 @@ local _NpcCars = NpcCars:FindFirstChild("NpcCars")
 
 local GhostTrack_ConTbl = {}
 
-local RemoveTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "Meteor_Projectile", "Hammers", "ThiefCar"}
+local RemoveTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "Meteor_Projectile", "Hammers", "ThiefCar", "Laser"}
 
 
 -->Non Return Functions<--
@@ -46,17 +46,15 @@ local function ChangeTrack(_size)
 end
 
 local function SafeParts(tbl)
-    for _,v in pairs(tbl)do
-        for __,_v in pairs(Workspace:GetDescendants())do
-            if v == _v.Name then
-                if #_v:GetChildren() > 0 then
-                    for ___,__v in pairs(_v:GetDescendants())do
-                        if __v:IsA("BasePart")then __v.CanCollide = false end
-                        if __v:IsA("TouchTransmitter") then __v:Destroy() end
-                    end
-                end 
-                if _v:IsA("Part") then _v.CanCollide = false end
-            end
+    for __,_v in pairs(Workspace:GetDescendants())do
+        if table.find(tbl, _v.Name) then
+            if #_v:GetChildren() > 0 then
+                for ___,__v in pairs(_v:GetDescendants())do
+                    if __v:IsA("BasePart")then __v.CanCollide = false end
+                    if __v:IsA("TouchTransmitter") then __v:Destroy() end
+                end
+            end 
+            if _v:IsA("Part") then _v.CanCollide = false end
         end
     end
 end
