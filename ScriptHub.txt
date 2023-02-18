@@ -1,4 +1,4 @@
-local Games = {
+wwwwwwlocal Games = {
     [8328351891] = {
         Name = "Mega Mansion Tycoon",
         Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Mansion%20Tycoon.txt'
@@ -391,7 +391,7 @@ local Games = {
 		Name = '+1 Blocks Every Second',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/+1%20Blocks%20Every%20Second.txt'
 	},
-	[11454403177] = {
+	[4072288216] = {
 		Name = 'Cart Ride Delivery Service',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Delivery%20Service.txt'
 	},
