@@ -1,4 +1,4 @@
-wwwwwwlocal Games = {
+local Games = {
     [8328351891] = {
         Name = "Mega Mansion Tycoon",
         Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Mansion%20Tycoon.txt'
