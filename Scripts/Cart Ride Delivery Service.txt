@@ -22,7 +22,8 @@ local _NpcCars = NpcCars:FindFirstChild("NpcCars")
 
 local GhostTrack_ConTbl = {}
 
-local RemoveTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "Meteor_Projectile", "Hammers", "ThiefCar", "Laser"}
+local RemoveTbl = {"Laser"}
+local SafeTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "Meteor_Projectile", "Hammers", "ThiefCar"}
 
 
 -->Non Return Functions<--
@@ -91,8 +92,8 @@ end
 
 Auto:Button("Easy",function()
     spawn(function()
-        --RemoveParts(RemoveTbl)
-        SafeParts(RemoveTbl)
+        RemoveParts(RemoveTbl)
+        SafeParts(SafeTbl)
         local Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
             if v.Name == "Cannon_Projectile"  then
                 local _p_ = v:WaitForChild("TouchInterest")
