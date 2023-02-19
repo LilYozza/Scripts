@@ -10,6 +10,14 @@ local Client_PackagePickups
 local Dropoffs = Workspace:FindFirstChild("Dropoffs")
 local Mechanics = Workspace:FindFirstChild("Mechanics")
 local GhostTrack = Mechanics:FindFirstChild("GhostTrack")
+local Teleports = Mechanics:FindFirstChild("Teleports")
+
+local Teams = Workspace:FindFirstChild("Teams")
+local Zero_Gravity = Teams:FindFirstChild("Zero-Gravity")
+local ZG_Checkpoints = Zero_Gravity:FindFirstChild("Checkpoints")
+
+
+
 
 for _,v in pairs(Workspace:GetChildren())do
     if v.Name == "Client_PackagePickups" and #v:GetChildren() > 5 then
@@ -28,6 +36,7 @@ local SafeTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function TouchObject(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 
 local function ChangeTrack(_size)
@@ -71,6 +80,28 @@ end
 local function GetDistance(p1, p2)
     return (p1.Position - p2.Position).Magnitude
 end
+
+local function FindZGTP()
+    local _f
+    local _min = math.huge
+    
+    for _,v in pairs(Teleports:GetChildren())do
+        local _Trigger = v:FindFirstChild("Trigger")
+        if _Trigger then
+            local _dis = GetDistance(_Trigger, ZG_Checkpoints.Touchy)
+            print(_dis)
+            if _dis and _dis < _min then
+
+                _min = _dis
+                _f = _Trigger
+            end
+        end
+    end
+    return _f
+end
+
+local ZGTrigger = FindZGTP()
+print(ZGTrigger)
 
 local function GetClosestPrompt()
     local _f
@@ -161,6 +192,22 @@ Auto:Toggle("No Cars",function(bool)
             if NpcCars_ConTbl then NpcCars_ConTbl:Disconnect()end
         end
         task.wait()
+    end)
+end)
+
+else
+    
+Auto:Button("1/2 Zero G",function()
+    spawn(function()
+        local _v = Player.Character:WaitForChild("Humanoid").SeatPart.Parent
+        if _v then
+            for _,v in pairs(_v:GetDescendants())do
+                if v:IsA("TouchTransmitter") and ZGTrigger then
+                    TouchObject(v.Parent, ZGTrigger)
+                    print("Touched")
+                end
+            end
+        end
     end)
 end)
 end
