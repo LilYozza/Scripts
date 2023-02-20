@@ -9,7 +9,7 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Client_PackagePickups
+local Client_PackagePickups, TeleportSelect
 local Dropoffs = Workspace:FindFirstChild("Dropoffs")
 local Mechanics = Workspace:FindFirstChild("Mechanics")
 local GhostTrack = Mechanics:FindFirstChild("GhostTrack")
@@ -120,6 +120,17 @@ local function GetClosestPrompt()
     end
     return _f
 end
+
+local TeleportSelectDP = Auto:Dropdown("Beginners",Teams:GetChildren(),true,function(SItem)
+    TeleportSelect = Teams:FindFirstChild(SItem).Spawns.TestTeamSpawn
+end)
+Auto:Button("Teleport",function()
+    spawn(function()
+        if TeleportSelect then
+            MoveTo(TeleportSelect, Vector3.new(0,3,0))
+        end
+    end)
+end)
 
 Auto:Toggle("No Bumps",function(bool)
     shared.ToggleNB=bool
@@ -254,7 +265,7 @@ Auto:Button("Next Stage",function()
         for _,v in pairs(teams)do
             if v.Name == _curTeam then
                 local _fnd
-                if game.PlaceId == 11454403177 then _fnd = Teams:FindFirstChild(teams[_-1].Name)else _fnd = Teams:FindFirstChild(teams[_+1].Name) end
+                if teams[1].Name == "Beginners" then _fnd = Teams:FindFirstChild(teams[_+1].Name) else  _fnd = Teams:FindFirstChild(teams[_-1].Name) end
                 if _fnd then
                     local _v = Player.Character:WaitForChild("Humanoid").SeatPart.Parent
                     local _Touchy = _fnd:FindFirstChild("Checkpoints"):FindFirstChild("Touchy")
