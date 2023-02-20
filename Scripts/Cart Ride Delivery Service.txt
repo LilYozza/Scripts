@@ -144,7 +144,6 @@ Auto:Toggle("Projectiles",function(bool)
         end
     end)
 end)
-print("Passed")
 
 if game.PlaceId == 11454403177 then
 local _trackToggle = false
@@ -226,7 +225,11 @@ local function FindZGTP()
 end
 print("Passed")
 local ZGTrigger
-repeat ZGTrigger = FindZGTP() task.wait()until ZGTrigger
+repeat
+    local s,e = pcall(function()
+    ZGTrigger = FindZGTP() task.wait()
+    end)if not s then print(e)end task.waiat()
+until ZGTrigger
 print(ZGTrigger)
     
 Auto:Button("1/2 Zero G",function()
