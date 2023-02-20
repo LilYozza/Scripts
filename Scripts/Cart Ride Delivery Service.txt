@@ -1,5 +1,8 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
+local GameTeams=game:GetService("Teams")
+local teams = GameTeams:GetTeams()
+
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
@@ -13,11 +16,6 @@ local GhostTrack = Mechanics:FindFirstChild("GhostTrack")
 local Teleports = Mechanics:FindFirstChild("Teleports")
 
 local Teams = Workspace:FindFirstChild("Teams")
-local Zero_Gravity = Teams:FindFirstChild("Zero-Gravity")
-local ZG_Checkpoints = Zero_Gravity:FindFirstChild("Checkpoints")
-
-
-
 
 for _,v in pairs(Workspace:GetChildren())do
     if v.Name == "Client_PackagePickups" and #v:GetChildren() > 5 then
@@ -31,7 +29,8 @@ local _NpcCars = NpcCars:FindFirstChild("NpcCars")
 local GhostTrack_ConTbl = {}
 
 local RemoveTbl = {"Laser"}
-local SafeTbl = {"Bump", "WedgeBump", "Wedge", "Cannons", "Cannon_Projectile", "Meteor_Projectile", "Hammers", "ThiefCar"}
+local ToggleTbl = {"Bump", "WedgeBump", "Wedge", "Hammers"}
+local SafeTbl = {"Cannons", "Cannon_Projectile", "Meteor_Projectile", "ThiefCar"}
 
 
 -->Non Return Functions<--
@@ -55,16 +54,21 @@ local function ChangeTrack(_size)
     end
 end
 
-local function SafeParts(tbl)
+local function SafeParts(tbl, bool)
     for __,_v in pairs(Workspace:GetDescendants())do
         if table.find(tbl, _v.Name) then
             if #_v:GetChildren() > 0 then
                 for ___,__v in pairs(_v:GetDescendants())do
-                    if __v:IsA("BasePart")then __v.CanCollide = false end
-                    if __v:IsA("TouchTransmitter") then __v:Destroy() end
+                    if bool then
+                        if __v:IsA("BasePart")then __v.CanCollide = false end
+                    else
+                        if __v:IsA("BasePart")then __v.CanCollide = true end
+                        if __v:IsA("TouchTransmitter") then __v:Destroy() end
+                    end
                 end
-            end 
-            if _v:IsA("Part") then _v.CanCollide = false end
+            end
+            if bool then if _v:IsA("Part") then _v.CanCollide = false end
+            else if _v:IsA("Part") then _v.CanCollide = true end end
         end
     end
 end
@@ -100,9 +104,6 @@ local function FindZGTP()
     return _f
 end
 
-local ZGTrigger = FindZGTP()
-print(ZGTrigger)
-
 local function GetClosestPrompt()
     local _f
     local _min = math.huge
@@ -120,21 +121,33 @@ local function GetClosestPrompt()
     return _f
 end
 
+Auto:Toggle("No Bumps",function(bool)
+    shared.ToggleNB=bool
+    spawn(function()
+        SafeParts(ToggleTbl, shared.ToggleNB)
+    end)
+end)
 
-Auto:Button("Easy",function()
+local Projectile_ConTbl
+Auto:Toggle("Projectiles",function(bool)
+    shared.TogglePro=bool
     spawn(function()
         RemoveParts(RemoveTbl)
         SafeParts(SafeTbl)
-        local Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
-            if v.Name == "Cannon_Projectile"  then
-                local _p_ = v:WaitForChild("TouchInterest")
-                if _p_ then v:Destroy()end
-            end
-            if v.Name == "Meteor_Projectile" then
-                repeat task.wait()until v
-                if v then v:Destroy() end
-            end
-        end)
+        if shared.TogglePro then
+            Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
+                if v.Name == "Cannon_Projectile"  then
+                    local _p_ = v:WaitForChild("TouchInterest")
+                    if _p_ then v:Destroy()end
+                end
+                if v.Name == "Meteor_Projectile" then
+                    repeat task.wait()until v
+                    if v then v:Destroy() end
+                end
+            end)
+        else
+            if Projectile_ConTbl then Projectile_ConTbl:Disconnect() end
+        end
     end)
 end)
 
@@ -197,6 +210,29 @@ end)
 
 else
     
+local Zero_Gravity = Teams:FindFirstChild("Zero-Gravity")
+local ZG_Checkpoints = Zero_Gravity:FindFirstChild("Checkpoints")
+    
+local function FindZGTP()
+    local _f
+    local _min = math.huge
+        
+    for _,v in pairs(Teleports:GetChildren())do
+        local _Trigger = v:FindFirstChild("Trigger")
+        if _Trigger then
+            local _dis = GetDistance(_Trigger, ZG_Checkpoints.Touchy)
+            if _dis and _dis < _min then
+                _min = _dis
+                _f = _Trigger
+            end
+        end
+    end
+    return _f
+end
+
+local ZGTrigger = FindZGTP()
+print(ZGTrigger)
+    
 Auto:Button("1/2 Zero G",function()
     spawn(function()
         local _v = Player.Character:WaitForChild("Humanoid").SeatPart.Parent
@@ -211,6 +247,31 @@ Auto:Button("1/2 Zero G",function()
     end)
 end)
 end
+print("------------------------------")
+Auto:Button("Next Stage",function()
+    spawn(function()
+        local _curTeam = Player.Team.Name
+        for _,v in pairs(teams)do
+            if v.Name == _curTeam then
+                local _fnd
+                if game.PlaceId == 11454403177 then _fnd = Teams:FindFirstChild(teams[_-1].Name)else _fnd = Teams:FindFirstChild(teams[_+1].Name) end
+                if _fnd then
+                    local _v = Player.Character:WaitForChild("Humanoid").SeatPart.Parent
+                    local _Touchy = _fnd:FindFirstChild("Checkpoints"):FindFirstChild("Touchy")
+                    if _Touchy and _v then
+                        for _,v in pairs(_v:GetDescendants())do
+                            if v:IsA("TouchTransmitter") then
+                                TouchObject(v.Parent, _Touchy)
+                            end
+                        end
+                        Touch(_Touchy)
+                    end
+                end
+            end
+        end
+    end)
+end)
+
 
 Auto:Button("Money",function()
     spawn(function()
