@@ -210,8 +210,8 @@ end)
 
 else
     
-local Zero_Gravity = Teams:FindFirstChild("Zero-Gravity")
-local ZG_Checkpoints = Zero_Gravity:FindFirstChild("Checkpoints")
+local Zero_Gravity = Teams:WaitForChild("Zero-Gravity")
+local ZG_Checkpoints = Zero_Gravity:WaitForChild("Checkpoints")
     
 local function FindZGTP()
     local _f
