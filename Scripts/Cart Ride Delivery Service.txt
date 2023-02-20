@@ -86,25 +86,6 @@ local function GetDistance(p1, p2)
     return (p1.Position - p2.Position).Magnitude
 end
 
-local function FindZGTP()
-    local _f
-    local _min = math.huge
-    
-    for _,v in pairs(Teleports:GetChildren())do
-        local _Trigger = v:FindFirstChild("Trigger")
-        if _Trigger then
-            local _dis = GetDistance(_Trigger, ZG_Checkpoints.Touchy)
-            print(_dis)
-            if _dis and _dis < _min then
-
-                _min = _dis
-                _f = _Trigger
-            end
-        end
-    end
-    return _f
-end
-
 local function GetClosestPrompt()
     local _f
     local _min = math.huge
@@ -223,11 +204,9 @@ Auto:Toggle("No Cars",function(bool)
 end)
 
 else
-print("Start 1")
+
 local Zero_Gravity = Teams:WaitForChild("Zero-Gravity")
-print(2)
 local ZG_Checkpoints = Zero_Gravity:WaitForChild("Checkpoints")
-print(3)
     
 local function FindZGTP()
     local _f
@@ -245,8 +224,9 @@ local function FindZGTP()
     end
     return _f
 end
-
-local ZGTrigger = FindZGTP()
+print("Passed")
+local ZGTrigger
+repeat ZGTrigger = FindZGTP() task.wait()until ZGTrigger
 print(ZGTrigger)
     
 Auto:Button("1/2 Zero G",function()
