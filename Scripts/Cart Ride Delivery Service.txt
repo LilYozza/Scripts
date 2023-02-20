@@ -214,7 +214,7 @@ local function FindZGTP()
     for _,v in pairs(Teleports:GetChildren())do
         local _Trigger = v:FindFirstChild("Trigger")
         if _Trigger then
-            local _dis = GetDistance(_Trigger, ZG_Checkpoints.Touchy)
+            local _dis = GetDistance(_Trigger, ZG_Checkpoints:WaitForChild("Touchy"))
             if _dis and _dis < _min then
                 _min = _dis
                 _f = _Trigger
