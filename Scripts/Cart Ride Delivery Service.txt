@@ -213,8 +213,8 @@ local function FindZGTP()
         
     for _,v in pairs(Teleports:GetChildren())do
         local _Trigger = v:FindFirstChild("Trigger")
-        if _Trigger then
-            local _dis = GetDistance(_Trigger, ZG_Checkpoints:WaitForChild("Touchy"))
+        if _Trigger and ZG_Checkpoints:FindFirstChild("Touchy") then
+            local _dis = GetDistance(_Trigger, ZG_Checkpoints.Touchy)
             if _dis and _dis < _min then
                 _min = _dis
                 _f = _Trigger
@@ -223,12 +223,11 @@ local function FindZGTP()
     end
     return _f
 end
-print("Passed")
 local ZGTrigger
 repeat
     local s,e = pcall(function()
     ZGTrigger = FindZGTP() task.wait()
-    end)if not s then print(e)end task.waiat()
+    end)if not s then print(e)end task.wait()
 until ZGTrigger
 print(ZGTrigger)
     
