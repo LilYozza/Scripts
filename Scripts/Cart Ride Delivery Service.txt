@@ -9,9 +9,10 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Client_PackagePickups, TeleportSelect
+local Client_PackagePickups
+local TeleportSelect = "Beginners"
 local Dropoffs = Workspace:FindFirstChild("Dropoffs")
-local Mechanics = Workspace:FindFirstChild("Mechanics")
+local Mechanics = Workspace:WaitForChild("Mechanics")
 local GhostTrack = Mechanics:FindFirstChild("GhostTrack")
 local Teleports = Mechanics:FindFirstChild("Teleports")
 
@@ -122,12 +123,13 @@ local function GetClosestPrompt()
 end
 
 local TeleportSelectDP = Auto:Dropdown("Beginners",Teams:GetChildren(),true,function(SItem)
-    TeleportSelect = Teams:FindFirstChild(SItem).Spawns.TestTeamSpawn
+    TeleportSelect = SItem
 end)
 Auto:Button("Teleport",function()
     spawn(function()
-        if TeleportSelect then
-            MoveTo(TeleportSelect, Vector3.new(0,3,0))
+        local _t = Teams:FindFirstChild(TeleportSelect).Spawns.TestTeamSpawn
+        if _t then
+            MoveTo( _t, Vector3.new(0,3,0))
         end
     end)
 end)
@@ -161,6 +163,7 @@ Auto:Toggle("Projectiles",function(bool)
         end
     end)
 end)
+print("Passed")
 
 if game.PlaceId == 11454403177 then
 local _trackToggle = false
@@ -220,9 +223,11 @@ Auto:Toggle("No Cars",function(bool)
 end)
 
 else
-    
+print("Start 1")
 local Zero_Gravity = Teams:WaitForChild("Zero-Gravity")
+print(2)
 local ZG_Checkpoints = Zero_Gravity:WaitForChild("Checkpoints")
+print(3)
     
 local function FindZGTP()
     local _f
@@ -258,7 +263,7 @@ Auto:Button("1/2 Zero G",function()
     end)
 end)
 end
-print("------------------------------")
+
 Auto:Button("Next Stage",function()
     spawn(function()
         local _curTeam = Player.Team.Name
