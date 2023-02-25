@@ -1,0 +1,149 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Events = game:GetService("ReplicatedStorage")
+
+local Auto = w:CreateFolder("Auto")
+local ItemMenu = w:CreateFolder("Items")
+
+-->Base Variables<--
+local ItemSelect, SItemSelect, Morph, TeleportSelect
+local checkpoints = Workspace:FindFirstChild("checkpoints")
+local finish = Workspace:FindFirstChild("finish")
+local Clear_inventory = Workspace:FindFirstChild("Clear inventory")
+local Morph_Remover = Workspace:FindFirstChild("Morph Remover")
+
+-->Tables<--
+local MorphsTbl = {}
+local SpawnItemTbl = {"All", "RainbowMagicCarpet", "Pizza", "GravityCoil", "Cake", "Cloud", "SuperCoil", "Boombox", "Sword", "Parachute", "balloon"}
+local ChanceTbl = {"All", "RocketLauncher", "Regen", "Jetpack", "MerelyWebSlinger", "Knife", "Personal dog", "Diamond"}
+
+-->Getting Data<--
+local function GetMorphs()
+    for _,v in pairs(Workspace:GetChildren())do
+        if v.Name:match("Morph") and v:FindFirstChild("Head") and not table.find(MorphsTbl, v.Name) then
+            if v.Name == "R6 Morph" then
+                local _part01 = v:FindFirstChild("Chest")
+                if _part01 then 
+                    local _col = _part01.Part01.BrickColor
+                    v.Name = tostring(_col.."Amoung Morph")
+                end
+            end   
+            table.insert(MorphsTbl, v)
+        end
+    end
+end GetMorphs()
+
+local function PinCloud()
+    for _,v in pairs(Workspace:GetChildren())do
+        if v.Name == "Cloud" and not v:FindFirstChild("TouchPart") then v.Name = "_Cloud" end
+    end
+end PinCloud()
+
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+
+local TeleportSelectDP = Auto:Dropdown("Select",checkpoints:GetChildren(),true,function(SItem)
+    TeleportSelect = checkpoints:FindFirstChild(SItem)
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        if TeleportSelect then
+            MoveTo(TeleportSelect, Vector3.new(0,3,0))
+        end
+    end)
+end)
+
+Auto:Button("Win",function()
+    spawn(function()
+        Touch(finish)
+    end)
+end)
+
+local ItemSelectDP = ItemMenu:Dropdown("Spawn Items",SpawnItemTbl,true,function(SItem)
+    if SItem == "All" then SItemSelect = SItem else
+    SItemSelect = Workspace:FindFirstChild(SItem) end
+end)
+
+ItemMenu:Button("Give Item",function()
+    spawn(function()
+        if SItemSelect then
+            if SItemSelect == "All" then
+                for _,v in pairs(SpawnItemTbl)do
+                    if v ~= "All" then
+                        local _p = Workspace:FindFirstChild(v)
+                        if _p then
+                            for _,v in pairs(_p:GetDescendants())do
+                                if v:IsA("TouchTransmitter") then
+                                    Touch(v.Parent, 0.7)
+                                end
+                            end                        
+                        end
+                    end
+                end
+            else
+                for _,v in pairs(SItemSelect:GetDescendants())do
+                    if v:IsA("TouchTransmitter") then
+                        Touch(v.Parent, 0.3)
+                    end
+                end               
+            end
+        end
+    end)
+end)
+
+local ItemSelectDP = ItemMenu:Dropdown("Chance Items",ChanceTbl,true,function(SItem)
+    ItemSelect = SItem
+end)
+
+ItemMenu:Button("Give Item",function()
+    spawn(function()
+        if ItemSelect then
+            if ItemSelect == "All" then
+                for _,v in pairs(ChanceTbl)do
+                    if v~= "All" then Events.giveGear:FireServer(v, 0.3) end
+                end
+            else Events.giveGear:FireServer(ItemSelect) end
+        end
+    end)
+end)
+
+
+local MorphSelectDP = Auto:Dropdown("Select Morph",MorphsTbl,true,function(SItem)
+    MorphSelect = Workspace:FindFirstChild(SItem)
+end)
+
+Auto:Button("Change Morph",function()
+    spawn(function()
+        if MorphSelect then
+            local _Head = MorphSelect:FindFirstChild("Head")
+            if _Head then Touch(_Head)end
+        end
+    end)
+end)
+Auto:Button("Remove Morph",function()
+    spawn(function()
+        local _Head = Morph_Remover:FindFirstChild("Head")
+        if _Head then
+            local _back = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+            Touch(_Head, 1)
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = _back
+        end
+    end)
+end)
+ItemMenu:Button("Clear Inv",function()
+    spawn(function()
+        local _Head = Clear_inventory:FindFirstChild("Head")
+        if _Head then Touch(_Head, 1)end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
