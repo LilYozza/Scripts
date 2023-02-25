@@ -33,7 +33,7 @@ local function GetMorphs()
                 local _part01 = v:FindFirstChild("Chest")
                 if _part01 then 
                     local _col = _part01.Part01.BrickColor
-                    v.Name = tostring(_col.."Amoung Morph")
+                    v.Name = tostring(_col).." Amoung Morph"
                 end
             end   
             table.insert(MorphsTbl, v)
@@ -46,6 +46,7 @@ local function PinCloud()
         if v.Name == "Cloud" and not v:FindFirstChild("TouchPart") then v.Name = "_Cloud" end
     end
 end PinCloud()
+
 
 
 -->Non Return Functions<--
