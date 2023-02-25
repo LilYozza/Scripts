@@ -1,7 +1,12 @@
+local _LOADCFRAME = CFrame.new(-13, 2050.2002, -5.99999905, 1, 0, 0, 0, 1, 0, 0, 0, 1)+Vector3.new(0,4,0)
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+
+local _BACK = Player.Character:WaitForChild("HumanoidRootPart").CFrame 
+repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = _LOADCFRAME task.wait() until Workspace:FindFirstChild("finish")  
+Player.Character:WaitForChild("HumanoidRootPart").CFrame = _BACK
 
 local Events = game:GetService("ReplicatedStorage")
 
