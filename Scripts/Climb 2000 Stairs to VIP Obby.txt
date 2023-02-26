@@ -28,7 +28,7 @@ local ChanceTbl = {"All", "RocketLauncher", "Regen", "Jetpack", "MerelyWebSlinge
 -->Getting Data<--
 local function GetMorphs()
     for _,v in pairs(Workspace:GetChildren())do
-        if v.Name:match("Morph") and v:FindFirstChild("Head") and v:FindFirstChild("Head"):FindFirstChild("TouchInterest") and not table.find(MorphsTbl, v.Name) then
+        if v.Name:match("Morph") and v:FindFirstChild("Head") and v.Head:FindFirstChildWhichIsA("TouchTransmitter") and not table.find(MorphsTbl, v) then
             if v.Name == "R6 Morph" then
                 local _part01 = v:FindFirstChild("Chest")
                 if _part01 then 
@@ -45,10 +45,22 @@ local function PinCloud()
     for _,v in pairs(Workspace:GetChildren())do
         if v.Name == "Cloud" and not v:FindFirstChild("TouchPart") then v.Name = "_Cloud" end
     end
-end 
-spawn(function()local s,e=pcall(function()GetMorphs()PinCloud()end)if not s then print(e)end end)
+end
 
+local function CntObj(name)
+    local _cnt = 0
+    for _,v in pairs(Workspace:GetChildren())do
+        if v.Name:match(name)then _cnt = _cnt+1 end
+    end
+    return _cnt
+end
 
+repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = _LOADCFRAME task.wait()until Workspace:FindFirstChild("R6 Morph"):FindFirstChild("Head")
+Player.Character:WaitForChild("HumanoidRootPart").CFrame = _BACK
+
+local s,e=pcall(function()GetMorphs()PinCloud()end)if not s then print(e)end
+
+for _,v in pairs(MorphsTbl)do print(v)end
 
 
 
