@@ -414,6 +414,10 @@ local Games = {
 	[10129750406] = {
 		Name = 'Climb 2000 Stairs to VIP Obby',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%202000%20Stairs%20to%20VIP%20Obby.txt'
+	},
+	[11806348769] = {
+		Name = 'Cart Ride Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Simulator.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

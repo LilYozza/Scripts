@@ -1,0 +1,230 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Events = game:GetService("ReplicatedStorage").Events
+local Teams=game:GetService("Teams")
+local teams = Teams:GetTeams()
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Track = w:CreateFolder("Track")
+
+-->Dynamic Variables<--
+local CartType = "Cart"
+
+-->Base Variables<--
+local TeleportSelect = "Beginning"
+local PlayerSpawn = Workspace:FindFirstChild("PlayerSpawn")
+local Checkpoint = Workspace:FindFirstChild("Checkpoint")
+local Coins = Workspace:FindFirstChild("Coins")
+local RebirthPart = Workspace:WaitForChild("RebirthPart")
+local Spawn = Workspace:WaitForChild("Spawn")
+local CartFolder = Workspace:WaitForChild("CartFolder")
+
+-->Tables<--
+local PlayerSpawnsTbl = {}
+
+-->Getting Data<--
+local function GetPlayerSpawns()
+    for _,v in pairs(PlayerSpawn:GetChildren())do
+        if not table.find(PlayerSpawnsTbl, v.Name) then
+            table.insert(PlayerSpawnsTbl, v.Name)
+        end
+    end
+end GetPlayerSpawns()
+
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function TouchObject(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset task.wait(0.3) end
+
+local function Rebirth()
+    if Player.Character:WaitForChild("Humanoid").Sit == true then Player.Character:WaitForChild("Humanoid").Sit = false end
+    Events.Alert:FireServer("Rebirth")
+end
+
+local function SafeParts(tbl, bool)
+    for __,_v in pairs(Workspace:GetDescendants())do
+        if table.find(tbl, _v.Name) then
+            if #_v:GetChildren() > 0 then
+                for ___,__v in pairs(_v:GetDescendants())do
+                    if bool then
+                        if __v:IsA("BasePart")then __v.CanCollide = false end
+                    else
+                        if __v:IsA("BasePart")then __v.CanCollide = true end
+                        if __v:IsA("TouchTransmitter") then __v:Destroy() end
+                    end
+                end
+            end
+            if bool then if _v:IsA("Part") then _v.CanCollide = false end
+            else if _v:IsA("Part") then _v.CanCollide = true end end
+        end
+    end
+end
+
+local function NextStage()
+    local _v = Player.Character:WaitForChild("Humanoid").SeatPart.Parent
+    if _v then
+        local _curTeam = Player.Team.Name
+        local _Seat = _v:FindFirstChild("Seat")
+        if _Seat then
+            for _,v in pairs(teams)do
+                if v.Name == _curTeam then
+                    local _fnd
+                    if teams[1].Name == "Beginning" then _fnd = Checkpoint:FindFirstChild(teams[_+1].Name) else  _fnd = Checkpoint:FindFirstChild(teams[_-1].Name) end
+                    if _fnd then TouchObject(_Seat, _fnd) break end
+                end
+            end
+        end
+    end
+end
+
+-->Return Functions<--
+local function GetDistanceFromPlayer(p)
+    return (Player.Character:WaitForChild("HumanoidRootPart").Position - p.Position).Magnitude
+end
+local function GetClosestPrompt()
+    local _f
+    local _min = math.huge
+    for _,v in pairs(Spawn:GetChildren())do
+        local _prompt = v:FindFirstChild("ProximityPrompt")
+        if v:IsA("Part") and _prompt then
+            local _dis = GetDistanceFromPlayer(v)
+            if _dis < _min then _min = _dis _f = _prompt end
+        end
+    end
+    return _f
+end
+
+local function GetClosestCart()
+    local _f
+    local _min = math.huge
+    for _,v in pairs(CartFolder:GetChildren())do
+        local _Body = v:FindFirstChild("Body")
+        if _Body then
+            local _dis = GetDistanceFromPlayer(_Body)
+            if _dis < _min then _min = _dis _f = v end
+        end
+    end
+    return _f
+end
+
+local TeleportSelectDP = Auto:Dropdown("Beginning",PlayerSpawnsTbl,true,function(SItem)
+    TeleportSelect = SItem
+end)
+Auto:Button("Teleport",function()
+    spawn(function()
+        local _t = PlayerSpawn:FindFirstChild(TeleportSelect)
+        if _t then MoveTo( _t, Vector3.new(0,3,0))end
+    end)
+end)
+
+Auto:Button("Next Stage",function()
+    spawn(function()
+        NextStage()
+    end)
+end)
+
+Auto:Toggle("Auto Coins",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+        local s,e = pcall(function()    
+            local _back = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+            for _,v in pairs(Coins:GetChildren())do
+                local _base = v:FindFirstChild("Base")
+                if _base and shared.ToggleAC and _base.Transparency == 0 then
+                    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = _base.CFrame + Vector3.new(0,1,0) task.wait() until _base.Transparency == 1 or not shared.ToggleAC
+                end
+            end
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = _back
+            task.wait()
+        end)if not s then print(e)end task.wait()    
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            if Player.Team.Name == "Winners" then
+                Rebirth()
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Complete",function(bool)
+    shared.Toggle_AC=bool
+    spawn(function()
+        while shared.Toggle_AC do
+        local s,e = pcall(function()
+            if Player.Character:WaitForChild("Humanoid").Sit == false then
+                local _Prompt = GetClosestPrompt()
+                if _Prompt and CartType then
+                    MoveTo(_Prompt.Parent, Vector3.new(0,3,0))task.wait(0.2)
+                    Events.SpawnCart:FireServer(CartType, _Prompt)task.wait(1)
+                    local _Cart = GetClosestCart()
+                    if _Cart then
+                        repeat 
+                        local _Seat = _Cart:WaitForChild("VehicleSeat")
+                        if _Seat then _Seat:Sit(Player.Character:WaitForChild("Humanoid")) end task.wait()
+                        until Player.Character:WaitForChild("Humanoid").Sit == true or  not shared.Toggle_AC
+                    end
+                end
+            else
+                repeat NextStage() task.wait() until Player.Team.Name == "Winners" or not shared.Toggle_AC
+                if Player.Team.Name == "Winners" then
+                    Rebirth()
+                end                
+            end
+            task.wait()
+        end)if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
+local BumpTbl = {}
+Track:Toggle("Semi Bumps",function(bool)
+    shared.ToggleB=bool
+    spawn(function()
+        for _,v in pairs(Workspace:GetDescendants())do
+            if v:IsA("Part") and v.Size == Vector3.new(unpack({0.914934, 0.48861, 0.509079}))then
+                v.CanCollide = not shared.ToggleB
+            end
+        end        
+    end)
+end)
+
+local HammerTbl = {"Rotating Hammer"}
+Track:Toggle("Hammers",function(bool)
+    shared.ToggleH=bool
+    spawn(function()
+        SafeParts(HammerTbl, shared.ToggleH)
+    end)
+end)
+
+local GhostRailsConnection = {}
+Track:Toggle("Ghost Rails",function(bool)
+    shared.ToggleGR=bool
+    spawn(function()
+        if shared.ToggleGR then
+            for _,v in pairs(Workspace:GetDescendants())do
+                if v:IsA("Part") and v.BrickColor == BrickColor.new("Really black") then
+                    v.CanCollide = true
+                    v:GetPropertyChangedSignal("CanCollide"):Connect(function()
+                        v.CanCollide = true
+                    end)
+                end
+            end
+        else
+            if GhostRailsConnection then for _,v in pairs(GhostRailsConnection)do v:Disconnect()  end end
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
