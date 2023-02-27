@@ -138,8 +138,11 @@ TrollMenu:Toggle("Slient Aim",function(bool)
                                 for _,v in pairs(Players:GetPlayers())do
                                     if v~=Player then
                                         spawn(function()
+                                            local s,e=pcall(function()
                                             local _p = v.Character:FindFirstChild("HumanoidRootPart")
-                                            if _p then TouchObject(_p, part)end
+                                            local _f = v.Character:FindFirstChild("ForceField")
+                                            if _p and not _f then TouchObject(_p, part)end
+                                        end)
                                         end)
                                     end
                                 end
