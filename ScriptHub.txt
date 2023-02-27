@@ -418,6 +418,10 @@ local Games = {
 	[11806348769] = {
 		Name = 'Cart Ride Simulator',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Simulator.txt'
+	},
+	[11756661207] = {
+		Name = 'Stairs Of RAGE!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Stairs%20Of%20RAGE!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

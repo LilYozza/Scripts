@@ -1,0 +1,82 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local ItemMenu = w:CreateFolder("Items")
+
+-->Base Variables<--
+local ItemSelect
+local TeleportSelect = "SpawnLocation"
+local Spawns = Workspace:WaitForChild("Spawns")
+local Stairs = Workspace:WaitForChild("Stairs")
+local WinnerPads = Workspace:WaitForChild("WinnerPads")
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+local TeleportSelectDP = Auto:Dropdown("SpawnLocation",{"Winners","SpawnLocation"},true,function(SItem)
+    TeleportSelect = Spawns:FindFirstChild(SItem)
+end)
+Auto:Button("Teleport",function()
+    spawn(function()
+        if TeleportSelect then
+            MoveTo(TeleportSelect, Vector3.new(0,3,0))
+        end
+    end)
+end)
+
+Auto:Button("Win",function()
+    spawn(function()
+        Touch(Spawns:FindFirstChild("Winners"))
+    end)
+end) 
+
+local StairConnection = {}
+Auto:Toggle("No Timer",function(bool)
+    shared.ToggleNT=bool
+    spawn(function()
+        if shared.ToggleNT then
+            for _,v in pairs(Stairs:GetChildren())do
+                if v:IsA("Part") then v.CanCollide = true v.Transparency = 0 end
+                StairConnection[_] = v:GetPropertyChangedSignal("CanCollide"):Connect(function()
+                    v.CanCollide = true v.Transparency = 0
+                end)
+            end
+        else
+            if StairConnection then for _,v in pairs(StairConnection) do v:Disconnect() end end
+            for _,v in pairs(Stairs:GetChildren())do
+                if v:IsA("Part") then v.CanCollide = false end
+            end
+        end
+    end)
+end)
+
+local ItemSelectDP = ItemMenu:Dropdown("Select Items",{"All", unpack(WinnerPads:GetChildren())},true,function(SItem)
+    ItemSelect = SItem
+end)
+
+ItemMenu:Button("Give Item",function()
+    spawn(function()
+        if ItemSelect then
+            if ItemSelect == "All" then
+                for _,v in pairs(WinnerPads:GetChildren())do
+                    if v~= "All" then
+                        local _Pad  = _Item:FindFirstChild("Pad")
+                        if _Pad then Touch(_Pad.Union, 0.3) end
+                    end
+                end
+            else
+                local _Item = WinnerPads:FindFirstChild(ItemSelect)
+                if _Item then
+                    local _Pad  = _Item:FindFirstChild("Pad")
+                    if _Pad then Touch(_Pad.Union) end
+                end
+            end
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
