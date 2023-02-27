@@ -8,10 +8,14 @@ local ItemMenu = w:CreateFolder("Items")
 
 -->Base Variables<--
 local ItemSelect
-local TeleportSelect = "SpawnLocation"
+local RoundTimeOut = 60
 local Spawns = Workspace:WaitForChild("Spawns")
 local Stairs = Workspace:WaitForChild("Stairs")
 local WinnerPads = Workspace:WaitForChild("WinnerPads")
+
+local TeleportSelect = Spawns:FindFirstChild("SpawnLocation")
+
+local RemoveTbl = {"Effect", "FuseBomb"}
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -32,7 +36,27 @@ Auto:Button("Win",function()
     spawn(function()
         Touch(Spawns:FindFirstChild("Winners"))
     end)
-end) 
+end)
+
+Auto:Toggle("Auto Play",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do
+        local s,e = pcall(function()
+            if Player.Team.Name ~= "Winners" then
+                task.wait(RoundTimeOut)
+                Touch(Spawns:FindFirstChild("Winners"))
+            end
+            task.wait(1)
+        end)if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
+local Speed = Auto:Slider("Round Cooldown",{
+	['default'] = 60;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
+    RoundTimeOut = value
+end)
 
 local StairConnection = {}
 Auto:Toggle("No Timer",function(bool)
@@ -47,6 +71,26 @@ Auto:Toggle("No Timer",function(bool)
             end
         else
             if StairConnection then for _,v in pairs(StairConnection) do v:Disconnect() end end
+        end
+    end)
+end)
+
+local BulletConnection 
+Auto:Toggle("Projectiles",function(bool)
+    shared.ToggleNT=bool
+    spawn(function()
+        if shared.ToggleNT then
+            for _,v in pairs(Workspace:GetChildren())do
+                if table.find(RemoveTbl, v.Name) then v:Destroy() end
+            end
+            BulletConnection = Workspace.ChildAdded:Connect(function(part)
+                if table.find(RemoveTbl, v.Name) then
+                    repeat task.wait()until part
+                    part:Destroy()
+                end
+            end)
+        else
+            if BulletConnection then BulletConnection:Disconnect()end
         end
     end)
 end)
