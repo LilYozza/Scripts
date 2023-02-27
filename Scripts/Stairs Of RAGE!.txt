@@ -47,9 +47,6 @@ Auto:Toggle("No Timer",function(bool)
             end
         else
             if StairConnection then for _,v in pairs(StairConnection) do v:Disconnect() end end
-            for _,v in pairs(Stairs:GetChildren())do
-                if v:IsA("Part") then v.CanCollide = false end
-            end
         end
     end)
 end)
