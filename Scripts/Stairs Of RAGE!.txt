@@ -15,7 +15,7 @@ local WinnerPads = Workspace:WaitForChild("WinnerPads")
 
 local TeleportSelect = Spawns:FindFirstChild("SpawnLocation")
 
-local RemoveTbl = {"Effect", "FuseBomb"}
+local RemoveTbl = {"Effect", "FuseBomb", "Laser"}
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -59,7 +59,7 @@ local Speed = Auto:Slider("Round Cooldown",{
 end)
 
 local StairConnection = {}
-Auto:Toggle("No Timer",function(bool)
+Auto:Toggle("All Colors",function(bool)
     shared.ToggleNT=bool
     spawn(function()
         if shared.ToggleNT then
@@ -84,7 +84,7 @@ Auto:Toggle("Projectiles",function(bool)
                 if table.find(RemoveTbl, v.Name) then v:Destroy() end
             end
             BulletConnection = Workspace.ChildAdded:Connect(function(part)
-                if table.find(RemoveTbl, v.Name) then
+                if table.find(RemoveTbl, part.Name) then
                     repeat task.wait()until part
                     part:Destroy()
                 end
@@ -104,10 +104,8 @@ ItemMenu:Button("Give Item",function()
         if ItemSelect then
             if ItemSelect == "All" then
                 for _,v in pairs(WinnerPads:GetChildren())do
-                    if v~= "All" then
-                        local _Pad  = _Item:FindFirstChild("Pad")
-                        if _Pad then Touch(_Pad.Union, 0.3) end
-                    end
+                    local _Pad  = v:FindFirstChild("Pad")
+                    if _Pad then Touch(_Pad.Union, 0.3) end
                 end
             else
                 local _Item = WinnerPads:FindFirstChild(ItemSelect)
