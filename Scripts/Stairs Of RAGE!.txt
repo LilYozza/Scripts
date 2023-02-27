@@ -5,9 +5,10 @@ local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 local ItemMenu = w:CreateFolder("Items")
+local TrollMenu = w:CreateFolder("Troll")
 
 -->Base Variables<--
-local ItemSelect
+local ItemSelect, PlayerSelect
 local RoundTimeOut = 60
 local Spawns = Workspace:WaitForChild("Spawns")
 local Stairs = Workspace:WaitForChild("Stairs")
@@ -19,6 +20,7 @@ local RemoveTbl = {"Effect", "FuseBomb", "Laser"}
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function TouchObject(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 
 local TeleportSelectDP = Auto:Dropdown("SpawnLocation",{"Winners","SpawnLocation"},true,function(SItem)
@@ -117,5 +119,46 @@ ItemMenu:Button("Give Item",function()
         end
     end)
 end)
+
+local PlayerSelectDP = TrollMenu:Dropdown("Select Player",{"All", unpack(Players:GetPlayers())},true,function(SItem)
+    PlayerSelect = SItem
+end)
+
+local BulletConnection
+TrollMenu:Toggle("Slient Aim",function(bool)
+    shared.ToggleSA=bool
+    spawn(function()
+        if shared.ToggleSA then
+            if PlayerSelect then
+                BulletConnection = Workspace.ChildAdded:Connect(function(part)
+                    if part:IsA("Part") then
+                        repeat task.wait()until part
+                        if part.Name == "Effect" then
+                            if PlayerSelect == "All" then
+                                for _,v in pairs(Players:GetPlayers())do
+                                    spawn(function()
+                                        local _p = v.Character:FindFirstChild("HumanoidRootPart")
+                                        if _p then TouchObject(_p, part, 0.2)end
+                                    end)
+                                end
+                            else
+                                local _Player = Players:FindFirstChild(PlayerSelect)
+                                if _Player then
+                                    local _p = _Player.Character:FindFirstChild("HumanoidRootPart")
+                                    if _p then TouchObject(_p, part)end
+                                end
+                            end
+                        end
+                    end                        
+                end)
+            end
+        else
+           if BulletConnection then BulletConnection:Disconnect()end
+        end
+    end)
+end)
+
+Players.PlayerAdded:Connect(function()PlayerSelectDP:Refresh({"All", unpack(Players:GetPlayers())})end)
+Players.PlayerRemoving:Connect(function()PlayerSelectDP:Refresh({"All", unpack(Players:GetPlayers())}) end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
