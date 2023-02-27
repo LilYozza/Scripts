@@ -136,10 +136,12 @@ TrollMenu:Toggle("Slient Aim",function(bool)
                         if part.Name == "Effect" then
                             if PlayerSelect == "All" then
                                 for _,v in pairs(Players:GetPlayers())do
-                                    spawn(function()
-                                        local _p = v.Character:FindFirstChild("HumanoidRootPart")
-                                        if _p then TouchObject(_p, part, 0.2)end
-                                    end)
+                                    if v~=Player then
+                                        spawn(function()
+                                            local _p = v.Character:FindFirstChild("HumanoidRootPart")
+                                            if _p then TouchObject(_p, part)end
+                                        end)
+                                    end
                                 end
                             else
                                 local _Player = Players:FindFirstChild(PlayerSelect)
