@@ -3,13 +3,16 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
+local Mouse = Player:GetMouse()
+local Camera = workspace.CurrentCamera
+
 local Auto = w:CreateFolder("Auto")
 local ItemMenu = w:CreateFolder("Items")
-local TrollMenu = w:CreateFolder("Troll")
+local TrollMenu = w:CreateFolder("HyperLaser")
 
 -->Base Variables<--
 local ItemSelect, PlayerSelect
-local RoundTimeOut = 60
+local RoundTimeOut = 3
 local Spawns = Workspace:WaitForChild("Spawns")
 local Stairs = Workspace:WaitForChild("Stairs")
 local WinnerPads = Workspace:WaitForChild("WinnerPads")
@@ -22,6 +25,46 @@ local RemoveTbl = {"Effect", "FuseBomb", "Laser"}
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 local function TouchObject(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
 local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+local function GetClosestPlayer()
+	local Closest = {nil, nil}
+	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
+	for _, Player in pairs(game.Players:GetPlayers()) do
+		if Player == game.Players.LocalPlayer then continue end
+		local Character = Player.Character
+		if Character then
+			local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+			if HumanoidRootPart then
+				local vector, onScreen = Camera:WorldToScreenPoint(HumanoidRootPart.Position)
+				if onScreen then
+					local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+					if Closest[1] == nil then Closest = {Distance, Player} continue end
+					if  Distance < Closest[1] then
+						Closest = {Distance, Player}
+					end
+				end
+			end
+		end
+	end
+	return Closest
+end
+
+-->Return Functions<--
+local function GetRndTime()
+    local _sndTime
+    local _Timer = Player.PlayerGui.ColourDisplay.Outer:FindFirstChild("RoundTimer")
+    if _Timer then
+        if _Timer.Text:match("minutes")then
+            --Convert from minutes
+            _sndTime = tonumber(string.match(_Timer.Text, "%d+"))*60
+        else
+            _sndTime  = tonumber(string.match(_Timer.Text, "%d+"))
+        end
+    end
+    return _sndTime
+end
+
+
 
 local TeleportSelectDP = Auto:Dropdown("SpawnLocation",{"Winners","SpawnLocation"},true,function(SItem)
     TeleportSelect = Spawns:FindFirstChild(SItem)
@@ -46,7 +89,7 @@ Auto:Toggle("Auto Play",function(bool)
         while shared.ToggleAP do
         local s,e = pcall(function()
             if Player.Team.Name ~= "Winners" then
-                task.wait(RoundTimeOut)
+                repeat task.wait()until GetRndTime() <= RoundTimeOut or not shared.ToggleAP
                 Touch(Spawns:FindFirstChild("Winners"))
             end
             task.wait(1)
@@ -55,8 +98,8 @@ Auto:Toggle("Auto Play",function(bool)
     end)
 end)
 
-local Speed = Auto:Slider("Round Cooldown",{
-	['default'] = 60;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
+local Speed = Auto:Slider("Seconds Left",{
+	['default'] = 3;['min'] = 0;['max'] = 600;['precise'] = true;},function(value)
     RoundTimeOut = value
 end)
 
@@ -124,44 +167,88 @@ local PlayerSelectDP = TrollMenu:Dropdown("Select Player",{"All", unpack(Players
     PlayerSelect = SItem
 end)
 
+local MouseConnection
+TrollMenu:Toggle("ToggleAim",function(bool)
+    shared.ToggleTA=bool
+    spawn(function()
+        if shared.ToggleTA then
+            MouseConnection = Mouse.KeyDown:Connect(function(key)
+                if key:lower() == "b" then
+                    PlayerSelect = GetClosestPlayer()[2].Name
+                    print(PlayerSelect)
+                end
+            end)
+        else
+            if MouseConnection then MouseConnection:Disconnect()end
+        end
+    end)
+end)
+
+
 local BulletConnection
 TrollMenu:Toggle("Slient Aim",function(bool)
     shared.ToggleSA=bool
     spawn(function()
         if shared.ToggleSA then
-            if PlayerSelect then
-                BulletConnection = Workspace.ChildAdded:Connect(function(part)
-                    if part:IsA("Part") then
-                        repeat task.wait()until part
-                        if part.Name == "Effect" then
-                            if PlayerSelect == "All" then
-                                for _,v in pairs(Players:GetPlayers())do
-                                    if v~=Player then
-                                        spawn(function()
-                                            local s,e=pcall(function()
-                                            local _p = v.Character:FindFirstChild("HumanoidRootPart")
-                                            local _f = v.Character:FindFirstChild("ForceField")
-                                            if _p and not _f then TouchObject(_p, part)end
-                                        end)
-                                        end)
+            BulletConnection = Workspace.ChildAdded:Connect(function(part)
+                if part:IsA("Part") then
+                    repeat task.wait()until part
+                    if part.Name == "Effect" then
+                        if shared.ToggleW or shared.ToggleC then
+                            for _,v in pairs(Players:GetPlayers())do
+                                spawn(function()
+                                if v~= Player then
+                                    if shared.ToggleW and Player.Team.Name == "Winners" then
+                                        local _p = v.Character:FindFirstChild("HumanoidRootPart")
+                                        local _f = v.Character:FindFirstChild("ForceField")
+                                        if _p and not _f then TouchObject(_p, part)end
+                                    end
+                                    
+                                    if shared.ToggleC and Player.Team.Name == "Climbers" then
+                                        local _p = v.Character:FindFirstChild("HumanoidRootPart")
+                                        local _f = v.Character:FindFirstChild("ForceField")
+                                        if _p and not _f then TouchObject(_p, part)end
                                     end
                                 end
-                            else
-                                local _Player = Players:FindFirstChild(PlayerSelect)
-                                if _Player then
-                                    local _p = _Player.Character:FindFirstChild("HumanoidRootPart")
-                                    if _p then TouchObject(_p, part)end
-                                end
+                                end)
                             end
                         end
-                    end                        
-                end)
-            end
+                        if PlayerSelect == "All" then
+                            for _,v in pairs(Players:GetPlayers())do
+                                if v~=Player then
+                                    spawn(function()
+                                        local s,e=pcall(function()
+                                        local _p = v.Character:FindFirstChild("HumanoidRootPart")
+                                        local _f = v.Character:FindFirstChild("ForceField")
+                                        if _p and not _f then TouchObject(_p, part)end
+                                    end)
+                                    end)
+                                end
+                            end
+                        else
+                            local _Player = Players:FindFirstChild(PlayerSelect)
+                            if _Player then
+                                local _p = _Player.Character:FindFirstChild("HumanoidRootPart")
+                                if _p then TouchObject(_p, part)end
+                            end
+                        end
+                    end
+                end                        
+            end)
         else
            if BulletConnection then BulletConnection:Disconnect()end
         end
     end)
 end)
+
+TrollMenu:Toggle("Winners",function(bool)
+    shared.ToggleW=bool
+end)
+
+TrollMenu:Toggle("Climbers",function(bool)
+    shared.ToggleC=bool
+end)
+
 
 Players.PlayerAdded:Connect(function()PlayerSelectDP:Refresh({"All", unpack(Players:GetPlayers())})end)
 Players.PlayerRemoving:Connect(function()PlayerSelectDP:Refresh({"All", unpack(Players:GetPlayers())}) end)
