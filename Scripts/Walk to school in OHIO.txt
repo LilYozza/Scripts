@@ -1,0 +1,108 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local TeleportSelect
+local Checkpoints = Workspace:WaitForChild("Checkpoints")
+local DeathParts = Workspace:WaitForChild("DeathParts")
+local BossFight = Workspace:WaitForChild("BossFight")
+
+local BStairs = BossFight:FindFirstChild("Stairs")
+
+-->Tables<--
+local RemoveTouchPartTbl = {"지구촌최강의압축프레스", "볼러", "코끼리"}
+
+-->AI<--
+local Car
+local cl_ouder = Workspace:WaitForChild("cl_ouder")
+
+
+-->Getting Data<--
+local function FindCar()
+    for _,v in pairs(Workspace:GetChildren())do
+        if v:FindFirstChild("SoundBalpan(소리발판)")then Car = v end
+    end
+end FindCar() print(Car)
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function RemoveTouchTransmitters(tbl)
+    for _,v in pairs(tbl)do
+        if v:IsA("TouchTransmitter") then v:Destroy()end
+    end
+end
+local function ChangeCollide(tbl, bool)
+    for _,v in pairs(tbl)do
+        if v:IsA("Part") then v.CanCollide = bool end
+    end
+end
+
+local TeleportSelectDP = Auto:Dropdown("Select TP",Checkpoints:GetChildren(),true,function(SItem)
+    TeleportSelect = Checkpoints:FindFirstChild(SItem)
+end)
+Auto:Button("Teleport",function()
+    spawn(function()
+        if TeleportSelect then
+            MoveTo(TeleportSelect, Vector3.new(0,3,0))
+        end
+    end)
+end)
+
+Auto:Button("No DeathParts",function()
+    spawn(function()
+        RemoveTouchTransmitters(DeathParts:GetDescendants())
+        RemoveTouchTransmitters(cl_ouder:GetDescendants())
+        RemoveTouchTransmitters(BossFight.Lava:GetChildren())
+        RemoveTouchTransmitters(BossFight.Map:GetDescendants())
+        for _,v in pairs(DeathParts:GetChildren())do
+            if v.Name == "문에 맞아 사망" then v:Destroy()end
+        end
+        for _,v in pairs(Workspace:GetChildren())do
+            if table.find(RemoveTouchPartTbl, v.Name)then
+                v:Destroy()
+            end
+        end
+    end)
+end)
+
+Auto:Button("Remove Robots",function()
+    spawn(function()
+        for _,v in pairs(Workspace:GetChildren())do
+            if v.Name:match("Roomba") or v.Name:match("Robot")then
+                v:Destroy()
+            end
+        end
+    end)
+end)
+
+Auto:Button("Remove AI",function()
+    spawn(function()
+        for _,v in pairs(Workspace:GetDescendants())do
+            if v:IsA("Humanoid")then
+                local _chkPlayer = Players:FindFirstChild(v.Parent.Name)
+                if not _chkPlayer then
+                    v.Parent:Destroy()
+                end
+            end
+        end
+    end)
+end)
+
+
+Auto:Toggle("Damage Boss",function(bool)
+    shared.ToggleDB=bool
+    spawn(function()
+        while shared.ToggleDB do
+            Touch(BStairs:FindFirstChild("TouchPad"))
+            task.wait()
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
