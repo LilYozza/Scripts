@@ -1,0 +1,217 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local ItemMenu = w:CreateFolder("Items")
+local TeleportMenu = w:CreateFolder("Teleport")
+
+local PlaceTime = 0.2
+local ToolCoolDown = 10
+
+-->Base Variables<--
+local ItemSelect, GearSelect, DoorSelect
+local TeleportSelect = "Spawn"
+local VipRoom = Workspace:WaitForChild("VipRoom")
+local Doors = Workspace:WaitForChild("Doors")
+local GearWallDebri = Workspace:WaitForChild("GearWallDebri")
+
+
+local Givers = VipRoom:FindFirstChild("Givers")
+local GearWall = VipRoom:FindFirstChild("GearWall")
+local GItems = GearWall:FindFirstChild("Items")
+
+local Backpack = Player.Backpack
+
+-->Tables<--
+local IDTbl = {}
+local TeleportMainTbl = {"Spawn", "EndPlace", "VipRoom"}
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function ChangeCollide(tbl, name, bool)
+    for _,v in pairs(Doors:GetChildren())do
+        local _part = v:FindFirstChild(name)
+        if _part and _part:IsA("Part") then _part.CanCollide = bool end
+    end
+end
+local function RemoveID(tbl, id)
+    for _,v in pairs(tbl)do
+        if _==id then table.remove(tbl, _)break end
+    end
+end
+
+
+
+-->Return Functions<--
+local function GetNextID(tbl)
+    for _=1, #tbl+1, 1 do
+        if not table.find(tbl, _) then return _ end
+    end
+end
+
+local function GiveID(tool, ID)
+    if tool and tool:IsA("Tool") and ID then
+        local _objectValue = Instance.new("NumberValue")
+        _objectValue.Parent = tool
+        _objectValue.Name = "ID"
+        _objectValue.Value = ID
+    end
+end
+
+Auto:Toggle("Hint Orbs",function(bool)
+    shared.ToggleHO=bool
+    spawn(function()
+        while shared.ToggleHO do
+            
+            task.wait()
+        end
+    end)
+end)
+
+local DoorCollideConnection
+Auto:Toggle("Door Collide",function(bool)
+    shared.ToggleDC=bool
+    spawn(function()
+        if shared.ToggleDC then
+            ChangeCollide(Doors:GetChildren(), "Door", false)
+            DoorCollideConnection = Doors.ChildAdded:Connect(function(part)
+                repeat task.wait() until part
+                local _Door = part:FindFirstChild("Door")
+                if _Door and _Door.Transparency == 0.5 then _Door.CanCollide = false end
+            end)
+        else
+            ChangeCollide(Doors:GetChildren(), "Door", true)
+            if DoorCollideConnection then DoorCollideConnection:Disconnect()end
+        end
+    end)
+end)
+
+
+Auto:Toggle("Banana",function(bool)
+    shared.ToggleB=bool
+    spawn(function()
+        while shared.ToggleB do
+        local s,e = pcall(function()
+        
+            for _,v in pairs(Backpack:GetChildren())do
+                if v.Name == "Banana Peel" and v:IsA("Tool") and shared.ToggleB then
+                    local _id = v:FindFirstChild("ID")
+                    if  not _id then
+                        local _newID = GetNextID(IDTbl)
+                        GiveID(v, _newID) table.insert(IDTbl, _newID)
+                        
+                        --Equip / USE ITEM
+                        Player.Character:WaitForChild("Humanoid"):EquipTool(v) task.wait()
+                        v:Activate()
+                        
+                        --Start Timer
+                        spawn(function()
+                            task.wait(ToolCoolDown)
+                            local _t = v:FindFirstChild("ID")
+                            if _t then _t:Destroy() RemoveID(IDTbl, _newID)end
+                        end)
+                        
+                    end
+                end
+                task.wait(PlaceTime)
+            end
+            
+            task.wait()
+        end) if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
+
+
+
+local ItemSelectDP = ItemMenu:Dropdown("Select Item",{"All",unpack(Givers:GetChildren())},true,function(SItem)
+    ItemSelect = SItem
+end)
+
+ItemMenu:Button("Give Item",function()
+    spawn(function()
+        if ItemSelect then
+            if ItemSelect == "All" then
+                for _,v in pairs(Givers:GetChildren())do
+                    local _btn = v:FindFirstChild("Giver")
+                    if _btn then Touch(_btn, 0.3) end
+                end
+            else
+                local _item = Givers:FindFirstChild(ItemSelect)
+                if _item then
+                    local _btn = _item:FindFirstChild("Giver")
+                    if _btn then Touch(_btn) end
+                end
+            end
+        end
+    end)
+end)
+
+local ItemSelectDP = ItemMenu:Dropdown("Select Gear",{"All", unpack(GItems:GetChildren())},true,function(SItem)
+    GearSelect = SItem
+end)
+
+ItemMenu:Button("Give Gear",function()
+    spawn(function()
+        if GearSelect then
+            if GearSelect == "All" then
+                for _,v in pairs(GItems:GetChildren())do
+                    local _btn = v:FindFirstChild("Button")
+                    if _btn then 
+                        fireclickdetector(_btn.ClickDetector)
+                        repeat task.wait()until GearWallDebri:FindFirstChild(v.Name)
+                        local _g = GearWallDebri:FindFirstChild(v.Name)
+                        if _g then local _p = _g:FindFirstChild("Handle") if _p then Touch(_p) end end
+                    end
+                end
+            else
+                local _item = GItems:FindFirstChild(GearSelect)
+                if _item then
+                    local _btn = _item:FindFirstChild("Button")
+                    if _btn then 
+                        fireclickdetector(_btn.ClickDetector) 
+                        repeat task.wait()until GearWallDebri:FindFirstChild(_item.Name)
+                        local _g = GearWallDebri:FindFirstChild(_item.Name)
+                        if _g then local _p = _g:FindFirstChild("Handle") if _p then Touch(_p) end end
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+local TeleportSelectDP = TeleportMenu:Dropdown("Select",TeleportMainTbl,true,function(SItem)
+    TeleportSelect = Workspace:FindFirstChild(SItem)
+end)
+
+TeleportMenu:Button("Teleport",function()
+    spawn(function()
+        if TeleportSelect then
+            local _p = TeleportSelect:FindFirstChild("Spawn")
+            if _p then MoveTo(_p, Vector3.new(0,3,0))end
+        end
+    end)
+end)
+
+local DoorSelectDP = TeleportMenu:Dropdown("Select Door",Doors:GetChildren(),true,function(SItem)
+    DoorSelect = Doors:FindFirstChild(SItem)
+end)
+
+TeleportMenu:Button("Teleport",function()
+    spawn(function()
+        if DoorSelect then
+            local _door = DoorSelect:FindFirstChild("Door")
+            if _door then MoveTo(_door, Vector3.new(0,0,0))end
+        end
+    end)
+end)
+
+Doors.ChildAdded:Connect(function()
+    DoorSelectDP:Refresh(Doors:GetChildren())
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
