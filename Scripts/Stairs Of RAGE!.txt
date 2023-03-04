@@ -232,6 +232,7 @@ TrollMenu:Toggle("Slient Aim",function(bool)
                 if part:IsA("Part") then
                     repeat task.wait()until part
                     if part.Name == "Effect" then
+                        local _touch = part:WaitForChild("TouchInterest",2) or nil
                         if PlayerSelect == "All" or shared.ToggleW or shared.ToggleC then
                             for _,v in pairs(Players:GetPlayers())do
                                 spawn(function()
@@ -248,11 +249,13 @@ TrollMenu:Toggle("Slient Aim",function(bool)
                                 end)
                             end
                         else
+                            local s,e=pcall(function()
                             local _Player = Players:FindFirstChild(PlayerSelect)
                             if _Player then
                                 local _p = _Player.Character:FindFirstChild("HumanoidRootPart")
                                 if _p then TouchObject(_p, part)end
                             end
+                            end)if not s then print (e)end
                         end
                     end
                 end                        
