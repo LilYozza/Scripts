@@ -62,6 +62,24 @@ Auto:Toggle("Hidden Join",function(bool)
     end)
 end)
 
+Auto:Toggle("Princess",function(bool)
+    shared.ToggleP=bool
+    spawn(function()
+        while shared.ToggleP do
+        local s,e = pcall(function()
+            local _tool = Player.Backpack:FindFirstChild("Princess")
+            if _tool then
+                local hum = Player.Character:FindFirstChild("Humanoid")
+                if hum then
+                    hum:EquipTool(_tool)
+                end
+            end
+            task.wait(1)
+        end)if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
 Other:Button("KMTSP",function()
     spawn(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/AsianGamer308/Azn-Scripts/main/kmtsp"))()
