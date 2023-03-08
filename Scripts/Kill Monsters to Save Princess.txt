@@ -1,0 +1,77 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Events = game:GetService("ReplicatedStorage").Remote
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Other = w:CreateFolder("Other")
+
+--Dynamic Variables<--
+local FromHubDis = 150
+
+-->Base Variables<--
+local World = Workspace:WaitForChild("World")
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
+-->Return Functions<--
+local function GetDistance(p1, p2)
+    return(p1.Position - p2.Position).Magnitude
+end
+
+Auto:Toggle("Hidden Join",function(bool)
+    shared.ToggleHJ=bool
+    spawn(function()
+        local InQueue = false
+        while shared.ToggleHJ do
+        local s,e = pcall(function()
+            if Player.stats["Battle Region"].Value == 0 then
+                local fnd = false
+                for _,v in pairs(Players:GetPlayers())do
+                    if v ~= Player then
+                        local _hrp = v.Character:FindFirstChild("HumanoidRootPart")
+                        if _hrp then
+                            local _dis = GetDistance(_hrp, World["1"].Base.Baseplate)
+                            if _dis and _dis <= FromHubDis then
+                                fnd = true 
+                                break
+                            end
+                        end
+                    end
+                end
+                if fnd then
+                    if InQueue then
+                        Events.Battle.ExitPrepare:FireServer()
+                        InQueue = false
+                    end
+                else
+                    if not InQueue then
+                        Events.Battle.JoinPrepare:FireServer()
+                        InQueue = true
+                    end
+                end
+            else
+                if InQueue then InQueue = false end
+            end
+            task.wait()
+        end)if not s then print(e)end task.wait()
+        end
+    end)
+end)
+
+Other:Button("KMTSP",function()
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/AsianGamer308/Azn-Scripts/main/kmtsp"))()
+    end)
+end)
+
+Other:Button("sexyhub",function()
+    spawn(function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/ovahpawer/sexyhub/main/Kill%20Monsters%20to%20Save%20Princess'))()
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
