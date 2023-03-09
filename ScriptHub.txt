@@ -431,7 +431,7 @@ local Games = {
 		Name = 'Guess the Emoji',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Guess%20the%20Emoji.txt'
 	},
-	[12538889612] = {
+	[3266192001] = {
 		Name = 'Kill Monsters to Save Princess',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Kill%20Monsters%20to%20Save%20Princess.txt'
 	}
