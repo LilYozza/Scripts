@@ -104,17 +104,21 @@ Auto:Toggle("Princess",function(bool)
     shared.ToggleP=bool
     spawn(function()
         while shared.ToggleP do
-        local s,e = pcall(function()
-            local _chk = Player.Character:FindFirstChild("Princess")
-            local _tool = Player.Backpack:FindFirstChild("Princess")
-            if _tool and not _chk then
-                local hum = Player.Character:FindFirstChild("Humanoid")
-                if hum then
-                    hum:EquipTool(_tool)
+            task.wait()
+            pcall(function()
+                local _chk = Player.Character:FindFirstChildWhichIsA("Tool")
+                local _tool = Player.Backpack:FindFirstChild("Princess")
+                
+                if _chk and _chk.Name ~= "Princess" then _chk = false end
+                
+                if _tool and not _chk then
+                    local hum = Player.Character:FindFirstChild("Humanoid")
+                    if hum then
+                        hum:EquipTool(_tool)
+                    end
                 end
-            end
-            task.wait(1)
-        end)if not s then print(e)end task.wait()
+                task.wait(1)
+            end)
         end
     end)
 end)
