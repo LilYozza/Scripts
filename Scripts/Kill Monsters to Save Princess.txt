@@ -12,6 +12,7 @@ local FromHubDis = 150
 
 -->Base Variables<--
 local World = Workspace:WaitForChild("World")
+local Waves = Workspace:WaitForChild("Waves")
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -79,6 +80,37 @@ Auto:Toggle("Princess",function(bool)
         end
     end)
 end)
+
+
+
+Auto:Toggle("Easy Enemies",function(bool)
+    shared.ToggleEE=bool
+    spawn(function()
+        while shared.ToggleEE do
+            task.wait()
+            pcall(function()
+                local reg = game.Players.LocalPlayer.stats["Battle Region"].Value
+                local chara = game.Players.LocalPlayer.Character.HumanoidRootPart
+                for p, enemy in pairs(game.Workspace.Waves[reg].Enemy:GetChildren()) do
+                    --Check For enemy Size
+                    local _offset = 5
+                    if shared.ToggleSM then
+                        if p > 2 then _offset = 30 end
+                        local _config = enemy:FindFirstChild("Configuration")
+                        if _config then _offset = _config.AttackRange.Value + 1 end
+                    end
+                    enemy.HumanoidRootPart.CFrame = CFrame.new(chara.Position + chara.CFrame.LookVector * _offset)
+                end
+            end)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Safe Mode",function(bool)
+    shared.ToggleSM=bool
+end)
+
 
 Other:Button("KMTSP",function()
     spawn(function()
