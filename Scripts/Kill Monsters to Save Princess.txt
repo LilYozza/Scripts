@@ -105,8 +105,9 @@ Auto:Toggle("Princess",function(bool)
     spawn(function()
         while shared.ToggleP do
         local s,e = pcall(function()
+            local _chk = Player.Character:FindFirstChild("Princess")
             local _tool = Player.Backpack:FindFirstChild("Princess")
-            if _tool then
+            if _tool and not _chk then
                 local hum = Player.Character:FindFirstChild("Humanoid")
                 if hum then
                     hum:EquipTool(_tool)
