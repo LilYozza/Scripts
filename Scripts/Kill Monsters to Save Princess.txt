@@ -9,10 +9,36 @@ local Other = w:CreateFolder("Other")
 
 --Dynamic Variables<--
 local FromHubDis = 150
+local AttackSpeed = 1
+local DefaultStat = "Attack"
 
 -->Base Variables<--
 local World = Workspace:WaitForChild("World")
 local Waves = Workspace:WaitForChild("Waves")
+
+-->Tables<--
+local StatsTbl = {}
+
+-->UI Variables<--
+local PGui = Player.PlayerGui
+local Main = PGui:WaitForChild("Main")
+local Func = Main:WaitForChild("Func")
+local Stats = Func:WaitForChild("Stats")
+
+local HomePage = Main:WaitForChild("HomePage")
+local Left = HomePage:WaitForChild("Left")
+
+-->Getting Data<--
+local function GetStats()
+    pcall(function()
+        local _Stats = Stats.Frame.Main.Stats
+        for _,v in pairs(_Stats:GetChildren())do
+            if v:IsA("Frame") and not table.find(StatsTbl, v.Name) then
+                table.insert(StatsTbl, v.Name)
+            end
+        end
+    end)
+end GetStats()
 
 -->Non Return Functions<--
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -22,6 +48,17 @@ local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart")
 local function GetDistance(p1, p2)
     return(p1.Position - p2.Position).Magnitude
 end
+Auto:Toggle("Auto Attack",function(bool)
+    shared.ToggleAA=bool
+    spawn(function()
+        while shared.ToggleAA do
+            task.wait()
+            for j = 1, AttackSpeed do
+                Events.Weapon.TakeDamage:FireServer()
+            end
+        end
+    end)
+end)
 
 Auto:Toggle("Hidden Join",function(bool)
     shared.ToggleHJ=bool
@@ -92,13 +129,7 @@ Auto:Toggle("Easy Enemies",function(bool)
                 local reg = game.Players.LocalPlayer.stats["Battle Region"].Value
                 local chara = game.Players.LocalPlayer.Character.HumanoidRootPart
                 for p, enemy in pairs(game.Workspace.Waves[reg].Enemy:GetChildren()) do
-                    --Check For enemy Size
                     local _offset = 5
-                    if shared.ToggleSM then
-                        if p > 2 then _offset = 30 end
-                        local _config = enemy:FindFirstChild("Configuration")
-                        if _config then _offset = _config.AttackRange.Value + 1 end
-                    end
                     enemy.HumanoidRootPart.CFrame = CFrame.new(chara.Position + chara.CFrame.LookVector * _offset)
                 end
             end)
@@ -107,9 +138,24 @@ Auto:Toggle("Easy Enemies",function(bool)
 end)
 
 
-Auto:Toggle("Safe Mode",function(bool)
-    shared.ToggleSM=bool
+local SelectUpgradeDD = Auto:Dropdown("Attack",StatsTbl,true,function(SItem)
+    DefaultStat = SItem
 end)
+
+Auto:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleAU=bool
+    spawn(function()
+        while shared.ToggleAU do
+            task.wait()
+            pcall(function()
+                if Left.Stats.Red.Visible == true and DefaultStat then
+                    Events.Profile.AddPoint:FireServer(DefaultStat)task.wait(1)
+                end
+            end)
+        end
+    end)
+end)
+
 
 
 Other:Button("KMTSP",function()
