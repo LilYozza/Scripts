@@ -1,0 +1,142 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Debounce = {}
+
+local DoorSelect
+local Doors = Workspace:WaitForChild("Doors")
+local WinnersEgg = Workspace:WaitForChild("WinnersEgg")
+local DoorCount = #Doors:GetChildren() or 41
+
+-->Functions<--
+local function Timer(t)task.wait(t)return true end
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame = p.CFrame + offset end
+
+local function CorrectDoor(door1, door2)
+    if door1 and door2 then
+        door1.Transparency = 0.5 door2.Transparency = 0 
+        door1.CanCollide = false
+    end
+end
+local function CheckDoor(hit, part1, part2)
+    local CrrDoor
+    local _p = Players:GetPlayerFromCharacter(hit.Parent)
+    
+    if _p and not Debounce[_p.UserId] then
+        Debounce[_p.UserId] = true
+        local Timeout = false
+        spawn(function() Timeout = Timer(2)end)
+        repeat task.wait()
+            if part1.Part.Decal.Transparency == 0 then CorrectDoor(part2, part1) CrrDoor = part2 Timeout = true else CorrectDoor(part1, part2) CrrDoor = part1 end
+        until Timeout
+        if shared.ToggleAP then Touch(CrrDoor) if Player.CurrentStage.Value >= DoorCount-2 and not Player.CurrentStage.Value == DoorCount then Touch(WinnersEgg.Handle) end end
+        Debounce[_p.UserId] = false
+    end
+end
+
+local PartCon = {}
+local function AddDoorCon(door)
+    local _door1 = door:WaitForChild("Door1")
+    local _door2 = door:WaitForChild("Door2")
+    if _door1 and _door2 then
+        PartCon[#PartCon+1] = _door1.Touched:Connect(function(hit) CheckDoor(hit, _door1, _door2) end)
+        PartCon[#PartCon+1] = _door2.Touched:Connect(function(hit) CheckDoor(hit, _door2, _door1) end)
+    end
+end
+
+local SelectStageList = Auto:Dropdown("Select Stage",Doors:GetChildren(),true,function(SItem)
+    DoorSelect = SItem
+end)
+
+Auto:Button("Teleport",function(bool)
+    spawn(function()
+        local _hrp = Player.Character:WaitForChild("HumanoidRootPart", 5)
+        local _CurrentStage = Doors:FindFirstChild(DoorSelect)
+        if _CurrentStage and _hrp then MoveTo(_CurrentStage.TP, Vector3.new(0,2,0)) _hrp.CFrame = _hrp.CFrame * CFrame.Angles(0,math.rad(90),0) end
+    end)
+end)
+
+Auto:Button("Current Stage",function(bool)
+    spawn(function()
+        local _hrp = Player.Character:WaitForChild("HumanoidRootPart", 5)
+        local _CurrentStage = Doors:FindFirstChild(Player.CurrentStage.Value)
+        if _CurrentStage and _hrp then MoveTo(_CurrentStage.TP, Vector3.new(0,2,0)) _hrp.CFrame = _hrp.CFrame * CFrame.Angles(0,math.rad(90),0) end
+    end)
+end)
+
+Auto:Button("Win",function(bool)
+    spawn(function()
+        Touch(WinnersEgg.Handle)
+    end)
+end)
+
+Auto:Toggle("Auto Play",function(bool)
+    shared.ToggleAP=bool
+end)
+
+
+Auto:Toggle("PlayerChecker",function(bool)
+    shared.TogglePC=bool
+    spawn(function()
+        --Check If Player Is Still alive after Touching Door
+        if shared.TogglePC then
+            Workspace.ChildAdded:Connect(function(part)
+                if part.Name == "Doors" then
+                    repeat task.wait()until part or not shared.TogglePC
+                    local t = part:WaitForChild(DoorCount)
+                    for _,v in pairs(part:GetChildren())do AddDoorCon(v)end
+                    Doors = Workspace:WaitForChild("Doors")
+                end
+            end)
+            for _,v in pairs(Doors:GetChildren())do AddDoorCon(v)end
+        else
+            for _,v in pairs(PartCon)do v:Disconnect()end
+        end
+    end)
+end)
+
+local PCon
+Auto:Toggle("Respawn",function(bool)
+    shared.ToggleR=bool
+    spawn(function()
+        if shared.ToggleR then
+            PCon = Player.CharacterAdded:Connect(function()
+                local _hrp = Player.Character:WaitForChild("HumanoidRootPart", 5)
+                local CurrentDoor = Doors:FindFirstChild(Player.CurrentStage.Value)
+                if Player.CurrentStage.Value < DoorCount and _hrp and CurrentDoor then MoveTo(CurrentDoor.TP,Vector3.new(0,2,0))
+                    _hrp.CFrame = _hrp.CFrame * CFrame.Angles(0,math.rad(90),0)
+                end
+            end)
+        else
+            if PCon then PCon:Disconnect()end
+        end
+    end)
+end)
+
+
+
+Auto:Toggle("Auto Try",function(bool)
+    shared.ToggleAT=bool
+    spawn(function()
+        while shared.ToggleAT do
+            pcall(function()    
+                for _,v in pairs(Doors:GetChildren())do
+                    local _stage = Doors[_]
+                    if _stage and shared.ToggleAT then
+                        
+                    end
+                end
+            end)
+            task.wait()
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

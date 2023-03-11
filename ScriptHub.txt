@@ -434,6 +434,10 @@ local Games = {
 	[3266192001] = {
 		Name = 'Kill Monsters to Save Princess',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Kill%20Monsters%20to%20Save%20Princess.txt'
+	},
+	[10679961467] = {
+		Name = '5050 Pick A Door Obby!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/5050%20Pick%20A%20Door%20Obby!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
