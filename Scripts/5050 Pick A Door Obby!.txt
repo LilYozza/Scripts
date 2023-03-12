@@ -14,6 +14,11 @@ local Doors = Workspace:WaitForChild("Doors")
 local WinnersEgg = Workspace:WaitForChild("WinnersEgg")
 local DoorCount = #Doors:GetChildren() or 41
 
+-->UI<--
+local _RG = Player.PlayerGui.ReviveGui.Frame
+_RG:GetPropertyChangedSignal("Visible"):Connect(function() _RG.Visible = false end)
+Workspace.ChildAdded:Connect(function(part) if part.Name == "Doors" then Doors = Workspace:WaitForChild("Doors")end end)
+
 -->Functions<--
 local function Timer(t)task.wait(t)return true end
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
@@ -36,7 +41,7 @@ local function CheckDoor(hit, part1, part2)
         repeat task.wait()
             if part1.Part.Decal.Transparency == 0 then CorrectDoor(part2, part1) CrrDoor = part2 Timeout = true else CorrectDoor(part1, part2) CrrDoor = part1 end
         until Timeout
-        if shared.ToggleAP then Touch(CrrDoor) if Player.CurrentStage.Value >= DoorCount-2 and not Player.CurrentStage.Value == DoorCount then Touch(WinnersEgg.Handle) end end
+        if shared.ToggleAP then Touch(CrrDoor) if Player.CurrentStage.Value >= DoorCount-1 and not Player.CurrentStage.Value == DoorCount then Touch(WinnersEgg.Handle) end end
         Debounce[_p.UserId] = false
     end
 end
@@ -121,20 +126,51 @@ Auto:Toggle("Respawn",function(bool)
 end)
 
 
-
+local _tempPCon
+local _doorCon = {}
 Auto:Toggle("Auto Try",function(bool)
     shared.ToggleAT=bool
     spawn(function()
-        while shared.ToggleAT do
-            pcall(function()    
+        if shared.ToggleAT then
+            _tempPCon = Player.CharacterAdded:Connect(function()
+                local _hrp = Player.Character:WaitForChild("HumanoidRootPart",5)
+                if _hrp then
+                    _hrp.CFrame = _hrp.CFrame + Vector3.new(0,1000,0) task.wait(0.5)
+                    repeat task.wait() _hrp.Anchored = true until not shared.ToggleAT and not _hrp
+                    _hrp.Anchored = false
+                end
+            end)
+            local s,e = pcall(function()
                 for _,v in pairs(Doors:GetChildren())do
                     local _stage = Doors[_]
                     if _stage and shared.ToggleAT then
-                        
+                        local _door1 = _stage:FindFirstChild("Door1")
+                        local _door2 = _stage:FindFirstChild("Door2")
+                        if _door1 and _door2 then
+                            _doorCon[#_doorCon+1] = _door1.Part.Decal:GetPropertyChangedSignal("Transparency"):Connect(function()
+                                _door1.Part.Decal.Transparency = 0 CorrectDoor(_door2, _door1)
+                            end)
+                            _doorCon[#_doorCon+1] = _door2.Part.Decal:GetPropertyChangedSignal("Transparency"):Connect(function()
+                                _door2.Part.Decal.Transparency = 0 CorrectDoor(_door1, _door2)
+                            end)
+                        end
+                        repeat task.wait()until Player.Character:WaitForChild("Humanoid",5) and Player.Character:WaitForChild("Humanoid",5).Health > 0 or not shared.ToggleAT
+                        if _door1.Transparency ~= 0.5 and _door2.Transparency ~= 0.5 then
+                            Touch(_door1)
+                            Touch(_door2)
+                            task.wait(1.5)
+                        end
                     end
                 end
-            end)
-            task.wait()
+                --MOVE PLAYER BACK TO SPAWN
+                local _hrp = Player.Character:WaitForChild("HumanoidRootPart",5)
+                _hrp.CFrame = Workspace.Spawns.SpawnLocation.CFrame + Vector3.new(0,2,0)
+                _hrp.Anchored = false
+                if _tempPCon then _tempPCon:Disconnect()end
+            end)if not s then print(e)end
+        else
+            if _tempPCon then _tempPCon:Disconnect()end
+            for _,v in pairs(_doorCon)do v:Disconnect() end
         end
     end)
 end)
