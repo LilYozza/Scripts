@@ -149,6 +149,10 @@ local Speed = Misc:Slider("Walk Speed",{
 	['default'] = 16;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
 	game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
 	local Players = game:GetService("Players")
+	Player.CharacterAdded:Connect(function()
+	    local _hum = Player.Character:WaitForChild("Humanoid",10)
+	    if _hum then _hum.WalkSpeed = value end
+	end)
 end)
 
 Misc:Button("3rd Person",function()
