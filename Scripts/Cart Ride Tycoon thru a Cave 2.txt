@@ -45,25 +45,38 @@ end)
 Auto:Toggle("Smart Collect",function(bool)
     shared.toggle2 = bool SCollect = shared
 end)
-
 Auto:Toggle("Auto Buy",function(bool)
     shared.toggle3 = bool
     spawn (function()
         if not Tycoon then GetTycoon() end
         while shared.toggle3 do
-            for _,v in pairs(Factory:GetChildren())do
-                if shared.toggle3 and v:FindFirstChild("Head")and v.Head.Transparency==0 and not v.Name:match("Gamepass") and not v:FindFirstChild("NameTag") and v:FindFirstChild("Humanoid").DisplayName ~=""and not v:FindFirstChild("Humanoid").DisplayName:match("RS") then
-                    local price=string.gsub(v:FindFirstChild("Humanoid").DisplayName:split("-")[2], "%D", "")
-                    if SCollect and tonumber(price) <= Player.leaderstats.Cash.Value + Tycoon:FindFirstChild("Cash to collect"):FindFirstChild("Money").Value then Collect()end
-                    if tonumber(price) <= Player.leaderstats.Cash.Value then
-                        Touch(v.Head,0.3)
+            local s,e = pcall(function()
+                for _,v in pairs(Factory:GetChildren())do
+                    local _Head = v:FindFirstChild("Head")
+                    local _Hum = v:FindFirstChild("Humanoid")
+                    local _NameTag = v:FindFirstChild("nameTag")
+                    if _Head and _Hum and _Head.Transparency == 0 and not v.Name:match("Gamepass") and not _NameTag and _Hum.DisplayName ~= "" and not _Hum.DisplayName:match("RS")then
+                        --Check If Price is TIX OR MONEY
+                        if _Hum.DisplayName:match("TIX") then
+                            --Cost TIX
+                            local _Price = tonumber(_Hum.DisplayName:gsub("%D", ""))
+                            if SCollect and _Price and _Price <= Player.leaderstats.Tix.Value + Tycoon["Tix to collect"].Money.Value then Collect()end
+                            if _Price and _Price <= Player.leaderstats.Tix.Value then Touch(_Head, 0.3) end
+                        else
+                            --COST MONEY
+                            local _Price = tonumber(_Hum.DisplayName:gsub("%D", ""))
+                            if SCollect and _Price and _Price <= Player.leaderstats.Cash.Value + Tycoon["Cash to collect"].Money.Value then Collect()end
+                            if _Price and _Price <= Player.leaderstats.Cash.Value then Touch(_Head, 0.3) end
+                        end
                     end
                 end
-            end
+            end)if not s then print(e)end
         	task.wait()
         end
     end)
 end)
+
+
 
 local CaveObby=Workspace:FindFirstChild("Cave obby")
 local Inside=CaveObby:FindFirstChild("Inside")
