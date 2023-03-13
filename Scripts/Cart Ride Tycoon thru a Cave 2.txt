@@ -13,6 +13,7 @@ local PlayerConnection
 local Auto = w:CreateFolder("Auto")
 local Troll = w:CreateFolder("Troll")
 local Kill = w:CreateFolder("Kill")
+local Tickets = w:CreateFolder("Tickets")
 
 --Base Variables
 local Tycoon, NilTycoon, SCollect
@@ -22,6 +23,7 @@ local BlackListItems = {"Gem Teleporter"}
 
 --Non Return Functions
 local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function TouchPart(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
 local function GetTycoon()
     for _,v in pairs(Workspace:GetChildren()) do
         if v:FindFirstChild("OwnerName") and v.OwnerName.Value==Player.Name then
@@ -103,7 +105,26 @@ local function GetClosestPlayer()
 end
 
 --Post Variables
+local BonusBalls
 local Factory=Tycoon:FindFirstChild("Factory")
+local TixArcade = Factory:WaitForChild("Tix Arcade Plinko")
+local TixDrop = Factory:WaitForChild("Tix Arcade BigDrop")
+local DropZone = TixDrop:WaitForChild("Circle Spinny thing")
+
+local DropBonus = DropZone:FindFirstChild("Drop Zone Bonus")
+local JackPot = DropZone:FindFirstChild("Drop Zone Jackpot")
+
+local Splinko = TixArcade:WaitForChild("Splinko")
+
+-->Finding Data<--
+for _,v in pairs(TixArcade:WaitForChild("Splinko")["-20k"]:GetChildren())do
+    if v.Name == "DropArea" and v.BrickColor == BrickColor.new("Pink")then
+        BonusBalls = v
+    end
+end
+local _chk = Splinko["-10k"]:FindFirstChild("DropArea")
+if _chk then _chk:Destroy() end
+
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.toggle1 = bool
@@ -314,6 +335,59 @@ Kill:Toggle("Kill",function(bool)
         else
             if _con then _con:Disconnect()end
             table.clear(UsedPlayerTbl)
+        end
+    end)
+end)
+
+local BallCon1
+Tickets:Toggle("Splinko",function(bool)
+    shared.ToggleDB=bool
+    spawn(function()
+        if shared.ToggleDB then
+            BallCon1 = TixArcade.GameHandler.KillerParts.ChildAdded:Connect(function(part)
+                pcall(function()
+                    if part.Name == "Drop" or part.Name == "BonusDrop" then
+                        spawn(function()
+                        local _t = part:WaitForChild("TouchInterest")
+                        if #TixArcade.GameHandler.KillerParts:GetChildren() <= 50 then
+                            repeat TouchPart(BonusBalls, part) task.wait() until not part
+                        else
+                            TouchPart(TixArcade.Splinko.SecretReward.DropArea, part)
+                        end
+                        end)
+                    end
+                end)
+            end)
+        else
+            if BallCon1 then BallCon1:Disconnect()end
+        end
+    end)
+end)
+
+local BallCon2
+Tickets:Toggle("Big Drop",function(bool)
+    shared.ToggleDB=bool
+    spawn(function()
+        if shared.ToggleDB then
+            BallCon2 = TixDrop.GameHandler.KillerParts.ChildAdded:Connect(function(part)
+                pcall(function()
+                    if part.Name == "Drop" or part.Name == "BonusDrop" then
+                        spawn(function()
+                        local _t = part:WaitForChild("TouchInterest")
+                        print("Yup")
+                        if #TixDrop.GameHandler.KillerParts:GetChildren() <= 50 then
+                            repeat TouchPart(DropBonus, part) task.wait() until not part
+                            --repeat part.CFrame = DropBonus.CFrame task.wait() until not part
+                        else
+                            TouchPart(JackPot, part)
+                            --part.CFrame = JackPot.CFrame
+                        end
+                        end)
+                    end
+                end)
+            end)
+        else
+            if BallCon2 then BallCon2:Disconnect()end
         end
     end)
 end)
