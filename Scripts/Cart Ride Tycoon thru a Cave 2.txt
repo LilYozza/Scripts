@@ -3,8 +3,16 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilY
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
+local Mouse = Player:GetMouse()
+local Camera = workspace.CurrentCamera
+
+local PlayerSelect
+local MouseConnection
+local PlayerConnection
+
 local Auto = w:CreateFolder("Auto")
 local Troll = w:CreateFolder("Troll")
+local Kill = w:CreateFolder("Kill")
 
 --Base Variables
 local Tycoon, NilTycoon, SCollect
@@ -29,6 +37,70 @@ local function GetTycoon()
     end
 end GetTycoon(t)
 local function Collect()for _,v in pairs(Tycoon:GetChildren())do if v:FindFirstChild("Collect")then Touch(v.Collect)end end task.wait(t)end
+
+local function RemoveFromTable(tbl, object)
+    for _,v in pairs(tbl)do
+        if v == object then table.remove(tbl, _)end
+    end
+end
+
+local function RemoveTags()
+    for _,v in pairs(Players:GetPlayers())do
+        local _head = v.Character:FindFirstChild("Head")
+        if _head then
+            local _t = _head:FindFirstChild("SelectedPlayer")
+            if _t then _t:Destroy()end
+        end
+    end
+end
+
+
+local function CreateTag(c,player)
+    RemoveTags()
+    GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head"))
+    GUI.Name="SelectedPlayer"
+    GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0)
+    GUI.AlwaysOnTop = true 
+    GUI.Size = UDim2.new(0,100,0, 50)
+    TextLabel = Instance.new("TextLabel", GUI)
+    TextLabel.Text =  player.DisplayName 
+    TextLabel.BackgroundTransparency = 1 
+    TextLabel.Font = "ArialBold" 
+    TextLabel.TextSize = 15 
+    TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) 
+end
+
+local function SelectPlayer(player)
+    if PlayerConnection then PlayerConnection:Disconnect()end
+    local _p = Players:FindFirstChild(player)
+    if _p then
+        PlayerConnection = _p.CharacterAdded:Connect(function() CreateTag(Color3.new(255,0,0), _p)end)
+        CreateTag(Color3.new(255,0,0), _p)
+    end
+end
+
+local function GetClosestPlayer()
+	local Closest = {nil, nil}
+	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
+	for _, Player in pairs(game.Players:GetPlayers()) do
+		if Player == game.Players.LocalPlayer then continue end
+		local Character = Player.Character
+		if Character then
+			local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+			if HumanoidRootPart then
+				local vector, onScreen = Camera:WorldToScreenPoint(HumanoidRootPart.Position)
+				if onScreen then
+					local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+					if Closest[1] == nil then Closest = {Distance, Player} continue end
+					if  Distance < Closest[1] then
+						Closest = {Distance, Player}
+					end
+				end
+			end
+		end
+	end
+	return Closest
+end
 
 --Post Variables
 local Factory=Tycoon:FindFirstChild("Factory")
@@ -179,6 +251,69 @@ Troll:Button("Spawn Carts",function()
             if v:IsA("TouchTransmitter") and v.Parent.Name:match("Regen") then
                 Touch(v.Parent)
             end
+        end
+    end)
+end)
+
+
+local PlayerSelectDP = Kill:Dropdown("Select Player",{"All", unpack(Players:GetPlayers())},true,function(SItem)
+    PlayerSelect = SItem
+    SelectPlayer(PlayerSelect)
+end)
+
+Kill:Toggle("ToggleAim",function(bool)
+    shared.ToggleTA=bool
+    spawn(function()
+        if shared.ToggleTA then
+            MouseConnection = Mouse.KeyDown:Connect(function(key)
+                if key:lower() == "b" then
+                    PlayerSelect = GetClosestPlayer()[2].Name
+                    SelectPlayer(PlayerSelect)
+                end
+            end)
+        else
+            if MouseConnection then MouseConnection:Disconnect()end
+        end
+    end)
+end)
+
+local _con
+local UsedPlayerTbl = {}
+Kill:Toggle("Kill",function(bool)
+    shared.ToggleK=bool
+    spawn(function()
+        if shared.ToggleK then
+            _con = Workspace.ChildAdded:Connect(function(part)
+                local s,e = pcall(function()
+                    if part.Name == "Tornado" then
+                        repeat task.wait()until part
+                        --Get Players
+                        if PlayerSelect == "All" then
+                            for _,v in pairs(Players:GetPlayers())do
+                                if not table.find(UsedPlayerTbl, v) and v ~= Players.LocalPlayer then
+                                    local _hrp = v.Character:FindFirstChild("HumanoidRootPart")
+                                    if _hrp then
+                                        table.insert(UsedPlayerTbl, v)
+                                        repeat part.CFrame = _hrp.CFrame task.wait() until not part or not v
+                                        RemoveFromTable(UsedPlayerTbl, v)
+                                    end
+                                end
+                            end
+                        else
+                            local _Player = Players:FindFirstChild(PlayerSelect)
+                            if _Player then
+                                local _hrp = _Player.Character:FindFirstChild("HumanoidRootPart")
+                                if _hrp then
+                                    repeat part.CFrame = _hrp.CFrame task.wait() until not part or not _hrp
+                                end  
+                            end
+                        end    
+                    end
+                end)if not s then print(e)end
+            end)            
+        else
+            if _con then _con:Disconnect()end
+            table.clear(UsedPlayerTbl)
         end
     end)
 end)
