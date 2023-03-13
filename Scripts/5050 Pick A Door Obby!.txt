@@ -41,7 +41,14 @@ local function CheckDoor(hit, part1, part2)
         repeat task.wait()
             if part1.Part.Decal.Transparency == 0 then CorrectDoor(part2, part1) CrrDoor = part2 Timeout = true else CorrectDoor(part1, part2) CrrDoor = part1 end
         until Timeout
-        if shared.ToggleAP then Touch(CrrDoor) if Player.CurrentStage.Value >= DoorCount-1 and not Player.CurrentStage.Value == DoorCount then Touch(WinnersEgg.Handle) end end
+        
+        if shared.ToggleAP then 
+            Touch(CrrDoor) 
+            if Player.CurrentStage.Value == DoorCount then 
+                Touch(WinnersEgg.Handle) 
+            end 
+        end
+        
         Debounce[_p.UserId] = false
     end
 end
@@ -78,7 +85,25 @@ end)
 
 Auto:Button("Win",function(bool)
     spawn(function()
-        Touch(WinnersEgg.Handle)
+        local _lastDoors = Doors:FindFirstChild(DoorCount)
+        if _lastDoors then
+            local _door1 = _lastDoors:FindFirstChild("Door1")
+            local _door2 = _lastDoors:FindFirstChild("Door2")
+            if _door1 and _door2 then
+                if _door1.Transparency ~= 0.5 and _door2 ~= 0.5 then
+                    Touch(_door1) task.wait(0.5)
+                    local _hum = Player.Character:WaitForChild("Humanoid")
+                    if not _hum or _hum and _hum.Health <= 0 then
+                        repeat task.wait()until Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Humanoid").Health > 0 task.wait()
+                        Touch(_door2)
+                    end
+                    task.wait(0.5)
+                    Touch(WinnersEgg.Handle)
+                else
+                    Touch(WinnersEgg.Handle)
+                end
+            end
+        end
     end)
 end)
 
@@ -136,7 +161,7 @@ Auto:Toggle("Auto Try",function(bool)
                 local _hrp = Player.Character:WaitForChild("HumanoidRootPart",5)
                 if _hrp then
                     _hrp.CFrame = _hrp.CFrame + Vector3.new(0,1000,0) task.wait(0.5)
-                    repeat task.wait() _hrp.Anchored = true until not shared.ToggleAT and not _hrp
+                    repeat task.wait() _hrp.Anchored = true until not shared.ToggleAT and not _hrp task.wait(0.1)
                     _hrp.Anchored = false
                 end
             end)
@@ -157,8 +182,12 @@ Auto:Toggle("Auto Try",function(bool)
                         repeat task.wait()until Player.Character:WaitForChild("Humanoid",5) and Player.Character:WaitForChild("Humanoid",5).Health > 0 or not shared.ToggleAT
                         if _door1.Transparency ~= 0.5 and _door2.Transparency ~= 0.5 then
                             Touch(_door1)
-                            Touch(_door2)
-                            task.wait(1.5)
+                            local _hum = Player.Character:WaitForChild("Humanoid")
+                            if not _hum or _hum and _hum.Health <= 0 then
+                                repeat task.wait()until Player.Character:WaitForChild("Humanoid",5) and Player.Character:WaitForChild("Humanoid",5).Health > 0 or not shared.ToggleAT 
+                                Touch(_door2)
+                            end
+                            task.wait(0.5)
                         end
                     end
                 end
@@ -171,7 +200,8 @@ Auto:Toggle("Auto Try",function(bool)
         else
             if _tempPCon then _tempPCon:Disconnect()end
             for _,v in pairs(_doorCon)do v:Disconnect() end
-        end
+            _hrp.Anchored = false
+        end _hrp.Anchored = false
     end)
 end)
 
