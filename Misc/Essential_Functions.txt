@@ -1,0 +1,73 @@
+--Essential Function Script
+
+-->Services<--
+local Players = game:GetService("Players")
+
+-->Base Variables<--
+local Player = Players.LocalPlayer
+
+-->Functions<--
+	-->Touch / TouchPart (Ready To Test)
+	-->Suffix
+	-->MoveTo (Ready To Test)
+	-->MovePart
+	-->Tween
+	-->SafePart (Ready To Test)
+
+--> Non Return Functions <--
+
+getgenv().Touch = function(_touchPart, _basePart, _timeout)
+	if _basePart and typeof(_basePart) == "number" then 
+		_timeout = _basePart 
+		_basePart = nil
+	end
+	if not _basePart then
+		_basePart = Player.Character:WaitForChild("HumanoidRootPart")
+	end	
+	if _touchPart and _touchPart:IsA("Basepart") and _basePart:IsA("BasePart") then
+		firetouchinterest(_basePart, _touchPart, 0)
+		firetouchinterest(_basePart, _touchPart, 1)
+	else
+		warn("Touch: Bad Values...")
+	end
+	task.wait(_timeout)
+end
+
+--Add Angles
+getgenv().MoveTo = function(_basePart, _offset)
+	if not _offset then
+		_offset = Vector3.new(0,0,0)
+	end
+	if _basePart and _basePart:IsA("Part")then
+		Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
+	else
+		warn("MoveTo: Bad Values...")
+	end
+end
+
+getgenv().ChangeCollide = function(_tbl, _bool)
+	if _tbl and _bool then
+		if typeof(_tbl) == "table" then
+			for _,v in pairs(workspace:GetDescendants())do
+				if table.find(_tbl, v.Name) or table.find(_tbl, v)then
+					if v:IsA("BasePart") then
+						v.CanCollide = _bool
+					end
+					for __,_v in pairs(v:GetDescendants())do
+						if _v:IsA("BasePart") then
+							v.CanCollide = _bool
+						end
+					end
+				end
+			end
+		end
+	else
+		warn("ChangeCollide: Bad Values...")
+	end
+end
+
+
+--> Return Functions <--
+
+
+
