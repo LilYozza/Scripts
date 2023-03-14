@@ -56,20 +56,13 @@ local function ChangeTrack(_size)
 end
 
 local function SafeParts(tbl, bool)
-    for __,_v in pairs(Workspace:GetDescendants())do
-        if table.find(tbl, _v.Name) then
-            if #_v:GetChildren() > 0 then
-                for ___,__v in pairs(_v:GetDescendants())do
-                    if bool then
-                        if __v:IsA("BasePart")then __v.CanCollide = false end
-                    else
-                        if __v:IsA("BasePart")then __v.CanCollide = true end
-                        if __v:IsA("TouchTransmitter") then __v:Destroy() end
-                    end
-                end
+    for _,v in pairs(Workspace:GetDescendants())do
+        if table.find(tbl, v.Name) then
+            if v:IsA("BasePart") then v.CanCollide = bool end
+            for __,_v in pairs(v:GetDescendants())do
+                if _v:IsA("BasePart") then _v.CanCollide = bool end
+                if _v:IsA("TouchTransmitter") then _v:Destroy() end
             end
-            if bool then if _v:IsA("Part") then _v.CanCollide = false end
-            else if _v:IsA("Part") then _v.CanCollide = true end end
         end
     end
 end
@@ -116,10 +109,7 @@ Auto:Button("Teleport",function()
 end)
 
 Auto:Toggle("No Bumps",function(bool)
-    shared.ToggleNB=bool
-    spawn(function()
-        SafeParts(ToggleTbl, shared.ToggleNB)
-    end)
+    spawn(function()SafeParts(ToggleTbl, not bool)end)
 end)
 
 local Projectile_ConTbl
@@ -127,7 +117,7 @@ Auto:Toggle("Projectiles",function(bool)
     shared.TogglePro=bool
     spawn(function()
         RemoveParts(RemoveTbl)
-        SafeParts(SafeTbl)
+        SafeParts(SafeTbl, not bool)
         if shared.TogglePro then
             Projectile_ConTbl = Workspace.ChildAdded:Connect(function(v)
                 if v.Name == "Cannon_Projectile"  then
