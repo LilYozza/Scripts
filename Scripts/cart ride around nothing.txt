@@ -15,11 +15,6 @@ local CartT={"Cart", "CartXL", "RaceCart"}
 local Carts=Workspace:FindFirstChild("Carts")
 local Spawners=Workspace:FindFirstChild("Spawners")
 
-local Door1Pos1=CFrame.new(-431.107635, 162.999954, 108.910851, -0.999998093, -3.67916577e-08, -0.00194944092, -3.66355266e-08, 1, -8.01246216e-08, 0.00194944092, -8.00530557e-08, -0.999998093) 
-local Door1Pos2=CFrame.new(-431.064514, 163.299957, 129.420593, -0.999973178, 2.01184562e-08, -0.00732675474, 2.07553779e-08, 1, -8.68550458e-08, 0.00732675474, -8.70047856e-08, -0.999973178) 
-local Door2Pos1=CFrame.new(-235.705154, 115.247658, -179.541153, 0.0261706542, -2.7695144e-08, -0.999657512, 1.9130761e-08, 1, -2.72037983e-08, 0.999657512, -1.84122673e-08, 0.0261706542) 
-local Door2Pos2=CFrame.new(-216.635849, 115.43866, -179.176193, 0.0261856019, -3.01601162e-08, -0.999657094, 8.32873184e-08, 1, -2.79887864e-08, 0.999657094, -8.25258581e-08, 0.0261856019)
-
 local CartCheckRoom=Workspace:FindFirstChild("CartCheckRoom")
 local CartCheckRoomFinish=Workspace:FindFirstChild("CartCheckRoomFinish")
 
@@ -50,18 +45,23 @@ local function SafeParts(tbl, bool)
 end
 
 
-local function RoomCheck(Door1, Door2, Type, Room)
-    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door1 task.wait() until Room.Light.SpotLight.Enabled==true task.wait()
-    Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door2
-    Player.Character:WaitForChild("Humanoid").Sit=true
-    repeat task.wait() until Player.Team.name == Type
-    Player.Character:WaitForChild("Humanoid").Sit=false
+local function RoomCheck(Room, Type)
+    local _trig = Room:FindFirstChild("TriggerZone")
+    local _HumChk = Room:FindFirstChild("HumanoidCheckZone")
+    
+    if _trig and _HumChk then
+        repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=_trig.CFrame task.wait() until Room.Light.SpotLight.Enabled==true task.wait()
+        Player.Character:WaitForChild("HumanoidRootPart").CFrame= _HumChk.CFrame
+        Player.Character:WaitForChild("Humanoid").Sit=true
+        repeat task.wait() until Player.Team.name == Type
+        Player.Character:WaitForChild("Humanoid").Sit=false
+    end
 end
 
 Auto:Button("Complete",function()
     spawn(function()
-    if Player.Team.Name=="starting to suffer" then RoomCheck(Door1Pos1, Door1Pos2, "suffering", CartCheckRoom)end
-    if Player.Team.Name=="suffering" then RoomCheck(Door2Pos1, Door2Pos2, "suffered", CartCheckRoomFinish)end
+    if Player.Team.Name=="starting to suffer" then RoomCheck(CartCheckRoom, "suffering")end
+    if Player.Team.Name=="suffering" then RoomCheck(CartCheckRoomFinish, "suffered")end
     end)
 end)
 
