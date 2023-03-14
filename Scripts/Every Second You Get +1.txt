@@ -1,0 +1,303 @@
+-->TO DO<--
+    -->No Teleport (After Wins)
+    
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local JumpsMenu = w:CreateFolder("Jumps")
+local SpeedMenu = w:CreateFolder("Speed")
+local HealthMenu = w:CreateFolder("Health")
+local DamageMenu = w:CreateFolder("Damage")
+
+-->Base Variables<--
+local _break
+local Wins = Workspace:WaitForChild("Wins")
+local Teleporters = Workspace:WaitForChild("Teleporters")
+local Npc = Workspace:WaitForChild("Npc")
+local Worlds = Workspace:WaitForChild("Worlds")
+local Products = Workspace:WaitForChild("Products")
+local Eggs = Workspace:WaitForChild("Eggs")
+
+local Locations = Teleporters:WaitForChild("Locations")
+local Rebirth = Worlds:WaitForChild("Rebirth")
+
+local RebirthTouch = Rebirth:WaitForChild("RebirthTouch")
+
+
+-->Tables<--
+local AutoTbl = {
+    [1] = {
+        Stat = "Jump", 
+        Max = 500
+    }, 
+    [2] = {
+        Stat = "Speed", 
+        Max = 1000
+    }, 
+    [3] = {
+        Stat = "Health",
+        Max = 2000
+    }, 
+    [4] = {
+        Stat = "Damage",
+        Max = 4000
+    }
+}
+
+local AutoKillTbl = {
+    [1] = {
+        Type = "Noob", 
+        Max = 40
+    }, 
+    [2] = {
+        Type = "Zombie",
+        Max = 400
+    }, 
+    [3] = {
+        Type = "Doombringer",
+        Max = 4000
+    }
+}
+
+for _,v in pairs(AutoKillTbl)do
+    print(v.Type)
+end
+
+-->Non Return Functions<--
+local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
+local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function AutoKill()
+    for i, enemy in pairs(AutoKillTbl)do
+        if shared.ToggleAK or shared.ToggleAP then
+            if Player.statsfolder:FindFirstChild("DamageWins").Value < enemy.Max then
+                print(enemy.Type, Player.statsfolder:FindFirstChild("DamageWins").Value, enemy.Max)
+                repeat 
+                    local _e = Npc:FindFirstChild(enemy.Type)
+                    if _e then
+                        local _hrp = _e:FindFirstChild("HumanoidRootPart")
+                        if _hrp then
+                            if Player.AutoDamage.Value == false then game:GetService("ReplicatedStorage").AutoDamage:FireServer(true) task.wait() end
+                            MoveTo(_hrp, Vector3.new(0,-0.5,3))
+                        end
+                    end task.wait()
+                until not shared.ToggleAK and not shared.ToggleAP or Player.statsfolder:FindFirstChild("DamageWins").Value >= enemy.Max or _break
+                _break = false
+            end
+        end
+    end game:GetService("ReplicatedStorage").AutoDamage:FireServer(false)
+end
+local function RemoveProducts()
+    for _,v in pairs(Products:GetChildren())do
+        local _head = v:FindFirstChild("Head")
+        local _product = v:FindFirstChild("ProductId")
+        if _head and _product then v:Destroy()end
+    end
+end RemoveProducts()
+
+
+-->Return Functions<--
+local function GetAllPartsByName(instance, name)
+    local t={}
+    for _,v in pairs(instance:GetChildren())do
+        if v.Name:match(name) and not table.find(t, v) then
+            table.insert(t, v)
+        end
+    end
+    return t
+end
+local function GetDistanceFromPlayer(Position)
+    return (Position - Player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+end
+
+local StageSelect
+local SelectStageList = Auto:Dropdown("Select Stage",Locations:GetChildren(),true,function(SItem)StageSelect = SItem end)
+
+Auto:Button("Teleport",function(bool)
+    spawn(function()
+        local _t = Locations:FindFirstChild(StageSelect) if _t then MoveTo(_t, Vector3.new(0,2,0))end
+    end)
+end)
+
+Auto:Toggle("Auto Gifts",function(bool)
+    shared.ToggleAG=bool
+    spawn(function()
+        while shared.ToggleAG do
+            pcall(function()
+                if game:GetService("Players")["RD_F34R"].PlayerGui.MainGui.Frame.Top.TimeGifts.Amount.Visible == true then
+                    for _=1, 8, 1 do
+                        game:GetService("ReplicatedStorage").Recv:InvokeServer("TimeGift", tostring(_))task.wait()
+                    end
+                end
+            end)
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Play",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do
+            local s,e = pcall(function()
+                local _pass
+                for i, stat in pairs(AutoTbl)do
+                    if Player.statsfolder:FindFirstChild(stat.Stat.."Wins").Value < stat.Max then
+                        --Win on Stat
+                        if stat.Stat ~= "Damage" then
+                            repeat local _t = Wins:FindFirstChild(stat.Stat.."3") if _t then Touch(_t)end task.wait() until Player.statsfolder:FindFirstChild(stat.Stat.."Wins").Value >= stat.Max or not shared.ToggleAP
+                        else
+                            --Auto Kill
+                            AutoKill()
+                            if Player.statsfolder:FindFirstChild(stat.Stat.."Wins").Value >= stat.Max then _pass = true end
+                        end
+                    end
+                end
+                if _pass and shared.ToggleAR then
+                    Touch(RebirthTouch)
+                end
+            end) if not s then print(e)end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+end)
+
+local EggSelect
+local SelectEggList = Auto:Dropdown("Select Egg",Eggs:GetChildren(),true,function(SItem)EggSelect = SItem end)
+
+Auto:Toggle("Auto Open",function(bool)
+    shared.ToggleAO=bool
+    spawn(function()
+        while shared.ToggleAO do
+            local s,e = pcall(function()
+                local _egg = Eggs:FindFirstChild(EggSelect)
+                if _egg then
+                    --Check Player Wins For Selected Egg
+                    local _tag = _egg.PriceBrick.SurfaceGui.Cost.Text
+                    local _price = _tag:split(" ")[1]
+                    if _tag:split("")[2] ~= "R$" and Player.statsfolder:FindFirstChild(_tag:split(" ")[2]).Value >= tonumber(_price) then
+                        game:GetService("ReplicatedStorage").RemoteEvents.EggOpened:InvokeServer(_egg.Name, "Single") task.wait(1)
+                    end
+                    
+                end
+            end) if not s then print(e)end
+            task.wait()
+        end
+    end)
+end)
+
+--====================================================================================================================================================
+
+local StageSelect_J
+JumpsMenu:Dropdown("Select Stage",GetAllPartsByName(Locations, "Jump"),true,function(SItem)StageSelect_J = SItem end)
+
+JumpsMenu:Button("Teleport",function(bool)
+    spawn(function()
+        local _t = Locations:FindFirstChild(StageSelect_J) if _t then MoveTo(_t, Vector3.new(0,2,0))end
+    end)
+end)
+
+local WinSelect_J = Wins:FindFirstChild("Jump3")
+JumpsMenu:Dropdown("Jump3",GetAllPartsByName(Wins, "Jump"),true,function(SItem)WinSelect_J =  Wins:FindFirstChild(SItem) end)
+
+JumpsMenu:Toggle("Auto Win",function(bool)
+    shared.ToggleAWJ=bool
+    spawn(function()
+        while shared.ToggleAWJ do
+            if WinSelect_J then Touch(WinSelect_J,0.1)end task.wait()
+        end
+    end)
+end)
+
+--====================================================================================================================================================
+
+local StageSelect_S
+SpeedMenu:Dropdown("Select Stage",GetAllPartsByName(Locations, "Speed"),true,function(SItem)StageSelect_S = SItem end)
+
+SpeedMenu:Button("Teleport",function(bool)
+    spawn(function()
+        local _t = Locations:FindFirstChild(StageSelect_S) if _t then MoveTo(_t, Vector3.new(0,2,0))end
+    end)
+end)
+
+local WinSelect_S = Wins:FindFirstChild("Speed3")
+SpeedMenu:Dropdown("Speed3",GetAllPartsByName(Wins, "Speed"),true,function(SItem)WinSelect_S =  Wins:FindFirstChild(SItem) end)
+
+SpeedMenu:Toggle("Auto Win",function(bool)
+    shared.ToggleAWS=bool
+    spawn(function()
+        while shared.ToggleAWS do
+            if WinSelect_S then Touch(WinSelect_S,0.1)end task.wait()
+        end
+    end)
+end)
+
+--====================================================================================================================================================
+
+local StageSelect_H
+HealthMenu:Dropdown("Select Stage",GetAllPartsByName(Locations, "Health"),true,function(SItem)StageSelect_H = SItem end)
+
+HealthMenu:Button("Teleport",function(bool)
+    spawn(function()
+        local _t = Locations:FindFirstChild(StageSelect_H) if _t then MoveTo(_t, Vector3.new(0,2,0))end
+    end)
+end)
+
+local WinSelect_H = Wins:FindFirstChild("Health3")
+HealthMenu:Dropdown("Health3",GetAllPartsByName(Wins, "Health"),true,function(SItem)WinSelect_H =  Wins:FindFirstChild(SItem) end)
+
+HealthMenu:Toggle("Auto Win",function(bool)
+    shared.ToggleAWH=bool
+    spawn(function()
+        while shared.ToggleAWH do
+            if WinSelect_H then Touch(WinSelect_H,0.1)end task.wait()
+        end
+    end)
+end)
+
+--====================================================================================================================================================
+
+local StageSelect_D
+DamageMenu:Dropdown("Select Stage",GetAllPartsByName(Locations, "Damage"),true,function(SItem)StageSelect_D = SItem end)
+
+DamageMenu:Button("Teleport",function(bool)
+    spawn(function()
+        local _t = Locations:FindFirstChild(StageSelect_D) if _t then MoveTo(_t, Vector3.new(0,2,0))end
+    end)
+end)
+
+local EnemySelect = "Noob"
+DamageMenu:Dropdown("Noob",{"Auto", "Noob", "Zombie", "Doombringer"},true,function(SItem)EnemySelect = SItem _break = true end)
+
+DamageMenu:Toggle("Auto Kill",function(bool)
+    shared.ToggleAK=bool
+    spawn(function()
+        while shared.ToggleAK do
+            pcall(function()
+                if EnemySelect == "Auto" then
+                    AutoKill()
+                else
+                    local _e = Npc:FindFirstChild(EnemySelect)
+                    local _hrp = _e:FindFirstChild("HumanoidRootPart")
+                    if _hrp then
+                        --local _tool = Player.Character:FindFirstChildWhichIsA("Tool")
+                        --if _tool then _tool:Activate()end
+                        if Player.AutoDamage.Value == false then game:GetService("ReplicatedStorage").AutoDamage:FireServer(true) task.wait() end
+                        MoveTo(_hrp, Vector3.new(0,-0.5,3))
+                    end
+                end
+            end)
+            task.wait()
+        end
+        if not shared.ToggleAK then game:GetService("ReplicatedStorage").AutoDamage:FireServer(false)end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
