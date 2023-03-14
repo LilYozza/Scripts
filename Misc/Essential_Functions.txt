@@ -24,7 +24,7 @@ getgenv().Touch = function(_touchPart, _basePart, _timeout)
 	if not _basePart then
 		_basePart = Player.Character:WaitForChild("HumanoidRootPart")
 	end	
-	if _touchPart and _touchPart:IsA("Basepart") and _basePart:IsA("BasePart") then
+	if _touchPart and _touchPart:IsA("BasePart") and _basePart:IsA("BasePart") then
 		firetouchinterest(_basePart, _touchPart, 0)
 		firetouchinterest(_basePart, _touchPart, 1)
 	else
