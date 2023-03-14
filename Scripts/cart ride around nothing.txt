@@ -37,6 +37,18 @@ local function FindItem(item)
     end
 end
 
+local function SafeParts(tbl, bool)
+    for _,v in pairs(Workspace:GetDescendants())do
+        if table.find(tbl, v.Name) then
+            if v:IsA("BasePart") then v.CanCollide = bool end
+            for __,_v in pairs(v:GetDescendants())do
+                if _v:IsA("BasePart") then _v.CanCollide = bool end
+                if _v:IsA("TouchTransmitter") then _v:Destroy() end
+            end
+        end
+    end
+end
+
 
 local function RoomCheck(Door1, Door2, Type, Room)
     repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame=Door1 task.wait() until Room.Light.SpotLight.Enabled==true task.wait()
@@ -96,12 +108,14 @@ Auto:Toggle("Auto Spawner",function(bool)
     end)
 end)
 
-Auto:Button("Remove Bumps",function()
-    spawn(function()RemoveObj("Bump")RemoveObj("OneWayRail")end)
+local BumpTbl = {"Bump", "OneWayRail"}
+Auto:Toggle("Bumps",function(bool)
+    spawn(function() SafeParts(BumpTbl, not bool) end)
 end)
 
-Auto:Button("Remove Doors",function()
-    spawn(function()RemoveObj("DoorPair")end)
+local DoorTbl = {"DoorPair"}
+Auto:Toggle("Doors",function(bool)
+    spawn(function()SafeParts(DoorTbl, not bool)end)
 end)
 
 Cart:Button("Easy Cart",function()
