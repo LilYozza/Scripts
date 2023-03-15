@@ -2,16 +2,15 @@
 
 -->Services<--
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 
 -->Base Variables<--
 local Player = Players.LocalPlayer
 
--->Functions<--
--->MovePart
--->Tween
+-->FUNCTIONS TO ADD<--
+
 
 --> Non Return Functions <--
-
 getgenv().Touch = function(_touchPart, _basePart, _timeout)
 	if _basePart and typeof(_basePart) == "number" then 
 		_timeout = _basePart 
@@ -66,6 +65,36 @@ getgenv().ChangeCollide = function(_tbl, _bool)
 	end
 end
 
+getgenv().MovePart = function(_part, _location, _offset, _timeout)
+	if _part and _location and _location:IsA("BasePart") then
+		if not _offset or typeof(_offset) ~= "Vector3" then 
+			_offset = Vector3.new(0,0,0)
+		end
+		if typeof(_part) == "table" and _part[1] then
+			if typeof(_part[1]) == "Instance" then
+				for _,v in pairs(_part)do
+					if v:IsA("BasePart") then
+						v.CFrame = _location.CFrame + _offset
+						task.wait(_timeout)
+					end
+				end
+			elseif typeof(_part[1] == "String") then
+				for _,v in pairs(workspace:GetDescendants())do
+					if table.find(_part, v.Name) and v:IsA("BasePart") then
+						v.CFrame = _location.CFrame + _offset
+						task.wait(_timeout)
+					end
+				end
+			end
+		elseif typeof(_part) == "Instance" and _part:IsA("BasePart") then
+			_part.CFrame = _location.CFrame + _offset
+		end
+
+	else
+		warn("MovePart: Bad Values...")
+	end
+end
+
 
 --> Return Functions <--
 getgenv().fromSuffixString = function(_value, _suffixes)
@@ -110,5 +139,15 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 
 end
 
-
-
+getgenv().TweenPart = function(_part, _des, _speed, _style)
+	if _part and _des and _part:IsA("BasePart") and _des:IsA("BasePart") then
+		if typeof(_des) == "Instance" and _des:IsA("BasePart") then _des = _des.CFrame end
+		if not _speed or typeof(_speed) ~= "number" then _speed = 1 end
+		if not _style  then _style = Enum.EasingStyle.Back end
+		local _tween = TweenService:Create(_part, TweenInfo.new(_speed, _style), {CFrame = _des})
+		_tween:Play()
+		return _tween
+	else
+		warn("TweenPart: Bad Values...")
+	end
+end
