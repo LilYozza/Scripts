@@ -1,16 +1,15 @@
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
 local NameTag = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/NameTags.txt'))
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
 --======================================FUNCTION IMPORTS=====================================--
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))() --<-- ###################### CHANGE THIS 
 local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))()
-local InvFling = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/InvFling.txt'))()
 local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))()
 --===========================================================================================--
 
 --======================================FUNCTION USAGE=======================================--
 -->Chams<--     [Table]=ChamsFuncTbl            [Functions]=UpdateChams,RemoveChams,CreateChams
--->InvFling<--  [Table]=InvFlingFuncTbl         [Functions]=FlingOn,FlingOff
 -->Fly<--       [Functions]=Init,FlyOn,FlyOff   [Connections]=Con1, Con2
 --===========================================================================================--
 local Virtual=game:GetService("VirtualUser")
@@ -33,9 +32,9 @@ GPlayers:Toggle("Player ESP",function(bool)
 	spawn(function()
 		shared.ToggleESP = bool
 		if shared.ToggleESP then
-			_G.ESPOn()
+			ESPOn()
 		else
-			_G.ESPOff()
+			ESPOff()
 		end
 	end)
 end)

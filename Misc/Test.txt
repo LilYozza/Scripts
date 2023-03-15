@@ -1,5 +1,0 @@
-local Var = {}
-
-function Var:FunctionName()
-print("Hello")
-end

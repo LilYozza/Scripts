@@ -1,4 +1,4 @@
-print("Version 2.0.3")
+print("Version 2.0.4")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -104,7 +104,7 @@ local function AddESP(player)
 	CreateTag(head)
 end
 
-function _G.ESPOn()
+getgenv().ESPOn = function()
 	isESP = true
 	for _,v in pairs(Players:GetPlayers())do
 		if v ~= Player then
@@ -120,7 +120,7 @@ function _G.ESPOn()
 	end
 end
 
-function _G.ESPOff()
+getgenv().ESPOff = function()
 	isESP = false
 	PlayerCon = {}
 	plist = {}
