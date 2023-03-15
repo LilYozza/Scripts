@@ -3,9 +3,27 @@ local Essential_Functions = loadstring(game:HttpGet("https://raw.githubuserconte
 
 local Auto=w:CreateFolder("Auto")
 
+local Bacon
+local BaconTbl = {}
+local AllBacons = workspace:FindFirstChild("AllBacons")
+
+-->Getting Data<--
+for _,v in pairs(AllBacons:GetChildren())do if v:IsA("BasePart") then table.insert(BaconTbl, v)end end
+
+table.sort(BaconTbl, function(a, b) return a.Name:byte() < b.Name:byte() end)
+local DropList = Auto:Dropdown("Select Bacon",BaconTbl,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    Bacon = FindInTable(BaconTbl, SItem)
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        if Bacon then MoveTo(Bacon) end
+    end)
+end)
+
 Auto:Button("Auto Find",function()
-    for _, v in pairs(Workspace:FindFirstChild("AllBacons"):GetChildren()) do
-        if v:FindFirstChild("TouchInterest")then Touch(v,0.5)end
+    for _, v in pairs(BaconTbl) do
+        if v:FindFirstChild("TouchInterest")then Touch(v,0.1)end
     end
 end)
 
