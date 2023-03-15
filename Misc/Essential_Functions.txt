@@ -7,12 +7,8 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
 -->Functions<--
-	-->Touch / TouchPart (Ready To Test)
-	-->Suffix
-	-->MoveTo (Ready To Test)
-	-->MovePart
-	-->Tween
-	-->SafePart (Ready To Test)
+-->MovePart
+-->Tween
 
 --> Non Return Functions <--
 
@@ -35,7 +31,7 @@ end
 
 --Add Angles
 getgenv().MoveTo = function(_basePart, _offset)
-	if not _offset then
+	if not _offset or typeof(_offset) ~= "Vector3" then
 		_offset = Vector3.new(0,0,0)
 	end
 	if _basePart and _basePart:IsA("Part")then
@@ -46,7 +42,7 @@ getgenv().MoveTo = function(_basePart, _offset)
 end
 
 getgenv().ChangeCollide = function(_tbl, _bool)
-	if _tbl and _bool then
+	if _tbl then
 		if typeof(_tbl) == "table" then
 			for _,v in pairs(workspace:GetDescendants())do
 				if table.find(_tbl, v.Name) or table.find(_tbl, v)then
@@ -60,6 +56,10 @@ getgenv().ChangeCollide = function(_tbl, _bool)
 					end
 				end
 			end
+		elseif typeof(_tbl) == "Instance" then
+			if _tbl:IsA("BasePart") then
+				_tbl.CanCollide = _bool
+			end
 		end
 	else
 		warn("ChangeCollide: Bad Values...")
@@ -68,6 +68,47 @@ end
 
 
 --> Return Functions <--
+getgenv().fromSuffixString = function(_value, _suffixes)
+	if _value then
+		local found = false
+		if not _suffixes then
+			_suffixes = {"K", "M", "B", "T", "Q"}
+		end
+		
+		if typeof(_value) == Instance and _value:IsA("TextLabel") then
+			_value = _value.Text
+		end
+
+		if typeof(_value) == "number" or tonumber(_value) then
+			return tonumber(_value)
+		end
+
+		if _value == "0" or _value == "" then
+			return 0	
+		end
+
+		for i, value in ipairs(_suffixes) do 
+			if _value:match(value) then 
+				found = true 
+			end 
+		end 
+
+		if found == false then 
+			return tonumber(_value) 
+		end 
+
+		local n, suffix = string.match(_value, "(.*)(%a)$") 
+		if n and suffix then 
+			local i = table.find(_suffixes, suffix) or 0
+			local p = n:gsub("%D", "")
+			return tonumber(p) * math.pow(10, i * 3) 
+		end 
+		return tonumber(_value) 
+	else
+		warn("fromSuffixString: Bad Values...")
+	end
+
+end
 
 
 
