@@ -1,4 +1,5 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -7,9 +8,9 @@ local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
 local Tycoon
-local Tycoons=Workspace:FindFirstChild("Tycoons")
-local obby=Workspace:FindFirstChild("obby")
-local ObbyModel=obby:FindFirstChild("2x Cash for 1 Minute")
+local Tycoons=Workspace:WaitForChild("Tycoons")
+local Obby=Workspace:WaitForChild("Obby")
+local ObbyModel=Obby:WaitForChild("Button")
 
 -->Waiting For Data<--
 repeat task.wait()Tycoon=Player.Tycoon.Value until Tycoon
@@ -21,14 +22,6 @@ local OrbProcessor=Tycoon:WaitForChild("Orb Processor")
 local OrbModel=OrbProcessor:WaitForChild("Model")
 local OrbDeposit=OrbModel:WaitForChild("Deposit")
 local Rebirth=Tycoon:WaitForChild("Rebirth")
-
-
--->Non Return Functions<--
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
-
--->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.Toggle=bool
@@ -44,7 +37,7 @@ end)
 Auto:Toggle("Auto Process",function(bool)
     shared.Toggle2=bool
     spawn(function()
-        while shared.Toggle2 do if Player.leaderstats.Orbs.Value>0 then Touch(OrbDeposit.Button)end end
+        while shared.Toggle2 do if Player.leaderstats.Orbs.Value>0 then Touch(OrbDeposit.Button)end task.wait() end
     end)
 end)
 
@@ -53,7 +46,8 @@ Auto:Toggle("Auto Buy",function(bool)
     spawn(function()
         while shared.Toggle3 do local s,e=pcall(function()
             for _,v in pairs(Buttons:GetChildren())do
-                if shared.Toggle3 and v:FindFirstChild("Button")and v.Button.Transparency==0 then local price=v.Button.PriceGui.Price.Text
+                if shared.Toggle3 and v:FindFirstChild("Button")and v.Button.Transparency==0 then 
+                    local price=v.Button.PriceGui.Price.Text
                     if fromSuffixString(price)<=Player.leaderstats.Money.Value then Touch(v.Button)end
                 end
             end task.wait()end)task.wait()if not s then print(e)end
@@ -79,7 +73,7 @@ Auto:Toggle("Tree Drop",function(bool)
                 if Tycoon:FindFirstChild("RebirthTree") then RebirthTree=Tycoon:FindFirstChild("RebirthTree") RBDrops=RebirthTree:FindFirstChild("Drops") end
             else
                 for _,v in pairs(RBDrops:GetChildren())do
-                    if shared.ToggleTD and v:IsA("BasePart")then Touch(v)print("Touching")end
+                    if shared.ToggleTD and v:IsA("BasePart")then Touch(v)end
                 end
             end task.wait()end)task.wait()
         end
@@ -91,9 +85,8 @@ Auto:Toggle("Auto Obby",function(bool)
     shared.ToggleO=bool
     spawn(function()
         while shared.ToggleO do local s,e=pcall(function()
-            Touch(ObbyModel.Button)
-            
-            task.wait()end)
+            Touch(ObbyModel.Button, 30)
+        end)task.wait()
         end
     end)
 end)
