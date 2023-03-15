@@ -163,7 +163,7 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 		if not _suffixes then
 			_suffixes = {"K", "M", "B", "T", "Q"}
 		end
-		
+
 		if typeof(_value) == Instance and _value:IsA("TextLabel") then
 			_value = _value.Text
 		end
@@ -176,13 +176,14 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 			return 0	
 		end
 
+		_value = _value:upper()
 		for i, value in ipairs(_suffixes) do 
-			if _value:match(value) then 
+			if _value:match(value:upper()) then 
 				found = true 
 			end 
 		end 
-
-		if found == false then 
+		if found == false then
+			_value = _value:gsub("%D", "")
 			return tonumber(_value) 
 		end 
 
