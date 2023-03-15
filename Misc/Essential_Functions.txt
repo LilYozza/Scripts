@@ -231,3 +231,13 @@ getgenv().FindInTable = function(_tbl, _item)
 		warn("FindInTable: Bad Values...")
 	end
 end
+
+getgenv().Timer = function(_time)
+	if _time then
+		if typeof(_time) == "number" or tonumber(_time) then
+			task.wait(_time) return true
+		end
+	else
+		warn("Timer: Bad Values...")
+	end
+end
