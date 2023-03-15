@@ -90,6 +90,11 @@ getgenv().MovePart = function(_part, _location, _offset, _timeout)
 			end
 		elseif typeof(_part) == "Instance" and _part:IsA("BasePart") then
 			_part.CFrame = _location.CFrame + _offset
+			for _,v in pairs(_part:GetDescendants())do
+				if v:IsA("BasePart") then
+					v.CFrame = _location.CFrame + _offset
+				end
+			end
 		end
 
 	else
