@@ -8,7 +8,9 @@ local TweenService = game:GetService("TweenService")
 local Player = Players.LocalPlayer
 
 -->FUNCTIONS TO ADD<--
-
+-->Return All Players [Username / DisplayName]
+-->Create NameTags
+-->Remove NameTags
 
 --> Non Return Functions <--
 getgenv().Touch = function(_touchPart, _basePart, _timeout)
@@ -95,6 +97,31 @@ getgenv().MovePart = function(_part, _location, _offset, _timeout)
 	end
 end
 
+getgenv().RemovePart = function(_part)
+	if _part then
+		if typeof(_part) == "table" and _part[1] then
+			if typeof(_part[1]) == "Instance" then
+				for _,v in pairs(_part)do
+					v:Destroy()
+				end
+			elseif typeof(_part[1]) == "string" then
+				for _,v in pairs(workspace:GetDescendants())do
+					if table.find(_part, v.Name) then
+						v:Destroy()
+					end
+				end
+			end
+		elseif typeof(_part) == "string" then
+			for _,v in pairs(workspace:GetDescendants())do
+				if v.Name == _part then
+					v:Destroy()
+				end
+			end
+		end
+	else
+		warn("RemovePart: Bad Values...")
+	end
+end
 
 --> Return Functions <--
 getgenv().fromSuffixString = function(_value, _suffixes)
