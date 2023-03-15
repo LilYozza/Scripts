@@ -52,7 +52,7 @@ getgenv().ChangeCollide = function(_tbl, _bool)
 					end
 					for __,_v in pairs(v:GetDescendants())do
 						if _v:IsA("BasePart") then
-							v.CanCollide = _bool
+							_v.CanCollide = _bool
 						end
 					end
 				end
@@ -61,7 +61,11 @@ getgenv().ChangeCollide = function(_tbl, _bool)
 			if _tbl:IsA("BasePart") then
 				_tbl.CanCollide = _bool
 			end
+			for _,v in pairs(_tbl:GetDescendants())do
+				if v:IsA("BasePart") then v.CanCollide = _bool end
+			end
 		end
+
 	else
 		warn("ChangeCollide: Bad Values...")
 	end
@@ -88,8 +92,10 @@ getgenv().MovePart = function(_part, _location, _offset, _timeout)
 					end
 				end
 			end
-		elseif typeof(_part) == "Instance" and _part:IsA("BasePart") then
-			_part.CFrame = _location.CFrame + _offset
+		elseif typeof(_part) == "Instance"  then
+			if _part:IsA("BasePart") then
+				_part.CFrame = _location.CFrame + _offset
+			end
 			for _,v in pairs(_part:GetDescendants())do
 				if v:IsA("BasePart") then
 					v.CFrame = _location.CFrame + _offset
