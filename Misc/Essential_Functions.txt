@@ -8,9 +8,12 @@ local TweenService = game:GetService("TweenService")
 local Player = Players.LocalPlayer
 
 -->FUNCTIONS TO ADD<--
--->Return All Players [Username / DisplayName]
+-->Remove From Table (READY TO TEST)
+-->Return All Players [DisplayName] (READY TO TEST)
 -->Create NameTags
 -->Remove NameTags
+-->Find Item (Maybe)
+-->Select Player
 
 --> Non Return Functions <--
 getgenv().Touch = function(_touchPart, _basePart, _timeout)
@@ -47,6 +50,7 @@ getgenv().ChangeCollide = function(_tbl, _bool)
 		if typeof(_tbl) == "table" then
 			for _,v in pairs(workspace:GetDescendants())do
 				if table.find(_tbl, v.Name) or table.find(_tbl, v)then
+					print(v.Name)
 					if v:IsA("BasePart") then
 						v.CanCollide = _bool
 					end
@@ -134,6 +138,24 @@ getgenv().RemovePart = function(_part)
 	end
 end
 
+getgenv().RemoveFromTable = function(_tbl, _item)
+	if _tbl and typeof(_tbl) == "table" then
+		for _,v in pairs(_tbl)do
+			if typeof(v) == "Instance" then
+				if v.Name == _item then
+					table.remove(_tbl, _)
+				end
+			elseif typeof(v) == "string" then
+				if v == _item then
+					table.remove(_tbl, _)
+				end
+			end
+		end
+	else
+		warn("RemoveFromTable: Bad Values")
+	end
+end
+
 --> Return Functions <--
 getgenv().fromSuffixString = function(_value, _suffixes)
 	if _value then
@@ -188,4 +210,12 @@ getgenv().TweenPart = function(_part, _des, _speed, _style)
 	else
 		warn("TweenPart: Bad Values...")
 	end
+end
+
+getgenv().GetDisplayNames = function()
+	local _t = {}
+	for _,v in pairs(Players:GetPlayers())do
+		table.insert(_t, v.DisplayName)
+	end
+	return _t
 end

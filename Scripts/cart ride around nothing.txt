@@ -1,4 +1,6 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -18,32 +20,15 @@ local Spawners=Workspace:FindFirstChild("Spawners")
 local CartCheckRoom=Workspace:FindFirstChild("CartCheckRoom")
 local CartCheckRoomFinish=Workspace:FindFirstChild("CartCheckRoomFinish")
 
-local function MoveObj(obj,p,offset)for _,v in pairs(obj:GetDescendants())do if v:IsA("BasePart")then v.CFrame=p.cFrame+offset end end end
 local function GetCart(s)if s.Name=="VehicleSeat"then return s.Parent else return s.Parent.Parent end end
-local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
-local function Touch(o,p,t)firetouchinterest(o,p,0)firetouchinterest(o,p,1)task.wait(t)end
-local function RemoveObj(p) for _,v in pairs(Workspace:GetDescendants())do if v.Name==p then v:Destroy() end end end
 local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
-local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+
 local function FindItem(item)
     for _,v in pairs(Players:GetChildren())do
         if v.Backpack:FindFirstChild(item)then return v.Backpack:FindFirstChild(item)end
         if v.Character:FindFirstChild(item)then return v.Character:FindFirstChild(item)end
     end
 end
-
-local function SafeParts(tbl, bool)
-    for _,v in pairs(Workspace:GetDescendants())do
-        if table.find(tbl, v.Name) then
-            if v:IsA("BasePart") then v.CanCollide = bool end
-            for __,_v in pairs(v:GetDescendants())do
-                if _v:IsA("BasePart") then _v.CanCollide = bool end
-                if _v:IsA("TouchTransmitter") then _v:Destroy() end
-            end
-        end
-    end
-end
-
 
 local function RoomCheck(Room, Type)
     local _trig = Room:FindFirstChild("TriggerZone")
@@ -110,12 +95,12 @@ end)
 
 local BumpTbl = {"Bump", "OneWayRail"}
 Auto:Toggle("Bumps",function(bool)
-    spawn(function() SafeParts(BumpTbl, not bool) end)
+    spawn(function() ChangeCollide(BumpTbl, not bool) end)
 end)
 
 local DoorTbl = {"DoorPair"}
 Auto:Toggle("Doors",function(bool)
-    spawn(function()SafeParts(DoorTbl, not bool)end)
+    spawn(function()ChangeCollide(DoorTbl, not bool)end)
 end)
 
 Cart:Button("Easy Cart",function()
@@ -163,7 +148,7 @@ end
 
 local function RemovePlayer(player)
     if table.find(PlayerList,player.DisplayName) then
-        RemoveItem(PlayerList, player.DisplayName)
+        RemoveFromTable(PlayerList, player.DisplayName)
         DropList:Refresh(PlayerList)
     end
 end
@@ -204,7 +189,7 @@ PlrS:Toggle("Auto Aim",function(bool)
                     PCart=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart
                 end
                 for _,v in pairs(Workspace:GetChildren())do
-                    if v.Name=="ShootPartC4" and PCart then v.CFrame=PCart.CFrame v.WeldConstraint.Part0=PCart v.WeldConstraint.Part1=PCart Touch(PCart,v,0) end
+                    if v.Name=="ShootPartC4" and PCart then v.CFrame=PCart.CFrame v.WeldConstraint.Part0=PCart v.WeldConstraint.Part1=PCart Touch(v,PCart) end
                 end
             end end)
         	task.wait()
@@ -217,9 +202,8 @@ PlrS:Button("MoveCartTo",function()
         local back= Player.Character:WaitForChild("HumanoidRootPart").CFrame
         local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart)
         local PCart2=GetCart(PlayerSelect.Character:WaitForChild("Humanoid").SeatPart)
-        if not PCart1 and not PCart2 then return else
-        MoveObj(PCart1, PCart2.MainCar.CartBase, Vector3.new(0,0,0))
-        Player.Character:WaitForChild("Humanoid").Sit=false task.wait() Player.Character:WaitForChild("HumanoidRootPart").CFrame=back--MoveTo(Workspace:FindFirstChild("SpawnLocation"),Vector3.new(0,4,0))
+        if not PCart1 and not PCart2 then return else MovePart(PCart1, PCart2.MainCar.CartBase)
+        Player.Character:WaitForChild("Humanoid").Sit=false task.wait() Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
         end
     end)
 end)
