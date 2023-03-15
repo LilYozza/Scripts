@@ -1,7 +1,5 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
-
-local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
 local Auto = w:CreateFolder("Auto")
 
@@ -10,37 +8,29 @@ local Panda
 local Pandas={}
 local Collectibles=Workspace:FindFirstChild("Collectibles")
 
---Non Return Functions
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-
-
 --Getting Data
-for _, v in pairs(Collectibles:GetDescendants())do if v.Name == "Hitbox" then table.insert(Pandas, v.Parent.Name)end end
-for _, v in pairs(game:GetService("ReplicatedStorage").Hidden:GetDescendants())do if v.Name == "Hitbox" then table.insert(Pandas, v.Parent.Name)end end
+for _, v in pairs(Collectibles:GetDescendants())do if v.Name == "Hitbox" then table.insert(Pandas, v.Parent)end end
+for _, v in pairs(game:GetService("ReplicatedStorage").Hidden:GetDescendants())do if v.Name == "Hitbox" then table.insert(Pandas, v.Parent)end end
 
-table.sort(Pandas, function(a, b) return a:byte() < b:byte() end)
+table.sort(Pandas, function(a, b) return a.Name:byte() < b.Name:byte() end)
 local DropList = Auto:Dropdown("Select Panda",Pandas,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    Panda = SItem
+    Panda = FindInTable(Pandas, SItem)
 end)
 
 Auto:Button("Teleport",function()
     spawn(function()
-        for _, v in pairs(Collectibles:GetDescendants()) do
-            if v.Name == Panda and v:FindFirstChild("Hitbox")then MoveTo(v.Hitbox,Vector3.new(0,0,0))end
-        end
-        for _, v in pairs(game:GetService("ReplicatedStorage").Hidden:GetDescendants()) do
-            if v.Name == Panda and v:FindFirstChild("Hitbox")then MoveTo(v.Hitbox,Vector3.new(0,0,0))end
+        if Panda then
+            local _hb = Panda:FindFirstChild("Hitbox")
+            if _hb then MoveTo(_hb) end
         end
     end)
 end)
 
 Auto:Button("Auto Find",function()
     spawn(function()
-        for _, v in pairs(Collectibles:GetDescendants()) do
-            if v:IsA("TouchTransmitter") then Touch(v.Parent,0.1)end
-        end
-        for _, v in pairs(game:GetService("ReplicatedStorage").Hidden:GetDescendants()) do
-            if v:IsA("TouchTransmitter") then Touch(v.Parent,0.1)end
+        for _,v in pairs(Pandas)do
+            local _hb = v:FindFirstChild("Hitbox")
+            if _hb then Touch(_hb, 0.1) end
         end
     end)
 end)
