@@ -10,18 +10,12 @@ local Auto = w:CreateFolder("Auto")
 if CoreGui:FindFirstChild('PurchasePrompt')then CoreGui.PurchasePrompt.Enabled=false end
 
 -->Base Variables<--
-local Tycoon,SCollect,TycoonSelect
+local Tycoon,TycoonSelect
 local TycoonKit=Workspace:FindFirstChild("YouTube Tycoon 2 by Const and Prime")
 local Tycoons=TycoonKit:FindFirstChild("Tycoons")
 local VIP=Workspace:FindFirstChild("VIP")
 
--->Non Return Functions<--
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Owner.Value==Player then Tycoon=v break end end end
-
--->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
 local TycoonDropList = Auto:Dropdown("Select Tycoon",Tycoons:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     TycoonSelect = SItem
@@ -48,9 +42,7 @@ Auto:Toggle("Auto Collect",function(bool)
     end)
 end)
 
-Auto:Toggle("Smart Collect",function(bool)
-    shared.ToggleSC=bool SCollect=shared.ToggleSC
-end)
+Auto:Toggle("Smart Collect",function(bool)shared.ToggleSC=bool end)
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.Toggle2=bool
@@ -58,7 +50,7 @@ Auto:Toggle("Auto Buy",function(bool)
         while shared.Toggle2 do local s,e=pcall(function()
             for _,v in pairs(Buttons:GetChildren())do
                 if v:FindFirstChild("Head")and v.Head.Transparency==0 and not v:FindFirstChild("Gamepass")then
-                    if SCollect and v.Price.value <= fromSuffixString(Player.leaderstats.Cash.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver)end
+                    if  shared.ToggleSC and v.Price.value <= fromSuffixString(Player.leaderstats.Cash.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver)end
                     if v.Price.Value <= fromSuffixString(Player.leaderstats.Cash.Value)then Touch(v.Head)end
                 end
             end task.wait()end)task.wait()if not s then print(e)end
