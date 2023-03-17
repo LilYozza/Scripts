@@ -65,23 +65,19 @@ GPlayers:Toggle("Player Chams",function(bool)
 				end
 			end
 			
-			
-
-			while shared.ToggleCham do
-				spawn(function() task.wait()
-					pcall(function()
-						for _, v in next, Players:GetPlayers() do
-							UpdateChams(v)
-						end
-					end)
-				end)
-			end
+			local succ, out = coroutine.resume(coroutine.create(function()
+				while shared.ToggleCham do
+					for _, v in next, Players:GetPlayers() do
+						UpdateChams(v)
+					end
+				end
+			end))
 			
 			
 		else
 			if AllPCon then AllPCon:Disconnect() end
 			
-			for _,v in pairs(PLayers:GetPlayers())do
+			for _,v in pairs(Players:GetPlayers())do
 				if v ~= Player then
 					if PlayerCHAMConnections[v.UserId] then PlayerCHAMConnections[v.UserId]:Disconnect() end
 					RemoveChams(v)
