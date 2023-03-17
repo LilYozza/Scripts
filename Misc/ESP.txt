@@ -1,4 +1,4 @@
-print("Version 5.0.0")
+print("Version 5.0.1")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -63,7 +63,7 @@ local function AddESP(player)
 		local _head = char:FindFirstChild("Head")
 		if _head then
 			local _tag = _head:FindFirstChild("PlayerTag")
-			if not _tag then CreateTag(player) end
+			if not _tag then CreateTag(_head) end
 		end
 	end
 end
