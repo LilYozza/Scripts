@@ -69,6 +69,7 @@ GPlayers:Toggle("Player Chams",function(bool)
 				while shared.ToggleCham do
 					for _, v in next, Players:GetPlayers() do
 						UpdateChams(v)
+						RunService.RenderStepped:Wait()
 					end
 				end
 			end))
