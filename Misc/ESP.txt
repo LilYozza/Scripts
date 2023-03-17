@@ -1,4 +1,4 @@
-print("Version 5.0.2")
+print("Version 5.0.3")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
@@ -70,7 +70,6 @@ end
 
 local function RemoveESP(player)
 	if PlayerCon[player.UserId] then PlayerCon[player.UserId]:Disconnect() end
-	
 	local char = player.Character
 	if char then
 		local _head = char:FindFirstChild("Head")
@@ -124,13 +123,19 @@ getgenv().ESPOn = function()
 	end)
 	
 	for _,v in pairs(Players:GetPlayers())do
-		AddESP(v)
+		if v ~= Player then
+			PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char) 
+				local _head = char:WaitForChild("Head")
+				AddESP(v)
+			end)
+			AddESP(v)
+		end
 	end
 	
 	--RUN SERICE BIND
 	RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
 		for _,v in pairs(Players:GetPlayers())do
-			UpdateTag(v)
+			if v ~= Player then UpdateTag(v) end
 		end
 	end)
 	
@@ -143,7 +148,7 @@ getgenv().ESPOff = function()
 	if AllPlayerRemoveCon then AllPlayerRemoveCon:Disconnect() end
 	
 	for _,v in pairs(Players:GetPlayers())do
-		RemoveESP(v)
+		if v ~= Player then RemoveESP(v) end
 	end
 end
 
