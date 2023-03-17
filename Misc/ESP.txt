@@ -11,8 +11,9 @@ local DistanceTagColor = Color3.fromRGB(0,0,255)
 local HealthTagColor = Color3.fromRGB(0,255,0)
 
 local NameTagPosition = UDim2.new(0,0,0,0)
-local DistanceTagPosition = UDim2.new(0,0,0.3,0)
-local HealthTagPosition = UDim2.new(0,0,0.6,0)
+--local DistanceTagPosition = UDim2.new(0,0,0.3,0)
+--local HealthTagPosition = UDim2.new(0,0,0.6,0)
+local HealthTagPosition = UDim2.new(0,0,0,-15)
 
 local function GetPDistance(player)
 	local Playerchar = Player.Character
@@ -31,10 +32,11 @@ local function CreateTextLabel(name, parent, color, position)
 	newText.Size = UDim2.new(1,0,0.3,0)
 	newText.Position = position
 	newText.BackgroundTransparency = 1
-	newText.TextScaled = true
+	--newText.TextScaled = true
 
 	-- Text --
-	newText.Font = Enum.Font.FredokaOne
+	newText.TextSize = 13
+	newText.Font = Enum.Font.Legacy
 	newText.TextColor3 = color
 end
 
@@ -47,11 +49,11 @@ local function CreateTag(part)
 	newBillBoard.Parent = part
 	newBillBoard.AlwaysOnTop = true
 	newBillBoard.Size = UDim2.new(0, 250,0, 100)
-	newBillBoard.ExtentsOffset = Vector3.new(0,3,0)
+	newBillBoard.ExtentsOffset = Vector3.new(0,1,0)
 
 
 	CreateTextLabel("NameTag", newBillBoard, NameTagColor, NameTagPosition)
-	CreateTextLabel("DistanceTag", newBillBoard, DistanceTagColor, DistanceTagPosition)
+	--CreateTextLabel("DistanceTag", newBillBoard, DistanceTagColor, DistanceTagPosition)
 	CreateTextLabel("HealthTag", newBillBoard, HealthTagColor, HealthTagPosition)
 
 end
@@ -99,8 +101,8 @@ local function UpdateTag(player)
 				local Distance = GetPDistance(player)
 				local Health = math.floor(char.Humanoid.Health + 0.5)
 
-				Tag.NameTag.Text = PlayerName
-				Tag.DistanceTag.Text = "Distance: "..Distance
+				Tag.NameTag.Text = PlayerName.."["..Distance.."]"
+				--Tag.DistanceTag.Text = "Distance: "..Distance
 				Tag.HealthTag.Text = "Health: "..Health
 			end
 		end
