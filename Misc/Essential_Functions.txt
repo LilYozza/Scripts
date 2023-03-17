@@ -227,6 +227,18 @@ getgenv().GetDisplayNames = function()
 	return _t
 end
 
+getgenv().GetPlayerByDisplayName = function(_displayName)
+	if _displayName and typeof(_displayName) == "string"then
+		for _,v in pairs(Players:GetPlayers())do
+			if v.DisplayName == _displayName then
+				return v
+			end
+		end
+	else
+		warn("GetPlayerByDisplayName: Bad Values...")
+	end
+end
+
 getgenv().FindInTable = function(_tbl, _item)
 	if _tbl and typeof(_tbl) == "table" and _item and typeof(_item) == "string" then
 		for _,v in pairs(_tbl)do
