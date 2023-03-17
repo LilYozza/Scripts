@@ -43,7 +43,7 @@ end)
 local AllPCon
 local PlayerCHAMConnections2 ={}
 GPlayers:Toggle("Player Chams",function(bool)
-	shared.ToggleCHAM = bool 
+	shared.ToggleCham = bool 
 	spawn(function()
 		if shared.ToggleCham then
 			
