@@ -1,9 +1,8 @@
-print("Version 2.0.4")
+print("Version 5.0.0")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
-local isESP = false
 local PlayerCon = {}
 local plist = {}
 
@@ -57,14 +56,28 @@ local function CreateTag(part)
 
 end
 
-local function RemoveESP(player)
+local function AddESP(player)
+	-- ADD TAG TO PLAYER
 	local char = player.Character
-	if not char then return end
+	if char then
+		local _head = char:FindFirstChild("Head")
+		if _head then
+			local _tag = _head:FindFirstChild("PlayerTag")
+			if not _tag then CreateTag(player) end
+		end
+	end
+end
 
-	local Tag = player.Character.Head:FindFirstChild("PlayerTag")
-	if Tag then Tag:Destroy()end
-	for _,v in pairs(plist)do
-		if v == player then table.remove(plist, _) end
+local function RemoveESP(player)
+	if PlayerCon[player.UserId] then PlayerCon[player.UserId]:Disconnect() end
+	
+	local char = player.Character
+	if char then
+		local _head = char:FindFirstChild("Head")
+		if _head then
+			local _tag = _head:FindFirstChild("PlayerTag")
+			if _tag then _tag:Destroy() end
+		end
 	end
 end
 
@@ -72,13 +85,13 @@ local function UpdateTag(player)
 	if player ~= nil then
 		local char = player.Character
 		local MyChar =Player.Character
-		
+
 		if char and MyChar then
-			
+
 			local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
 			local Find3 = char:FindFirstChild("HumanoidRootPart")
 			local Find4 = char:FindFirstChildOfClass("Humanoid")
-			
+
 			if Find2 and Find3 then
 				local Tag = player.Character.Head:FindFirstChild("PlayerTag")
 				if not Tag then return end
@@ -95,64 +108,45 @@ local function UpdateTag(player)
 	end
 end
 
-local function AddESP(player)
-	local char = player.Character
-	if not char then return end
-	local head = char:FindFirstChild("Head")
-	if not head then return end
-	table.insert(plist, player)
-	CreateTag(head)
-end
-
+local AllPlayerCon, AllPlayerRemoveCon
 getgenv().ESPOn = function()
-	isESP = true
-	for _,v in pairs(Players:GetPlayers())do
-		if v ~= Player then
-			AddESP(v)
-			PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char)
-				char.ChildAdded:Connect(function(part)
-					if part.Name == "Head" then
-						if isESP == true then AddESP(v) end
-					end
-				end)
+	--ON PLAYERS JOINING GAME
+	AllPlayerCon = Players.PlayerAdded:Connect(function(player)
+		--ON NEW CHARACTER FROM PLAYER
+		PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
+			char.ChildAdded:Connect(function(part)
+				AddESP(player)
 			end)
-		end
+		end)
+	end)
+	--ON PLAYER LEAVING GaME
+	AllPlayerRemoveCon = Players.PlayerRemoving:Connect(function(player)
+		RemoveESP(player)
+	end)
+	
+	for _,v in pairs(Players:GetPlayers())do
+		AddESP(v)
 	end
+	
+	--RUN SERICE BIND
+	RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
+		for _,v in pairs(Players:GetPlayers())do
+			UpdateTag(v)
+		end
+	end)
+	
 end
 
 getgenv().ESPOff = function()
-	isESP = false
-	PlayerCon = {}
-	plist = {}
+	RunService:UnbindFromRenderStep("UpdateESP")
+	
+	if AllPlayerCon then AllPlayerCon:Disconnect() end
+	if AllPlayerRemoveCon then AllPlayerRemoveCon:Disconnect() end
+	
 	for _,v in pairs(Players:GetPlayers())do
-			if v ~= Player then
 		RemoveESP(v)
-		end
 	end
 end
 
-Players.PlayerAdded:Connect(function(player)
-	PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
-		char.ChildAdded:Connect(function(part)
-			if part.Name == "Head" then
-				if isESP == true then AddESP(player) end
-			end
-		end)
 
-	end)
-end)
 
-Players.PlayerRemoving:Connect(function(player)
-	if PlayerCon[player.UserId] then PlayerCon[player.UserId] = {} end
-	RemoveESP(player)
-end)
-
-RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
-	if isESP then
-		for _, v in next, Players:GetPlayers() do
-			if v ~= Player then
-				UpdateTag(v)
-			end
-		end
-	end
-end)
