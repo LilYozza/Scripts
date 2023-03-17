@@ -24,7 +24,7 @@ local PlayerSelect_M
 local PlayerList_M={}
 
 -->Functions<--
-local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do if v.Name==character.Name then return v end end end
+--local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do if v.Name==character.Name then return v end end end
 
 --========================================PLAYER ESP========================================--
 GPlayers:Toggle("Player ESP",function(bool)
@@ -40,20 +40,54 @@ end)
 --===========================================================================================--
 
 --=======================================PLAYER CHAMS=======================================--
-local isCham local PlayerCHAMConnections={}
+local AllPCon
+local PlayerCHAMConnections2 ={}
 GPlayers:Toggle("Player Chams",function(bool)
-	shared.ToggleCHAM = bool isCham=shared.ToggleCHAM
+	shared.ToggleCHAM = bool 
 	spawn(function()
-		for _,v in pairs(Players:GetChildren())do
-			spawn(function()
-				if v~=Player then
-					PlayerCHAMConnections[_]=v.CharacterAdded:Connect(function(character)
-						local plr=ReturnPlayer(character)
-						if isCham then ChamsFuncTbl.RemoveChams(plr)ChamsFuncTbl.CreateChams(plr)end end)
-					if isCham then ChamsFuncTbl.RemoveChams(v)ChamsFuncTbl.CreateChams(v)else ChamsFuncTbl.RemoveChams(v)end end
+		if shared.ToggleCham then
+			
+			AllPCon = Players.PlayerAdded:Connect(function(player)
+				PlayerCHAMConnections2[player.UserId]=player.CharacterAdded:Connect(function(char)
+					RemoveChams(player)
+					CreateChams(player)
+				end)
 			end)
+
+			for _,v in pairs(Players:GetChildren())do
+				if v ~= Player then
+					PlayerCHAMConnections2[v.UserId]=v.CharacterAdded:Connect(function(char)
+						RemoveChams(v)
+						CreateChams(v)
+					end)
+					RemoveChams(v)
+					CreateChams(v)
+				end
+			end
+			
+			
+
+			while shared.ToggleCham do
+				spawn(function() task.wait()
+					pcall(function()
+						for _, v in next, Players:GetPlayers() do
+							UpdateChams(v)
+						end
+					end)
+				end)
+			end
+			
+			
+		else
+			if AllPCon then AllPCon:Disconnect() end
+			
+			for _,v in pairs(PLayers:GetPlayers())do
+				if v ~= Player then
+					if PlayerCHAMConnections[v.UserId] then PlayerCHAMConnections[v.UserId]:Disconnect() end
+					RemoveChams(v)
+				end
+			end
 		end
-		if not isCham then for _,v in pairs(PlayerCHAMConnections)do if v then v:Disconnect()end end end 
 	end)
 end)
 --===========================================================================================--
@@ -78,16 +112,31 @@ GPlayers:Button("TeleportTo",function()
 end)
 
 
-local SAEnabled = false
+
 local range = 15
+local SACon
 Misc:Toggle("Sword Aura",function(bool)
 	shared.ToggleSA = bool
-	SAEnabled = shared.ToggleSA
-	--spawn (function()
-		--local credit='guardscripts'local url=('https://raw.githubusercontent.com/%s/myscripts/main/scriptinit.lua'):format(credit)init=loadstring(game:HttpGet(url,true))
-		--getgenv().xscriptId='NDA5MzBy'init()
-		
-	--end)
+	if shared.ToggleSA then
+		SACon = game:GetService("RunService").RenderStepped:Connect(function()
+			local p = Players:GetPlayers()
+			for i = 2, #p do local v = p[i].Character
+				if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
+					local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+					if tool and tool:FindFirstChild("Handle") then
+						tool:Activate()
+						for i,v in next, v:GetChildren() do
+							if v:IsA("BasePart") then
+								firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
+							end
+						end
+					end
+				end
+			end
+		end)
+	else
+		if SACon then SACon:Disconnect() end
+	end
 end)
 
 --============================================Fly==========================================--
@@ -96,12 +145,10 @@ Misc:Toggle("Fly",function(bool)
 	shared.ToggleFly = bool
 	spawn (function()
 		if shared.ToggleFly then 
-		    _conFly = Init()
+			_conFly = Init()
 		else 
 			FlyOff()
-			for _,v in pairs(_conFly)do
-			    _conFly[_]:Disconnect()
-			end
+			for _,v in pairs(_conFly)do _conFly[_]:Disconnect()end
 		end
 	end)
 end)
@@ -138,16 +185,16 @@ end)
 
 local Speed = Misc:Slider("Walk Speed",{
 	['default'] = 16;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
-	game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = value
+	Player.Character.Humanoid.WalkSpeed = value
 	local Players = game:GetService("Players")
 	Player.CharacterAdded:Connect(function()
-	    local _hum = Player.Character:WaitForChild("Humanoid",10)
-	    if _hum then _hum.WalkSpeed = value end
+		local _hum = Player.Character:WaitForChild("Humanoid",10)
+		if _hum then _hum.WalkSpeed = value end
 	end)
 end)
 
 Misc:Button("3rd Person",function()
-	game:GetService('Players').LocalPlayer.CameraMode = 'Classic'
+	Player.CameraMode = 'Classic'
 	Player.CameraMaxZoomDistance = 150
 	Player.CameraMinZoomDistance = 0
 end)
@@ -158,39 +205,9 @@ Misc:DestroyGui()
 Players.PlayerAdded:Connect(function(player)
 	player.CharacterAdded:Connect(function()
 		AddPlayer(player)
-		if isCham and player then ChamsFuncTbl.RemoveChams(player)ChamsFuncTbl.CreateChams(player)end
 	end)
 end)
 
 --===========================================================================================--
-spawn(function()local succ, out = coroutine.resume(coroutine.create(function()
-		while true do
-			for _, v in next, Players:GetPlayers() do
-				ChamsFuncTbl.UpdateChams(v)
+Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)end)
 
-			end
-		end
-	end))end)
-
-
-Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),Workspace.CurrentCamera.CFrame)end)
-
-game:GetService("RunService").RenderStepped:Connect(function()
-	if SAEnabled then
-		local p = Players:GetPlayers()
-		for i = 2, #p do local v = p[i].Character
-			if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
-				local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
-				if tool and tool:FindFirstChild("Handle") then
-					tool:Activate()
-					for i,v in next, v:GetChildren() do
-						if v:IsA("BasePart") then
-							firetouchinterest(tool.Handle,v,0)
-							firetouchinterest(tool.Handle,v,1)
-						end
-					end
-				end
-			end
-		end
-	end
-end)
