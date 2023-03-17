@@ -41,14 +41,14 @@ end)
 
 --=======================================PLAYER CHAMS=======================================--
 local AllPCon
-local PlayerCHAMConnections2 ={}
+local PlayerCHAMConnections ={}
 GPlayers:Toggle("Player Chams",function(bool)
 	shared.ToggleCham = bool 
 	spawn(function()
 		if shared.ToggleCham then
 			
 			AllPCon = Players.PlayerAdded:Connect(function(player)
-				PlayerCHAMConnections2[player.UserId]=player.CharacterAdded:Connect(function(char)
+				PlayerCHAMConnections[player.UserId]=player.CharacterAdded:Connect(function(char)
 					RemoveChams(player)
 					CreateChams(player)
 				end)
@@ -56,7 +56,7 @@ GPlayers:Toggle("Player Chams",function(bool)
 
 			for _,v in pairs(Players:GetChildren())do
 				if v ~= Player then
-					PlayerCHAMConnections2[v.UserId]=v.CharacterAdded:Connect(function(char)
+					PlayerCHAMConnections[v.UserId]=v.CharacterAdded:Connect(function(char)
 						RemoveChams(v)
 						CreateChams(v)
 					end)
