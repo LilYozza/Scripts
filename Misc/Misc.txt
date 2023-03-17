@@ -7,10 +7,6 @@ local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozz
 local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))()
 --===========================================================================================--
 
---======================================FUNCTION USAGE=======================================--
--->Chams<--     [Table]=ChamsFuncTbl            [Functions]=UpdateChams,RemoveChams,CreateChams
--->Fly<--       [Functions]=Init,FlyOn,FlyOff   [Connections]=Con1, Con2
---===========================================================================================--
 local Virtual=game:GetService("VirtualUser")
 local RunService = game:GetService("RunService")
 local Players=game:GetService("Players")
@@ -96,9 +92,9 @@ end)
 --===========================================================================================--
 
 --===================================Player List Controller==================================--
-local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
+--local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
 local function AddPlayer(player)if not table.find(PlayerList_M,player.DisplayName) then table.insert(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
-local function RemovePlayer(player)if table.find(PlayerList_M,player.DisplayName) then RemoveItem(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
+local function RemovePlayer(player)if table.find(PlayerList_M,player.DisplayName) then RemoveFromTable(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
 --===========================================================================================--
 
@@ -203,6 +199,10 @@ Players.PlayerAdded:Connect(function(player)
 	player.CharacterAdded:Connect(function()
 		AddPlayer(player)
 	end)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	RemovePlayer(player)
 end)
 
 --===========================================================================================--
