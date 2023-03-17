@@ -150,6 +150,4 @@ Other:Button("Teleport End",function()
 	spawn(function()MoveTo(Baseplate,Vector3.new(0,6,0))end)
 end)
 
-ESPOn()
-
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
