@@ -1,10 +1,10 @@
-print("Version 5.0.1")
+print("Version 5.0.2")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+
 local Player = Players.LocalPlayer
 
 local PlayerCon = {}
-local plist = {}
 
 local NameTagColor = Color3.fromRGB(255,0,0)
 local DistanceTagColor = Color3.fromRGB(0,0,255)
@@ -114,9 +114,8 @@ getgenv().ESPOn = function()
 	AllPlayerCon = Players.PlayerAdded:Connect(function(player)
 		--ON NEW CHARACTER FROM PLAYER
 		PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
-			char.ChildAdded:Connect(function(part)
-				AddESP(player)
-			end)
+			local _head = char:WaitForChild("Head")
+			AddESP(player)
 		end)
 	end)
 	--ON PLAYER LEAVING GaME
