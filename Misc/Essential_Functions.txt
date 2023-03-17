@@ -180,19 +180,25 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 		for i, value in ipairs(_suffixes) do 
 			if _value:match(value:upper()) then 
 				found = true 
+				-- Remove all characters after
+				_value = _value:split(value)[1]..value --TEMP FIX LOL
 			end 
 		end 
+
 		if found == false then
 			_value = _value:gsub("%D", "")
 			return tonumber(_value) 
 		end 
 
-		local n, suffix = string.match(_value, "(.*)(%a)$") 
+
+		local n, suffix = string.match(_value, "(.*)(%a)$")
 		if n and suffix then 
 			local i = table.find(_suffixes, suffix) or 0
 			local p = n:gsub("%D", "")
 			return tonumber(p) * math.pow(10, i * 3) 
 		end 
+
+		_value = _value:gsub("%D", "")
 		return tonumber(_value) 
 	else
 		warn("fromSuffixString: Bad Values...")
