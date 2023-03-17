@@ -5,7 +5,6 @@ local Player=game.Players.LocalPlayer
 local Run = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
-ChamsFuncTbl={UpdateChams,RemoveChams,CreateChams}
 local MyChar = Player.Character
 
 local ChamsFolder=CoreGui:FindFirstChild("Chams")
@@ -17,9 +16,15 @@ local ItemChams=ChamsFolder:FindFirstChild("ItemChams")
 if not PlayerChams then PlayerChams=Instance.new("Folder",ChamsFolder)PlayerChams.Name="PlayerChams"end
 if not ItemChams then ItemChams=Instance.new("Folder",ChamsFolder)ItemChams.Name="ItemChams"end
 
+local function GetCamera() -- Just in case some game renames the player's camera.
+	return workspace:FindFirstChildOfClass("Camera")
+end
+
+local MyCam = GetCamera()
+
 local function FindCham(Obj)
 	for i, v in next, ItemChams:GetChildren() do if v.className == "ObjectValue" then
-	    if v.Value == Obj then return v.Parent end end end
+			if v.Value == Obj then return v.Parent end end end
 	return nil
 end
 
@@ -31,7 +36,7 @@ local function GetSizeOfObject(Obj)
 	end
 end
 
-ChamsFuncTbl.RemoveChams=function(Obj)
+getgenv().RemoveChams = function(Obj) --<<<<< HERE 
 	if Obj ~= nil then
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
@@ -44,7 +49,7 @@ ChamsFuncTbl.RemoveChams=function(Obj)
 	end task.wait()
 end
 
-ChamsFuncTbl.CreateChams=function(Obj)
+getgenv().CreateChams = function(Obj) --<<<<< HERE 
 	if Obj ~= nil then
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
@@ -81,7 +86,7 @@ ChamsFuncTbl.CreateChams=function(Obj)
 	end
 end
 
-ChamsFuncTbl.UpdateChams=function(Obj)
+getgenv().UpdateChams=function(Obj) --<<<<< HERE 
 	if Obj == nil then return end
 
 	if Obj:IsA("Player") then
