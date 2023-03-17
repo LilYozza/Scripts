@@ -36,7 +36,7 @@ local function GetSizeOfObject(Obj)
 	end
 end
 
-getgenv().RemoveChams = function(Obj) --<<<<< HERE 
+getgenv().RemoveChams = function(Obj)
 	if Obj ~= nil then
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
@@ -49,7 +49,7 @@ getgenv().RemoveChams = function(Obj) --<<<<< HERE
 	end task.wait()
 end
 
-getgenv().CreateChams = function(Obj) --<<<<< HERE 
+getgenv().CreateChams = function(Obj)
 	if Obj ~= nil then
 		local IsPlr = Obj:IsA("Player")
 		local UseFolder = ItemChams
@@ -86,7 +86,7 @@ getgenv().CreateChams = function(Obj) --<<<<< HERE
 	end
 end
 
-getgenv().UpdateChams=function(Obj) --<<<<< HERE 
+getgenv().UpdateChams=function(Obj)
 	if Obj == nil then return end
 
 	if Obj:IsA("Player") then
