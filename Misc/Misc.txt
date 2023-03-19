@@ -36,50 +36,13 @@ end)
 --===========================================================================================--
 
 --=======================================PLAYER CHAMS=======================================--
-local AllPCon
-local PlayerCHAMConnections ={}
 GPlayers:Toggle("Player Chams",function(bool)
 	shared.ToggleCham = bool 
 	spawn(function()
 		if shared.ToggleCham then
-			
-			AllPCon = Players.PlayerAdded:Connect(function(player)
-				PlayerCHAMConnections[player.UserId]=player.CharacterAdded:Connect(function(char)
-					RemoveChams(player)
-					CreateChams(player)
-				end)
-			end)
-
-			for _,v in pairs(Players:GetChildren())do
-				if v ~= Player then
-					PlayerCHAMConnections[v.UserId]=v.CharacterAdded:Connect(function(char)
-						RemoveChams(v)
-						CreateChams(v)
-					end)
-					RemoveChams(v)
-					CreateChams(v)
-				end
-			end
-			
-			local succ, out = coroutine.resume(coroutine.create(function()
-				while shared.ToggleCham do
-					for _, v in next, Players:GetPlayers() do
-						UpdateChams(v)
-						RunService.RenderStepped:Wait()
-					end
-				end
-			end))
-			
-			
+			PlayerChamsOn()
 		else
-			if AllPCon then AllPCon:Disconnect() end
-			
-			for _,v in pairs(Players:GetPlayers())do
-				if v ~= Player then
-					if PlayerCHAMConnections[v.UserId] then PlayerCHAMConnections[v.UserId]:Disconnect() end
-					RemoveChams(v)
-				end
-			end
+			PlayerChamsOff()
 		end
 	end)
 end)

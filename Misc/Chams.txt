@@ -7,6 +7,8 @@ local CoreGui = game:GetService("CoreGui")
 
 local MyChar = Player.Character
 
+local isChams, isPlayerCham
+
 local ChamsFolder=CoreGui:FindFirstChild("Chams")
 if not ChamsFolder then ChamsFolder=Instance.new("Folder",CoreGui)ChamsFolder.Name="Chams"end
 
@@ -35,6 +37,7 @@ local function GetSizeOfObject(Obj)
 		return Obj:GetExtentsSize()
 	end
 end
+
 
 getgenv().RemoveChams = function(Obj)
 	if Obj ~= nil then
@@ -86,7 +89,7 @@ getgenv().CreateChams = function(Obj)
 	end
 end
 
-getgenv().UpdateChams=function(Obj)
+local function UpdateChams(Obj)
 	if Obj == nil then return end
 
 	if Obj:IsA("Player") then
@@ -126,3 +129,91 @@ getgenv().UpdateChams=function(Obj)
 		end
 	end
 end
+
+local AllPCon
+local PCon = {}
+getgenv().PlayerChamsOn = function()
+	--Connections
+	isPlayerCham = true
+	AllPCon = Players.PlayerAdded:Connect(function(player)
+		PCon[player.UserId] = player.CharacterAdded:Connect(function()
+			RemoveChams(player)
+			CreateChams(player)
+		end)
+	end)
+	for _,v in pairs(Players:GetPlayers())do
+		PCon[player.UserId] = v.CharacterAdded:Connect(function()
+			RemoveChams(v)
+			CreateChams(v)
+		end)
+		RemoveChams(v)
+		CreateChams(v)
+	end
+	
+	local succ, out = coroutine.resume(coroutine.create(function()
+		while isPlayerCham do
+			for _, v in next, Players:GetPlayers() do
+				UpdateChams(v)
+				Run.RenderStepped:Wait()
+			end
+		end
+	end))
+end
+
+getgenv().PlayerChamsOff = function()
+	isPlayerCham = false
+
+	--Remove Connections
+	if AllPCon then AllPCon:Disconnect()end
+	for _,v in pairs(PCon)do
+		v:Disconnect()
+	end
+end
+
+local _temp = {}
+getgenv().ChamsOff = function()
+	isChams = false
+	for _,v in pairs(_temp)do
+		RemoveChams(v)
+	end
+end
+
+getgenv().ChamsOn = function(_object)
+	if _object then
+		ChamsOff()
+		_temp = {}
+		isChams = false
+		isChams = true
+		if typeof(_object) == "Instance" then
+			if _object:IsA("BasePart") then
+				RemoveChams(_object)
+				CreateChams(_object)
+				table.insert(_temp, _object)
+			end
+			for _,v in pairs(_object:GetDescendants())do
+				if v:IsA("BasePart") then
+					RemoveChams(v)
+					CreateChams(v)
+					table.insert(_temp, v)
+				end
+			end
+			
+		elseif typeof(_object) == "table" then
+			for _,v in pairs(_object)do
+				RemoveChams(v)
+				CreateChams(v)
+				table.insert(_temp, v)
+			end
+		end
+		local succ, out = coroutine.resume(coroutine.create(function()
+			while isChams do
+				for _,v in pairs(_temp)do
+					print("Updating")
+					UpdateChams(v)
+					Run.RenderStepped:Wait()
+				end
+			end
+		end))
+	end
+end
+
