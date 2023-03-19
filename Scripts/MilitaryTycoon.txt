@@ -1,5 +1,11 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
+local EventMenu = w:CreateFolder("Events")
+
+-->Base Variables<--
+local KillTool = "Katana"
+
+local AssassianEvent = true --< Dont leave this
 
 local InstantEnabled = false
 local Player = game.Players.LocalPlayer
@@ -127,6 +133,43 @@ Auto:Toggle("Vault Status", function(bool)
         if not shared.Toggle then RemoveTags() end
     end)
 end)
+
+if AssassianEvent then
+local CharacterFolder = Workspace:WaitForChild("Characters")
+    
+Auto:Toggle("Assassians",function(bool)
+    shared.ToggleE_A=bool
+    spawn(function()
+        
+        local _tool = Player.Backpack:FindFirstChildWhichIsA('Tool') or Player.Character:FindFirstChildWhichIsA('Tool')
+        if not Player.Character:FindFirstChildWhichIsA('Tool') then Player.Character:WaitForChild("Humanoid"):EquipTool(_tool) end
+        local _myhrp = Player.Character:WaitForChild("HumanoidRootPart")
+        
+        while shared.ToggleE_A do
+            pcall(function()
+
+                
+                for _,v in pairs(CharacterFolder:GetChildren())do
+                    if v.Name == "Guard" and shared.ToggleE_A then
+                        
+                        local _hrp = v:FindFirstChild("HumanoidRootPart")
+                        local _hum = v:FindFirstChild("Humanoid")
+                        if _hrp and _myhrp and _hum and _hum.Health > 0 and _ <= 20 then
+                            if _tool and _tool.Name == KillTool then
+                                _hrp.CFrame = CFrame.new(_myhrp.Position + _myhrp.CFrame.LookVector * 3) 
+                                
+                            end
+                        end
+                    end
+                end
+                
+                _tool:Activate()
+            end)
+            task.wait()
+        end
+    end)
+end)
+end
 
 mouse.KeyDown:connect(function(k)
     --Check if "e" and theres a prompt close enough
