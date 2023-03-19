@@ -142,19 +142,23 @@ getgenv().PlayerChamsOn = function()
 		end)
 	end)
 	for _,v in pairs(Players:GetPlayers())do
-		PCon[V.UserId] = v.CharacterAdded:Connect(function()
+		if v ~= Player then
+			PCon[v.UserId] = v.CharacterAdded:Connect(function()
+				RemoveChams(v)
+				CreateChams(v)
+			end)
 			RemoveChams(v)
 			CreateChams(v)
-		end)
-		RemoveChams(v)
-		CreateChams(v)
+		end
 	end
-	
+
 	local succ, out = coroutine.resume(coroutine.create(function()
 		while isPlayerCham do
 			for _, v in next, Players:GetPlayers() do
-				UpdateChams(v)
-				Run.RenderStepped:Wait()
+				if v ~= Player then
+					UpdateChams(v)
+					Run.RenderStepped:Wait()
+				end
 			end
 		end
 	end))
@@ -167,6 +171,10 @@ getgenv().PlayerChamsOff = function()
 	if AllPCon then AllPCon:Disconnect()end
 	for _,v in pairs(PCon)do
 		v:Disconnect()
+	end
+
+	for _,v in pairs(Players:GetPlayers())do
+		RemoveChams(v)
 	end
 end
 
@@ -186,34 +194,26 @@ getgenv().ChamsOn = function(_object)
 		isChams = true
 		if typeof(_object) == "Instance" then
 			if _object:IsA("BasePart") then
-				RemoveChams(_object)
+				--RemoveChams(_object)
 				CreateChams(_object)
 				table.insert(_temp, _object)
 			end
 			for _,v in pairs(_object:GetDescendants())do
 				if v:IsA("BasePart") then
-					RemoveChams(v)
+					--RemoveChams(v)
 					CreateChams(v)
 					table.insert(_temp, v)
 				end
 			end
-			
-		elseif typeof(_object) == "table" then
-			for _,v in pairs(_object)do
-				RemoveChams(v)
-				CreateChams(v)
-				table.insert(_temp, v)
-			end
-		end
-		local succ, out = coroutine.resume(coroutine.create(function()
-			while isChams do
-				for _,v in pairs(_temp)do
-					print("Updating")
-					UpdateChams(v)
-					Run.RenderStepped:Wait()
+			local succ, out = coroutine.resume(coroutine.create(function()
+				while isChams do
+					for _,v in pairs(_temp)do
+						UpdateChams(v)
+						Run.RenderStepped:Wait()
+					end
 				end
-			end
-		end))
+			end))
+		end
 	end
 end
 

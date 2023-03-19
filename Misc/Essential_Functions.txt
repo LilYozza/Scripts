@@ -210,7 +210,7 @@ getgenv().TweenPart = function(_part, _des, _speed, _style)
 	if _part and _des and _part:IsA("BasePart") and _des:IsA("BasePart") then
 		if typeof(_des) == "Instance" and _des:IsA("BasePart") then _des = _des.CFrame end
 		if not _speed or typeof(_speed) ~= "number" then _speed = 1 end
-		if not _style  then _style = Enum.EasingStyle.Back end
+		if not _style  then _style = Enum.EasingStyle.Linear end
 		local _tween = TweenService:Create(_part, TweenInfo.new(_speed, _style), {CFrame = _des})
 		_tween:Play()
 		return _tween
