@@ -142,7 +142,7 @@ getgenv().PlayerChamsOn = function()
 		end)
 	end)
 	for _,v in pairs(Players:GetPlayers())do
-		PCon[player.UserId] = v.CharacterAdded:Connect(function()
+		PCon[V.UserId] = v.CharacterAdded:Connect(function()
 			RemoveChams(v)
 			CreateChams(v)
 		end)
