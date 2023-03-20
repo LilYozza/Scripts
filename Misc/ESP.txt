@@ -146,7 +146,7 @@ getgenv().ESPOn = function()
 	for _,v in pairs(Players:GetPlayers())do
 		if v ~= Player then
 			PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char) 
-				local _head = char:WaitForChild("Head")
+				local _head = char:FindFirstChild("Head")
 				AddESP(v)
 			end)
 			AddESP(v)
