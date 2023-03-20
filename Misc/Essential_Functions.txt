@@ -50,7 +50,6 @@ getgenv().ChangeCollide = function(_tbl, _bool)
 		if typeof(_tbl) == "table" then
 			for _,v in pairs(workspace:GetDescendants())do
 				if table.find(_tbl, v.Name) or table.find(_tbl, v)then
-					print(v.Name)
 					if v:IsA("BasePart") then
 						v.CanCollide = _bool
 					end
