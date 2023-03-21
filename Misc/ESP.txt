@@ -115,7 +115,7 @@ getgenv().ESPOn = function()
 	AllPlayerCon = Players.PlayerAdded:Connect(function(player)
 		--ON NEW CHARACTER FROM PLAYER
 		PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
-			local _head = char:WaitForChild("Head")
+			local _head = char:FindFirstChild("Head")
 			AddESP(player)
 		end)
 	end)
