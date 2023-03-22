@@ -14,6 +14,8 @@ local Other = w:CreateFolder("Other")
 
 --[[	TODO
 
+--Timmer
+
 --Pets
 --Unlock All Zones
 
@@ -22,6 +24,9 @@ local Other = w:CreateFolder("Other")
 
 
 -->Base Variables<--
+local isCheck = false
+local IdleTimeOut = 10
+
 local Spawns = workspace:WaitForChild("Spawns")
 local SafeZones = workspace:WaitForChild("ScriptSabitleri")
 
@@ -29,9 +34,25 @@ local DailyChest = workspace.Oduller:WaitForChild("DailyChest")
 local GemChest = workspace.Oduller:WaitForChild("GemReward")
 local VIPChest = workspace.Oduller:WaitForChild("VIPReward")
 local WINChest = workspace.Oduller:WaitForChild("WINReward")
+
 -->Non Return Functions<--
 
+
+
 -->Return Functions<--
+local function IdleChecker(_instance, _timeout)
+	
+	local _oldValue = _instance.Value
+	task.wait(_timeout)
+	if _oldValue == _instance.Value then
+		return true
+	else
+		return false
+	end
+	
+end
+
+
 shared.WeightSpeed = 0
 local Speed = Auto:Slider("Weight Speed",{
 	['default'] = 0;['min'] = 0;['max'] = 1;['precise'] = true;},function(value)
@@ -45,6 +66,21 @@ Auto:Toggle("Auto Weight",function(bool)
 			pcall(function()
 				local _tool = Player.Data.Weight.Value
 				local _toolToggle = Player.PlayerGui.Main.Bottom.NumberOne.Toggled
+				
+				--IDLE CHECKER
+				if isCheck == false then
+					isCheck = true
+					spawn(function()
+						local _chk = IdleChecker(Player.leaderstats.Muscle, IdleTimeOut)
+						if _chk == true then
+							print("Idle...")
+							_toolToggle.Value = false
+							MoveTo(SafeZones:WaitForChild("Training"))
+						end
+						isCheck = false
+					end)
+					
+				end
 
 				if _toolToggle.Value == false then
 					Events.SkillToggle:FireServer("NumberOne", true)
@@ -64,7 +100,7 @@ end)
 
 Auto:Toggle("Auto Spin",function(bool)
 	shared.ToggleSP=bool
-	
+
 	spawn(function()
 		while shared.ToggleSP do
 			pcall(function()
@@ -80,7 +116,7 @@ end)
 
 Auto:Toggle("Auto Rebirth",function(bool)
 	shared.ToggleAR=bool
-	
+
 	spawn(function()
 		while shared.ToggleAR do
 			pcall(function()
@@ -238,13 +274,13 @@ end)
 
 GamePassMenu:Button("Auto Clicker",function()
 	spawn(function()
-		Player.Data.AutoClick = true
+		Player.Data.AutoClick.Value = true
 	end)
 end)
 
 GamePassMenu:Button("Auto Rebirth",function()
 	spawn(function()
-		Player.Data.AutoRebirth = true
+		Player.Data.AutoRebirth.Value = true
 	end)
 end)
 
