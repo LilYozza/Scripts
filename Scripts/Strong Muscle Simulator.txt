@@ -1,7 +1,7 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
-local Events = game:GetService("ReplicatedStorage").Events
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
@@ -15,6 +15,8 @@ local Other = w:CreateFolder("Other")
 
 --[[	TODO
 
+--Fix Auto Boss (Testing)
+--Auto Gift
 
 ]]--
 
@@ -26,6 +28,11 @@ local _reqTraining3 = 100000000000000	--Moon Stage
 -->Base Variables<--
 local isCheck = false
 local IdleTimeOut = 10
+local _current
+local _sleepFunction
+
+local Events = ReplicatedStorage:WaitForChild("Events")
+local BOSS = ReplicatedStorage:WaitForChild("BOSS")
 
 local Spawns = workspace:WaitForChild("Spawns")
 local SafeZones = workspace:WaitForChild("ScriptSabitleri")
@@ -35,6 +42,12 @@ local DailyChest = workspace.Oduller:WaitForChild("DailyChest")
 local GemChest = workspace.Oduller:WaitForChild("GemReward")
 local VIPChest = workspace.Oduller:WaitForChild("VIPReward")
 local WINChest = workspace.Oduller:WaitForChild("WINReward")
+
+-->Tables<--
+local BossTbl = {}
+
+-->Getting Data<--
+for _,v in pairs(BOSS:GetChildren())do table.insert(BossTbl, v.Name)end
 
 -->Non Return Functions<--
 
@@ -46,6 +59,18 @@ local function IdleChecker(_instance, _timeout)
 	local _oldValue = _instance.Value
 	task.wait(_timeout)
 	if _oldValue == _instance.Value then
+		return true
+	else
+		return false
+	end
+
+end
+
+local function HealthChecker(_instance, _timeout)
+	print(_instance.Health)
+	local _oldValue = _instance.Health
+	task.wait(_timeout)
+	if _oldValue == _instance.Health then
 		return true
 	else
 		return false
@@ -65,34 +90,36 @@ Auto:Toggle("Auto Weight",function(bool)
 	spawn(function()
 		while shared.ToggleAW do
 			pcall(function()
-				local _tool = Player.Data.Weight.Value
-				local _toolToggle = Player.PlayerGui.Main.Bottom.NumberOne.Toggled
+				if not _sleepFunction then
+					local _tool = Player.Data.Weight.Value
+					local _toolToggle = Player.PlayerGui.Main.Bottom.NumberOne.Toggled
 
-				--IDLE CHECKER
-				if isCheck == false then
-					isCheck = true
-					spawn(function()
-						local _chk = IdleChecker(Player.leaderstats.Muscle, IdleTimeOut)
-						if _chk == true then
-							print("Idle...")
-							_toolToggle.Value = false
-							MoveTo(SafeZones:WaitForChild("Training"))
-						end
-						isCheck = false
-					end)
+					--IDLE CHECKER
+					if isCheck == false then
+						isCheck = true
+						spawn(function()
+							local _chk = IdleChecker(Player.leaderstats.Muscle, IdleTimeOut)
+							if _chk == true then
+								print("Weight Lift Idle...")
+								_toolToggle.Value = false
+								if shared.ToggleTZ and _current then MoveTo(SafeZones:FindFirstChild(_current)) end
+							end
+							isCheck = false
+						end)
 
-				end
+					end
 
-				if _toolToggle.Value == false then
-					Events.SkillToggle:FireServer("NumberOne", true)
-					keypress("0x31") task.wait(0.3)
-					keyrelease("0x31")
-					_toolToggle.Value = true
-					task.wait(0.5)
-				end
+					if _toolToggle.Value == false then
+						Events.SkillToggle:FireServer("NumberOne", true)
+						keypress("0x31") task.wait(0.3)
+						keyrelease("0x31")
+						_toolToggle.Value = true
+						task.wait(0.5)
+					end
 
-				if _tool then
-					Events.Weight:FireServer(_tool)
+					if _tool then
+						Events.Weight:FireServer(_tool)
+					end
 				end
 
 			end)
@@ -101,30 +128,37 @@ Auto:Toggle("Auto Weight",function(bool)
 	end)
 end)
 
+
 Auto:Toggle("Training Zones",function(bool)
 	shared.ToggleTZ=bool
 	spawn(function()
-		local _current
+		if not shared.ToggleTZ then _current = nil end
 		while shared.ToggleTZ do
 			pcall(function()
 				local _currentMuscle = Player.leaderstats.Muscle.Value
-
-				if _currentMuscle < _reqTraining2 and _current ~= SafeZones:FindFirstChild("Training") then
+				local _isVip = Player.Data.VIP.Value
+				
+				if _currentMuscle < _reqTraining2 and _current ~= "Training" and _isVip == false then
 					--Teleport to Training1
-					_current = SafeZones:FindFirstChild("Training")
-					MoveTo(_current)
+					_current = "Training"
+					MoveTo(SafeZones:FindFirstChild(_current))
+					
+				elseif _currentMuscle < _reqTraining2 and _current ~= "VIP" and _isVip == true  then
+					_current = "VIP"
+					MoveTo(SafeZones:FindFirstChild(_current))
+				
 				end
 
-				if _currentMuscle >= _reqTraining2 and _currentMuscle < _reqTraining3 and _current ~= SafeZones:FindFirstChild("Training2") then
+				if _currentMuscle >= _reqTraining2 and _currentMuscle < _reqTraining3 and _current ~= "Training2" then
 					--Teleport To Training2
-					_current = SafeZones:FindFirstChild("Training2")
-					MoveTo(_current)
+					_current = "Training2"
+					MoveTo(SafeZones:FindFirstChild(_current))
 				end
 
-				if _currentMuscle >= _reqTraining3 and _current ~= SafeZones:FindFirstChild("Training3") then
+				if _currentMuscle >= _reqTraining3 and _current ~= "Training3" then
 					--Teleport To Training3
-					_current = SafeZones:FindFirstChild("Training3")
-					MoveTo(_current)
+					_current = "Training3"
+					MoveTo(SafeZones:FindFirstChild(_current))
 				end
 				--Check if Under Candy and Moon
 			end)
@@ -150,15 +184,45 @@ Auto:Toggle("Auto Spin",function(bool)
 	end)
 end)
 
+Auto:Toggle("Auto Gift",function(bool)
+	shared.ToggleAG=bool
+	spawn(function()
+		while shared.ToggleAG do
+			pcall(function()
+				local GiftInv = Player.PlayerGui.Main.Frames.freegiftframe.Inventory
+				if GiftInv then
+					for _,v in pairs(GiftInv:GetChildren())do
+						local _timer = v:FindFirstChild("Money")
+						local _tick = v:FindFirstChild("tick")
+						if _timer and _tick and _timer.Text == "Claim!" and not _tick.Visible then
+							--Claim wait 0.5 sec
+							Events.FreeGift:FireServer(v.Name)
+							task.wait(0.5)
+						end
+					end
+				end
+			end)
+			task.wait(1)
+		end
+	end)
+end)
+
 local _punch
+local _isToggled = false
+local _isCheck2 = false
 Auto:Toggle("Auto Boss",function(bool)
 	shared.ToggleAB=bool
 
 	spawn(function()
 		while shared.ToggleAB do
-			pcall(function()
-				local _boss = workspace:FindFirstChild("Epic") or  workspace:FindFirstChild("God")
+			local s,e = pcall(function()
+				local _boss 
 				
+				for _,v in pairs(BossTbl)do
+					_boss = workspace:FindFirstChild(v)
+					if _boss then break end
+				end
+
 				if _boss then
 					local _bhrp = _boss:FindFirstChild("HumanoidRootPart")
 					local _bhum = _boss:FindFirstChild("Humanoid")
@@ -170,7 +234,34 @@ Auto:Toggle("Auto Boss",function(bool)
 						--Teleport to boss
 						--Attack
 						local _toolToggle = Player.PlayerGui.Main.Bottom.NumberTwo.Toggled
-						_bhrp.CFrame = CFrame.new(_hrp.Position + _hrp.CFrame.LookVector * 3)
+						--_bhrp.CFrame = CFrame.new(_hrp.Position + _hrp.CFrame.LookVector * 2) -- BOSS TO PLAYER
+						_hrp.CFrame = CFrame.new(_bhrp.Position + _bhrp.CFrame.LookVector * 2) -- PLAYER TO BOSS
+						
+						--IDLE CHECKER
+						if _isCheck2 == false then
+							_isCheck2 = true
+							spawn(function()
+								local _chk = HealthChecker(_bhum, IdleTimeOut)
+								if _chk == true then
+									print("Boss Idle...")
+									_toolToggle.Value = false
+								end
+								_isCheck2 = false
+							end)
+
+						end
+						
+						--Toggle Auto Weight Off until boss is dead
+						if not _isToggled and shared.ToggleAW then
+							_isToggled = true
+							spawn(function()
+								_sleepFunction = true
+								repeat task.wait() until not _bhum or _bhum.Health <= 0 or not _bhrp or not shared.ToggleAB task.wait(0.5)
+								_isToggled = false
+								if shared.ToggleTZ and _current then MoveTo(SafeZones:FindFirstChild(_current)) end
+								_sleepFunction = false
+							end)
+						end
 						
 						if _toolToggle.Value == false then
 							Events.SkillToggle:FireServer("NumberTwo", true)
@@ -186,12 +277,13 @@ Auto:Toggle("Auto Boss",function(bool)
 							_punch = "Right"
 						end
 						
+						
 						if _punch then
-							game:GetService("ReplicatedStorage").Skills.CombatFolder.RemoteEvent:FireServer(_punch)
+							game:GetService("ReplicatedStorage").Skills.CombatFolder.RemoteEvent:FireServer(_punch) task.wait()
 						end
 					end
 				end
-			end)
+			end) if not s then print(e)end
 			task.wait()
 		end
 	end)
