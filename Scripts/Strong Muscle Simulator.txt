@@ -121,7 +121,7 @@ Auto:Toggle("Training Zones",function(bool)
 					MoveTo(_current)
 				end
 
-				if _currentMuscle >= _reqTraining3 and _current ~= SafeZones:FindFirstChild("Training2") then
+				if _currentMuscle >= _reqTraining3 and _current ~= SafeZones:FindFirstChild("Training3") then
 					--Teleport To Training3
 					_current = SafeZones:FindFirstChild("Training3")
 					MoveTo(_current)
@@ -157,7 +157,7 @@ Auto:Toggle("Auto Boss",function(bool)
 	spawn(function()
 		while shared.ToggleAB do
 			pcall(function()
-				local _boss = workspace:FindFirstChild("Epic")
+				local _boss = workspace:FindFirstChild("Epic") or  workspace:FindFirstChild("God")
 				
 				if _boss then
 					local _bhrp = _boss:FindFirstChild("HumanoidRootPart")
