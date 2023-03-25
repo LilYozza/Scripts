@@ -8,14 +8,13 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 local PotionMenu = w:CreateFolder("Potions")
 local ChestMenu = w:CreateFolder("Chest")
+local EggMenu = w:CreateFolder("Eggs")
 local TeleportMenu = w:CreateFolder("Teleports")
 local GamePassMenu = w:CreateFolder("GamePasses")
 local Other = w:CreateFolder("Other")
 
 --[[	TODO
 
---Pets
---Unlock All Zones
 
 ]]--
 
@@ -30,6 +29,7 @@ local IdleTimeOut = 10
 
 local Spawns = workspace:WaitForChild("Spawns")
 local SafeZones = workspace:WaitForChild("ScriptSabitleri")
+local Eggs = workspace:WaitForChild("Eggs")
 
 local DailyChest = workspace.Oduller:WaitForChild("DailyChest")
 local GemChest = workspace.Oduller:WaitForChild("GemReward")
@@ -108,19 +108,19 @@ Auto:Toggle("Training Zones",function(bool)
 		while shared.ToggleTZ do
 			pcall(function()
 				local _currentMuscle = Player.leaderstats.Muscle.Value
-				
+
 				if _currentMuscle < _reqTraining2 and _current ~= SafeZones:FindFirstChild("Training") then
 					--Teleport to Training1
 					_current = SafeZones:FindFirstChild("Training")
 					MoveTo(_current)
 				end
-				
+
 				if _currentMuscle >= _reqTraining2 and _currentMuscle < _reqTraining3 and _current ~= SafeZones:FindFirstChild("Training2") then
 					--Teleport To Training2
 					_current = SafeZones:FindFirstChild("Training2")
 					MoveTo(_current)
 				end
-				
+
 				if _currentMuscle >= _reqTraining3 and _current ~= SafeZones:FindFirstChild("Training2") then
 					--Teleport To Training3
 					_current = SafeZones:FindFirstChild("Training3")
@@ -146,6 +146,53 @@ Auto:Toggle("Auto Spin",function(bool)
 				end
 			end)
 			task.wait(1)
+		end
+	end)
+end)
+
+local _punch
+Auto:Toggle("Auto Boss",function(bool)
+	shared.ToggleAB=bool
+
+	spawn(function()
+		while shared.ToggleAB do
+			pcall(function()
+				local _boss = workspace:FindFirstChild("Epic")
+				
+				if _boss then
+					local _bhrp = _boss:FindFirstChild("HumanoidRootPart")
+					local _bhum = _boss:FindFirstChild("Humanoid")
+					
+					local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+					local _hum = Player.Character:FindFirstChild("Humanoid")
+					
+					if _bhrp and _hrp then
+						--Teleport to boss
+						--Attack
+						local _toolToggle = Player.PlayerGui.Main.Bottom.NumberTwo.Toggled
+						_bhrp.CFrame = CFrame.new(_hrp.Position + _hrp.CFrame.LookVector * 3)
+						
+						if _toolToggle.Value == false then
+							Events.SkillToggle:FireServer("NumberTwo", true)
+							keypress("0x32") task.wait(0.5)
+							keyrelease("0x32")
+							_toolToggle.Value = true
+							task.wait(0.5)
+						end
+						
+						if not _punch or _punch == "Right" then
+							_punch = "Left"
+						elseif _punch == "Left" then
+							_punch = "Right"
+						end
+						
+						if _punch then
+							game:GetService("ReplicatedStorage").Skills.CombatFolder.RemoteEvent:FireServer(_punch)
+						end
+					end
+				end
+			end)
+			task.wait()
 		end
 	end)
 end)
@@ -224,6 +271,79 @@ ChestMenu:Toggle("Vip Chest",function(bool)
 		end
 	end)
 end)
+
+local PetCon
+EggMenu:Toggle("Equip best",function(bool)
+	shared.Toggle_EB = bool
+	spawn(function()
+		pcall(function()
+			if shared.Toggle_EB then
+				Events.PetAction:InvokeServer("Equip Best")
+				PetCon = Player.Pets.ChildAdded:Connect(function(_pet)
+					repeat task.wait() until _pet or not shared.Toggle_EB
+					Events.PetAction:InvokeServer("Equip Best")
+				end)
+			else
+				if PetCon then PetCon:Disconnect() end
+			end
+		end)
+	end)
+end)
+
+EggMenu:Toggle("Craft All",function(bool)
+	shared.Toggle_CA = bool
+	spawn(function()
+		while shared.Toggle_CA do
+			pcall(function()
+				Events.PetAction:InvokeServer("Craft All")
+			end)
+			task.wait(1)
+		end
+	end)
+end)
+
+
+local Dropegg1 = EggMenu:Dropdown("Select Egg",Eggs:GetChildren(),true,function(SItem)
+	shared.EggSelect = SItem
+end)
+
+EggMenu:Toggle("Egg x1",function(bool)
+	shared.Toggle_E1 = bool
+	spawn(function()
+		while shared.Toggle_E1 do
+			local s,e = pcall(function()
+				if shared.EggSelect then Events.HatchEgg:InvokeServer(shared.EggSelect, 1) end
+			end) if not s then print(e)end
+			task.wait(0.1)
+		end
+	end)
+end)
+
+EggMenu:Toggle("Egg x2",function(bool)
+	shared.Toggle_E2 = bool
+	spawn(function()
+		while shared.Toggle_E2 do
+			pcall(function()
+				if shared.EggSelect then Events.HatchEgg:InvokeServer(shared.EggSelect, 2) end
+			end)
+			task.wait(0.1)
+		end
+	end)
+end)
+
+EggMenu:Toggle("Egg x3",function(bool)
+	shared.Toggle_E3 = bool
+	spawn(function()
+		while shared.Toggle_E3 do
+			pcall(function()
+				if shared.EggSelect then Events.HatchEgg:InvokeServer(shared.EggSelect, 3) end
+			end)
+			task.wait(0.1)
+		end
+	end)
+end)
+
+
 
 shared.SpawnSelect = Spawns:WaitForChild("Spawn")
 local DropList1 = TeleportMenu:Dropdown("Spawn",Spawns:GetChildren(),true,function(SItem)
@@ -317,6 +437,19 @@ end)
 GamePassMenu:Button("Auto Rebirth",function()
 	spawn(function()
 		Player.Data.AutoRebirth.Value = true
+	end)
+end)
+
+GamePassMenu:Button("Unlock Stages",function()
+	spawn(function()
+		local _Zones = Player:WaitForChild("Zones")
+		if _Zones then
+			for _,v in pairs(_Zones:GetChildren()) do
+				if v.Value == false then
+					v.Value = true
+				end
+			end
+		end
 	end)
 end)
 
