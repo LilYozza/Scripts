@@ -137,16 +137,16 @@ Auto:Toggle("Training Zones",function(bool)
 			pcall(function()
 				local _currentMuscle = Player.leaderstats.Muscle.Value
 				local _isVip = Player.Data.VIP.Value
-				
+
 				if _currentMuscle < _reqTraining2 and _current ~= "Training" and _isVip == false then
 					--Teleport to Training1
 					_current = "Training"
 					MoveTo(SafeZones:FindFirstChild(_current))
-					
+
 				elseif _currentMuscle < _reqTraining2 and _current ~= "VIP" and _isVip == true  then
 					_current = "VIP"
 					MoveTo(SafeZones:FindFirstChild(_current))
-				
+
 				end
 
 				if _currentMuscle >= _reqTraining2 and _currentMuscle < _reqTraining3 and _current ~= "Training2" then
@@ -217,7 +217,7 @@ Auto:Toggle("Auto Boss",function(bool)
 		while shared.ToggleAB do
 			local s,e = pcall(function()
 				local _boss 
-				
+
 				for _,v in pairs(BossTbl)do
 					_boss = workspace:FindFirstChild(v)
 					if _boss then break end
@@ -226,19 +226,19 @@ Auto:Toggle("Auto Boss",function(bool)
 				if _boss then
 					local _bhrp = _boss:FindFirstChild("HumanoidRootPart")
 					local _bhum = _boss:FindFirstChild("Humanoid")
-					
+
 					local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
 					local _hum = Player.Character:FindFirstChild("Humanoid")
-					
+
 					if _bhrp and _hrp then
 						--Teleport to boss
 						--Attack
 						local _toolToggle = Player.PlayerGui.Main.Bottom.NumberTwo.Toggled
 						--_bhrp.CFrame = CFrame.new(_hrp.Position + _hrp.CFrame.LookVector * 2) -- BOSS TO PLAYER
 						_hrp.CFrame = CFrame.new(_bhrp.Position + _bhrp.CFrame.LookVector * 2) -- PLAYER TO BOSS
-						
+
 						--IDLE CHECKER
-						if _isCheck2 == false then
+						if not _isCheck2 then
 							_isCheck2 = true
 							spawn(function()
 								local _chk = HealthChecker(_bhum, IdleTimeOut)
@@ -250,36 +250,35 @@ Auto:Toggle("Auto Boss",function(bool)
 							end)
 
 						end
-						
+
 						--Toggle Auto Weight Off until boss is dead
 						if not _isToggled and shared.ToggleAW then
 							_isToggled = true
 							spawn(function()
-								_sleepFunction = true
-								repeat task.wait() until not _bhum or _bhum.Health <= 0 or not _bhrp or not shared.ToggleAB task.wait(0.5)
+								_sleepFunction = true task.wait(1)
+								repeat task.wait() until not _bhum or _bhum.Health <= 0 or not shared.ToggleAB task.wait(0.5)
 								_isToggled = false
 								if shared.ToggleTZ and _current then MoveTo(SafeZones:FindFirstChild(_current)) end
 								_sleepFunction = false
 							end)
 						end
-						
+
 						if _toolToggle.Value == false then
 							Events.SkillToggle:FireServer("NumberTwo", true)
 							keypress("0x32") task.wait(0.5)
 							keyrelease("0x32")
-							_toolToggle.Value = true
 							task.wait(0.5)
 						end
-						
+
 						if not _punch or _punch == "Right" then
 							_punch = "Left"
 						elseif _punch == "Left" then
 							_punch = "Right"
 						end
-						
-						
+
+
 						if _punch then
-							game:GetService("ReplicatedStorage").Skills.CombatFolder.RemoteEvent:FireServer(_punch) task.wait()
+							ReplicatedStorage.Skills.CombatFolder.RemoteEvent:FireServer(_punch) task.wait(0.1)
 						end
 					end
 				end
