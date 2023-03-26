@@ -20,12 +20,12 @@ local EventMenu = w:CreateFolder("Events")
 local KillTool = "Katana"
 
 -->Temp CFrames (Capture Points Load in)<--
+local AirDrop_C = CFrame.new(43.1323357, 91.8282928, 48.0653687, 0.346148193, -8.92082213e-08, 0.938179851, 7.30415408e-08, 1, 6.81372825e-08, -0.938179851, 4.49405064e-08, 0.346148193)
 local LoadInPoints_ISLAND = {
 	CFrame.new(1182.5, 119.446434, 3125.50024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
 	CFrame.new(-2606.5, 119.181107, 2164.50024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
 	CFrame.new(3177.5, 119.23465, -117.499756, 1, 0, 0, 0, 1, 0, 0, 0, 1)
 }
-
 local LoadInPoints_Fortress = {
 	CFrame.new(336.428101, 114.087624, 1028.51282, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247),
 	CFrame.new(954.013916, 117.676262, -709.658752, 0.707134247, -0, -0.707079291, 0, 1, -0, 0.707079291, 0, 0.707134247),
@@ -335,7 +335,31 @@ Auto:Toggle("Air Drop", function(bool)
 	spawn(function()
 		while shared.ToggleAD do 
 			local s,e=pcall(function()
-				
+				local _Crate = workspace:FindFirstChild("Crate")
+				if _Crate then
+					--Move Player to crate
+					local _hitBox = _Crate:FindFirstChild("Hitbox")
+					if _hitBox then
+						local _pCheck
+						for __,player in pairs(Players:GetPlayers())do
+							local _hrp = player.Character:FindFirstChild("HumanoidRootPart")
+							if _hrp then
+								local _dis = GetDistance(_hrp, _hitBox)
+								if _dis and _dis <= 500 then 
+									_pCheck = true break
+								end
+							end
+						end
+						if not _pCheck then
+							local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+							if _hrp then
+								local _OldPos = _hrp.CFrame
+								repeat _hrp.CFrame = AirDrop_C task.wait() until not _hrp or not shared.ToggleAD or not _hitBox or not _Crate
+								_hrp.CFrame = _OldPos
+							end
+						end
+					end
+				end
 			end) 
 			task.wait()
 		end
