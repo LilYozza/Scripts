@@ -1,47 +1,105 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local mouse = Player:GetMouse()
+
+
 local Auto = w:CreateFolder("Auto")
+local VaultMenu = w:CreateFolder("Vault")
 local EventMenu = w:CreateFolder("Events")
 
--->Base Variables<--
+--[[	TODO
+
+--Auto AirDrop 
+
+]]
+
+-->Dynamic Variables<--
 local KillTool = "Katana"
 
-local AssassianEvent = true --< Dont leave this
+-->Temp CFrames (Capture Points Load in)<--
+local LoadInPoints_ISLAND = {
+	CFrame.new(1182.5, 119.446434, 3125.50024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+	CFrame.new(-2606.5, 119.181107, 2164.50024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+	CFrame.new(3177.5, 119.23465, -117.499756, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
 
-local InstantEnabled = false
-local Player = game.Players.LocalPlayer
-local mouse = game.Players.LocalPlayer:GetMouse()
-local PlayerTycoons = Workspace:FindFirstChild("PlayerTycoons")
+local LoadInPoints_Fortress = {
+	CFrame.new(336.428101, 114.087624, 1028.51282, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247),
+	CFrame.new(954.013916, 117.676262, -709.658752, 0.707134247, -0, -0.707079291, 0, 1, -0, 0.707079291, 0, 0.707134247),
+	CFrame.new(-942.572021, 120.622002, 204.513, -0.707134247, 0, 0.707079291, 0, 1, 0, -0.707079291, 0, -0.707134247)
+}
 
+-->Temp Values<--
+local AssassianEvent = false --< Dont leave this
+
+-->Base Variables<--
+local Tycoon
+local PlayerTycoons = workspace:WaitForChild("PlayerTycoons")
+local ControlPoints = workspace:WaitForChild("ControlPoints")
+
+-->CurrencyAssets<--
+local _CashID = "rbxassetid://9720034073"
+local _DiamondID = "rbxassetid://11300462512"
+
+-->Getting Data<--
+local function GetTycoon()
+	for _,v in pairs(PlayerTycoons:GetChildren())do
+		local _TycoonVals = v:FindFirstChild("TycoonVals")
+		if _TycoonVals then
+			if _TycoonVals.Owner.value == Player then Tycoon = v end
+		end
+	end
+end GetTycoon()
+
+repeat GetTycoon() task.wait() until Tycoon
+
+--Post Variables<--
+local Essentials = Tycoon:WaitForChild("Essentials")
+local Buttons = Tycoon:WaitForChild("Buttons")
+local TycoonVals = Tycoon:WaitForChild("TycoonVals")
+
+local Giver = Essentials:WaitForChild("Giver")
+
+-->Player Variables<--
+local PlayingScene = Player.PlayerGui:WaitForChild("PlayingScene")
+local Money = PlayingScene:WaitForChild("Money")
+local CashToCollect = TycoonVals:WaitForChild("CashCollect")
+
+local PlayerCash = Money.Cash.Meter
+local PlayerDiamonds = Money.Diamonds.Meter
 
 local function GetAncestors(obj)
-    local parent = obj.Parent
-    while (parent) do
-	    parent = parent.Parent
-	    if parent and parent:IsA("BasePart") then return parent end
-    end
+	local parent = obj.Parent
+	while (parent) do
+		parent = parent.Parent
+		if parent and parent:IsA("BasePart") then return parent end
+	end
 end
 
 
 local function GetDistanceFromPlayer(part)
-    local newPart = GetAncestors(part)
-    if not newPart then return 999 end
-    return (newPart.Position - Player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+	local newPart = GetAncestors(part)
+	if not newPart then return 999 end
+	return (newPart.Position - Player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
 end
 
 local function FireClosesPrompts()
-    for _,v in pairs(PlayerTycoons:GetDescendants()) do
-        if v:IsA("ProximityPrompt") and GetDistanceFromPlayer(v) <= 20 then
-            fireproximityprompt(v)
-        end
-    end
+	for _,v in pairs(PlayerTycoons:GetDescendants()) do
+		if v:IsA("ProximityPrompt") and GetDistanceFromPlayer(v) <= 20 then
+			fireproximityprompt(v)
+		end
+	end
 end
 
 local function ChangePartColor(part, color)
-    for _,v in pairs(part:GetDescendants())do
-        if v:IsA("BasePart") and v.Name == "Laser" then
-            v.BrickColor = color
-        end
-    end
+	for _,v in pairs(part:GetDescendants())do
+		if v:IsA("BasePart") and v.Name == "Laser" then
+			v.BrickColor = color
+		end
+	end
 end
 
 local function CreateTextLabel(parent, color, text)
@@ -62,9 +120,9 @@ end
 
 
 local function CreateTag(part, color, text)
-    	-- Creates BillBoard --
-    local p = part:FindFirstChild("PlayerTag")
-    if p then p:Destroy() end
+	-- Creates BillBoard --
+	local p = part:FindFirstChild("PlayerTag")
+	if p then p:Destroy() end
 	local newBillBoard = Instance.new("BillboardGui")
 	-- Data --
 	newBillBoard.Name = "PlayerTag"
@@ -72,119 +130,288 @@ local function CreateTag(part, color, text)
 	newBillBoard.AlwaysOnTop = true
 	newBillBoard.Size = UDim2.new(0, 250,0, 100)
 	newBillBoard.ExtentsOffset = Vector3.new(0,3,0)
-	
+
 	CreateTextLabel(newBillBoard, color, text)
-	
+
 end
 
 local function DisplayVaultTags()
-    for _,v in pairs(PlayerTycoons:GetChildren())do
-        local Unlocks = v:FindFirstChild("Unlocks")
-        if Unlocks then
-            local VaultRoom1 = Unlocks:FindFirstChild("VaultRoom1")
-            if VaultRoom1 then
-                local Cooldown = VaultRoom1:FindFirstChild("Cooldown")
-                if Cooldown then
-                    local timer = Cooldown:FindFirstChild("SurfaceGui").Frame.Time.text
-                    if timer then
-                        if timer == "READY" then
-                            CreateTag(Cooldown, Color3.fromRGB(0,255,255), "Ready")
-                        else
-                            CreateTag(Cooldown, Color3.fromRGB(255,0,255), timer)
-                        end
-                    else
-                        local p = Cooldown:FindFirstChild("PlayerTag")
-                        if p then p:Destroy() end
-                    end
-                end
-            end
-        end
-    end
+	for _,v in pairs(PlayerTycoons:GetChildren())do
+		local Unlocks = v:FindFirstChild("Unlocks")
+		if Unlocks then
+			local VaultRoom1 = Unlocks:FindFirstChild("VaultRoom1")
+			if VaultRoom1 then
+				local Cooldown = VaultRoom1:FindFirstChild("Cooldown")
+				if Cooldown then
+					local timer = Cooldown:FindFirstChild("SurfaceGui").Frame.Time.text
+					if timer then
+						if timer == "READY" then
+							CreateTag(Cooldown, Color3.fromRGB(0,255,255), "Ready")
+						else
+							CreateTag(Cooldown, Color3.fromRGB(255,0,255), timer)
+						end
+					else
+						local p = Cooldown:FindFirstChild("PlayerTag")
+						if p then p:Destroy() end
+					end
+				end
+			end
+		end
+	end
+end
+
+local function Collect()
+	local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+	if _hrp then
+		local _oldPos = _hrp.CFrame
+		MoveTo(Giver.CollectButton)task.wait(0.5)
+		Touch(Giver.CollectButton)
+		_hrp.CFrame = _oldPos
+	end
 end
 
 local function LasersDontKill()
-    for _,v in pairs(PlayerTycoons:GetDescendants())do
-        if v.Name == "Door" and v.Parent.Name == "Target" then
-            local TI = v:FindFirstChild("TouchInterest")
-            if TI then TI:Destroy()end
-            ChangePartColor(v.Parent, BrickColor.new("Lime green"))
-        end
-    end
+	for _,v in pairs(PlayerTycoons:GetDescendants())do
+		if v.Name == "Door" and v.Parent.Name == "Target" then
+			local TI = v:FindFirstChild("TouchInterest")
+			if TI then TI:Destroy()end
+			ChangePartColor(v.Parent, BrickColor.new("Lime green"))
+		end
+	end
 end
 
 local function RemoveTags()
-    for _,v in pairs(PlayerTycoons:GetDescendants())do
-        if v.Name == "PlayerTag" then
-            v:Destroy()
-        end
-    end
+	for _,v in pairs(PlayerTycoons:GetDescendants())do
+		if v.Name == "PlayerTag" then
+			v:Destroy()
+		end
+	end
 end
 
-Auto:Toggle("Vault Status", function(bool)
-    shared.Toggle=bool
-    spawn(function()
-        while shared.Toggle do 
-            local s,e=pcall(function()
-                DisplayVaultTags()
-                task.wait(1)
-            end) 
-        task.wait()
-        end
-        if not shared.Toggle then RemoveTags() end
-    end)
+local function GetDistance(p1, p2)
+	return (p1.Position - p2.Position).Magnitude
+end
+
+local function GetClosestFlag()
+	local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+	for _,v in pairs(ControlPoints:GetChildren())do
+		local _hitBox = v:FindFirstChild("Hitbox")
+		if _hitBox then
+			local _dis = GetDistance(_hitBox, _hrp)
+			if _dis and _dis <= 10 then
+				return v
+			end
+		end
+	end
+end
+
+Auto:Toggle("Auto Collect", function(bool)
+	shared.ToggleAC=bool
+	spawn(function()
+		while shared.ToggleAC do pcall(Collect)task.wait(1)end
+	end)
+end)
+
+Auto:Toggle("Smart Collect", function(bool)
+	shared.Toggle_SmartCollect=bool
+end)
+
+Auto:Toggle("Cash Buy", function(bool)
+	shared.ToggleAB=bool
+	spawn(function()
+		while shared.ToggleAB do 
+			local s,e=pcall(function()
+				for _,v in pairs(Buttons:GetChildren())do
+					local _btn = v:FindFirstChild("Button")
+					if _btn and _btn.Transparency == 0 then
+						local _Currency = _btn.BillboardGui.Frame.Currency
+						local _price = fromSuffixString(_btn.BillboardGui.Frame.Price.Text)
+						if _price and _Currency and _Currency.Image == _CashID then
+							if shared.Toggle_SmartCollect and fromSuffixString(PlayerCash.Text) + CashToCollect.Value >= _price then
+								Collect() task.wait(0.1)
+							end 
+							if fromSuffixString(PlayerCash.Text) >= _price then
+								Touch(_btn) task.wait(0.1)
+							end
+							
+						end
+					end
+				end
+			end)if not s then print(e)end
+			task.wait()
+		end
+	end)
+end)
+
+Auto:Toggle("Gem Buy", function(bool)
+	shared.ToggleGB=bool
+	spawn(function()
+		while shared.ToggleGB do 
+			local s,e=pcall(function()
+				for _,v in pairs(Buttons:GetChildren())do
+					local _btn = v:FindFirstChild("Button")
+					if _btn and _btn.Transparency == 0 then
+						local _Currency = _btn.BillboardGui.Frame.Currency
+						local _price = fromSuffixString(_btn.BillboardGui.Frame.Price.Text)
+						if _price and _Currency and _Currency.Image == _DiamondID then
+							if fromSuffixString(PlayerCash.Text) >= _price then
+								Touch(_btn) task.wait(0.1)
+							end
+
+						end
+					end
+				end
+			end)if not s then print(e)end
+			task.wait()
+		end
+	end)
+end)
+
+Auto:Toggle("Auto Rebirth", function(bool)
+	shared.ToggleAR=bool
+	spawn(function()
+		while shared.ToggleAR do 
+			local s,e=pcall(function()
+				local _Percent = PlayingScene.BottomMenu.LevelBar.Holder:FindFirstChild("Percent")
+				if _Percent and _Percent.Text == "REBIRTH" then
+					ReplicatedStorage.LocalRebirth:FireServer()
+				end
+			end) if not s then print(e)end
+			task.wait(1)
+		end
+	end)
+end)
+
+Auto:Toggle("Control Points", function(bool)
+	shared.ToggleCP=bool
+	spawn(function()
+		while shared.ToggleCP do 
+			local s,e=pcall(function()
+				for _,v in pairs(ControlPoints:GetChildren())do
+					local _hitBox = v:FindFirstChild("Hitbox")
+					local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+					if _hitBox then
+						local _Owner = _hitBox.Owner
+						if _Owner.Value ~= Player and _hrp then
+							--Move To Area
+							--Maybe Change Hitbox Size
+							_hitBox.CanCollide = true
+							local _OldPos = _hrp.CFrame
+							repeat _hrp.CFrame = _hitBox.CFrame task.wait() until _Owner.Value == Player or not _hrp or not shared.ToggleCP
+							_hrp.CFrame = _OldPos
+						end
+					else
+						--Load In Areas
+						local _tbl
+						local _OldPos = _hrp.CFrame
+						if v.Name == "ISLAND" then _tbl = LoadInPoints_ISLAND end
+						if v.Name == "Fortress" then _tbl = LoadInPoints_Fortress end
+						if _tbl and _hrp then
+							for _,_v in pairs(_tbl)do
+								local _Chk
+								
+								repeat _hrp.CFrame = _v task.wait() 
+									local _Flag = GetClosestFlag()
+									if _Flag then
+										local _hitBox = _Flag:FindFirstChild("Hitbox")
+										if _hitBox and _hitBox.Owner.Value == Player then
+											_Chk = true
+										end
+									end
+								until not _hrp or not shared.ToggleCP or _Chk
+								
+							end
+						end _hrp.CFrame = _OldPos
+					end
+				end
+			end) if not s then print(e)end
+			task.wait(1)
+		end
+	end)
+end)
+
+Auto:Toggle("Air Drop", function(bool)
+	shared.ToggleAD=bool
+	spawn(function()
+		while shared.ToggleAD do 
+			local s,e=pcall(function()
+				
+			end) 
+			task.wait()
+		end
+	end)
+end)
+
+VaultMenu:Toggle("Vault Status", function(bool)
+	shared.Toggle=bool
+	spawn(function()
+		while shared.Toggle do 
+			local s,e=pcall(function()
+				DisplayVaultTags()
+				task.wait(1)
+			end) 
+			task.wait()
+		end
+		if not shared.Toggle then RemoveTags() end
+	end)
+end)
+
+local _KeyCon
+VaultMenu:Toggle("Instant E", function(bool)
+	shared.Toggle1 = bool
+	spawn(function()
+		if shared.Toggle1 then
+			_KeyCon = mouse.KeyDown:connect(function(k)
+				--Check if "e" and theres a prompt close enough
+				if k:lower() == "e" then
+					FireClosesPrompts()
+				end
+			end)
+		else
+			if _KeyCon then _KeyCon:Disconnect() end
+		end
+	end)
+end)
+
+VaultMenu:Button("Safe Lasers", function()
+	LasersDontKill()
 end)
 
 if AssassianEvent then
-local CharacterFolder = Workspace:WaitForChild("Characters")
-    
-Auto:Toggle("Assassians",function(bool)
-    shared.ToggleE_A=bool
-    spawn(function()
-        
-        local _tool = Player.Backpack:FindFirstChildWhichIsA('Tool') or Player.Character:FindFirstChildWhichIsA('Tool')
-        if not Player.Character:FindFirstChildWhichIsA('Tool') then Player.Character:WaitForChild("Humanoid"):EquipTool(_tool) end
-        local _myhrp = Player.Character:WaitForChild("HumanoidRootPart")
-        
-        while shared.ToggleE_A do
-            pcall(function()
+	local CharacterFolder = workspace:WaitForChild("Characters")
 
-                
-                for _,v in pairs(CharacterFolder:GetChildren())do
-                    if v.Name == "Guard" and shared.ToggleE_A then
-                        
-                        local _hrp = v:FindFirstChild("HumanoidRootPart")
-                        local _hum = v:FindFirstChild("Humanoid")
-                        if _hrp and _myhrp and _hum and _hum.Health > 0 and _ <= 20 then
-                            if _tool and _tool.Name == KillTool then
-                                _hrp.CFrame = CFrame.new(_myhrp.Position + _myhrp.CFrame.LookVector * 3) 
-                                
-                            end
-                        end
-                    end
-                end
-                
-                _tool:Activate()
-            end)
-            task.wait()
-        end
-    end)
-end)
+	EventMenu:Toggle("Assassians",function(bool)
+		shared.ToggleE_A=bool
+		spawn(function()
+
+			local _tool = Player.Backpack:FindFirstChildWhichIsA('Tool') or Player.Character:FindFirstChildWhichIsA('Tool')
+			if not Player.Character:FindFirstChildWhichIsA('Tool') then Player.Character:WaitForChild("Humanoid"):EquipTool(_tool) end
+			local _myhrp = Player.Character:WaitForChild("HumanoidRootPart")
+
+			while shared.ToggleE_A do
+				pcall(function()
+
+
+					for _,v in pairs(CharacterFolder:GetChildren())do
+						if v.Name == "Guard" and shared.ToggleE_A then
+
+							local _hrp = v:FindFirstChild("HumanoidRootPart")
+							local _hum = v:FindFirstChild("Humanoid")
+							if _hrp and _myhrp and _hum and _hum.Health > 0 and _ <= 20 then
+								if _tool and _tool.Name == KillTool then
+									_hrp.CFrame = CFrame.new(_myhrp.Position + _myhrp.CFrame.LookVector * 3) 
+
+								end
+							end
+						end
+					end
+
+					_tool:Activate()
+				end)
+				task.wait()
+			end
+		end)
+	end)
 end
-
-mouse.KeyDown:connect(function(k)
-    --Check if "e" and theres a prompt close enough
-    if k:lower() == "e" and InstantEnabled then
-        FireClosesPrompts()
-    end
-end)
-
-Auto:Toggle("Instant E", function(bool)
-    shared.Toggle1 = bool
-    InstantEnabled =  shared.Toggle1
-end)
-
-Auto:Button("Safe Lasers", function()
-    LasersDontKill()
-end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
