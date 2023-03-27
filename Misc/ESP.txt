@@ -115,12 +115,12 @@ getgenv().ESPOn = function()
 	AllPlayerCon = Players.PlayerAdded:Connect(function(player)
 		--ON NEW CHARACTER FROM PLAYER
 		PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
-			local _head = char:FindFirstChild("Head")
+			local _head = char:WaitForChild("Head")
 			AddESP(player)
 		end)
 	end)
 	
-	workspace.ChildAdded:Connect(function(part)
+	workCon = workspace.ChildAdded:Connect(function(part)
 		if Players:FindFirstChild(part.Name) then
 			repeat task.wait()until part
 			local _char = part.Character
@@ -144,19 +144,24 @@ getgenv().ESPOn = function()
 	end)
 
 	for _,v in pairs(Players:GetPlayers())do
-		if v ~= Player then
-			PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char) 
-				local _head = char:FindFirstChild("Head")
+		spawn(function()
+			if v ~= Player then
+				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char) 
+					local _head = char:WaitForChild("Head")
+					AddESP(v)
+				end)
 				AddESP(v)
-			end)
-			AddESP(v)
-		end
+			end
+		end)
 	end
 
 	--RUN SERICE BIND
 	RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
 		for _,v in pairs(Players:GetPlayers())do
-			if v ~= Player then UpdateTag(v) end
+			if v ~= Player then 
+				AddESP(v)
+				UpdateTag(v) 
+			end
 		end
 	end)
 
@@ -164,7 +169,8 @@ end
 
 getgenv().ESPOff = function()
 	RunService:UnbindFromRenderStep("UpdateESP")
-
+	
+	if workCon then workCon:Disconnect() end
 	if AllPlayerCon then AllPlayerCon:Disconnect() end
 	if AllPlayerRemoveCon then AllPlayerRemoveCon:Disconnect() end
 
