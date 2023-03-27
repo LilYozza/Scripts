@@ -111,8 +111,7 @@ Auto:Toggle("Auto Weight",function(bool)
 
 					if _toolToggle.Value == false then
 						Events.SkillToggle:FireServer("NumberOne", true)
-						keypress("0x31") task.wait(0.3)
-						keyrelease("0x31")
+						SendKey("One")
 						_toolToggle.Value = true
 						task.wait(0.5)
 					end
@@ -195,9 +194,11 @@ Auto:Toggle("Auto Gift",function(bool)
 						local _timer = v:FindFirstChild("Money")
 						local _tick = v:FindFirstChild("tick")
 						if _timer and _tick and _timer.Text == "Claim!" and not _tick.Visible then
-							--Claim wait 0.5 sec
+							_sleepFunction = true
+							task.wait(0.5)
 							Events.FreeGift:FireServer(v.Name)
 							task.wait(0.5)
+							_sleepFunction = false
 						end
 					end
 				end
@@ -230,7 +231,7 @@ Auto:Toggle("Auto Boss",function(bool)
 					local _hrp = Player.Character:FindFirstChild("HumanoidRootPart")
 					local _hum = Player.Character:FindFirstChild("Humanoid")
 
-					if _bhrp and _hrp then
+					if _bhrp and _hrp and _bhum and _bhum.Health > 0 then
 						--Teleport to boss
 						--Attack
 						local _toolToggle = Player.PlayerGui.Main.Bottom.NumberTwo.Toggled
@@ -265,8 +266,7 @@ Auto:Toggle("Auto Boss",function(bool)
 
 						if _toolToggle.Value == false then
 							Events.SkillToggle:FireServer("NumberTwo", true)
-							keypress("0x32") task.wait(0.5)
-							keyrelease("0x32")
+							SendKey("Two")
 							task.wait(0.5)
 						end
 
