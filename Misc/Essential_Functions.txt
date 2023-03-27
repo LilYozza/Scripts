@@ -3,6 +3,7 @@
 -->Services<--
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
 -->Base Variables<--
 local Player = Players.LocalPlayer
@@ -155,6 +156,14 @@ getgenv().RemoveFromTable = function(_tbl, _item)
 	end
 end
 
+getgenv().SendKey = function(_key)
+	if _key then
+		VirtualInputManager:SendKeyEvent(true, _key, false, game)
+	else
+		warn("SendKey: Bad Values")
+	end
+end
+
 --> Return Functions <--
 getgenv().fromSuffixString = function(_value, _suffixes)
 	if _value then
@@ -259,3 +268,5 @@ getgenv().Timer = function(_time)
 		warn("Timer: Bad Values...")
 	end
 end
+
+
