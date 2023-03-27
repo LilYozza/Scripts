@@ -110,7 +110,7 @@ Auto:Toggle("Auto Weight",function(bool)
 					end
 
 					if _toolToggle.Value == false then
-						Events.SkillToggle:FireServer("NumberOne", true)
+						--Events.SkillToggle:FireServer("NumberOne", true)
 						SendKey("One")
 						_toolToggle.Value = true
 						task.wait(0.5)
@@ -265,8 +265,9 @@ Auto:Toggle("Auto Boss",function(bool)
 						end
 
 						if _toolToggle.Value == false then
-							Events.SkillToggle:FireServer("NumberTwo", true)
+							--Events.SkillToggle:FireServer("NumberTwo", true)
 							SendKey("Two")
+							_toolToggle.Value = true
 							task.wait(0.5)
 						end
 
