@@ -89,7 +89,7 @@ Auto:Toggle("Auto Weight",function(bool)
 	shared.ToggleAW=bool
 	spawn(function()
 		while shared.ToggleAW do
-			pcall(function()
+			local s,e = pcall(function()
 				if not _sleepFunction then
 					local _tool = Player.Data.Weight.Value
 					local _toolToggle = Player.PlayerGui.Main.Bottom.NumberOne.Toggled
@@ -111,7 +111,7 @@ Auto:Toggle("Auto Weight",function(bool)
 
 					if _toolToggle.Value == false then
 						--Events.SkillToggle:FireServer("NumberOne", true)
-						SendKey("One")
+						SendKey("One") task.wait(0.1)
 						_toolToggle.Value = true
 						task.wait(0.5)
 					end
@@ -121,7 +121,7 @@ Auto:Toggle("Auto Weight",function(bool)
 					end
 				end
 
-			end)
+			end)if not s then print(e)end
 			task.wait(shared.WeightSpeed)
 		end
 	end)
@@ -266,7 +266,7 @@ Auto:Toggle("Auto Boss",function(bool)
 
 						if _toolToggle.Value == false then
 							--Events.SkillToggle:FireServer("NumberTwo", true)
-							SendKey("Two")
+							SendKey("Two") task.wait(0.1)
 							_toolToggle.Value = true
 							task.wait(0.5)
 						end
