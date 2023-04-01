@@ -78,6 +78,65 @@ local function HealthChecker(_instance, _timeout)
 
 end
 
+local NPCS = workspace:FindFirstChild("NPCS")
+if NPCS then
+	local EventMenu = w:CreateFolder("Event")
+	
+	local _punch
+	EventMenu:Toggle("Easter Eggs",function(bool)
+		shared.ToggleEE=bool
+		spawn(function()
+			while shared.ToggleEE do
+				local s,e = pcall(function()
+					local hum = Player.Character:FindFirstChild("Humanoid")
+					local hrp = Player.Character:FindFirstChild("HumanoidRootPart")
+					if hum and hrp then
+						for _,v in pairs(NPCS:GetChildren())do
+
+							local Ehum = v:FindFirstChild("Humanoid")
+							local Ehrp = v:FindFirstChild("HumanoidRootPart")
+
+							if Ehum and Ehrp and shared.ToggleEE then
+								--Ehrp.CFrame = CFrame.new(hrp.Position + hrp.CFrame.LookVector * 3)
+								local _timeout = false
+								spawn(function()task.wait(0.5) _timeout = true end)
+								repeat 
+									hrp.CFrame = CFrame.new(Ehrp.Position + Ehrp.CFrame.LookVector * 3)
+									
+									local _toolToggle = Player.PlayerGui.Main.Bottom.NumberTwo.Toggled
+									
+									
+									if _toolToggle.Value == false then
+										--Events.SkillToggle:FireServer("NumberTwo", true)
+										SendKey("Two") task.wait(0.2)
+										_toolToggle.Value = true
+										task.wait(0.5)
+									end
+									
+									
+									if not _punch or _punch == "Right" then
+										_punch = "Left"
+									elseif _punch == "Left" then
+										_punch = "Right"
+									end
+									
+									if _punch then
+										ReplicatedStorage.Skills.CombatFolder.RemoteEvent:FireServer(_punch) task.wait(0.1)
+									end
+									task.wait()
+								until not shared.ToggleEE or not hrp or not Ehrp or not Ehum or Ehum.Health <= 0 or _timeout
+
+							end
+						end
+					end
+				end)if not s then print(e)end
+				task.wait()
+			end
+		end)
+	end)
+	
+end
+
 
 shared.WeightSpeed = 0
 local Speed = Auto:Slider("Weight Speed",{
