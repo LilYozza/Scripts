@@ -224,6 +224,19 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 
 end
 
+getgenv().GetDistance = function(_p1, _p2)
+	if _p1 and (_p1:IsA("Part") or _p1:IsA("CFrame")) then
+		if not _p2 then 
+			_p2 = Player.Character:WaitForChild("HumanoidRootPart") 
+		elseif _p2 and (not _p2:IsA("BasePart") and not _p2:IsA("CFrame") and not _p2:IsA("SpawnLocation")) then
+			warn("GetDistance: _p2 is not a Part...") return
+		end
+		return (_p1.Position - _p2.Position).Magnitude
+	else
+		warn("GetDistance: Bad Values...")
+	end
+end
+
 getgenv().TweenPart = function(_part, _des, _speed, _style)
 	if _part and _des and _part:IsA("BasePart") and _des:IsA("BasePart") then
 		if typeof(_des) == "Instance" and _des:IsA("BasePart") then _des = _des.CFrame end
