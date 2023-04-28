@@ -1,0 +1,270 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+--Dynamic Variables (Changes If Needed To)
+local TurnTrackCheck = 30
+
+local BaseTrackTurners = 100
+local MineTrackTurners = 90
+
+local Threshold = 10
+
+--> Because Client Teams arent sorted the same as Server Teams <--
+local TeamOrder = {"Blue Miners", "Red Miners", "Orange Miners", "Green Miners", "Purple Miners"}
+
+local Events = game:GetService("ReplicatedStorage").TycoonEvent
+local FunctionEvents = game:GetService("ReplicatedStorage").TycoonFunction
+local Teams = game:GetService("Teams")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local CartsMenu = w:CreateFolder("Carts")
+local TrackMenu = w:CreateFolder("Tracks")
+
+-->Base Variables<--
+local PlayerTracks = {}
+local TycoonSelect, Tycoon
+
+local Workspace_Map = workspace:WaitForChild("Workspace Map")
+local Tracks_V2 = Workspace_Map:WaitForChild("Tracks V2")
+
+local TycoonKit = workspace:WaitForChild("TycoonKit 1.13")
+local Tycoons = TycoonKit:WaitForChild("Tycoons")
+
+local Boost = Workspace_Map:WaitForChild("Boost")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function BestTycoon()
+    local _pt = {}
+    --local PTeams = Teams:GetTeams()
+
+    --Check if Teams are ordered
+    -- if PTeams[1].Name ~= "For Hire" then
+    --     PTeams = ReverseTable(PTeams)
+    -- end
+    
+    for _,v in pairs(Players:GetPlayers())do
+        table.insert(_pt, v.Team.Name)
+    end
+    
+    for _,v in pairs(TeamOrder)do
+        if not table.find(_pt, v) then
+            table.clear(_pt)
+            return v
+        end
+    end
+end
+TycoonSelect = Tycoons:FindFirstChild(BestTycoon())
+local DropList = Auto:Dropdown("Random",{"Random", unpack(Tycoons:GetChildren())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    if SItem == "Random" then
+        local Rnd = BestTycoon()
+        TycoonSelect = Tycoons:FindFirstChild(Rnd)
+    else
+        TycoonSelect = Tycoons:FindFirstChild(SItem)
+    end
+end)
+
+Auto:Button("Claim",function()
+    if TycoonSelect and Player.Tycoon.Value == nil then
+        local claim = TycoonSelect.Essentials.Door.ClaimPart
+        Touch(claim) MoveTo(claim)
+    end
+end)
+
+repeat task.wait() until Player.Tycoon.Value ~= nil
+
+-->Post  Variables<--
+local Tycoon = Player.Tycoon.Value
+local Essentials = Tycoon:WaitForChild("Essentials")
+local Buttons = Tycoon:WaitForChild("Buttons")
+local Purchased = Tycoon:WaitForChild("Purchased")
+local Drops = Tycoon:WaitForChild("Drops")
+
+local BaseSpawn = Essentials:WaitForChild("TycoonSpawn")
+local Conveyor = Essentials:WaitForChild("Conveyor")
+
+
+-->Post Non Return Functions<--
+local function SetTracks()
+    local StartTycoon = Purchased:WaitForChild("StartTycoon",99999)
+    local DropPoint = StartTycoon:WaitForChild("Drop")
+    for _,v in pairs(Tracks_V2:GetDescendants())do
+        if v.Name:match("Show") and v:IsA("Part") then
+            
+            
+            local _dis1 = GetDistance(v, BaseSpawn)
+            local _dis2 = GetDistance(v, DropPoint)
+            
+            --print(BaseSpawn.Position)
+           if v.BrickColor == BrickColor.New("Hot pink") then print(v, BaseSpawn)  end
+            
+            if (_dis1 < BaseTrackTurners + Threshold) or (_dis2 < MineTrackTurners + Threshold) then
+
+                v.BrickColor = BrickColor.new('Lime green')
+                table.insert(PlayerTracks, v.Parent.Parent)
+                print("Added", v)
+            end
+        end
+    end
+end
+
+local CurrencyCollector = Essentials:WaitForChild("CurrencyCollector")
+local DisplayLabel = CurrencyCollector.DisplayPart.SurfaceGui:FindFirstChild("DisplayLabel")
+
+Auto:Button("Home", function()
+    MoveTo(BaseSpawn, Vector3.new(0,2,0))
+end)
+
+Auto:Toggle("Auto Coal",function(bool)
+    local StartTycoon = Purchased:WaitForChild("StartTycoon",99999)
+    local DropPoint = StartTycoon:WaitForChild("Drop")
+    shared.Toggle_AC=bool
+    spawn(function()
+        local delTabl = {}
+        while shared.Toggle_AC do
+            local s,e = pcall(function()
+                fireproximityprompt(StartTycoon.Clicker.CoalProxPrompt)
+                for _,v in pairs(Drops:GetChildren())do
+                    if v:IsA("Part") and not table.find(delTabl, v) then
+                        table.insert(delTabl, v)
+                        spawn(function()
+                            task.wait(1) MovePart(v, Conveyor.CollidePart, Vector3.new(0,1,0))
+                            RemoveFromTable(delTabl, v)
+                        end)
+                        
+                    end
+                end
+            end) if not s then print(e) end
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Clicker",function(bool)
+    shared.ToggleAC_2=bool
+    spawn(function()
+        local StartTycoon = Purchased:WaitForChild("StartTycoon")
+        while shared.ToggleAC_2 do
+            pcall(function()
+                fireproximityprompt(StartTycoon.Clicker.CoalProxPrompt)
+            end)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            Touch(CurrencyCollector.Giver, 1)
+        end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.ToggleSC=bool
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            local s,e = pcall(function()
+                for _,v in pairs(Buttons:GetChildren())do
+                    local _cash = v.CurrencyCost:FindFirstChild("Cash")
+                    if _cash then
+                        local price = _cash.Value
+                        local cash = fromSuffixString(Player.realstats.Cash.Value)
+                        if shared.ToggleSC and fromSuffixString(DisplayLabel.Text) + cash >= price then Touch(CurrencyCollector.Giver, 0.1) print(fromSuffixString(DisplayLabel.Text) + cash, price) end
+                        if cash >= price then Touch(v.Head, 0.1) print(v) end
+                    end
+                end
+            end)if not s then print(e) end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.Toggle_AB=bool
+    spawn(function()
+        while shared.Toggle_AB do
+            local _chk = FunctionEvents:InvokeServer("RebirthCheck")
+            if _chk then Events:FireServer("Rebirth") end
+            task.wait(1)
+        end
+    end)
+end)
+
+local cartCon = {}
+CartsMenu:Toggle("Cart Collide",function(bool)
+    shared.ToggleCC=bool
+    spawn(function()
+        for __,_v in pairs(Tycoons:GetChildren())do
+            for _,v in pairs(_v.Purchased:GetDescendants())do
+                if v.Name == "Cart" and v:IsA("Model") and not v:FindFirstAncestor(Tycoon.Name) then
+                    ChangeCollide(v, not shared.ToggleCC)
+                end
+            end
+            local _chk = _v.Purchased:FindFirstChild("CoalCart1")
+            if _chk then
+                cartCon[_] = _chk.ChildAdded:Connect(function(part)
+                    if part.Name == "Cart" and part:IsA("Model") then
+                        repeat task.wait() until part
+                        ChangeCollide(v, not shared.ToggleCC)
+                    end
+                end)
+            end
+        end
+        if not shared.ToggleCC and cartCon then
+            for _,v in pairs(cartCon)do
+                v:Disconnect()
+            end
+        end
+    end)
+end)
+
+CartsMenu:Toggle("Auto Boost",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            local s,e = pcall(function()
+                local _v = Player.Character.Humanoid.SeatPart
+                if shared.ToggleAB then
+                    Touch(Boost.Boost2, _v)
+                end
+            end)if not s then print(e)end
+        task.wait(1)
+        end
+        if not shared.ToggleAB then Touch(Boost.Boost1, _v) end
+    end)
+end)
+
+
+Spawn(SetTracks)
+TrackMenu:Toggle("Auto Toggle",function(bool)
+    shared.ToggleAT=bool
+    spawn(function()
+        if PlayerTracks and PlayerTracks[1] ~= nil then
+            while shared.ToggleAT do
+                local s,e = pcall(function()
+                    for _,v in pairs(PlayerTracks)do
+                        local _dis = GetDistance(v.TriggerBase.Show)
+                        if _dis < TurnTrackCheck + Threshold and v.Bb.Stright1.CanCollide == true then
+                            fireproximityprompt(v.TriggerBase.Show.Prox)
+                            task.wait(0.5)
+                        end
+                    end
+                end) if not s then print(e) end
+                task.wait()
+            end
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

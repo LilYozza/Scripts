@@ -446,6 +446,10 @@ local Games = {
 	[10945472407] = {
 		Name = 'Strong Muscle Simulator',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Strong%20Muscle%20Simulator.txt'
+	},
+	[11319403460] = {
+		Name = 'Coal Miner Tycoon 2 [2.1.7]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Coal%20Miner%20Tycoon%202%20[2.1.7].txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
