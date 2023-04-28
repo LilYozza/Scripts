@@ -156,6 +156,16 @@ getgenv().RemoveFromTable = function(_tbl, _item)
 	end
 end
 
+getgenv().PrintTable = function (_tbl)
+	if _tbl and typeof(_tbl) == "table" then
+		for _,v in pairs(_tbl)do
+			print(v)
+		end
+	else
+		warn("PrintTable: Bad Values")
+	end
+end
+
 getgenv().SendKey = function(_key)
 	if _key then
 		VirtualInputManager:SendKeyEvent(true, _key, false, game)
@@ -256,6 +266,26 @@ getgenv().FindInTable = function(_tbl, _item)
 		end
 	else
 		warn("FindInTable: Bad Values...")
+	end
+end
+
+getgenv().ReverseTable = function(_tbl)
+	if _tbl and typeof(_tbl) == "table" then
+		local newTable = {}
+		for index = 1, #_tbl do
+			newTable[#_tbl - index] = _tbl[index]
+		end
+		return newTable
+	else
+		warn("ReverseTable: Bad Values...")
+	end
+end
+
+getenv().ReturnTableAsString = function(_tbl)
+	if _tbl and typeof(_tbl) == "table" then
+		return unpack(_tbl, ", ")
+	else
+		warn("ReturnTableAsString: Bad Values...")
 	end
 end
 
