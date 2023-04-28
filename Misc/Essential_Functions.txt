@@ -272,8 +272,8 @@ end
 getgenv().ReverseTable = function(_tbl)
 	if _tbl and typeof(_tbl) == "table" then
 		local newTable = {}
-		for index = 1, #_tbl do
-			newTable[#_tbl - index] = _tbl[index]
+		for _,v in pairs(_tbl) do
+			newTable[#_tbl+1 - _] = _tbl[_]
 		end
 		return newTable
 	else
@@ -281,9 +281,9 @@ getgenv().ReverseTable = function(_tbl)
 	end
 end
 
-getenv().ReturnTableAsString = function(_tbl)
+getgenv().ReturnTableAsString = function(_tbl)
 	if _tbl and typeof(_tbl) == "table" then
-		return unpack(_tbl, ", ")
+		return table.concat(_tbl, ", ")
 	else
 		warn("ReturnTableAsString: Bad Values...")
 	end
