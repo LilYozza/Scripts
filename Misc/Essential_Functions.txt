@@ -2,6 +2,7 @@
 
 -->Services<--
 local Players = game:GetService("Players")
+local TeamsService = game:GetService("Teams")
 local TweenService = game:GetService("TweenService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
@@ -142,7 +143,7 @@ getgenv().RemoveFromTable = function(_tbl, _item)
 	if _tbl and typeof(_tbl) == "table" then
 		for _,v in pairs(_tbl)do
 			if typeof(v) == "Instance" then
-				if v.Name == _item then
+				if v.Name == _item or v == _item then
 					table.remove(_tbl, _)
 				end
 			elseif typeof(v) == "string" then
@@ -224,6 +225,38 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 
 end
 
+getgenv().NextTeam = function(_player, _sortedTbl)
+	if not _player then _player = Player end
+	if not _sortedTbl then _sortedTbl = TeamsService:GetTeams() end
+	
+	local curr = _player.Team
+	if curr then
+		for _,v in pairs(_sortedTbl) do
+			if curr == v and _sortedTbl[_+1] then
+				return _sortedTbl[_+1]
+			end
+		end
+	else
+		warn("NextTeam: Player Does Not Have A Team")
+	end
+end
+
+getgenv().PrevTeam = function(_player, _sortedTbl)
+	if not _player then _player = Player end
+	if not _sortedTbl then _sortedTbl = TeamsService:GetTeams() end
+
+	local curr = _player.Team
+	if curr then
+		for _,v in pairs(_sortedTbl) do
+			if curr == v and _sortedTbl[_-1] then
+				return _sortedTbl[_-1]
+			end
+		end
+	else
+		warn("PrevTeam: Player Does Not Have A Team")
+	end
+end
+
 getgenv().GetDistance = function(_p1, _p2)
 	if _p1 and (_p1:IsA("Part") or _p1:IsA("CFrame")) then
 		if not _p2 then 
@@ -267,6 +300,30 @@ getgenv().GetPlayerByDisplayName = function(_displayName)
 		end
 	else
 		warn("GetPlayerByDisplayName: Bad Values...")
+	end
+end
+
+getgenv().GetClosestPart = function(_part, _tbl)
+	if _part and _part:IsA("Part") and _tbl then
+		local _s
+		local _min = math.huge
+		for _,v in pairs(_tbl)do
+			if v:IsA("Part") or v:IsA("CFrame") then
+				local _dis = GetDistance(_part, v)
+				if _dis and _dis < _min then
+					_s = v
+				end
+			else
+				warn("GetClosestPart: Index: ".._.." Has no Position/CFrame")
+			end
+		end
+		if _s then
+			return _s
+		else
+			warn("GetClosestPart: No Part Was Found")
+		end
+	else
+		warn("GetClosestPart: Bad Values...")
 	end
 end
 
