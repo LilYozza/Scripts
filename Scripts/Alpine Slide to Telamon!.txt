@@ -1,4 +1,6 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -6,101 +8,165 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Main = Workspace:FindFirstChild("Main")
-local Regen = Main:FindFirstChild("Regen")
+local sCart
+local CartList = {}
 
-local KillZone
-local End = Workspace:FindFirstChild("End")
+local sMap
+local mapList = {"Classic", "Bluesteel", "Loopty "}
 
-local Carts = Workspace:FindFirstChild("Carts")
+local _end = game:GetService("Workspace").End
+local WinPad = _end.WinnersTeamer
+local ToStart = _end.Teleport.Part
 
-for _,v in pairs(End:GetChildren())do
-    if v:FindFirstChildWhichIsA("TouchTransmitter") and v.Name == "Part" then
-        KillZone = v break
-    end
-end
+local Coins = game:GetService("Workspace").Coins
 
 -->Non Return Functions<--
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
+local function SpawnCart(_sCart)
+    if _sCart then 
+        --local newName = string.match(_sCart, "^(%S+)")
+        --local newName = string.gsub(_sCart, "^(%S+)%s+Cart", "%1")
+        local newName = string.gsub(_sCart, "^Classic%s*", "")
+        local newName = string.gsub(newName, "%s", "")
 
-local function SetCollision(tbl, bool)
-    for _,v in pairs(tbl:GetDescendants())do
-        if v:IsA("Part") and not v:FindFirstAncestor(Player.Name) then
-            v.CanCollide = bool
-        end
+        newName = newName .. "_001"
+
+        local args = {
+            [1] = workspace.RegenButtons.Regen,
+            [2] = newName
+        }
+        game:GetService("ReplicatedStorage").SpawnCart:InvokeServer(unpack(args))
     end
 end
 
+local function GetAllCarts()
+    local _Carts = game:GetService("ReplicatedStorage").Shop.Carts
+    for _,v in pairs(_Carts:GetChildren())do
+        table.insert(CartList, v)
+    end
+end
 
 -->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
 
-local TeleportSelect = Workspace:FindFirstChild("Players")
-local TeleportSelectDP = Auto:Dropdown("Players",{"Players","Winners"},true,function(SItem)
-    TeleportSelect = Workspace:FindFirstChild(SItem)
-end)
-Auto:Button("Teleport",function()
-    spawn(function()
-        if TeleportSelect then
-            MoveTo(TeleportSelect, Vector3.new(0,3,0))
-        end
-    end)
+
+GetAllCarts()
+local DropList = Auto:Dropdown("Select Car",CartList,true,function(sItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sCart = sItem
 end)
 
-Auto:Toggle("Auto Push",function(bool)
-    shared.ToggleAP=bool
+Auto:Button("Spawn Cart",function()
+    SpawnCart(sCart)
+end)
+
+Auto:Button("Win",function()
+    local hum = Player.Character:WaitForChild("Humanoid")
+    if hum and hum.Sit then
+        Touch(WinPad)
+    end
+end)
+
+Auto:Button("Start",function()
+    Touch(ToStart)
+end)
+
+
+Auto:Toggle("Collect Coins",function(bool)
+    shared.Toggle1=bool
     spawn(function()
-        while shared.ToggleAP do
-            if Player.Character:WaitForChild("Humanoid").Sit == true then
-                local _tool = game.Players.LocalPlayer.Backpack:FindFirstChildWhichIsA('Tool') or game.Players.LocalPlayer.Character:FindFirstChildWhichIsA('Tool')
-                if _tool then Player.Character:WaitForChild("Humanoid"):EquipTool(_tool) _tool:Activate() task.wait(1) end
+        while shared.Toggle1 do
+            for _,v in pairs(Coins:GetChildren()) do
+                local part = v:FindFirstChild("HumanoidRootPart")
+                if part and shared.Toggle1 then
+                    local hum = Player.Character:WaitForChild("Humanoid")
+                    if hum and hum.sit then
+                        Touch(part)
+                    end
+                end
             end
             task.wait()
         end
     end)
 end)
 
-Auto:Toggle("Get Cart",function(bool)
-    shared.ToggleGC=bool
+Auto:Toggle("Auto Win",function(bool)
+    shared.Toggle2=bool
     spawn(function()
-        while shared.ToggleGC do
-            repeat
-                local s,e = pcall(function()
-                    if Regen and Player.Character:WaitForChild("Humanoid").Sit == false then
-                        Touch(Regen,0)fireclickdetector(Regen.ClickDetector)
-                    end task.wait()
-                end)if not s then print(e)end task.wait()
-            until Player.Character:WaitForChild("Humanoid").Sit == true or not shared.ToggleGC
-            task.wait()
+        while shared.Toggle2 do
+            local hum = Player.Character:WaitForChild("Humanoid")
+            if hum and shared.Toggle2 then
+                if hum.Sit then
+                    Touch(WinPad, 0.5)
+                    hum.Sit = false
+                    Touch(ToStart, 0.5)
+                else
+                    SpawnCart("Cart")
+                end
+            end
+            task.wait(10)
         end
     end)
 end)
 
 
-local NCConnection
-Auto:Toggle("No Collision",function(bool)
-    shared.ToggleNC=bool
+Auto:Button("All Items",function()
+    for _,v in pairs(_end:GetChildren()) do
+        if v.Name == "Giver" then
+            local _gpart = v:FindFirstChild("Touch")
+            if _gpart then
+                Touch(_gpart)
+            end
+        end
+    end
+end)
+
+
+local DropList = Auto:Dropdown("Map Vote",mapList,true,function(sItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sMap = sItem
+end)
+
+Auto:Button("Vote",function()
+    if sMap then
+        local args = {
+            [1] = sMap
+        }
+        for i=1,10,1 do
+            game:GetService("ReplicatedStorage").Modules.MapVote.RemoteEvent:FireServer(unpack(args))
+        end
+    end
+end)
+
+local function toggleCart(_cart, _toggle)
+    if _cart then
+        
+        local driver = _cart:FindFirstChild("Driver")
+        if driver and driver.Occupant == Player.Character:WaitForChild("Humanoid") then
+            return
+        end
+        for _,v in pairs(_cart:GetDescendants()) do
+            if v:IsA("Part") then
+                v.CanCollide = _toggle
+                
+            end
+        end
+    end
+end
+
+local con1
+local LiveCarts = game:GetService("Workspace").Carts
+Auto:Toggle("No Collide",function(bool)
+    shared.Toggle3=bool
     spawn(function()
-        if shared.ToggleNC then
-            NCConnection = Carts.ChildAdded:Connect(function(part)
-                repeat task.wait() until part
-                SetCollision(part, false)
+        if shared.Toggle3 then
+            con1 = LiveCarts.ChildAdded:Connect(function(_c)
+                task.wait(2)
+                toggleCart(_c, 0)
             end)
-            SetCollision(Carts, false)
-        else
-            SetCollision(Carts, true)
-            if NCConnection then NCConnection:Disconnect()end
-        end
-    end)
-end)
 
-Auto:Button("Auto Finish",function()
-    spawn(function()
-        if KillZone then
-            if Player.Character:WaitForChild("Humanoid").Sit == false then GetNextCart() task.wait(1) end
-            Touch(KillZone)
-        end        
+        else
+            con1:Disconnect()
+        end
+        for _,v in pairs(LiveCarts:GetChildren()) do
+            toggleCart(v, not shared.Toggle3)
+        end
     end)
 end)
 
@@ -116,7 +182,6 @@ Auto:Button("Stop/Go",function()
         end
     end)
 end)
-
 
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
