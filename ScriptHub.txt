@@ -466,6 +466,10 @@ local Games = {
 	[5818771056] = {
 		Name = 'Alpine Slide to Telamon!',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Alpine%20Slide%20to%20Telamon!.txt'
+	},
+	[18738679670] = {
+		Name = 'Pick Right Path to RICH!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Pick%20Right%20Path%20to%20RICH!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
