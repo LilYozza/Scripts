@@ -13,16 +13,11 @@ local _part = game:GetService("Workspace").GlassModel
 -->Non Return Functions<--
 
 -->Return Functions<--
-
-local DropList = Auto:Dropdown("SELECT MESSAGE",[TABLE],true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    
-end)
-
 local conTab = {}
 Auto:Toggle("Auto",function(bool)
     shared.Toggle=bool
     spawn(function()
-        if shared.Toggle=bool then
+        if shared.Toggle then
             for _,v in pairs(_part:GetChildren()) do
                 local _child = v:GetChildren()[1] or 0
                 if _child and _child:IsA("TouchTransmitter") then
