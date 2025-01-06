@@ -458,6 +458,10 @@ local Games = {
 	[128578546442311] = {
 		Name = 'Escape The Pit',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Pit.txt'
+	},
+	[14409837735] = {
+		Name = 'Only Run!!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Only%20Run!!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
