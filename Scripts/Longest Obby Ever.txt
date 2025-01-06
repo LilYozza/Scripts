@@ -1,0 +1,46 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local isRebith = false
+local Checkpoints = game:GetService("Workspace").Checkpoints
+local Stage = Player.leaderstats.Stage
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+local offset = 1
+Auto:Toggle("Auto Complete",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            local nextStage = Checkpoints:FindFirstChild(Stage.Value + offset)
+            if nextStage then
+                offset = 1
+                Player.Character:WaitForChild("HumanoidRootPart").CFrame = nextStage.CFrame + Vector3.new(0,3,0)
+            else
+                if isRebith then
+                    game:GetService("ReplicatedStorage").Rebirth:InvokeServer()
+                end
+                --offset = offset - 1
+                
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local offset = 1
+Auto:Toggle("Auto Rebirth",function(bool)
+    isRebith=bool
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
