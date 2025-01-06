@@ -1,0 +1,37 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local _paths = game:GetService("Workspace").Steps
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            for _,v in pairs(_paths:GetChildren()) do
+                for __, _v in pairs(v:GetChildren()) do
+                    if shared.Toggle and _v.Name == "PlaceArea" and #_v:GetChildren() > 0 and _v:GetChildren()[1]:IsA("TouchTransmitter") then
+                        Touch(game:GetService("Workspace").PickupBlockArea)
+                        Touch(_v)
+                        break
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+

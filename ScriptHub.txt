@@ -454,6 +454,10 @@ local Games = {
 	[9641256228] = {
 		Name = 'Impossible Glass Bridge Obby',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20Glass%20Bridge%20Obby.txt'
+	},
+	[128578546442311] = {
+		Name = 'Escape The Pit',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Pit.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
