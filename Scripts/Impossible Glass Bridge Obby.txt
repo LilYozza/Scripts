@@ -1,0 +1,51 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local _part = game:GetService("Workspace").GlassModel
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+local DropList = Auto:Dropdown("SELECT MESSAGE",[TABLE],true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    
+end)
+
+local conTab = {}
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        if shared.Toggle=bool then
+            for _,v in pairs(_part:GetChildren()) do
+                local _child = v:GetChildren()[1] or 0
+                if _child and _child:IsA("TouchTransmitter") then
+                    con = v.Touched:Connect(function(_p)
+                        local player = game.Players:GetPlayerFromCharacter(_p.Parent)
+                        if player and player.character then
+                            if v then
+                                v.BrickColor = BrickColor.new("Lime green")
+                            end
+                        end
+                    end)
+                    table.insert(conTab, con)
+                end
+            end
+        else
+            for _,v in pairs(conTab) do
+                v:Disconnect()
+            end
+        end
+    end)
+end)
+
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
