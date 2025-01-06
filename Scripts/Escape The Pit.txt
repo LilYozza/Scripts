@@ -18,14 +18,17 @@ Auto:Toggle("Auto",function(bool)
     shared.Toggle=bool
     spawn(function()
         while shared.Toggle do
+            local f = false
             for _,v in pairs(_paths:GetChildren()) do
                 for __, _v in pairs(v:GetChildren()) do
                     if shared.Toggle and _v.Name == "PlaceArea" and #_v:GetChildren() > 0 and _v:GetChildren()[1]:IsA("TouchTransmitter") then
-                        Touch(game:GetService("Workspace").PickupBlockArea)
+                        Touch(game:GetService("Workspace").PickupBlockArea, 0.1)
                         Touch(_v)
+                        f = true
                         break
                     end
                 end
+                if f then break end
             end
             task.wait()
         end
