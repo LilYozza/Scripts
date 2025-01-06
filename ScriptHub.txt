@@ -462,4 +462,4 @@ for _,v in pairs(Games)do
         Found=true print("Running:",v.Name)loadstring(game:HttpGet(v.Script))()break
     end
 end
-if not Found then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() end
+if not Found then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() print("No Scripts")end
