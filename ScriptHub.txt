@@ -482,6 +482,10 @@ local Games = {
 	[12413830324] = {
 		Name = 'Stud Jump Obby',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Stud%20Jump%20Obby.txt'
+	},
+	[6875469709] = {
+		Name = 'STRONGEST PUNCH SIMULATOR',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/STRONGEST%20PUNCH%20SIMULATOR.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

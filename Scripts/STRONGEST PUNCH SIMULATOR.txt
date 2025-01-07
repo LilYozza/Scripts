@@ -1,0 +1,99 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Stage = Player.leaderstats.WORLD
+local Boosts = game:GetService("Workspace").Map.Stages.Boosts
+
+-->Non Return Functions<--
+
+local args2 = {
+    [1] = {
+        [1] = "Activate_Punch"
+    }
+}
+
+
+-->Return Functions<--
+local function sortByItemName(items)
+    local sortedItems = {table.unpack(items)} -- Create a copy to avoid modifying the original table
+    table.sort(sortedItems, function(a, b)
+        local aMain, aSub = a.name:match("MAP_(%d+)_(%d+)")
+        local bMain, bSub = b.name:match("MAP_(%d+)_(%d+)")
+        aMain, aSub = tonumber(aMain), tonumber(aSub)
+        bMain, bSub = tonumber(bMain), tonumber(bSub)
+        if aMain == bMain then
+            return aSub > bSub -- Reverse for sub-number
+        end
+        return aMain > bMain -- Reverse for main number
+    end)
+    return sortedItems
+end
+
+Auto:Toggle("Auto Punch",function(bool)
+    shared.Toggle2=bool
+    spawn(function()
+        while shared.Toggle2 do
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args2))
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            local curStage = Boosts:FindFirstChild(Stage.Value)
+            if curStage then
+
+                local newTable = sortByItemName(curStage:GetChildren())
+
+                for _,v in pairs(newTable)do
+
+                    if curStage.Name ~= tostring(Stage.Value) or not shared.Toggle then
+                        break
+                    end
+
+                    for __,_v in pairs(v:GetChildren()) do
+                        local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
+                        if part and shared.Toggle then
+                            Touch(_v)
+                            break
+                        end
+                    end
+                    task.wait(0.6)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local args = {
+    [1] = {
+        [1] = "UpgradeCurrentPet"
+    }
+}
+
+Auto:Toggle("Pet Upgrade",function(bool)
+    shared.Toggle1=bool
+    spawn(function()
+        while shared.Toggle1 do
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+            task.wait(1)
+        end
+    end)
+end)
+
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
