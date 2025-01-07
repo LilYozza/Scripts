@@ -25,7 +25,7 @@ Auto:Toggle("Auto",function(bool)
                 local Win_Giver = Winners_Area:FindFirstChild("Win_Giver")
                 if Win_Giver and shared.Toggle then
                     local tempPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
-                   -- Touch(Win_Giver)
+                    Touch(Win_Giver)
                     task.wait(0.1)
                    -- Player.Character:WaitForChild("HumanoidRootPart").CFrame = tempPos
                 end
