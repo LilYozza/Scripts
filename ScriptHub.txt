@@ -494,6 +494,10 @@ local Games = {
 	[12114398020] = {
 		Name = 'Every Second You Get +1 Points',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Second%20You%20Get%20+1%20Points.txt'
+	},
+	[87583185172012] = {
+		Name = 'Impossible SQUID Bridge (Squid Game)',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20SQUID%20Bridge%20(Squid%20Game).txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
