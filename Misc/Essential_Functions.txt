@@ -44,7 +44,7 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 	if not _offset or typeof(_offset) ~= "Vector3" then
 		_offset = Vector3.new(0,0,0)
 	end
-	if _basePart and (_basePart:IsA("Part") or_basePart:IsA("UnionOperation")) then
+	if _basePart and (_basePart:IsA("Part") or _basePart:IsA("UnionOperation")) then
 		Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
         if oldPos and _back then
             task.wait(_backTime)
