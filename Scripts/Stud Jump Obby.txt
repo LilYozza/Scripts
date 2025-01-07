@@ -1,0 +1,56 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Worlds = game:GetService("Workspace").Worlds
+local Stage = Player["Custom_Data"]["Basic_Info"]["Current_Realm"]
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            local Winners_Area = game:GetService("Workspace").Constants:FindFirstChild("Winners_Area")
+            if Winners_Area then
+                local Win_Giver = Winners_Area:FindFirstChild("Win_Giver")
+                if Win_Giver and shared.Toggle then
+                    local tempPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                   -- Touch(Win_Giver)
+                    task.wait(0.1)
+                   -- Player.Character:WaitForChild("HumanoidRootPart").CFrame = tempPos
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("End",function(bool)
+    local currentStage = Worlds:FindFirstChild(Stage.Value)
+    if currentStage then
+        MoveTo(currentStage:FindFirstChild("End_Reference"))
+    end
+end)
+
+local gamePasses = Player["Custom_Data"].Temporary
+Auto:Button("Gamepasses",function(bool)
+    for _,v in pairs(gamePasses:GetChildren())do 
+        if v:IsA("BoolValue") then
+            v.Value = true
+        end
+    end
+end)
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
