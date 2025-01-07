@@ -36,12 +36,20 @@ getgenv().Touch = function(_touchPart, _basePart, _timeout)
 end
 
 --Add Angles
-getgenv().MoveTo = function(_basePart, _offset)
+getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
+    local oldPos
+    if _back then
+        oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+    end
 	if not _offset or typeof(_offset) ~= "Vector3" then
 		_offset = Vector3.new(0,0,0)
 	end
 	if _basePart and _basePart:IsA("Part")then
 		Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
+        if oldPos and _back then
+            task.wait(_backTime)
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos
+        end
 	else
 		warn("MoveTo: Bad Values...")
 	end
