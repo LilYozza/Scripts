@@ -1,0 +1,55 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Wins = Player.leaderstats.Wins
+
+local Worlds = game:GetService("Workspace").StagesTP
+local sWorld = "Stage2"
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+
+
+local DropList = Auto:Dropdown("Stage2",Worlds:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sWorld = SItem
+end)
+
+Auto:Button("Teleport",function(bool)
+    MoveTo(Worlds:FindFirstChild(sWorld))
+end)
+
+
+local Win = game:GetService("Workspace").Wins.Stage10
+Auto:Toggle("Auto Win",function(bool)
+    shared.Toggle1=bool
+    spawn(function()
+        while shared.Toggle1 do
+            Touch(Win)
+            task.wait()
+        end
+    end)
+end)
+
+local RebirthTouch = game:GetService("Workspace").Model.RebirthTouch
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            if Wins.Value > 250000 then
+                Touch(RebirthTouch, 1)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
