@@ -1,0 +1,61 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local args = {
+    [1] = game:GetService("Players").LocalPlayer
+}
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Bridge = game:GetService("Workspace").Baldosas
+local Win = game:GetService("Workspace").Chest.Chest
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            Touch(Win)
+            task.wait()
+        end
+    end)
+end)
+
+local args = {
+    [1] = game:GetService("Players").LocalPlayer
+}
+
+Auto:Toggle("Auto Wheel",function(bool)
+    shared.Toggle1=bool
+    spawn(function()
+        while shared.Toggle1 do
+
+
+            game:GetService("ReplicatedStorage").SpinnerRemotes.TiradaFree:FireServer(unpack(args))
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Show Path",function(bool)
+    for _,v in pairs(Bridge:GetChildren()) do
+        if v.CanCollide == false then
+            v.Transparency = 1
+        end
+    end
+end)
+
+Auto:Button("Lucky Box",function(bool)
+    game:GetService("ReplicatedStorage").RemotoParaBlock:FireServer()
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

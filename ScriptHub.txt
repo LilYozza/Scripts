@@ -474,6 +474,10 @@ local Games = {
 	[15037674330] = {
 		Name = 'Longest Obby Ever',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Longest%20Obby%20Ever.txt'
+	},
+	[17723028298] = {
+		Name = '1% Win Obby Break into the Concert',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/1%%20Win%20Obby%20Break%20into%20the%20Concert.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
