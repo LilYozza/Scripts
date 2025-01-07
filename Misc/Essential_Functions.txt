@@ -47,7 +47,9 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 	if _basePart and _basePart:IsA("Part")then
 		Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
         if oldPos and _back then
+            Player.Character:WaitForChild("HumanoidRootPart").Anchored = true
             task.wait(_backTime)
+            Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
             Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos
         end
 	else
