@@ -1,0 +1,136 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Tycoon
+local sCollect
+local Zones = game:GetService("Workspace").Zones
+
+local Cash = Player.leaderstats.Cash
+
+-->Non Return Functions<--
+local function ClaimTycoon()
+    local nilTycoon
+    for _,v in pairs(Zones:GetChildren())do
+        local claimVal = v:FindFirstChild("PlayerInside")
+        if claimVal then
+            if claimVal.Value == Player then
+                Tycoon = v
+                return
+            end
+            if claimVal.Value == nil then
+                nilTycoon = v
+            end
+        end
+    end
+    if nilTycoon then
+        Tycoon = v
+        Touch(nilTycoon.TouchToClaimPart)
+        MoveTo(nilTycoon.TouchToClaimPart)
+    end
+end 
+
+
+repeat ClaimTycoon() task.wait(1) until Tycoon
+
+-->Return Functions<--
+
+
+-->Post Variables<--
+local CashGiver = Tycoon.AllModels.CashGiver.TouchPart
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.Toggle1=bool
+    spawn(function()
+        while shared.Toggle1 do
+            MoveTo(CashGiver, Vector3.new(0,2,0), 1)
+            Touch(CashGiver, 1)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    sCollect=bool
+end)
+
+local AllButtons = game:GetService("Workspace").AllButtons
+Auto:Toggle("Auto Buy",function(bool)
+    shared.Toggle2=bool
+    spawn(function()
+        while shared.Toggle2 do
+            for _,v in pairs(AllButtons:GetChildren())do
+                local priceString = v:FindFirstChild("BillboardGui")
+                if priceString then
+                    if not shared.Toggle2 then
+                        break
+                    end
+                    local priceLabel = priceString:FindFirstChild("Label")
+                    local tempPrice = string.match(priceLabel.Text, "%$(%w+)")
+                    local Price = fromSuffixString(tempPrice)
+                    local toCollect = Tycoon.CashAvialable.Value
+
+                    if sCollect and Price <= Cash.Value + toCollect then
+                        MoveTo(CashGiver, Vector3.new(0,2,0), 1, 0.2)
+                        Touch(CashGiver, 1)
+                        MoveTo(v, Vector3.new(0,3,0), 1, 0.2)
+                    elseif Price <= Cash.Value then
+                        MoveTo(v, Vector3.new(0,3,0), 1, 0.2)
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local CrateFolder = game:GetService("Workspace").CrateFolder
+
+Auto:Toggle("Auto Crate",function(bool)
+    shared.Toggle3=bool
+    spawn(function()
+        while shared.Toggle3 do
+            pcall(function()
+                --local oldC = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                for _,v in pairs(CrateFolder:GetChildren()) do
+                    if v and v:FindFirstChild("ClickDetector") and shared.Toggle3 then
+                        --Touch(v,1)
+                        --MoveTo(v)
+                        task.wait(0.5)
+                        fireclickdetector(v.ClickDetector)
+
+                    end
+                end
+                --Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldC
+            end)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Home",function(bool)
+    MoveTo(Tycoon.BasePart)
+end)
+
+Auto:Button("Remove Lasers",function(bool)
+    MoveTo(Tycoon.BasePart)
+end)
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
