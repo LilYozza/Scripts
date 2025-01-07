@@ -16,24 +16,40 @@ local Stage = Player["Custom_Data"]["Basic_Info"]["Current_Realm"]
 -->Return Functions<--
 
 
-Auto:Toggle("Auto",function(bool)
+Auto:Toggle("Auto Win",function(bool)
     shared.Toggle=bool
     spawn(function()
         while shared.Toggle do
             local Winners_Area = game:GetService("Workspace").Constants:FindFirstChild("Winners_Area")
-            if Winners_Area then
-                local Win_Giver = Winners_Area:FindFirstChild("Win_Giver")
-                if Win_Giver and shared.Toggle then
-                    local tempPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
-                    Touch(Win_Giver)
-                    task.wait(0.1)
-                   -- Player.Character:WaitForChild("HumanoidRootPart").CFrame = tempPos
+            if Stage.Value == "Heaven_Realm" then
+                local currentStage = Worlds:FindFirstChild(Stage.Value)
+                if currentStage then
+                    MoveTo(currentStage.Lobby:FindFirstChild("Jump_Zone"))
+                    task.wait(0.5)
+                    Player.Character:WaitForChild("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+                    task.wait(1)
+                    local stop = false
+                    repeat 
+                        stop = Player.Character:WaitForChild("Humanoid").FloorMaterial ~= "Air"
+                        task.wait() 
+                    until stop
+                end
+            else
+                if Winners_Area then
+                    local Win_Giver = Winners_Area:FindFirstChild("Win_Giver")
+                    if Win_Giver and shared.Toggle then
+                        local tempPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                        Touch(Win_Giver)
+                        task.wait(0.1)
+                    -- Player.Character:WaitForChild("HumanoidRootPart").CFrame = tempPos
+                    end
                 end
             end
             task.wait()
         end
     end)
 end)
+
 
 Auto:Button("End",function(bool)
     local currentStage = Worlds:FindFirstChild(Stage.Value)
