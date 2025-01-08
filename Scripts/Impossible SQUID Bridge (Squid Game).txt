@@ -66,6 +66,29 @@ Auto:Button("Lucky Block",function(bool)
     game:GetService("ReplicatedStorage").RemoteEvents.blockRemote:FireServer(unpack(arg3s))
 end)
 
+local sEgg
+local Eggs = {"Basic Egg", "Noob Egg", "Mystery Egg", "Rainbow Egg"}
+local DropList = Auto:Dropdown("Select Egg",Eggs,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sEgg = SItem
+end)
+
+Auto:Toggle("Hatch",function(bool)
+    shared.Toggle3=bool
+    spawn(function()
+        while shared.Toggle3 do
+            if sEgg and shared.Toggle3 then
+                local args = {
+                    [1] = "validatePrice",
+                    [2] = sEgg
+                }
+
+                game:GetService("ReplicatedStorage").petRemote:FireServer(unpack(args))
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
+
 
 
 
