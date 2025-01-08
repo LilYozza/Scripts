@@ -1,0 +1,78 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local sMap = 1
+local Maps = game:GetService("Workspace").Map3
+local SpawnPoints = game:GetService("Workspace").SpawnPoints
+local Paths = game:GetService("Workspace").BuildFolder.Path
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function indexOf(array, value)
+    for i, v in ipairs(array) do
+        if v.Name == value then
+            return i
+        end
+    end
+    return nil
+end
+
+local mapList = Maps:GetChildren()
+local DropList = Auto:Dropdown("Garden",mapList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sMap = indexOf(mapList, SItem)
+    print(sMap)
+end)
+
+Auto:Button("Teleport",function(bool)
+    MoveTo(SpawnPoints:GetChildren()[sMap])
+end)
+
+
+
+
+Auto:Toggle("Auto Click",function(bool)
+    shared.Toggle1=bool
+    spawn(function()
+        while shared.Toggle1 do
+            game:GetService("ReplicatedStorage").Remotes.Items.Click:FireServer(1)
+            task.wait()
+        end
+    end)
+end)
+
+local con1 = {}
+Auto:Toggle("Auto Win[WIP]",function(bool)
+    shared.Toggle2=bool
+    spawn(function()
+        if shared.Toggle2 then
+            for _,v in pairs(Paths:GetChildren())do
+                local path1 = v:FindFirstChild("Path1")
+                if path1 then
+                    local newCon = path1.Touched:Connect(function(_part)
+                        if _part == Player.Character:WaitForChild("HumanoidRootPart") then
+                            for __,_v in pairs(v:GetChildren())do
+                                Touch(_v, 0.1)
+                                print("Touched", _v.Name)
+                            end
+                        end
+                    end)
+                    table.insert(con1, newCon)
+                end
+            end
+        else
+            for _,v in pairs(con1) do
+                v:Disconnect()
+            end
+        end
+    end)
+end)
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

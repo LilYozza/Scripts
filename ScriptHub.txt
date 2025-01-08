@@ -498,6 +498,10 @@ local Games = {
 	[87583185172012] = {
 		Name = 'Impossible SQUID Bridge (Squid Game)',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20SQUID%20Bridge%20(Squid%20Game).txt'
+	},
+	[109644231059364] = {
+		Name = 'Maze Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Maze%20Simulator.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found
