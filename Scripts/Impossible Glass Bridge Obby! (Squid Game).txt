@@ -11,6 +11,41 @@ local GlassPane=GlassBridge:FindFirstChild("GlassPane")
 --Non Return Functions
 local function Touh(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
 
+Auto:Toggle("Auto Spin",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            game:GetService("ReplicatedStorage").SpinEvent.Request:InvokeServer()
+            task.wait(5)
+        end
+    end)
+end)
+
+local function removeTouch(_part)
+    for _,v in pairs(_part:GetDescendants())do
+        if v:isA("TouchTransmitter") then
+            v.Parent.CanCollide = true
+            v:Destroy()
+        end
+    end
+end
+
+local con
+Auto:Toggle("Safe",function(bool)
+    shared.Toggle2=bool
+    spawn(function()
+        if shared.Toggle2 then
+            con = GlassPane.ChildAdded:Connect(function(p)
+                removeTouch(p)
+            end)
+            removeTouch(GlassPane)
+        else
+            if con then con:Disconnect() end
+        end
+    end)
+end)
+
+
 Auto:Button("Show Path",function()
     spawn(function()
          for _,v in pairs(GlassPane:GetChildren())do
@@ -19,5 +54,7 @@ Auto:Button("Show Path",function()
         end       
     end)
 end)
+
+
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
