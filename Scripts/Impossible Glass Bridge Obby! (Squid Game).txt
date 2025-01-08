@@ -36,6 +36,7 @@ Auto:Toggle("Safe",function(bool)
     spawn(function()
         if shared.Toggle2 then
             con = GlassPane.ChildAdded:Connect(function(p)
+                task.wait(0.5)
                 removeTouch(p)
             end)
             removeTouch(GlassPane)
