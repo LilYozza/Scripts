@@ -1,0 +1,72 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local args = {
+    [1] = false
+}
+
+local sWorld = game:GetService("Workspace").StarterWorld
+local Worlds = {}
+local reBirth = Player.PlayerData.CanRebirth
+
+
+local WorldkeyWords = {"World", "world", "Update", "update"}
+-->Non Return Functions<--
+local function getWorlds()
+    for _,v in pairs(game.Workspace:GetChildren())do
+        for __,_v in pairs(WorldkeyWords) do
+            if string.find(v.Name, _v) then
+                table.insert(Worlds, v)
+            end
+        end
+    end
+end getWorlds()
+
+-->Return Functions<--
+
+
+local DropList = Auto:Dropdown("StarterWorld",Worlds,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sWorld = FindInTable(Worlds, SItem)
+end)
+
+Auto:Button("Teleport",function(bool)
+    local SafeZone = sWorld:FindFirstChild("SafeZone") or sWorld:FindFirstChild("Builds"):FindFirstChild("SafeZone")
+    if SafeZone then
+        if string.find(SafeZone.Parent.Parent.Name, "Christmas") then
+
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = SafeZone.SafeZone.CFrame + Vector3.new(0,5,20)
+        else
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = SafeZone.SafeZone.CFrame
+        end
+    end
+end)
+
+
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.Toggle1=bool
+    spawn(function()
+        while shared.Toggle1 do
+            if reBirth.Value == true and shared.Toggle1 then
+                game:GetService("ReplicatedStorage").RebirthPlayer:FireServer(unpack(args))
+                task.wait(0.5)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local BonusArea = game:GetService("Workspace")["Christmas Update"].Zones.KingOfHill.BonusArea
+Auto:Button("KingOfHill",function(bool)
+    firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"), BonusArea, 0)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
