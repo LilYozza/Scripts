@@ -40,6 +40,19 @@ end
 repeat ClaimTycoon() task.wait(1) until Tycoon
 
 -->Return Functions<--
+local function findHeighestPart(_folder)
+    local tempHeight = 0
+    local tempPart
+    for _,v in pairs(_folder:GetDescendants()) do
+        if v:IsA("Part") and v.Position then
+            if v.Position.y > tempHeight then
+                tempPart = v
+                tempHeight = v.Position.y
+            end
+        end
+    end
+    return tempPart
+end
 
 
 -->Post Variables<--
@@ -78,8 +91,8 @@ Auto:Toggle("Auto Buy",function(bool)
 
                     if sCollect and Price <= Cash.Value + toCollect then
                         MoveTo(CashGiver, Vector3.new(0,2,0), 1, 0.2)
-                        Touch(CashGiver, 1)
-                        MoveTo(v, Vector3.new(0,3,0), 1, 0.2)
+                        Touch(CashGiver, 0.2)
+                        MoveTo(v, Vector3.new(0,3,0), 1, 0.4)
                     elseif Price <= Cash.Value then
                         MoveTo(v, Vector3.new(0,3,0), 1, 0.2)
                     end
@@ -114,12 +127,12 @@ Auto:Toggle("Auto Crate",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto",function(bool)
-    shared.Toggle=bool
+Auto:Button("Top",function(bool)
     spawn(function()
-        while shared.Toggle do
-            task.wait()
-        end
+        local heightPart = findHeighestPart(Tycoon)
+        local newPos = Tycoon.BasePart.CFrame + Vector3.new(0,heightPart.Position.Y,0)
+        print(newPos.Position, heightPart)
+        Player.Character:WaitForChild("HumanoidRootPart").CFrame = newPos
     end)
 end)
 
@@ -127,8 +140,32 @@ Auto:Button("Home",function(bool)
     MoveTo(Tycoon.BasePart)
 end)
 
-Auto:Button("Remove Lasers",function(bool)
-    MoveTo(Tycoon.BasePart)
+Auto:Button("Lasers/Doors",function(bool)
+    local s, e = pcall(function()
+        for _,v in pairs(Zones:GetDescendants()) do
+            if v:IsA("TouchTransmitter") then
+                if v.Parent and string.match(v.Parent.Name, "KillPart") and v.Parent:IsA("Part") then
+                    v.Parent.BrickColor = BrickColor.new("Lime green")
+                    v:Destroy()
+                end
+            end
+            if string.find(v.Name, "Sliding doors") then
+                v:Destroy()
+            end
+        end
+    end)
+    print(s,e)
+end)
+
+local Gamepasses = Player.Stats.GamePass
+Auto:Button("Gamepasses",function(bool)
+    spawn(function()
+        for _,v in pairs(Gamepasses:GetChildren())do
+            if v:IsA("BoolValue") then
+                v.Value = true
+            end
+        end
+    end)
 end)
 
 
