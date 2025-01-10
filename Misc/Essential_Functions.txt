@@ -185,53 +185,48 @@ end
 
 --> Return Functions <--
 getgenv().fromSuffixString = function(_value, _suffixes)
-	if _value then
-		local found = false
-		if not _suffixes then
-			_suffixes = {"K", "M", "B", "T", "Q"}
-		end
+    if _value then
+        if not _suffixes then
+            _suffixes = {"K", "M", "B", "T", "Q"}
+        end
 
-		if typeof(_value) == Instance and _value:IsA("TextLabel") then
-			_value = _value.Text
-		end
+        -- Handle TextLabel
+        if typeof(_value) == Instance and _value:IsA("TextLabel") then
+            _value = _value.Text
+        end
 
-		if typeof(_value) == "number" or tonumber(_value) then
-			return tonumber(_value)
-		end
+        -- Handle numeric values
+        if typeof(_value) == "number" or tonumber(_value) then
+            return tonumber(_value)
+        end
 
-		if _value == "0" or _value == "" then
-			return 0	
-		end
+        -- Handle edge cases for "0" or empty strings
+        if _value == "0" or _value == "" then
+            return 0
+        end
 
-		_value = _value:upper()
-		for i, value in ipairs(_suffixes) do 
-			if _value:match(value:upper()) then 
-				found = true 
-				-- Remove all characters after
-				_value = _value:split(value)[1]..value --TEMP FIX LOL
-			end 
-		end 
+        _value = _value:upper()
 
-		if found == false then
-			_value = _value:gsub("%D", "")
-			return tonumber(_value) 
-		end 
+        -- Check for suffix
+        for _, suffix in ipairs(_suffixes) do
+            if _value:match(suffix) then
+                -- Extract number and suffix
+                local n, foundSuffix = string.match(_value, "([%d%.]+)(%a)")
+                if n and foundSuffix and foundSuffix == suffix then
+                    local i = table.find(_suffixes, foundSuffix) or 0
+                    return tonumber(n) * math.pow(10, i * 3)
+                end
+            end
+        end
 
-
-		local n, suffix = string.match(_value, "(.*)(%a)$")
-		if n and suffix then 
-			local i = table.find(_suffixes, suffix) or 0
-			local p = n:gsub("%D", "")
-			return tonumber(p) * math.pow(10, i * 3) 
-		end 
-
-		_value = _value:gsub("%D", "")
-		return tonumber(_value) 
-	else
-		warn("fromSuffixString: Bad Values...")
-	end
-
+        -- If no suffix is found, remove non-numeric characters
+        _value = _value:gsub("[^%d%.]", "")
+        return tonumber(_value)
+    else
+        warn("fromSuffixString: Bad Values...")
+    end
 end
+
 
 getgenv().NextTeam = function(_player, _sortedTbl)
 	if not _player then _player = Player end
