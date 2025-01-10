@@ -200,8 +200,12 @@ ItemMenu:Button("Give Item",function()
     end)
 end)
 
-local PlayerSelectDP = TrollMenu:Dropdown("Select Player",{"All", unpack(Players:GetPlayers())},true,function(SItem)
-    PlayerSelect = SItem
+local PlayerSelectDP = TrollMenu:Dropdown("Select Player",{"All", unpack(GetDisplayNames())},true,function(SItem)
+    if SItem == "All" then
+        PlayerSelect = SItem
+    else
+        PlayerSelect = GetPlayerByDisplayName(SItem)
+    end
     SelectPlayer(PlayerSelect)
 end)
 
@@ -222,6 +226,14 @@ TrollMenu:Toggle("ToggleAim",function(bool)
         end
     end)
 end)
+
+local MouseConnection
+TrollMenu:Button("Fire",function(bool)
+    spawn(function()
+        local gun = 
+    end)
+end)
+
 
 local BulletConnection
 TrollMenu:Toggle("Slient Aim",function(bool)
@@ -275,7 +287,7 @@ TrollMenu:Toggle("Climbers",function(bool)
 end)
 
 
-Players.PlayerAdded:Connect(function()PlayerSelectDP:Refresh({"All", unpack(Players:GetPlayers())})end)
-Players.PlayerRemoving:Connect(function()PlayerSelectDP:Refresh({"All", unpack(Players:GetPlayers())}) end)
+Players.PlayerAdded:Connect(function()PlayerSelectDP:Refresh({"All", unpack(GetDisplayNames())})end)
+Players.PlayerRemoving:Connect(function()PlayerSelectDP:Refresh({"All", unpack(GetDisplayNames())}) end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
