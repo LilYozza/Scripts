@@ -104,6 +104,7 @@ Auto:Toggle("Auto Buy",function(bool)
 end)
 
 local CrateFolder = game:GetService("Workspace").CrateFolder
+local KeyFolder = game:GetService("Workspace").KeyFolder
 
 Auto:Toggle("Auto Crate",function(bool)
     shared.Toggle3=bool
@@ -118,6 +119,31 @@ Auto:Toggle("Auto Crate",function(bool)
                         task.wait(0.5)
                         fireclickdetector(v.ClickDetector)
 
+                    end
+                end
+                --Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldC
+            end)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Key",function(bool)
+    shared.Toggle5=bool
+    spawn(function()
+        while shared.Toggle5 do
+            pcall(function()
+                local HRP = Player.Character:WaitForChild("HumanoidRootPart")
+                local oldC = HRP.CFrame
+                for _,v in pairs(KeyFolder:GetChildren()) do
+                    if v and v:FindFirstChild("ClickDetector") and shared.Toggle5 then
+                        HRP.CFrame = v.CFrame
+                        task.wait(0.1)
+                        fireclickdetector(v.ClickDetector)
+                        Touch(v)
+                        HRP.CFrame = oldC
+                        task.wait(1)
+                        
                     end
                 end
                 --Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldC
@@ -163,6 +189,44 @@ Auto:Button("Gamepasses",function(bool)
             if v:IsA("BoolValue") then
                 v.Value = true
             end
+        end
+    end)
+end)
+
+local selectedItem
+local ItemList = {}
+local function GetAllTouchParts()
+    local tbl = {}
+    for _,v in pairs(Tycoon.AllModels:GetDescendants())do
+        if v:IsA("TouchTransmitter") then 
+            table.insert(tbl, v.Parent.Parent)
+        end
+    end
+    return tbl
+end
+
+local function FindTouchPart(_p)
+    for _,v in pairs(_p:GetDescendants()) do
+        if v:IsA("TouchTransmitter") then
+            return v.Parent
+        end
+    end
+end
+
+
+ItemList = GetAllTouchParts()
+local DropList = Auto:Dropdown("Select Item",ItemList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    selectedItem = FindInTable(ItemList, SItem)
+    selectedItem = FindTouchPart(selectedItem)
+    
+    if not selectedItem then print("Couldnt Find") end
+end)
+
+Auto:Button("Give Item",function(bool)
+    spawn(function()
+        if selectedItem then
+            MoveTo(selectedItem, nil, true, 0.2)
+            --Touch(selectedItem)
         end
     end)
 end)
