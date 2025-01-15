@@ -1,0 +1,131 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local virtualUser = game:GetService('VirtualUser')
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Locks = workspace:WaitForChild("Locks")
+local Events = workspace:WaitForChild("Events")
+
+-- select your default here
+local sCart = "Star Cart"
+local AllCarts = {}
+local Carts = game:GetService("ReplicatedStorage").Modules.Carts
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function getCarts()
+    local tbl = {}
+    for _,v in pairs(Carts:GetChildren()) do
+        table.insert(tbl, v)
+    end
+    return tbl
+end
+
+local DropList = Auto:Dropdown(sCart,getCarts(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sCart = SItem
+end)
+
+Auto:Button("Spawn Cart",function()
+    spawn(function()
+        local args = {
+            [1] = sCart
+        }
+        game:GetService("ReplicatedStorage").Remotes.SpawnCart:FireServer(unpack(args))   
+    end)
+end)
+
+
+Auto:Button("Unlimited Fuel",function()
+    spawn(function()
+        local hum = Player.Character:WaitForChild("Humanoid")
+        if hum and hum.Sit == true then
+            local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+            for _,v in pairs(Events:GetChildren()) do
+                local hitbox = v:FindFirstChild("Hitbox")
+                if v and v.Name == "GasStation" and hitbox and hrp and hum.Sit == true then
+                    firetouchinterest(hrp, hitbox, 0)
+                    print("Touched Station")
+                    break
+                end
+            end
+        end
+    end)
+end)
+
+local holdWbool = false
+local con
+Auto:Toggle("Hold W",function(bool)
+    shared.ToggleHW=bool
+    spawn(function()
+        if shared.ToggleHW then
+            --con = game:GetService("RunService").RenderStepped:Connect(function()
+                --if shared.ToggleHW then
+                    local hum = Player.Character:WaitForChild("Humanoid")
+                    if hum and hum.Sit == true then
+                        virtualUser:SetKeyDown("0x77")
+                    end
+                --end
+            --end)
+        else
+            virtualUser:SetKeyUp("0x77")
+            if con then con:Disconnect() end
+        end
+    end)
+end)
+
+
+
+Auto:Toggle("Get Upgrades",function(bool)
+    shared.ToggleGU=bool
+    spawn(function()
+        print("---------------")
+        while shared.ToggleGU do
+            local s,e = pcall(function()
+                local hum = Player.Character:WaitForChild("Humanoid")
+                if hum and hum.Sit == true then
+                    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+                    for _,v in pairs(Events:GetChildren()) do
+                        local hitbox = v:FindFirstChild("Hitbox")
+                        if v and v.Name == "Garage" and hitbox and hrp and hum.Sit == true then
+                            Touch(hitbox, 1.5)
+                            local isbool = true
+                            repeat isbool = Player.PlayerGui.Garage.Frame.AbsolutePosition.Y < 500 task.wait(0.1) until not isbool or not shared.ToggleGU
+                            task.wait()
+                        end
+                    end
+                end
+            end) if not s then print (e) end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Button("Unlock Areas",function(bool)
+    spawn(function()
+        for _,v in pairs(Locks:GetChildren()) do
+            if v:IsA("Part") then
+                v.CanCollide = false
+            end
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
