@@ -65,14 +65,16 @@ Auto:Toggle("Hold W",function(bool)
     shared.ToggleHW=bool
     spawn(function()
         if shared.ToggleHW then
-            --con = game:GetService("RunService").RenderStepped:Connect(function()
-                --if shared.ToggleHW then
-                    local hum = Player.Character:WaitForChild("Humanoid")
-                    if hum and hum.Sit == true then
-                        virtualUser:SetKeyDown("0x77")
-                    end
-                --end
-            --end)
+            repeat 
+
+                local hum = Player.Character:WaitForChild("Humanoid")
+                if hum and hum.Sit == true then
+                    virtualUser:SetKeyDown("0x77")
+                end
+                task.wait(1)
+
+            until not shared.ToggleHW
+            print("Stopped")
         else
             virtualUser:SetKeyUp("0x77")
             if con then con:Disconnect() end
@@ -103,15 +105,6 @@ Auto:Toggle("Get Upgrades",function(bool)
                 end
             end) if not s then print (e) end
             task.wait(1)
-        end
-    end)
-end)
-
-Auto:Toggle("Auto",function(bool)
-    shared.Toggle=bool
-    spawn(function()
-        while shared.Toggle do
-            task.wait()
         end
     end)
 end)
