@@ -23,6 +23,15 @@ Auto:Button("Win",function()
     end)
 end)
 
+Auto:Button("Spawn",function()
+    spawn(function()
+        local lastPoint = PointFolder:FindFirstChild(0)
+        if lastPoint then
+            MoveTo(lastPoint)
+        end
+    end)
+end)
+
 
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
