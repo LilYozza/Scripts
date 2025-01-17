@@ -1,0 +1,33 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local endCFrame = CFrame.new(-1129.85596, 1313.26587, -37.2077026, -0.0144228851, -2.78312839e-08, 0.99989599, -2.78196488e-08, 1, 2.74328986e-08, -0.99989599, -2.74210947e-08, -0.0144228851)
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Button("Win",function()
+    spawn(function()
+        Player.Character:WaitForChild("HumanoidRootPart").CFrame = endCFrame
+    end)
+end)
+
+Auto:Button("Spawn",function()
+    spawn(function()
+        local lastPoint = game:GetService("Workspace").mapbase.Baseplate
+        if lastPoint then
+            MoveTo(lastPoint, Vector3.new(0,5,0))
+        end
+    end)
+end)
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

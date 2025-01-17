@@ -522,6 +522,10 @@ local Games = {
 	[13949837806] = {
 		Name = 'World Food Tower',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/World%20Food%20Tower.txt'
+	},
+	[12933818947] = {
+		Name = 'Collapsing Tower',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Collapsing%20Tower.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
