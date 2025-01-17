@@ -14,6 +14,14 @@ local defaultCol = _part:GetChildren()[1].BrickColor
 -->Non Return Functions<--
 
 -->Return Functions<--
+local function getDefaultCol()
+    for _,v in pairs(_part:GetChildren()) do
+        if v:IsA("Part") and v.BrickColor ~= BrickColor.new("Lime green") then
+            return v.BrickColor
+        end
+    end
+end defaultCol = getDefaultCol()
+
 local conTab = {}
 Auto:Toggle("Auto",function(bool)
     shared.Toggle=bool
