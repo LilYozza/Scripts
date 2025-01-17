@@ -9,6 +9,7 @@ local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
 local _part = game:GetService("Workspace").GlassModel
+local defaultCol = _part:GetChildren()[1].BrickColor
 
 -->Non Return Functions<--
 
@@ -35,6 +36,13 @@ Auto:Toggle("Auto",function(bool)
         else
             for _,v in pairs(conTab) do
                 v:Disconnect()
+            end
+            if defaultCol then
+                for _,v in pairs(_part:GetChildren())do
+                    if v:IsA("Part") then
+                        v.BrickColor = defaultCol
+                    end
+                end
             end
         end
     end)
