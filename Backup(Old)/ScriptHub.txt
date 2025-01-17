@@ -516,11 +516,10 @@ local Games = {
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20Stud%20Jumps%20Obby.txt'
 	}
 }
-repeat task.wait()until game:IsLoaded()
-local _g = Games[game.PlaceId] or Games[game.GameId]
-if _g then
-    print("Running:",_g.Name) loadstring(game:HttpGet(_g.Script))()
-else
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() print("No Script Found For Game")
+repeat task.wait()until game:IsLoaded()local Found
+for _,v in pairs(Games)do
+    if _==game.PlaceId or _==game.GameId then
+        Found=true print("Running:",v.Name)loadstring(game:HttpGet(v.Script))()break
+    end
 end
-
+if not Found then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() print("No Scripts")end
