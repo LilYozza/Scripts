@@ -510,6 +510,10 @@ local Games = {
 	[18993029136] = {
 		Name = 'RNG Cart Ride',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/RNG%20Cart%20Ride.txt'
+	},
+	[11166344460] = {
+		Name = 'Easy Stud Jumps Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20Stud%20Jumps%20Obby.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()local Found

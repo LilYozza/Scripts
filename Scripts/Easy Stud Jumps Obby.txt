@@ -1,0 +1,102 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local sCheckPoint = "Spawn"
+local sPoint = 1
+
+local Checkpoints = game:GetService("Workspace").Checkpoints
+local RebirthButtons = game:GetService("Workspace").RebirthButtons
+local Worlds = game:GetService("Workspace").Worlds
+local GearGivers = game:GetService("Workspace").GearGivers
+
+-->Non Return Functions<--
+local function Win()
+    local currentWorld = Worlds:GetChildren()[1]
+    if currentWorld then
+        local rButton = RebirthButtons:FindFirstChild(currentWorld.Name) or Worlds.Space.Model.Space
+        local cWorld = Checkpoints:FindFirstChild(currentWorld.Name)
+        if rButton and cWorld then
+            local lastPoint = cWorld:FindFirstChild(#cWorld:GetChildren()-1)
+            if lastPoint then
+                Touch(lastPoint)
+                MoveTo(rButton)
+                task.wait(0.2)
+                fireproximityprompt(rButton.ProximityPrompt)
+            else
+                print("Couldnt Find lastPoint")
+            end
+        else
+            print("Couldnt Find Rebirth Button or Current World")
+            print("World:", cWorld, "Rebirth Button:", rButton)
+        end
+    end
+end
+
+-->Return Functions<--
+local function getMostChildren(_parent)
+    local max = 0
+    local smax
+    for _,v in pairs(_parent:GetChildren())do
+        if #v:GetChildren() > max then
+            max = #v:GetChildren()
+            smax = v
+        end
+    end
+    return smax
+end
+
+local DropList1 = Auto:Dropdown("Spawn",Checkpoints:GetChildren(),true,function(SItem1) --true/false, replaces the current title "Dropdown" with the option that t
+    sCheckPoint = SItem1
+end)
+
+local DropList2 = Auto:Dropdown("0",getMostChildren(Checkpoints):GetChildren(),true,function(SItem2) --true/false, replaces the current title "Dropdown" with the option that t
+    sPoint = SItem2
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        local _sCheckpoint = Checkpoints:FindFirstChild(sCheckPoint)
+        if _sCheckpoint then
+            local _sPoint = _sCheckpoint:FindFirstChild(sPoint)
+            if _sPoint then
+                MoveTo(_sPoint)
+            end
+        end
+    end)
+end)
+
+Auto:Button("Win",function()
+    spawn(function()
+        Win()
+    end)
+end)
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            Win()
+            task.wait(20)
+        end
+    end)
+end)
+
+Auto:Button("All Items",function()
+    spawn(function()
+        for _,v in pairs(GearGivers:GetDescendants()) do
+            if v:IsA("TouchTransmitter") then
+                Touch(v.Parent)
+            end
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
