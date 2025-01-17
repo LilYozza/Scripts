@@ -22,8 +22,9 @@ Auto:Toggle("Auto",function(bool)
                 local _child = v:GetChildren()[1] or 0
                 if _child and _child:IsA("TouchTransmitter") then
                     con = v.Touched:Connect(function(_p)
-                        local player = game.Players:GetPlayerFromCharacter(_p.Parent)
-                        if player and player.character then
+                        local p = game.Players:GetPlayerFromCharacter(_p.Parent)
+                        local hum = p:FindFirstChild("Humanoid")
+                        if p and hum and hum.Health > 0 then
                             if v then
                                 v.BrickColor = BrickColor.new("Lime green")
                             end
