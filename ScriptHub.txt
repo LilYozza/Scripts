@@ -530,6 +530,10 @@ local Games = {
 	[18768675350] = {
 		Name = 'Every Click +1 Jump',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Click%20+1%20Jump.txt'
+	},
+	[13057041140] = {
+		Name = 'Every Second Stud Jumps Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Second%20Stud%20Jumps%20Obby.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()

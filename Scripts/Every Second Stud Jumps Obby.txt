@@ -1,0 +1,57 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Gears = game:GetService("Workspace").Finish.Gears
+local Checkpoints = game:GetService("Workspace").Checkpoints
+local Wins = game:GetService("Workspace").Wins
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Button("Start",function()
+    spawn(function()
+        MoveTo(Checkpoints:FindFirstChild("0"))
+    end)
+end)
+
+Auto:Button("Finish",function()
+    spawn(function()
+        MoveTo(Checkpoints:FindFirstChild(#Checkpoints:GetChildren()-1))
+    end)
+end)
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            local WinPart = Wins:FindFirstChild("WinPart")
+            if WinPart then
+                Touch(Checkpoints:FindFirstChild(#Checkpoints:GetChildren()-1))
+                MoveTo(WinPart) task.wait(0.1)
+                fireproximityprompt(WinPart.ProximityPrompt)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("All Items",function()
+    spawn(function()
+        for _,v in pairs(Gears:GetDescendants())do
+            if v:IsA("TouchTransmitter") then
+                Touch(v.Parent)
+            end
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
