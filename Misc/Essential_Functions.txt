@@ -286,10 +286,13 @@ getgenv().TweenPart = function(_part, _des, _speed, _style)
 	end
 end
 
-getgenv().GetDisplayNames = function()
+getgenv().GetDisplayNames = function(_bool) --_bool is to return localplayer also or not (false to not return)
 	local _t = {}
+    if _bool == nil then _bool = true end
 	for _,v in pairs(Players:GetPlayers())do
-		table.insert(_t, v.DisplayName)
+        if _bool or v ~= Player then
+		    table.insert(_t, v.DisplayName)
+        end
 	end
 	return _t
 end
