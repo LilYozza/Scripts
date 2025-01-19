@@ -1,0 +1,86 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Trade = w:CreateFolder("Trading")
+
+-->Base Variables<--
+local sPlayer
+local Backpack = Player.Backpack
+
+local BLFish = {"Coral Guard"}
+local Trades = Player.PlayerGui:WaitForChild("hud"):WaitForChild("safezone"):WaitForChild("bodyannouncements")
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Button("Raito Hub",function(bool)
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Efe0626/RaitoHub/main/Script"))()
+    end)
+end)
+
+local PDropList = Trade:Dropdown("Select Player",GetDisplayNames(false),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPlayer = GetPlayerByDisplayName(SItem)
+end)
+
+Trade:Toggle("Trade All",function(bool)
+    shared.ToggleTA=bool
+    spawn(function()
+        while shared.ToggleTA do
+            if sPlayer then
+                for _,v in pairs(Backpack:GetChildren())do
+                    if shared.ToggleTA then
+                        local _offer = v:FindFirstChild("offer")
+                        local hum = Player.Character:FindFirstChild("Humanoid")
+                        if _offer and sPlayer and hum then
+                            hum:EquipTool(v) task.wait(0.1)
+
+                            local args = {
+                                [1] = sPlayer
+                            }
+                            Player.Character[v.Name].offer:FireServer(unpack(args))
+                            --v.offer:FireServer(unpack(args))
+                            task.wait(0.4)
+                        end
+                    else
+                        break
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+
+Trade:Toggle("Accept All",function(bool)
+    shared.Toggle2=bool
+    spawn(function()
+        while shared.Toggle2 do
+            for _,v in pairs(Trades:GetChildren()) do
+                if v.Name == "offer" and v:FindFirstChild("confirm") then
+                    firesignal(v.confirm['MouseButton1Click'])
+                    task.wait(0.2)
+                end
+            end
+            task.wait(2)
+        end
+    end)
+end)
+
+Players.PlayerAdded:Connect(function(player)
+    PDropList:Refresh(GetDisplayNames(false))
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+     PDropList:Refresh(GetDisplayNames(false))
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
