@@ -156,7 +156,7 @@ Misc:Button("3rd Person",function()
 	Player.CameraMinZoomDistance = 0
 end)
 
-Misc:Toggle("Rejoin Server",function()
+Misc:Button("Rejoin Server",function()
 	spawn(function()
         ts:Teleport(game.PlaceId, Player)
     end)
