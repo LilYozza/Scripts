@@ -8,6 +8,7 @@ local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/
 --===========================================================================================--
 
 local Virtual=game:GetService("VirtualUser")
+local ts = game:GetService("TeleportService")
 local RunService = game:GetService("RunService")
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -153,6 +154,12 @@ Misc:Button("3rd Person",function()
 	Player.CameraMode = 'Classic'
 	Player.CameraMaxZoomDistance = 150
 	Player.CameraMinZoomDistance = 0
+end)
+
+Misc:Toggle("Rejoin Server",function()
+	spawn(function()
+        ts:Teleport(game.PlaceId, Player)
+    end)
 end)
 
 Misc:DestroyGui()
