@@ -416,7 +416,7 @@ getgenv().Tag = function(_p, _b, _s1, _s2) --_p = Part / _b = true or false to a
             _s2.Parent = _s1
             _s1.Parent = _p
 
-            return {_s1, _s2}
+            return {_p, _s1, _s2}
         else
             if _check then _check:Destroy() end
         end
