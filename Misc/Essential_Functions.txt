@@ -414,13 +414,14 @@ getgenv().Tag = function(_p, _b, _s1, _s2) --_p = Part / _b = true or false to a
         
         local _check = _p:FindFirstChild("Tag")
         if _b == true then
-            if not (_check and _check:IsA("BillboardGui")) then
-                if not _s1 then _s1 = getgenv().CreateBillBoard() end
-                if not _s2 then _s2 = getgenv().CreateTextLabel(_p.Name) end
+            if _check then _check:Destroy() end
+            if not _s1 then _s1 = getgenv().CreateBillBoard() end
+            if not _s2 then _s2 = getgenv().CreateTextLabel(_p.Name) end
 
-                _s2.Parent = _s1
-                _s1.Parent = _p
-            end
+            _s2.Parent = _s1
+            _s1.Parent = _p
+
+            return {_s1, _s2}
         else
             if _check then _check:Destroy() end
         end
