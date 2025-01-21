@@ -71,10 +71,10 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 		_offset = Vector3.new(0,0,0)
 	end
 	if _basePart then
-        if _basePart:IsA("BasePart") then
-		    Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
-        elseif typeof(_basePart) == "CFrame" then
-            Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart + _offset
+        if typeof(_basePart) == "CFrame"  then
+		    Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart + _offset
+        elseif _basePart:IsA("BasePart") then
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
         end
         if oldPos and _back then
             task.wait(_backTime)
@@ -424,7 +424,7 @@ end
 getgenv().CreateTextLabel = function(text, color, position)
 
     if not text then text = "" end
-    if not color then color = Color3.fromRGB(255,0,0) end
+    if not color then color = Color3.fromRGB(0,255,0) end
     if not position then position = UDim2.new(0,0,0,0) end
 	-- Creates Name Tag --
 	local newText = Instance.new("TextLabel")
