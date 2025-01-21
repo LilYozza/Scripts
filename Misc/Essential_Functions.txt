@@ -11,11 +11,6 @@ local Player = Players.LocalPlayer
 
 -->FUNCTIONS TO ADD<--
 -->Remove From Table (READY TO TEST)
--->Return All Players [DisplayName] (READY TO TEST)
--->Create NameTags
--->Remove NameTags
--->Find Item (Maybe)
--->Select Player
 
 --> Non Return Functions <--
 getgenv().Touch = function(_touchPart, _basePart, _timeout)
@@ -427,5 +422,26 @@ getgenv().Tag = function(_p, _b, _s1, _s2) --_p = Part / _b = true or false to a
         end
     else
         warn("Tag: Bad Values...(Part(1))")
+    end
+end
+
+getgenv().FindItem = function(_s, _p, _t) -- _s = String to find / _p = item to search in / _t = exact match or not
+    if _s and typeof(_s) == "string" then
+        if _t == nil then _t = true end
+        local _tb = {}
+        if _p then
+            for _,v in pairs(_p:GetDescendants())do
+                if not _t and string.find(v.Name, _s) then table.insert(_tb, v) end
+                if _t and v.Name == _s then table.insert(_tb, v) end
+            end
+        else
+            for _,v in pairs(game.Workspace:GetDescendants())do
+                if not _t and string.find(v.Name, _s) then table.insert(_tb, v) end
+                if _t and v.Name == _s then table.insert(_tb, v) end
+            end
+        end
+        return _tb
+    else
+        warn("FindItem: Bad Values...(No String To Search)")
     end
 end
