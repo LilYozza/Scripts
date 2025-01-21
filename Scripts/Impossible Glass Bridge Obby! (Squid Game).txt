@@ -30,25 +30,31 @@ local function removeTouch(_part)
     end
 end
 
-local con
-Auto:Toggle("Safe",function(bool)
-    shared.Toggle2=bool
-    spawn(function()
-        if shared.Toggle2 then
-            con = GlassPane.ChildAdded:Connect(function(p)
-                task.wait(0.5)
-                removeTouch(p)
-            end)
-            removeTouch(GlassPane)
-        else
-            if con then con:Disconnect() end
-        end
-    end)
-end)
+--local con
+--Auto:Toggle("Safe",function(bool)
+ --   shared.Toggle2=bool
+--    spawn(function()
+--        if shared.Toggle2 then
+--            con = GlassPane.ChildAdded:Connect(function(p)
+ --               task.wait(0.5)
+ --               removeTouch(p)
+ --           end)
+ --           removeTouch(GlassPane)
+ --       else
+ --           if con then con:Disconnect() end
+ --       end
+ --   end)
+--end)
 
 
 Auto:Button("Show Path",function()
     spawn(function()
+         for _,v in pairs(GlassPane:GetChildren())do
+            if v[1] and v[2] then
+                v[1].BrickColor = BrickColor.new("Electric blue")
+                v[1].BrickColor = BrickColor.new("Electric blue")
+            end
+        end   
          for _,v in pairs(GlassPane:GetChildren())do
             if v[1].CanCollide then v[1].BrickColor=BrickColor.new("Lime green")
             else v[2].BrickColor=BrickColor.new("Lime green") end
