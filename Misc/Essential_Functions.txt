@@ -9,6 +9,37 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 -->Base Variables<--
 local Player = Players.LocalPlayer
 
+local _sHelp = {
+
+    ["Touch"] = "Touch(PartWithTouchTransmittter, PartToTouchIt, TimeToWaitAfter)",
+    ["MoveTo"] = "MoveTo(PartToMoveTo, Offset, TeleportBack?, TimeToWaitBeforeTeleportBack)",
+    ["ChangeCollide"] = "ChangeCollide(Part, Toggle?)",
+    ["MovePart"] = "MovePart(Part, Location, Offset, TimeToWaitPerPart)",
+    ["RemovePart"] = "RemovePart(Part(Can Be Table / Part))",
+    ["SortTableByNumber"] = "SortTableByNumber(Table)",
+    ["SortTableByName"] = "SortTableByName(Table)",
+    ["RemoveFromTable"] = "RemoveFromTable(Table, Item)",
+    ["PrintTable"] = "PrintTable(Table)",
+    ["SendKey"] = "SendKey(Key)",
+    ["fromSuffixString"] = "fromSuffixString(Value, Table(Suffixes))",
+    ["NextTeam"] = "NextTeam(Player, Table)",
+    ["PrevTeam"] = "PrevTeam(Player, Table)",
+    ["GetDistance"] = "GetDistance(Object1, Object2)",
+    ["TweenPart"] = "TweenPart(Part, Destination, Speed, Style)",
+    ["GetDisplayNames"] = "GetDisplayNames(Bool?(ReturnPlayer Or Not))",
+    ["GetPlayerByDisplayName"] = "GetPlayerByDisplayName(Player)",
+    ["GetClosestPart"] = "GetClosestPart(Part, Table)",
+    ["FindInTable"] = "FindInTable(Table, Item)",
+    ["ReverseTable"] = "ReverseTable(Table)",
+    ["ReturnTableAsString"] = "ReturnTableAsString(Table)",
+    ["Timer"] = "Timer(Time(seconds))",
+    ["CreateTextLabel"] = "CreateTextLabel(Text, Color, Position)",
+    ["CreateBillBoard"] = "CreateBillBoard()",
+    ["Tag"] = "Tag(Part, Bool?(Add OR Remove), Settings1, Settings2)",
+    ["FindItem"] = "FindItem(Name, PartOrNot, MatchType)"
+}
+
+
 -->FUNCTIONS TO ADD<--
 -->Remove From Table (READY TO TEST)
 
@@ -39,8 +70,12 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 	if not _offset or typeof(_offset) ~= "Vector3" then
 		_offset = Vector3.new(0,0,0)
 	end
-	if _basePart and (_basePart:IsA("BasePart") or _basePart:IsA("UnionOperation")) then
-		Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
+	if _basePart then
+        if _basePart:IsA("BasePart") then
+		    Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
+        elseif typeof(_basePart) == "CFrame" then
+            Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart + _offset
+        end
         if oldPos and _back then
             task.wait(_backTime)
             Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos
@@ -140,6 +175,22 @@ getgenv().RemovePart = function(_part)
 	else
 		warn("RemovePart: Bad Values...")
 	end
+end
+
+getgenv().SortTableByNumber = function(_tbl) -- ONLY ACCEPTS TABLES WITH .NAME PROPERTY ATM
+    table.sort(_tbl, function(a, b)
+        local numA = tonumber(a.Name:match("%d+$")) or 0
+        local numB = tonumber(b.Name:match("%d+$")) or 0
+        return numA < numB
+    end)
+    return _tbl
+end
+
+getgenv().SortTableByName = function(_tbl) -- ONLY ACCEPTS TABLES WITH .NAME PROPERTY ATM
+    table.sort(_tbl, function(a, b)
+        return a.Name < b.Name
+    end)
+    return _tbl
 end
 
 getgenv().RemoveFromTable = function(_tbl, _item)
@@ -402,11 +453,11 @@ getgenv().CreateBillBoard = function()
     return _defaultBillBoard
 end
 
-getgenv().Tag = function(_p, _b, _s1, _s2) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
+
+getgenv().Tag = function(_p, _b, _s1, _s2, text) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
     if _p and _p:IsA("BasePart") then
         if _b == nil then _b = true end
 
-        
         local _check = _p:FindFirstChild("Tag")
         if _b == true then
             if _check then _check:Destroy() end
@@ -443,5 +494,15 @@ getgenv().FindItem = function(_s, _p, _t) -- _s = String to find / _p = item to 
         return _tb
     else
         warn("FindItem: Bad Values...(No String To Search)")
+    end
+end
+
+getgenv().EHelp = function(_func)
+    for _,v in pairs(_sHelp) do
+        if _func and string.find(_, _func) then
+            print(_,":",v)
+        elseif not _func then
+            print(_,":",v)
+        end
     end
 end
