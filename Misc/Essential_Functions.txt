@@ -44,7 +44,7 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 	if not _offset or typeof(_offset) ~= "Vector3" then
 		_offset = Vector3.new(0,0,0)
 	end
-	if _basePart and (_basePart:IsA("Part") or _basePart:IsA("UnionOperation")) then
+	if _basePart and (_basePart:IsA("BasePart") or _basePart:IsA("UnionOperation")) then
 		Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
         if oldPos and _back then
             task.wait(_backTime)
@@ -261,7 +261,7 @@ getgenv().PrevTeam = function(_player, _sortedTbl)
 end
 
 getgenv().GetDistance = function(_p1, _p2)
-	if _p1 and (_p1:IsA("Part") or _p1:IsA("CFrame")) then
+	if _p1 and (_p1:IsA("BasePart") or _p1:IsA("CFrame")) then
 		if not _p2 then 
 			_p2 = Player.Character:WaitForChild("HumanoidRootPart") 
 		elseif _p2 and (not _p2:IsA("BasePart") and not _p2:IsA("CFrame") and not _p2:IsA("SpawnLocation")) then
@@ -310,11 +310,11 @@ getgenv().GetPlayerByDisplayName = function(_displayName)
 end
 
 getgenv().GetClosestPart = function(_part, _tbl)
-	if _part and _part:IsA("Part") and _tbl then
+	if _part and _part:IsA("BasePart") and _tbl then
 		local _s
 		local _min = math.huge
 		for _,v in pairs(_tbl)do
-			if v:IsA("Part") or v:IsA("CFrame") then
+			if v:IsA("BasePart") or v:IsA("CFrame") then
 				local _dis = GetDistance(_part, v)
 				if _dis and _dis < _min then
 					_s = v
@@ -375,4 +375,56 @@ getgenv().Timer = function(_time)
 	end
 end
 
+getgenv().CreateTextLabel = function(text, color, position)
 
+    if not text then text = "" end
+    if not color then color = Color3.fromRGB(255,0,0) end
+    if not position then position = UDim2.new(0,0,0,0) end
+	-- Creates Name Tag --
+	local newText = Instance.new("TextLabel")
+	-- Data --
+	newText.Size = UDim2.new(1,0,0.3,0)
+	newText.Position = position
+	newText.BackgroundTransparency = 1
+	--newText.TextScaled = true
+
+	-- Text --
+    newText.Text = text
+	newText.TextSize = 13
+	newText.Font = Enum.Font.Legacy
+	newText.TextColor3 = color
+
+    return newText
+end
+
+getgenv().CreateBillBoard = function()
+    local _defaultBillBoard = Instance.new("BillboardGui")
+    _defaultBillBoard.Name = "Tag"
+    _defaultBillBoard.AlwaysOnTop = true
+    _defaultBillBoard.Size = UDim2.new(0, 250,0, 100)
+    _defaultBillBoard.ExtentsOffset = Vector3.new(0,1,0)
+
+    return _defaultBillBoard
+end
+
+getgenv().Tag = function(_p, _b, _s1, _s2) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
+    if _p and _p:IsA("BasePart") then
+        if _b == nil then _b = true end
+
+        
+        local _check = _p:FindFirstChild("Tag")
+        if _b == true then
+            if not (_check and _check:IsA("BillboardGui")) then
+                if not _s1 then _s1 = getgenv().CreateBillBoard() end
+                if not _s2 then _s2 = getgenv().CreateTextLabel(_p.Name) end
+
+                _s2.Parent = _s1
+                _s1.Parent = _p
+            end
+        else
+            if _check then _check:Destroy() end
+        end
+    else
+        warn("Tag: Bad Values...(Part(1))")
+    end
+end
