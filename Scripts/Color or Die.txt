@@ -1,0 +1,118 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local RunService = game:GetService("RunService")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local GameplayAssets = game:GetService("Workspace"):WaitForChild("GameplayAssets")
+local Monsters = GameplayAssets:WaitForChild("Monsters")
+local Items = GameplayAssets:WaitForChild("Items")
+local Normal = Items:WaitForChild("Normal")
+
+-->Non Return Functions<--
+local function exePrompt(_p)
+    local Root = _p:FindFirstChild("Root")
+    if Root and Root:FindFirstChild("ProximityPrompt") then
+        local _old = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+        MoveTo(Root) task.wait(0.3)
+        fireproximityprompt(Root.ProximityPrompt) task.wait(0.1)
+        MoveTo(_old) task.wait(0.1)
+    end   
+end
+
+-->Return Functions<--
+Auto:Button("Spawn",function()
+    spawn(function()
+        MoveTo(game:GetService("Workspace").SpawnLocation)
+    end)
+end)
+
+
+local con
+local EnemyTbl = {}
+
+Auto:Toggle("ESP Enemy",function(bool)
+    shared.ToggleEE=bool
+    spawn(function()
+        if shared.ToggleEE then
+            for _,v in pairs(Monsters:GetChildren()) do
+                local hrp = v:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local _t = Tag(hrp)
+                    _t[3].TextColor3 = Color3.fromRGB(0,255,0)
+                    table.insert(EnemyTbl, _t)
+                end
+            end
+
+            con = RunService.Heartbeat:Connect(function(deltaTime)
+                for _,v in pairs(EnemyTbl) do
+                    if v[1] then
+                        v[3].Text = v[1].Parent.Name .. " [" .. math.ceil(GetDistance(v[1])) .. "]"
+                    end
+                end
+            end)
+
+        else
+            if con then con:Disconnect() end
+            EnemyTbl = {}
+        end
+    end)
+end)
+
+Auto:Button("Paint Brushes",function()
+    spawn(function()
+        local _items = SortTableByNumber(Items.Collectable.Collectable:GetChildren())
+        for _,v in pairs(_items) do
+            exePrompt(v)
+        end
+    end)
+end)
+
+local sPaint
+local DropList1 = Auto:Dropdown("Select Paint",Normal.PaintBucket:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPaint = Normal.PaintBucket:FindFirstChild(SItem)
+end)
+
+Auto:Button("Get Bucket",function(bool)
+    spawn(function()
+        if sPaint then
+            exePrompt(sPaint)
+        end
+    end)
+end)
+
+local selectItem = "All"
+local DropList2 = Auto:Dropdown("All",{"All", unpack(Normal.Tool:GetChildren())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    selectItem = SItem
+end)
+
+Auto:Button("Get Item",function(bool)
+    spawn(function()
+        if selectItem == "All" then
+            for _,v in pairs(Normal.Tool:GetChildren()) do
+                exePrompt(v)
+            end
+        else
+            local item = Normal.Tool:FindFirstChild(selectItem)
+            if item then
+                exePrompt(item)
+            end
+        end
+    end)
+end)
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            task.wait()
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
