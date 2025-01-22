@@ -16,6 +16,7 @@ local mouse = Player:GetMouse()
 
 local GPlayers = w:CreateFolder("Players")
 local Misc = w:CreateFolder("Misc")
+local Dev = w:CreateFolder("Dev")
 
 local PlayerSelect_M
 local PlayerList_M={}
@@ -159,6 +160,18 @@ end)
 Misc:Button("Rejoin Server",function()
 	spawn(function()
         ts:Teleport(game.PlaceId, Player)
+    end)
+end)
+
+Dev:Button("Dex Explorer",function()
+	spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+    end)
+end)
+
+Dev:Button("Remote Spy",function()
+	spawn(function()
+        loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
     end)
 end)
 
