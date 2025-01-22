@@ -1,0 +1,114 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local deleteCarts = {}
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function Click(_v)
+    if _v then
+        spawn(function()
+            repeat
+                fireclickdetector(_v)
+                task.wait()
+            until not _v or not shared.ToggleAD
+        end)
+    end
+end
+
+local function findClick(_p)
+    for _,v in pairs(_p:GetDescendants()) do
+        if v:IsA("ClickDetector") and v.Parent.Name == "Delete" then
+            return v
+        end
+    end
+end
+
+local function findFirstPart(_p)
+    for _,v in pairs(_p:GetDescendants()) do
+        if v:IsA("Part") then
+            return v
+        end
+    end
+end
+
+local con1
+local con2
+
+local MaxDis = 100
+Auto:Toggle("Near Delete",function(bool)
+    shared.ToggleND=bool
+    spawn(function()
+          while shared.ToggleND do
+            for _,v in pairs(Workspace:GetChildren())do
+                local _first = findFirstPart(v)
+                if v and _first and v.Name == "Model" and GetDistance(_first) <= MaxDis then
+                    local _c = findClick(v)
+                    if _c then
+                        Click(_c)
+                    end
+                end
+            end
+            task.wait()
+        end      
+    end)
+end)
+
+Auto:Toggle("Auto Delete",function(bool)
+    shared.ToggleAD=bool
+    spawn(function()
+
+        if shared.ToggleAD then
+
+            for _,v in pairs(Workspace:GetChildren())do
+                local _c = findClick(v)
+                Click(_c)
+            end
+            con1 = Workspace.ChildAdded:Connect(function(_v)
+                task.wait(0.5)
+                local _c = findClick(_v)
+                Click(_c)
+            end)
+            --con2 = Workspace.ChildRemoved:Connect(function()
+               -- local _c = findClick(v)
+               -- if _c then fireclickdetector(_c) end
+            --end)
+
+        else
+            if con1 then con1:Disconnect() end
+            if con2 then con2:Disconnect() end   
+        end
+
+    end)
+end)
+
+local sPlayer
+local DropList = Auto:Dropdown("Select Player",GetDisplayNames(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPlayer = GetPlayerByDisplayName(sPlayer)
+end)
+
+Auto:Toggle("Despawn",function(bool)
+    shared.ToggleD=bool
+    spawn(function()
+          while shared.ToggleD do
+            task.wait()
+        end      
+    end)
+end)
+
+
+
+Players.ChildAdded:Connect(function() DropList:Refresh(GetDisplayNames()) end)
+Players.ChildRemoved:Connect(function() DropList:Refresh(GetDisplayNames()) end)
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
