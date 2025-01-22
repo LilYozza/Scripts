@@ -1,17 +1,33 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
-local RunService = game:GetService("RunService")
+
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
+local colorNames = {
+    Blue = "Bright blue",
+    Green = "Bright green",
+    Orange = "Bright orange",
+    Pink = "Hot pink",
+    Purple = "Bright purple",
+    Teal = "Bright blue", -- Roblox doesn't have a direct Teal; this is the closest match
+    White = "Institutional white",
+    Yellow = "Bright yellow",
+    Red = "Bright red"
+}
+
 local GameplayAssets = game:GetService("Workspace"):WaitForChild("GameplayAssets")
+local ChristmasEvent = GameplayAssets:WaitForChild("ChristmasEvent")
 local Monsters = GameplayAssets:WaitForChild("Monsters")
 local Items = GameplayAssets:WaitForChild("Items")
 local Normal = Items:WaitForChild("Normal")
+local GameplayParts = game:GetService("Workspace"):WaitForChild("GameplayParts")
+local Doors = GameplayParts:WaitForChild("Doors")
+
 
 -->Non Return Functions<--
 local function exePrompt(_p)
@@ -32,9 +48,7 @@ Auto:Button("Spawn",function()
 end)
 
 
-local con
 local EnemyTbl = {}
-
 Auto:Toggle("ESP Enemy",function(bool)
     shared.ToggleEE=bool
     spawn(function()
@@ -42,23 +56,66 @@ Auto:Toggle("ESP Enemy",function(bool)
             for _,v in pairs(Monsters:GetChildren()) do
                 local hrp = v:FindFirstChild("HumanoidRootPart")
                 if hrp then
-                    local _t = Tag(hrp)
+                    local _t = Tag(hrp, true, hrp.Parent.Name)
                     _t[3].TextColor3 = Color3.fromRGB(0,255,0)
                     table.insert(EnemyTbl, _t)
                 end
             end
 
-            con = RunService.Heartbeat:Connect(function(deltaTime)
-                for _,v in pairs(EnemyTbl) do
-                    if v[1] then
-                        v[3].Text = v[1].Parent.Name .. " [" .. math.ceil(GetDistance(v[1])) .. "]"
-                    end
-                end
-            end)
-
         else
-            if con then con:Disconnect() end
-            EnemyTbl = {}
+            for _,v in pairs(EnemyTbl) do
+                if v then
+                    Tag(v[1], false)
+                end
+            end
+        end
+    end)
+end)
+
+local DoorTbl = {}
+Auto:Toggle("ESP Door",function(bool)
+    shared.ToggleED=bool
+    spawn(function()
+        if shared.ToggleED then
+            for _,v in pairs(Doors:GetDescendants()) do
+                if v and v.Name == "Core" and v:IsA("Part") then
+                    local _t = Tag(v, true, v.Parent.Name)
+                    if colorNames[v.Parent.Name] then
+                        _t[3].TextColor3 = BrickColor.new(colorNames[v.Parent.Name]).Color
+                    else
+                        _t[3].TextColor3 = BrickColor.new("Medium stone grey").Color
+                    end
+                    table.insert(DoorTbl, _t)                    
+                end
+            end
+        else
+             for _,v in pairs(DoorTbl) do
+                if v then
+                    Tag(v[1], false)
+                end
+            end       
+        end
+    end)
+end)
+
+local ItemTbl = {}
+Auto:Toggle("ESP Item",function(bool)
+    shared.ToggleEI=bool
+    spawn(function()
+        if shared.ToggleEI then
+            for _,v in pairs(Items:GetDescendants()) do
+                if v and v.Name == "Core" and v:IsA("Part") then
+                    local _t = Tag(v, true, v.Parent.Name)
+                    _t[3].TextColor3 = BrickColor.new("Reddish brown").Color
+                    table.insert(ItemTbl, _t)                    
+                end
+            end
+        else
+             for _,v in pairs(ItemTbl) do
+                if v then
+                    Tag(v[1], false)
+                end
+            end       
         end
     end)
 end)
@@ -86,7 +143,7 @@ Auto:Button("Get Bucket",function(bool)
 end)
 
 local selectItem = "All"
-local DropList2 = Auto:Dropdown("All",{"All", unpack(Normal.Tool:GetChildren())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropList2 = Auto:Dropdown(selectItem,{"All", unpack(Normal.Tool:GetChildren())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     selectItem = SItem
 end)
 
@@ -105,14 +162,18 @@ Auto:Button("Get Item",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto",function(bool)
-    shared.Toggle=bool
+Auto:Toggle("Auto Presents",function(bool)
+    shared.ToggleAP=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.ToggleAP do
+            for _,v in pairs(ChristmasEvent:GetDescendants())do
+                if v and v:IsA("TouchTransmitter") then
+                    Touch(v.Parent, 0.1)
+                end
+            end
             task.wait()
         end
     end)
 end)
-
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
