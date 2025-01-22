@@ -1,6 +1,8 @@
 --Essential Function Script
+local startTime = os.clock()
 
 -->Services<--
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local TeamsService = game:GetService("Teams")
 local TweenService = game:GetService("TweenService")
@@ -453,22 +455,34 @@ getgenv().CreateBillBoard = function()
     return _defaultBillBoard
 end
 
-
-getgenv().Tag = function(_p, _b, _s1, _s2, text) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
+local _RenderCon = {}
+getgenv().Tag = function(_p, _b, _text, _s1, _s2) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
     if _p and _p:IsA("BasePart") then
         if _b == nil then _b = true end
 
         local _check = _p:FindFirstChild("Tag")
         if _b == true then
             if _check then _check:Destroy() end
+            if not _text then _text = _p.Name end
             if not _s1 then _s1 = getgenv().CreateBillBoard() end
-            if not _s2 then _s2 = getgenv().CreateTextLabel(_p.Name) end
+            if not _s2 then _s2 = getgenv().CreateTextLabel(_text) end
 
             _s2.Parent = _s1
             _s1.Parent = _p
 
+            _RenderCon[_p] = RunService.Heartbeat:Connect(function(deltaTime)
+                if _p then
+                    _s2.Text = _text .. " [" .. math.ceil(GetDistance(_p)) .. "]"
+                end
+            end)
+            
+
             return {_p, _s1, _s2}
         else
+            if _RenderCon[_p] then 
+                _RenderCon[_p]:Disconnect()
+                _RenderCon[_p] = nil
+            end
             if _check then _check:Destroy() end
         end
     else
@@ -506,3 +520,5 @@ getgenv().EHelp = function(_func)
         end
     end
 end
+
+print(string.format("Loaded Functions in: %.6f seconds", os.clock() - startTime))
