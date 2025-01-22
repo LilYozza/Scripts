@@ -142,6 +142,23 @@ Auto:Button("Get Bucket",function(bool)
     end)
 end)
 
+local selectDoor
+local DropList3 = Auto:Dropdown("Select Door",Doors.Normal.Paintable:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    selectDoor = SItem
+    DropList3:Refresh(Doors.Normal.Paintable:GetChildren())
+end)
+
+Auto:Button("Teleport",function(bool)
+    spawn(function()
+        if selectDoor then
+            local door = Doors.Normal.Paintable:FindFirstChild(selectDoor)
+            if door and door:FindFirstChild("Core") then
+                MoveTo(door.Core)
+            end
+        end
+    end)
+end)
+
 local selectItem = "All"
 local DropList2 = Auto:Dropdown(selectItem,{"All", unpack(Normal.Tool:GetChildren())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     selectItem = SItem
