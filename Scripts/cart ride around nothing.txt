@@ -75,7 +75,7 @@ Auto:Toggle("Auto Start",function(bool)
                     end
                 end
             end
-        	task.wait(0.2)
+        	task.wait(0.5)
         end
     end)
 end)
@@ -95,7 +95,7 @@ Auto:Toggle("Auto Stop",function(bool)
                     end
                 end
             end
-        	task.wait(0.2)
+        	task.wait(0.5)
         end
     end)
 end)
