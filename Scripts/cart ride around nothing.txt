@@ -40,6 +40,14 @@ local function getEngine(_cart)
 
 end
 
+local function removeTouchParts(_part)
+    for _,v in pairs(_part:GetDescendants()) do
+        if v:IsA("TouchTransmitter") then
+            v:Destroy()
+        end
+    end
+end
+
 
 local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
 
@@ -133,6 +141,17 @@ end)
 local DoorTbl = {"DoorPair"}
 Auto:Toggle("Doors",function(bool)
     spawn(function()ChangeCollide(DoorTbl, not bool)end)
+end)
+
+Cart:Button("Remove Touch",function()
+    spawn(function()
+        if Player.Character:WaitForChild("Humanoid").SeatPart then
+            local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart) or nil
+            if PCart1 then
+                removeTouchParts(PCart1)
+            end
+        end
+    end)
 end)
 
 Cart:Button("Easy Cart",function()
@@ -231,10 +250,11 @@ end)
 
 PlrS:Button("MoveCartTo",function()
     spawn(function()
-        local back= Player.Character:WaitForChild("HumanoidRootPart").CFrame
-        local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart)
+        if not PlayerSelect then return end
+        --local back= Player.Character:WaitForChild("HumanoidRootPart").CFrame
+        local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart) or nil
         local PCart2=GetCart(PlayerSelect.Character:WaitForChild("Humanoid").SeatPart)
-        if not PCart1 and not PCart2 then 
+        if not PCart1 or not PCart2 then 
             return 
         else 
             
@@ -265,6 +285,26 @@ end)
 PlrS:Button("Hack Check",function()
     spawn(function()
         if PlayerSelect.Character:FindFirstChild("expensive flight potion") or PlayerSelect.Backpack:FindFirstChild("expensive flight potion")then print("Has Flying Potion")else print("Does Not Have Flying Potion") end
+    end)
+end)
+
+PlrS:Button("AllCarts",function()
+    spawn(function()
+
+        for _,v in pairs(Carts:GetChildren()) do
+            if table.find(CartT, v.Name) then
+                local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart)
+                
+                
+
+                local _cartBase = v.MainCar:FindFirstChild("CartBase")
+                local pcart = PCart1.MainCar:FindFirstChild("CartBase")
+                if _cartBase and pcart then 
+                    removeTouchParts(PCart1)
+                    Touch(_cartBase, pcart)
+                end
+            end
+        end
     end)
 end)
 
