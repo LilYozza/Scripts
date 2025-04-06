@@ -490,6 +490,52 @@ getgenv().Tag = function(_p, _b, _text, _s1, _s2) --_p = Part / _b = true or fal
     end
 end
 
+local gameParts
+local PathfindingService = game:GetService("PathfindingService")
+
+getgenv().PathFind = function(_part, _col) -- _part = Part to waypoint to / _col = Colour of Waypoints (can be null)
+    if not _part or not _part:IsA("BasePart") then warn ("PathFind: Bad Values....(Part)") return end
+    if not _col then _col = brickColor.new("White") end
+
+    if not game.Workspace:FindFirstChild("_gameParts") then
+        gameParts = Instance.new("Folder")
+        gameParts.Parent = game.Workspace
+        gameParts.Name = "gameParts"
+    else
+            gameParts = game.Workspace:FindfirstChild("_gameParts")
+    end
+
+    local path = PathfindingService:CreatePath()
+    local hum = Player.Character:WaitForChild("Humanoid")
+    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+    path:ComputeAsync(hrp.Position, _part.Position)
+    local waypoints = path:GetWaypoints()
+    
+    for i, waypoint in pairs(waypoints) do
+        hum:MoveTo(waypoint.Postion)
+        hum.MoveToFinish:Wait(2)
+
+        local part = Instance.new("Part")
+        part.Shape = "Ball"
+        part.Material = "Neon"
+        part.Size = Vector3.new(0.5, 0.5, 0.5)
+        part.Position = waypoint.Position
+        part.Anchored = true
+        part.CanCollide = false
+        part.Parent = gameParts
+   
+    end
+
+    print("Made Path For:", _part)
+
+    hum:MoveTo(_part.Position)
+
+    -- (Part, Color)
+    -- Get Part
+    -- Show Path to part
+    -- Update Path To Part
+end
+
 getgenv().FindItem = function(_s, _p, _t) -- _s = String to find / _p = item to search in / _t = exact match or not
     if _s and typeof(_s) == "string" then
         if _t == nil then _t = true end
