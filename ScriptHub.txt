@@ -567,7 +567,14 @@ local Games = {
 repeat task.wait()until game:IsLoaded()
 local _g = Games[game.PlaceId] or Games[game.GameId]
 if _g then
-    print("Running:",_g.Name) loadstring(game:HttpGet(_g.Script))()
+    print("Running:",_g.Name)
+    local s,e = pcall(function()
+        loadstring(game:HttpGet(_g.Script))()
+    end)
+    if not s then 
+        print("Error Loading",_g.Name, "Script... Reloading....")
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))()
+    end
 else
     loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() print("No Script Found For Game")
 end
