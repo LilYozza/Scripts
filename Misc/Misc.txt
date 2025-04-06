@@ -182,6 +182,7 @@ Dev:Button("Remote Spy",function()
         webImport("init")
         webImport("ui/main")	
     end)
+end)
 Misc:DestroyGui()
 
 --========================================CONNECTIONS========================================--
