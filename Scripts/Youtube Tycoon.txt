@@ -9,8 +9,9 @@ local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
 local Tycoon, SCollect
-local Tycoons = Workspace:FindFirstChild("Tycoons")
-local Plots = Workspace:FindFirstChild("Plots")
+local GameAssents = Workspace:FindFirstChild("GameAssents")
+local Tycoons = GameAssents:FindFirstChild("Tycoons")
+local Plots = GameAssents:FindFirstChild("Plots")
 
 --> Non Return Functions <--
 local function FireTouch(t,p) firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t) end
@@ -227,7 +228,7 @@ Auto:Toggle("Sub Buy",function(bool)
 end)
 
 
-local _precent = Player.PlayerGui.Pantalla.RebirthGui.Bar.TextLabel
+local _precent = Player.PlayerGui.Pantalla.RebirthGui.backframe.Bar.TextLabel
 Auto:Toggle("Auto Rebirth",function(bool)
     shared.toggleAR = bool
     spawn (function()
