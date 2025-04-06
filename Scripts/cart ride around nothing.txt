@@ -48,12 +48,21 @@ local function removeTouchParts(_part)
     end
 end
 
+local ACart
 local function attachCart(_cart)
     if _cart then
-        _cart.ChildAdded:Connect(function(_c)
+        ACart = _cart.ChildAdded:Connect(function(_c)
             if _c and _c.Name == "ShootPart" and _c:IsA("BasePart") then
                 if PlayerSelect then
-                    GetCart()
+                    local pcart = GetCart(PlayerSelect.Character:WaitForChild("Humanoid").SeatPart)
+                    if pcart then
+
+                        TweenPart(_c, pcart.MainCar.CartBase)
+
+                        Touch(pcart.MainCar.CartBase, _c)
+                        Touch(_c, pcart.MainCar.CartBase)
+                        print("Touched")
+                    end
                 end
             end
         end)
@@ -242,35 +251,43 @@ end)
 Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
 
 PlrS:Toggle("Auto Aim",function(bool)
-    shared.toggle1 = bool
+    shared.toggle5 = bool
     spawn (function()
-        while shared.toggle1 do
+        while shared.toggle5 do
             local success, err = pcall(function()
             if Workspace:FindFirstChild("ShootPartC4")then
                 local PCart
                 if PlayerSelect and PlayerSelect.Character:WaitForChild("Humanoid") and PlayerSelect.Character:WaitForChild("Humanoid").SeatPart then
                     PCart=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart
-                end
-                for _,v in pairs(Workspace:GetChildren())do
-                    if v.Name=="ShootPartC4" and PCart then v.CFrame=PCart.CFrame v.WeldConstraint.Part0=PCart v.WeldConstraint.Part1=PCart Touch(v,PCart) end
-                end
 
-                Carts.ChildAdded:Connect(function(_p)
-                    if table.find(CartT, _p.Name) then
-                        attachCart(_p)
-                    end
-                end)
-
-                -- Adds already carts
-                for _,v in pairs(Carts:GetChildren()) do
-                        if table.find(CartT, _p.Name) then
-                        attachCart(v)
+                    for _,v in pairs(Workspace:GetChildren())do
+                        if v.Name=="ShootPartC4" and PCart then v.CFrame=PCart.CFrame v.WeldConstraint.Part0=PCart v.WeldConstraint.Part1=PCart Touch(v,PCart) end
                     end
                 end
 
+    
 
-            end end)
+
+
+            end 
+                --[[
+                --AutoShoot
+                local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart) or nil
+                if not PCart1 and ACart then ACart:Disconnect() ACart = nil print("Removed") end
+
+                    --local PCart2=GetCart(PlayerSelect.Character:WaitForChild("Humanoid").SeatPart)
+                if PCart1 and not ACart then 
+                    attachCart(PCart1)
+                    print("Attached")
+                end
+                ]]--
+
+            end)
         	task.wait()
+        end
+
+        if not shared.toggle5 and ACart then
+            ACart:Disconnect() ACart = nil print("Removed")
         end
     end)
 end)
