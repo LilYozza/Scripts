@@ -13,7 +13,7 @@ local Items=w:CreateFolder("Items")
 local PlayerSelect
 local PlayerList={}
 local savedPotion
-local CartT={"Cart", "CartXL", "RaceCart"}
+local CartT={"Cart", "CartXL", "RaceCart", "HackerCart", "BigCapacityCart"}
 local Carts=Workspace:FindFirstChild("Carts")
 local Spawners=Workspace:FindFirstChild("Spawners")
 
@@ -50,45 +50,65 @@ Auto:Button("Complete",function()
     end)
 end)
 
+local function getEngine(_cart)
+    for _,v in pairs(_cart:GetChildren())do
+        local wall = v:FindFirstChild("Walls")
+        if wall and wall:FindFirstChild("GeneratorWall") then
+            return wall:FindFirstChild("GeneratorWall")
+        end
+    end
+
+end
+
 Auto:Toggle("Auto Start",function(bool)
     shared.toggle1 = bool
     spawn (function()
         while shared.toggle1 do
             for _,v in pairs(Carts:GetChildren())do
-                if shared.toggle1 and table.find(CartT, v.Name) and v:FindFirstChild("Values")and not v.Values.IsOn.Value then
-                    local o=nil if v.Name==CartT[2] then o=v.Car3.Walls.GeneratorWall.ProximityPrompt else o=v.Car2.Walls.GeneratorWall.ProximityPrompt end
-                    fireproximityprompt(o)task.wait()
+                if shared.toggle1 and table.find(CartT, v.Name) then
+                    local vals = v:FindFirstChild("Values")
+                    if vals and vals:FindFirstChild("IsOn").Value == false then
+                        local engine = getEngine(v)
+                        if engine then
+                            fireproximityprompt(engine.ProximityPrompt )
+                        end
+                    end
                 end
             end
-        	task.wait(1)
+        	task.wait(0.2)
         end
     end)
 end)
 
 Auto:Toggle("Auto Stop",function(bool)
-    shared.toggle1 = bool
+    shared.toggle2 = bool
     spawn (function()
-        while shared.toggle1 do
+        while shared.toggle2 do
             for _,v in pairs(Carts:GetChildren())do
-                if shared.toggle1 and table.find(CartT, v.Name)and v:FindFirstChild("Values") and v.Values.IsOn.Value then
-                    local o=nil if v.Name==CartT[2] then o=v.Car3.Walls.GeneratorWall.ProximityPrompt else o=v.Car2.Walls.GeneratorWall.ProximityPrompt end
-                    fireproximityprompt(o)
+                if shared.toggle2 and table.find(CartT, v.Name) then
+                    local vals = v:FindFirstChild("Values")
+                    if vals and vals:FindFirstChild("IsOn").Value == true then
+                        local engine = getEngine(v)
+                        if engine then
+                            fireproximityprompt(engine.ProximityPrompt )
+                        end
+                    end
                 end
             end
-        	task.wait(1)
+        	task.wait(0.2)
         end
     end)
 end)
 Auto:Toggle("Auto Spawner",function(bool)
-    shared.toggle1 = bool
+    shared.toggle3 = bool
     spawn (function()
-        while shared.toggle1 do
+        while shared.toggle3 do
             for _,v in pairs(Spawners:GetChildren())do
-                if shared.toggle1 and v:FindFirstChild("ProximityPrompt") then
+                if shared.toggle3 and v:FindFirstChild("ProximityPrompt") then
                     fireproximityprompt(v:FindFirstChild("ProximityPrompt"))task.wait()
                 end
             end
-        	task.wait(1)
+        	task.wait(0.2)
         end
     end)
 end)
@@ -202,8 +222,26 @@ PlrS:Button("MoveCartTo",function()
         local back= Player.Character:WaitForChild("HumanoidRootPart").CFrame
         local PCart1=GetCart(Player.Character:WaitForChild("Humanoid").SeatPart)
         local PCart2=GetCart(PlayerSelect.Character:WaitForChild("Humanoid").SeatPart)
-        if not PCart1 and not PCart2 then return else MovePart(PCart1, PCart2.MainCar.CartBase)
-        Player.Character:WaitForChild("Humanoid").Sit=false task.wait() Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+        if not PCart1 and not PCart2 then 
+            return 
+        else 
+            
+            --print(PCart1, PCart2)
+            Touch(PCart2.MainCar.CartBase, PCart1.MainCar.CartBase)
+            --[[
+            if PCart2:IsA("Part") then
+                for _, v in pairs(PCart2:GetDescendants())do
+                    if v:IsA("Part") and v.FindFirstChild("TouchTransmitter") then
+
+                    end
+                end
+            
+            end
+
+            --OLD
+            --MovePart(PCart1, PCart2.MainCar.CartBase)
+            --Player.Character:WaitForChild("Humanoid").Sit=false task.wait() Player.Character:WaitForChild("HumanoidRootPart").CFrame=back
+            ]]--
         end
     end)
 end)
