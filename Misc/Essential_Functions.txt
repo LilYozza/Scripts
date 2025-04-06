@@ -87,6 +87,26 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 	end
 end
 
+getgenv().GetHrp = function(_player) -- Returns HumanoidRootPart
+    if not _player then _player = Player end
+    local hrp = _player.Character:WaitForChild("HumanoidRootPart")
+    if hrp then 
+        return hrp
+    else 
+        warn("Couldnt Find HumanoidRootPart")
+    end
+end
+
+getgenv().GetPos = function() -- Returns CFrame Where it can be used as .Position
+    if not _player then _player = Player end
+    local hrp = _player.Character:WaitForChild("HumanoidRootPart")
+    if hrp then 
+        return hrp.CFrame
+    else 
+        warn("Couldnt Find HumanoidRootPart")
+    end
+end
+
 getgenv().ChangeCollide = function(_tbl, _bool)
 	if _tbl then
 		if typeof(_tbl) == "table" then
