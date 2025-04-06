@@ -18,9 +18,20 @@ local _end = game:GetService("Workspace").End
 local WinPad = _end.WinnersTeamer
 local ToStart = _end.Teleport.Part
 
-local Coins = game:GetService("Workspace").Coins
+--local Coins = game:GetService("Workspace").Coins
+local folders = {}
 
--->Non Return Functions<--
+for _, obj in ipairs(workspace:GetChildren()) do
+    if obj.Name == "Folder" and obj:FindFirstChildWhichIsA("Model") then
+        folders[#folders + 1] = obj
+    end
+end
+
+local Coins = folders[1]
+local Coins2 = folders[2]
+
+-->Non Return Functions<-
+
 local function SpawnCart(_sCart)
     if _sCart then 
         --local newName = string.match(_sCart, "^(%S+)")
@@ -73,12 +84,16 @@ Auto:Toggle("Collect Coins",function(bool)
     shared.Toggle1=bool
     spawn(function()
         while shared.Toggle1 do
-            for _,v in pairs(Coins:GetChildren()) do
-                local part = v:FindFirstChild("HumanoidRootPart")
-                if part and shared.Toggle1 then
-                    local hum = Player.Character:WaitForChild("Humanoid")
-                    if hum and hum.sit then
-                        Touch(part)
+            for _, folder in ipairs({Coins, Coins2}) do
+                if folder then
+                    for _, v in ipairs(folder:GetChildren()) do
+                        local part = v:FindFirstChild("HumanoidRootPart")
+                        if part and shared.Toggle1 then
+                            local hum = Player.Character:FindFirstChild("Humanoid")
+                            if hum and hum.Sit then
+                                Touch(part)
+                            end
+                        end
                     end
                 end
             end
