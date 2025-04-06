@@ -14,7 +14,9 @@ local Player = Players.LocalPlayer
 local _sHelp = {
 
     ["Touch"] = "Touch(PartWithTouchTransmittter, PartToTouchIt, TimeToWaitAfter)",
-    ["MoveTo"] = "MoveTo(PartToMoveTo, Offset, TeleportBack?, TimeToWaitBeforeTeleportBack)",
+    ["MoveTo"] = "MoveTo(PartToMoveTo, Offset, TeleportBack?, TimeToWaitBeforeTeleportBack, Function)",
+    ["GetHrp"] = "GetHrp(Player)",
+    ["GetPos"] = "GetPos(Player)",
     ["ChangeCollide"] = "ChangeCollide(Part, Toggle?)",
     ["MovePart"] = "MovePart(Part, Location, Offset, TimeToWaitPerPart)",
     ["RemovePart"] = "RemovePart(Part(Can Be Table / Part))",
@@ -35,6 +37,7 @@ local _sHelp = {
     ["ReverseTable"] = "ReverseTable(Table)",
     ["ReturnTableAsString"] = "ReturnTableAsString(Table)",
     ["Timer"] = "Timer(Time(seconds))",
+    ["PathFind"] = "PathFind(Part, Color) - STILL IN WIP"
     ["CreateTextLabel"] = "CreateTextLabel(Text, Color, Position)",
     ["CreateBillBoard"] = "CreateBillBoard()",
     ["Tag"] = "Tag(Part, Bool?(Add OR Remove), Settings1, Settings2)",
@@ -64,7 +67,7 @@ getgenv().Touch = function(_touchPart, _basePart, _timeout)
 end
 
 --Add Angles
-getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
+getgenv().MoveTo = function(_basePart, _offset, _back, _backTime, _func)
     local oldPos
     if _back then
         oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
@@ -77,6 +80,9 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime)
 		    Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart + _offset
         elseif _basePart:IsA("BasePart") then
             Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
+        end
+        if _func and type(_func) == "function" then
+            _func()
         end
         if oldPos and _back then
             task.wait(_backTime)
