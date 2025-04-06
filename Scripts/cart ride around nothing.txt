@@ -20,7 +20,27 @@ local Spawners=Workspace:FindFirstChild("Spawners")
 local CartCheckRoom=Workspace:FindFirstChild("CartCheckRoom")
 local CartCheckRoomFinish=Workspace:FindFirstChild("CartCheckRoomFinish")
 
-local function GetCart(s)if s.Name=="VehicleSeat"then return s.Parent else return s.Parent.Parent end end
+local function GetCart(s)
+    if s then 
+        if s.Name=="VehicleSeat" then   
+            return s.Parent 
+        else
+            return s.Parent.Parent 
+        end 
+    end
+end
+
+local function getEngine(_cart)
+    for _,v in pairs(_cart:GetChildren())do
+        local wall = v:FindFirstChild("Walls")
+        if wall and wall:FindFirstChild("GeneratorWall") then
+            return wall:FindFirstChild("GeneratorWall")
+        end
+    end
+
+end
+
+
 local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
 
 local function FindItem(item)
@@ -50,15 +70,7 @@ Auto:Button("Complete",function()
     end)
 end)
 
-local function getEngine(_cart)
-    for _,v in pairs(_cart:GetChildren())do
-        local wall = v:FindFirstChild("Walls")
-        if wall and wall:FindFirstChild("GeneratorWall") then
-            return wall:FindFirstChild("GeneratorWall")
-        end
-    end
 
-end
 
 Auto:Toggle("Auto Start",function(bool)
     shared.toggle1 = bool
