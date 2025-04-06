@@ -48,6 +48,18 @@ local function removeTouchParts(_part)
     end
 end
 
+local function attachCart(_cart)
+    if _cart then
+        _cart.ChildAdded:Connect(function(_c)
+            if _c and _c.Name == "ShootPart" and _c:IsA("BasePart") then
+                if PlayerSelect then
+                    GetCart()
+                end
+            end
+        end)
+    end
+end
+
 
 local function CreateTag(c, player)GUI = Instance.new("BillboardGui", player.Character:WaitForChild("Head")) GUI.StudsOffsetWorldSpace = Vector3.new(0,2.5,0) GUI.AlwaysOnTop = true GUI.Size = UDim2.new(3, 0, 1, 0) TextLabel = Instance.new("TextLabel", GUI) TextLabel.Text =  player.DisplayName TextLabel.BackgroundTransparency = 1 TextLabel.Font = "ArialBold" TextLabel.TextSize = 15 TextLabel.TextColor3 = c TextLabel.Size = UDim2.new(1,0,1,0) end
 
@@ -242,6 +254,21 @@ PlrS:Toggle("Auto Aim",function(bool)
                 for _,v in pairs(Workspace:GetChildren())do
                     if v.Name=="ShootPartC4" and PCart then v.CFrame=PCart.CFrame v.WeldConstraint.Part0=PCart v.WeldConstraint.Part1=PCart Touch(v,PCart) end
                 end
+
+                Carts.ChildAdded:Connect(function(_p)
+                    if table.find(CartT, _p.Name) then
+                        attachCart(_p)
+                    end
+                end)
+
+                -- Adds already carts
+                for _,v in pairs(Carts:GetChildren()) do
+                        if table.find(CartT, _p.Name) then
+                        attachCart(v)
+                    end
+                end
+
+
             end end)
         	task.wait()
         end
