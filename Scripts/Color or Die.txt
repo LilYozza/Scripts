@@ -21,7 +21,7 @@ local colorNames = {
 }
 
 local GameplayAssets = game:GetService("Workspace"):WaitForChild("GameplayAssets")
-local ChristmasEvent = GameplayAssets:WaitForChild("ChristmasEvent")
+local ChristmasEvent = GameplayAssets:WaitForChild("ChristmasEvent", 2) or nil
 local Monsters = GameplayAssets:WaitForChild("Monsters")
 local Items = GameplayAssets:WaitForChild("Items")
 local Normal = Items:WaitForChild("Normal")
@@ -98,15 +98,76 @@ Auto:Toggle("ESP Door",function(bool)
     end)
 end)
 
+local ColTbl = {}
+Auto:Toggle("ESP Pickup",function(bool)
+    shared.ToggleCI=bool
+    spawn(function()
+        if shared.ToggleCI then
+            local Collectable = Items:FindFirstChild("Collectable")
+            for _,v in pairs(Collectable:GetDescendants()) do
+                if v and v.Name == "Core" and v:IsA("BasePart") then
+                    local _t = Tag(v, true, v.Parent.Name)
+                    _t[3].TextColor3 = BrickColor.new("White").Color
+                    table.insert(ColTbl, _t)                    
+                end
+            end
+
+        else
+             for _,v in pairs(ColTbl) do
+                if v then
+                    Tag(v[1], false)
+                end
+            end       
+        end
+    end)
+end)
+
+local BrushTbl = {}
+Auto:Toggle("ESP Brush",function(bool)
+    shared.ToggleCI=bool
+    spawn(function()
+        if shared.ToggleCI then
+            local Normal = Items:FindFirstChild("Normal")
+            for _,v in pairs(Normal.PaintBucket:GetDescendants()) do
+                if v and v.Name == "Core" and v:IsA("BasePart") then
+                    local _t = Tag(v, true, v.Parent.Name)
+                    if colorNames[v.Parent.Name] then
+                        _t[3].TextColor3 = BrickColor.new(colorNames[v.Parent.Name]).Color
+                    else
+                        _t[3].TextColor3 = BrickColor.new("Medium stone grey").Color
+                    end                
+                    table.insert(BrushTbl, _t)                    
+                end
+            end
+
+        else
+             for _,v in pairs(BrushTbl) do
+                if v then
+                    Tag(v[1], false)
+                end
+            end       
+        end
+    end)
+end)
+
 local ItemTbl = {}
 Auto:Toggle("ESP Item",function(bool)
     shared.ToggleEI=bool
     spawn(function()
         if shared.ToggleEI then
-            for _,v in pairs(Items:GetDescendants()) do
-                if v and v.Name == "Core" and v:IsA("Part") then
+            local Item = Items:FindFirstChild("Normal")
+            for _,v in pairs(Item.Tool:GetDescendants()) do
+                if v and v.Name == "Core" and v:IsA("BasePart") then
                     local _t = Tag(v, true, v.Parent.Name)
                     _t[3].TextColor3 = BrickColor.new("Reddish brown").Color
+                    table.insert(ItemTbl, _t)                    
+                end
+            end
+            local Secret = Items:FindFirstChild("Secret")
+            for _,v in pairs(Secret.Tool:GetDescendants()) do
+                if v and v.Name == "Core" and v:IsA("BasePart") then
+                    local _t = Tag(v, true, v.Parent.Name)
+                    _t[3].TextColor3 = BrickColor.new("Black").Color
                     table.insert(ItemTbl, _t)                    
                 end
             end
@@ -115,7 +176,7 @@ Auto:Toggle("ESP Item",function(bool)
                 if v then
                     Tag(v[1], false)
                 end
-            end       
+            end     
         end
     end)
 end)
@@ -178,19 +239,20 @@ Auto:Button("Get Item",function(bool)
         end
     end)
 end)
-
-Auto:Toggle("Auto Presents",function(bool)
-    shared.ToggleAP=bool
-    spawn(function()
-        while shared.ToggleAP do
-            for _,v in pairs(ChristmasEvent:GetDescendants())do
-                if v and v:IsA("TouchTransmitter") then
-                    Touch(v.Parent, 0.1)
+if ChristmasEvent then
+    Auto:Toggle("Auto Presents",function(bool)
+        shared.ToggleAP=bool
+        spawn(function()
+            while shared.ToggleAP do
+                for _,v in pairs(ChristmasEvent:GetDescendants())do
+                    if v and v:IsA("TouchTransmitter") then
+                        Touch(v.Parent, 0.1)
+                    end
                 end
+                task.wait()
             end
-            task.wait()
-        end
+        end)
     end)
-end)
+end
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
