@@ -1,5 +1,5 @@
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
-local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+--local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
 --======================================FUNCTION IMPORTS=====================================--
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
@@ -111,6 +111,16 @@ Misc:Toggle("Fly",function(bool)
 	end)
 end)
 --===========================================================================================--
+
+Misc:Toggle("Anchor",function(bool)
+	shared.MiscA = bool
+	spawn (function()
+        local hrp = GetHrp()
+        if hrp then
+            hrp.Anchored = shared.MiscA
+        end
+    end)
+end)
 
 Misc:Toggle("Full Bright",function(bool)
 	shared.Misc2 = bool
