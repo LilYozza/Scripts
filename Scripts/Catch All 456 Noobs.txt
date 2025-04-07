@@ -1,0 +1,37 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local NPCS = Workspace:FindFirstChild("NPCs")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Button("Auto Catch",function(bool)
+    spawn(function()
+
+        local back = GetPos()
+        for _,v in pairs(NPCS:GetChildren())do
+            local tPart = v:FindFirstChild("UpperTorso")
+            if tPart then
+                    --print("Touched")
+                    --Touch(tPart)
+                MoveTo(tPart)
+                task.wait(0.1)
+            end
+        end
+        task.wait()
+
+        MoveTo(back)
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

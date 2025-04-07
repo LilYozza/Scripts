@@ -562,6 +562,14 @@ local Games = {
 	[84421264392487] = {
 		Name = 'Blue Train Coaster',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Blue%20Train%20Coaster.txt'
+	},
+	[92335351779065] = {
+		Name = 'Catch All 456 Noobs',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Catch%20All%20456%20Noobs.txt'
+	},
+	[11346638227] = {
+		Name = 'FALL BUT 100 PLAYERS',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FALL%20BUT%20100%20PLAYERS.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()

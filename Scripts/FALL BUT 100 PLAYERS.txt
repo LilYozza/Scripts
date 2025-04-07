@@ -1,0 +1,155 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Easter = Workspace:FindFirstChild("Easter_Eggs_2")
+local Top = Workspace:FindFirstChild("youMadeItToTheTopBadge")
+local Heli = Workspace:FindFirstChild("Helicopter")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+if Easter then 
+    Auto:Toggle("Easter Eggs",function(bool)
+        shared.ToggleEA=bool
+        spawn(function()
+            local back = GetPos()
+            while shared.ToggleEA do
+                for _,v in pairs(Easter:GetChildren()) do
+                    local prox = v:FindFirstChild("ProximityPrompt")
+                    if prox then
+                        MoveTo(v, nil, true, 0, fireproximityprompt(v.ProximityPrompt))
+                    end
+                end
+                task.wait()
+            end
+        end)
+    end)
+end
+
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            if Heli then
+                local Glass = Heli:FindFirstChild("Glass")
+                if Glass and Glass.Transparency == 0 then
+                    MoveTo(Glass) task.wait(0.5)
+                    fireproximityprompt(Glass.ProximityPrompt)
+                    local SpawnPoint = Workspace:FindFirstChildWhichIsA("SpawnLocation")
+                    MoveTo(SpawnPoint, Vector3.new(0,5,0))
+                    task.wait(300)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("No Fall Dmg",function(bool)
+    shared.ToggleFD=bool
+    spawn(function()
+        --game:GetService("ReplicatedStorage").sendFallDmg
+        workspace.RD_F34R.FallDamage.Disabled = shared.ToggleFD
+    end)
+end)
+--[[
+Auto:Toggle("Max Energy",function(bool)
+    shared.ToggleME=bool
+    spawn(function()
+        while shared.ToggleME do
+            local Energy = Player:FindFirstChild("Energy")
+            if Energy and shared.ToggleME then
+                Energy.Value = 100
+            end
+            task.wait()
+        end
+    end)
+end)
+]]--
+
+--[[
+Auto:Toggle("Auto Roll",function(bool)
+    shared.ToggleAR=bool
+    local RollGui
+    spawn(function()
+        while shared.ToggleAR do
+                --game:GetService("ReplicatedStorage").cross_boundary.Roll_Function:InvokeServer("Can", "First", "Coins")
+                RollGui = Player.PlayerGui.RollGui:FindFirstChild("ROLL")
+                AcceptGui =  Player.PlayerGui.RollGui:FindFirstChild("ACCEPT")
+
+                if RollGui then
+                    if RollGui.Visible == false then RollGui.Visible = true end
+                    firesignal(RollGui.Button["Activated"])
+                end
+
+            wait(1)
+        end
+        if not shared.ToggleAR and RollGui then RollGui.Visible = false end
+    end)
+end)
+]]--
+
+Auto:Button("Start",function()
+    spawn(function()
+        local SpawnPoint = Workspace:FindFirstChildWhichIsA("SpawnLocation")
+        MoveTo(SpawnPoint, Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Top",function()
+    spawn(function()
+        MoveTo(Top, Vector3.new(0,5,0))
+    end)
+end)
+
+local ToggleRoll = false
+Auto:Button("Toggle Roll",function()
+    spawn(function()
+        RollGui = Player.PlayerGui.RollGui:FindFirstChild("ROLL")
+        if RollGui then 
+            ToggleRoll = not ToggleRoll
+            RollGui.Visible = ToggleRoll
+        end
+    end)
+end)
+
+local PSelect
+local DropList = Auto:Dropdown("Select Player",GetDisplayNames(false),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    PSelect = GetPlayerByDisplayName(SItem)
+end)
+
+Auto:Button("Carry",function()
+    spawn(function()
+        if PSelect then
+            game:GetService("ReplicatedStorage").cross_boundary.ClientEvent:FireServer("Request", PSelect.Name)
+        end
+    end)
+end)
+
+Auto:Button("Attach",function()
+    spawn(function()
+        local tool = Player.character:FindFirstChildOfClass("Tool")
+        if PSelect and tool then
+            local ohVector31 = GetPos(PSelect).Position
+
+            tool.equipAccessories.getMouse:FireServer(ohVector31)
+            print(PSelect, tool, ohVector31)      
+        end
+    end)
+end)
+
+
+Players.ChildAdded:Connect(function() DropList:Refresh(GetDisplayNames(false)) end)
+Players.ChildRemoved:Connect(function() DropList:Refresh(GetDisplayNames(false)) end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
