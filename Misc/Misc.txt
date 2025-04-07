@@ -61,6 +61,46 @@ end)
 local function AddPlayer(player)if not table.find(PlayerList_M,player.DisplayName) then table.insert(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function RemovePlayer(player)if table.find(PlayerList_M,player.DisplayName) then RemoveFromTable(PlayerList_M, player.DisplayName)DropList:Refresh(PlayerList_M)end end
 local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
+
+local function invisible()
+	local Char  = Player.Character
+	local touched = false
+	local tpdback = false
+	local box = Instance.new('Part')
+	box.Anchored = true
+	box.CanCollide = true
+	box.Size = Vector3.new(10,1,10)
+	box.Position = Vector3.new(0,10000,0)
+	box.Parent = workspace
+	local boxTouched = box.Touched:connect(function(part)
+		if (part.Parent.Name == Player.Name) then
+			if touched == false then
+				touched = true
+				local function apply()
+					local no = Char.HumanoidRootPart:Clone()
+					wait(.25)
+					Char.HumanoidRootPart:Destroy()
+					no.Parent = Char
+					Char:MoveTo(loc)
+					touched = false
+				end
+				if Char then
+					apply()
+				end
+			end
+		end
+	end)
+	repeat wait() until Char
+	local cleanUp
+	cleanUp = Player.CharacterAdded:connect(function(char)
+		boxTouched:Disconnect()
+		box:Destroy()
+		cleanUp:Disconnect()
+	end)
+	loc = Char.HumanoidRootPart.Position
+	Char:MoveTo(box.Position + Vector3.new(0,.5,0))    
+end
+
 --===========================================================================================--
 
 GPlayers:Button("TeleportTo",function()
@@ -111,6 +151,12 @@ Misc:Toggle("Fly",function(bool)
 	end)
 end)
 --===========================================================================================--
+Misc:Button("Invisible",function()
+	spawn (function()
+        invisible()
+    end)
+end)
+
 
 Misc:Toggle("Anchor",function(bool)
 	shared.MiscA = bool
@@ -167,11 +213,12 @@ Misc:Button("3rd Person",function()
 	Player.CameraMinZoomDistance = 0
 end)
 
-Misc:Button("Rejoin Server",function()
+Dev:Button("Rejoin Server",function()
 	spawn(function()
         ts:Teleport(game.PlaceId, Player)
     end)
 end)
+
 
 Dev:Button("Dex Explorer",function()
 	spawn(function()
