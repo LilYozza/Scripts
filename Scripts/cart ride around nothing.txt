@@ -16,9 +16,19 @@ local savedPotion
 local CartT={"Cart", "CartXL", "RaceCart", "HackerCart", "BigCapacityCart"}
 local Carts=Workspace:FindFirstChild("Carts")
 local Spawners=Workspace:FindFirstChild("Spawners")
+local Baseplates = Workspace:FindFirstChild("Baseplates")
 
 local CartCheckRoom=Workspace:FindFirstChild("CartCheckRoom")
 local CartCheckRoomFinish=Workspace:FindFirstChild("CartCheckRoomFinish")
+
+local teleports = {
+    ["SafePoint"] = CFrame.new(386.339966, 83.3199921, -3.95824623, -0.635840595, 1.06469457e-07, 0.771820426, 3.59826338e-08, 1, -1.08302707e-07, -0.771820426, -4.10911269e-08, -0.635840595),
+    ["Start"] = Baseplates.Baseplate.CFrame + Vector3.new(0,10,0),
+    ["Top"] = CFrame.new(-73.482399, 82.9999924, 23.9853001, -0.999267817, -2.11703082e-08, -0.0382596925, -1.71605432e-08, 1, -1.05132258e-07, 0.0382596925, -1.0439873e-07, -0.999267817),
+    ["CheckPoint"] = Baseplates.Baseplate2.CFrame + Vector3.new(0,10,0),
+    ["End"] = Baseplates.Baseplate3.CFrame + Vector3.new(0,10,0)
+}
+
 
 local function GetCart(s)
     if s then 
@@ -163,6 +173,21 @@ local DoorTbl = {"DoorPair"}
 Auto:Toggle("Doors",function(bool)
     spawn(function()ChangeCollide(DoorTbl, not bool)end)
 end)
+
+local STeleport = "Start"
+local DropList = Auto:Dropdown("Start",{"Start", "CheckPoint", "End", "SafePoint", "Top"},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    STeleport = SItem    
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        if STeleport then
+            MoveTo(teleports[STeleport])
+        end
+    end)
+end)
+
+
 
 Cart:Button("Remove Touch",function()
     spawn(function()
