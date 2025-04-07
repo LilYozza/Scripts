@@ -5,6 +5,9 @@ local Essential_Functions = loadstring(game:HttpGet("https://raw.githubuserconte
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
+local Mouse = Player:GetMouse()
+local Camera = workspace.CurrentCamera
+
 local Auto = w:CreateFolder("Auto")
 local Cart = w:CreateFolder("Cart")
 local PlrS= w:CreateFolder("Troll")
@@ -43,8 +46,11 @@ end
 local function getEngine(_cart)
     for _,v in pairs(_cart:GetChildren())do
         local wall = v:FindFirstChild("Walls")
-        if wall and wall:FindFirstChild("GeneratorWall") then
-            return wall:FindFirstChild("GeneratorWall")
+        if wall then
+            local wallPart = wall:FindFirstChild("GeneratorWall") or wall:FindFirstChild("Wall")
+            if wallPart then
+                return wallPart
+            end
         end
     end
 
@@ -77,6 +83,48 @@ local function attachCart(_cart)
             end
         end)
     end
+end
+
+local function GetClosestPlayer()
+	local Closest = {nil, nil}
+	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
+	for _, Player in pairs(game.Players:GetPlayers()) do
+		if Player == game.Players.LocalPlayer then continue end
+		local Character = Player.Character
+		if Character then
+			local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+			if HumanoidRootPart then
+				local vector, onScreen = Camera:WorldToScreenPoint(HumanoidRootPart.Position)
+				if onScreen then
+					local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+					if Closest[1] == nil then Closest = {Distance, Player} continue end
+					if  Distance < Closest[1] then
+						Closest = {Distance, Player}
+					end
+				end
+			end
+		end
+	end
+	return Closest
+end
+
+local function GetClosestCart()
+	local Closest = {nil, nil}
+	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
+	for _, v in pairs(Carts:GetChildren()) do
+        local sCart = getEngine(v)	
+		if sCart then
+			local vector, onScreen = Camera:WorldToScreenPoint(sCart.Position)
+			if onScreen then
+				local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+				if Closest[1] == nil then Closest = {Distance, sCart} continue end
+				if  Distance < Closest[1] then
+					Closest = {Distance, sCart}
+				end
+			end
+		end
+	end
+	return Closest
 end
 
 
@@ -226,11 +274,7 @@ Cart:Button("Reset Cart",function()
     end)
 end)
 local DropList = PlrS:Dropdown("Select Player",PlayerList,true,function(SItem)
-    for _,v in pairs(game.Players:GetChildren())do
-        if  v.DisplayName==SItem then
-            PlayerSelect = v break
-        end
-    end
+    PlayerSelect = GetPlayerByDisplayName(SItem)
 end)
 
 local function AddPlayer(player)
@@ -275,6 +319,41 @@ Players.PlayerAdded:Connect(function(player)
 end)
 Players.PlayerRemoving:Connect(function(player)RemovePlayer(player)end)
 
+--========================================
+local CartTarget = false
+local CartSelect
+PlrS:Toggle("CartTarget",function(bool)
+    shared.toggleAA = bool
+    spawn (function()
+        CartTarget = shared.toggleAA
+    end)
+end)
+
+local PlayerTarget = false
+PlrS:Toggle("PlayerTarget",function(bool)
+    shared.togglePA = bool
+    spawn (function()
+        PlayerTarget = shared.togglePA
+    end)
+end)
+
+
+local MouseConnection = Mouse.KeyDown:Connect(function(key)
+    if key:lower() == "q" then
+
+        if CartTarget then
+            CartSelect = GetClosestCart()[2]
+        end
+
+        if PlayerTarget then
+            PlayerSelect = GetPlayerByDisplayName(GetClosestPlayer()[2].DisplayName)
+        end
+    end
+end)
+
+
+--==========================================
+
 PlrS:Toggle("Auto Aim",function(bool)
     shared.toggle5 = bool
     spawn (function()
@@ -282,9 +361,17 @@ PlrS:Toggle("Auto Aim",function(bool)
             local success, err = pcall(function()
             if Workspace:FindFirstChild("ShootPartC4")then
                 local PCart
-                if PlayerSelect and PlayerSelect.Character:WaitForChild("Humanoid") and PlayerSelect.Character:WaitForChild("Humanoid").SeatPart then
-                    PCart=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart
 
+                if PlayerTarget and shared.togglePA then
+                    if PlayerSelect and PlayerSelect.Character:WaitForChild("Humanoid") and PlayerSelect.Character:WaitForChild("Humanoid").SeatPart then
+                        PCart=PlayerSelect.Character:WaitForChild("Humanoid").SeatPart
+                    end
+
+                elseif CartTarget and shared.toggleAA then
+                    PCart = CartSelect
+                end
+
+                if PCart then
                     for _,v in pairs(Workspace:GetChildren())do
                         if v.Name=="ShootPartC4" and PCart then v.CFrame=PCart.CFrame v.WeldConstraint.Part0=PCart v.WeldConstraint.Part1=PCart Touch(v,PCart) end
                     end
