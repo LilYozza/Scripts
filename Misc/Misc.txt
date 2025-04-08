@@ -169,6 +169,27 @@ Misc:Button("Invisible",function()
     end)
 end)
 
+local PCConnection
+Misc:Toggle("PCollide",function(bool)
+	shared.MiscPC = bool
+	spawn (function()
+        if shared.MiscPC then
+            PCConnection = RunService.Stepped:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= Player and player.Character then
+                        for _, v in pairs(player.Character:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                v.CanCollide = false
+                            end
+                        end
+                    end
+                end
+            end)            
+        else
+            if PCConnection then PCConnection:Disconnect() PCConnection = nil end
+        end
+    end)
+end)
 
 Misc:Toggle("Anchor",function(bool)
 	shared.MiscA = bool

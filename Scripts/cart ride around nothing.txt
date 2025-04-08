@@ -159,13 +159,15 @@ end)
 
 local function GetPrompt(_cart)
     local cart = _cart:FindFirstChild("Car3") or _cart:FindFirstChild("Car2")
-    local Gen = cart:FindFirstChild("Walls")
-    if Gen then
-        local Walls = Gen:FindFirstChild("GeneratorWall")
-        if Walls then 
-            local prox = Walls:FindFirstChild("ProximityPrompt")
-            if prox then
-                return prox
+    if cart then
+        local Gen = cart:FindFirstChild("Walls")
+        if Gen then
+            local Walls = Gen:FindFirstChild("GeneratorWall")
+            if Walls then 
+                local prox = Walls:FindFirstChild("ProximityPrompt")
+                if prox then
+                    return prox
+                end
             end
         end
     end
