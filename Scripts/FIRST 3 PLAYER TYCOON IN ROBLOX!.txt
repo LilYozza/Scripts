@@ -112,8 +112,11 @@ Auto:Toggle("Auto Buy",function(bool)
             for _,v in pairs(Buttons:GetChildren())do
                 if v:FindFirstChild("Head")and v.Head.Transparency==0 then
                     local price = v:FindFirstChild("Price")
-                    if TCollect and price and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
-                    if price and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(v.Head,0.3)end
+                    local head = v:FindFirstChild("Head")
+                    if price and head then
+                        if TCollect and price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
+                        if price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(head,0.3)end
+                    end
                 end
             end task.wait()
         end
@@ -195,14 +198,14 @@ Item:Button("Get Item",function()
             if table.find(otherItemTable, ItemSelect) then
                 if ItemSelect == "Diamond" then
                     local back = GetPos()
-                    Touch(BasePlate.Parkour2.End.End, 0.3)
+                    Touch(BasePlate.Parkour2.End.End, 0.6)
                     MoveTo(back)
                     local tool = Player.Character:FindFirstChildOfClass("Tool")
                     if tool then tool.Parent = Player.Backpack end
 
                 elseif ItemSelect == "Torch" then
                     local back = GetPos()
-                    Touch(BasePlate.Parkour1.End.End, 0.3)
+                    Touch(BasePlate.Parkour1.End.End, 0.6)
                     MoveTo(back)
                     local tool = Player.Character:FindFirstChildOfClass("Tool")
                     if tool then tool.Parent = Player.Backpack end
