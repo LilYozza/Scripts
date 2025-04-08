@@ -38,7 +38,7 @@ Auto:Button("Claim Tycoon",function(bool)
     end)
 end)
 
-repeat task.wait()until Tycoon
+repeat GetTycoon() task.wait(0.5) until Tycoon
 
 -->Post Variables<--
     -->Player Tycoon<--
