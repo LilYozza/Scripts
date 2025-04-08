@@ -113,7 +113,7 @@ Auto:Toggle("Auto Buy",function(bool)
                 if v:FindFirstChild("Head")and v.Head.Transparency==0 then
                     local price = v:FindFirstChild("Price")
                     if TCollect and price and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
-                    if v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(v.Head,0.3)end
+                    if price and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(v.Head,0.3)end
                 end
             end task.wait()
         end
