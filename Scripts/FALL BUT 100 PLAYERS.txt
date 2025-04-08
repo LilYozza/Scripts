@@ -8,7 +8,7 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Easter = Workspace:FindFirstChild("Easter_Eggs_2")
+local Easter = Workspace:FindFirstChild("Easter_Eggs_2") or Workspace:FindFirstChild("Easter_Eggs_1")
 local Top = Workspace:FindFirstChild("youMadeItToTheTopBadge")
 local Heli = Workspace:FindFirstChild("Helicopter")
 
