@@ -579,7 +579,8 @@ if _g then
     local s,e = pcall(function()
         loadstring(game:HttpGet(_g.Script))()
     end)
-    if not s then 
+    if not s then
+        print(e)
         print("Error Loading",_g.Name, "Script... Reloading....")
         loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))()
     end
