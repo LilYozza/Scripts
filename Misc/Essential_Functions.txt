@@ -1,5 +1,4 @@
 --Essential Function Script
-getgenv().EFLoaded = false
 local startTime = os.clock()
 
 -->Services<--

@@ -1,3 +1,4 @@
+
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
@@ -20,25 +21,45 @@ local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("Humano
 
 -->Getting Data<--
     -->Tables<--
+
+local otherItemTable = {"Pickaxe", "Diamond", "Torch"}
+
 local function GetTycoons()for _,v in pairs(Tycoons:GetChildren())do table.insert(TycoonList, v.Name)end if TycoonList then table.sort(TycoonList,function(a, b)return a:byte() < b:byte() end) end end GetTycoons()
-local function UpdateItems()if Items then table.clear(Items)end for _,v in pairs(Tycoons:GetDescendants())do if v:IsA("TouchTransmitter")and v:FindFirstAncestor("Giver")and not v:FindFirstAncestor("Essentials") and not table.find(Items, v.Parent.Parent.Name) then table.insert(Items, v.Parent.Parent.Name)end end if Items then table.sort(Items, function(a, b) return a:byte() < b:byte() end) end end UpdateItems()
+local function UpdateItems()
+    if Items then 
+        table.clear(Items)
+    end 
+    for _,v in pairs(Tycoons:GetDescendants())do 
+        if v:IsA("TouchTransmitter")and v:FindFirstAncestor("Giver")and not v:FindFirstAncestor("Essentials") and not table.find(Items, v.Parent.Parent.Name) then 
+            table.insert(Items, v.Parent.Parent.Name)
+        end 
+    end 
+
+    --Add Custom Items
+    for _,v in pairs(otherItemTable) do table.insert(Items, v) end
+        
+    if Items then table.sort(Items, function(a, b) return a:byte() < b:byte() end) 
+    end 
+end UpdateItems()
+
     -->Variables<--
 local function GetTycoon()for _,v in pairs(Tycoons:GetChildren())do if v.Owner.Value==Player then Tycoon=v break end end end GetTycoon()
 
--->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+if not Tycoon then 
 
-local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    TycoonSelect = SItem
-end)
-
-Auto:Button("Claim Tycoon",function(bool)
-    spawn(function()
-        for _,v in pairs(Tycoons:GetChildren())do
-            if v.Name==TycoonSelect and v.Owner.Value==nil then Touch(v.Entrance:GetChildren()[1].Head) MoveTo(v.Entrance:GetChildren()[1].Head) Tycoon=v break end
-        end
+    local TycoonDropList = Auto:Dropdown("Select Tycoon",TycoonList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+        TycoonSelect = SItem
     end)
-end)
+
+    Auto:Button("Claim Tycoon",function(bool)
+        spawn(function()
+            for _,v in pairs(Tycoons:GetChildren())do
+                if v.Name==TycoonSelect and v.Owner.Value==nil then Touch(v.Entrance:GetChildren()[1].Head) MoveTo(v.Entrance:GetChildren()[1].Head) Tycoon=v break end
+            end
+        end)
+    end)
+
+end
 
 repeat GetTycoon() task.wait(0.5) until Tycoon
 
@@ -49,6 +70,19 @@ local Buttons=Tycoon:FindFirstChild("Buttons")
 
 local TWEssentials=Tycoon:FindFirstChild("Essentials")
 local TWMine=TWEssentials:FindFirstChild("Mine")
+
+Auto:Button("Home",function(bool)
+    spawn(function()
+        MoveTo(Tycoon.Entrance:GetChildren()[1].Head)
+     end)
+end)
+
+Auto:Button("Spawn",function(bool)
+    spawn(function()
+        MoveTo(BasePlate:FindFirstChildWhichIsA("SpawnLocation"))
+     end)
+end)
+
 
 
 Auto:Toggle("Auto Click",function(bool)
@@ -77,7 +111,8 @@ Auto:Toggle("Auto Buy",function(bool)
         while shared.toggle3 do
             for _,v in pairs(Buttons:GetChildren())do
                 if v:FindFirstChild("Head")and v.Head.Transparency==0 then
-                    if TCollect and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
+                    local price = v:FindFirstChild("Price")
+                    if TCollect and price and v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
                     if v.Price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(v.Head,0.3)end
                 end
             end task.wait()
@@ -134,18 +169,57 @@ Auto:Button("Remove Doors",function()
     end
 end)
 
+Auto:Button("Alien Hunt",function(bool)
+    spawn(function()
+        local AlienMatter = Workspace:FindFirstChild("AlienMatter")
+        if AlienMatter then
+            Touch(AlienMatter)
+        end
+     end)
+end)
+
+
 
 
 local DropList = Item:Dropdown("Select Item",Items,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     ItemSelect = SItem
 end)
 
+
+local PickaxeGiver = BasePlate:FindFirstChild("PickaxeGiver")
+local debounce = true
 Item:Button("Get Item",function()
     spawn(function()
-        for _, v in pairs(Tycoons:GetDescendants()) do
-            if  v.Name:match(ItemSelect) and v:FindFirstChild("Giver") then
-                Touch(v:FindFirstChild("Giver"))break
+        if debounce then
+            debounce = false
+            if table.find(otherItemTable, ItemSelect) then
+                if ItemSelect == "Diamond" then
+                    local back = GetPos()
+                    Touch(BasePlate.Parkour2.End.End, 0.3)
+                    MoveTo(back)
+                    local tool = Player.Character:FindFirstChildOfClass("Tool")
+                    if tool then tool.Parent = Player.Backpack end
+
+                elseif ItemSelect == "Torch" then
+                    local back = GetPos()
+                    Touch(BasePlate.Parkour1.End.End, 0.3)
+                    MoveTo(back)
+                    local tool = Player.Character:FindFirstChildOfClass("Tool")
+                    if tool then tool.Parent = Player.Backpack end
+
+                elseif ItemSelect == "Pickaxe" then
+                    if PickaxeGiver then
+                        Touch(PickaxeGiver.Handle)
+                    end
+                end
+            else
+                for _, v in pairs(Tycoons:GetDescendants()) do
+                    if  v.Name:match(ItemSelect) and v:FindFirstChild("Giver") then
+                        Touch(v:FindFirstChild("Giver"))break
+                    end
+                end
             end
+            debounce = true
         end
     end)
 end)
@@ -155,34 +229,25 @@ Item:Button("Refresh",function()
     DropList:Refresh(Items)
 end)
 
-Item:Button("Give Torch",function()
-    back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Parkour1") then
-            Touch(v.Parent)break
+local House = BasePlate:FindFirstChild("House")
+local CollectPotion = House:FindFirstChild("Collect")
+
+Item:Button("Potion Shop", function()
+    spawn(function()
+        if CollectPotion then
+            local hasDiamond = Player.Character:FindFirstChild("Diamond")
+            if not hasDiamond then
+                for _, tool in ipairs(Player.Backpack:GetChildren()) do
+                    if tool:IsA("Tool") and tool.Name == "Diamond" then
+                        tool.Parent = Player.Character
+                        task.wait()
+                        break
+                    end
+                end
+            end
+            Touch(CollectPotion)
         end
-    end
-    task.wait(0.5)
-    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
-end)
-
-
-
-Item:Button("Give Diamond",function()
-
-    MoveTo()
-
-
-    back = Player.character:WaitForChild("HumanoidRootPart").CFrame
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and v:FindFirstAncestor("Parkour2") then
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 0)
-            firetouchinterest(Player.character:WaitForChild("HumanoidRootPart"), v.Parent, 1)
-            break
-        end
-    end
-    task.wait(0.5)
-    Player.character:WaitForChild("HumanoidRootPart").CFrame = back
+    end)
 end)
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

@@ -124,8 +124,9 @@ Misc:Toggle("Sword Aura",function(bool)
 	if shared.ToggleSA then
 		SACon = game:GetService("RunService").RenderStepped:Connect(function()
 			local p = Players:GetPlayers()
-			for i = 2, #p do local v = p[i].Character
-				if v and v.Character and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
+			for i = 2, #p do 
+                local v = p[i].Character
+				if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
 					local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
 					if tool and tool:FindFirstChild("Handle") then
 						tool:Activate()
