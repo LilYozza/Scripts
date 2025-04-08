@@ -58,7 +58,9 @@ Auto:Toggle("No Fall Dmg",function(bool)
     shared.ToggleFD=bool
     spawn(function()
         --game:GetService("ReplicatedStorage").sendFallDmg
-        workspace.RD_F34R.FallDamage.Disabled = shared.ToggleFD
+        if Player.Character then
+            Player.Character.FallDamage.Disabled = shared.ToggleFD
+        end
     end)
 end)
 --[[
