@@ -58,8 +58,20 @@ Auto:Toggle("No Fall Dmg",function(bool)
     shared.ToggleFD=bool
     spawn(function()
         --game:GetService("ReplicatedStorage").sendFallDmg
+        while shared.ToggleFD do
+            if Player.Character then
+                local FallDamage = Player.Character:FindFirstChild("FallDamage")
+                if FallDamage then
+                    FallDamage.Disabled = shared.ToggleFD
+                end
+            end
+            task.wait(1)
+        end
         if Player.Character then
-            Player.Character.FallDamage.Disabled = shared.ToggleFD
+            local FallDamage = Player.Character:FindFirstChild("FallDamage")
+            if FallDamage then
+                FallDamage.Disabled = shared.ToggleFD
+            end
         end
     end)
 end)
