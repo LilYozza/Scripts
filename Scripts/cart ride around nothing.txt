@@ -157,6 +157,20 @@ Auto:Button("Complete",function()
     end)
 end)
 
+local function GetPrompt(_cart)
+    local cart = _cart:FindFirstChild("Car3") or _cart:FindFirstChild("Car2")
+    local Gen = cart:FindFirstChild("Walls")
+    if Gen then
+        local Walls = Gen:FindFirstChild("GeneratorWall")
+        if Walls then 
+            local prox = Walls:FindFirstChild("ProximityPrompt")
+            if prox then
+                return prox
+            end
+        end
+    end
+end
+
 
 
 Auto:Toggle("Auto Start",function(bool)
@@ -167,10 +181,8 @@ Auto:Toggle("Auto Start",function(bool)
                 if shared.toggle1 and table.find(CartT, v.Name) then
                     local vals = v:FindFirstChild("Values")
                     if vals and vals:FindFirstChild("IsOn").Value == false then
-                        local engine = getEngine(v)
-                        if engine then
-                            fireproximityprompt(engine.ProximityPrompt )
-                        end
+                    local prox = GetPrompt(v)
+                    if prox then fireproximityprompt(prox) end
                     end
                 end
             end
@@ -187,10 +199,8 @@ Auto:Toggle("Auto Stop",function(bool)
                 if shared.toggle2 and table.find(CartT, v.Name) then
                     local vals = v:FindFirstChild("Values")
                     if vals and vals:FindFirstChild("IsOn").Value == true then
-                        local engine = getEngine(v)
-                        if engine then
-                            fireproximityprompt(engine.ProximityPrompt )
-                        end
+                        local prox = GetPrompt(v)
+                        if prox then fireproximityprompt(prox) end
                     end
                 end
             end
