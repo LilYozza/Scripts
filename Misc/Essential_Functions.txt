@@ -1,4 +1,5 @@
 --Essential Function Script
+getgenv().EFLoaded = false
 local startTime = os.clock()
 
 -->Services<--
@@ -596,4 +597,5 @@ getgenv().EHelp = function(_func)
     end
 end
 
+getgenv().EFLoaded = true
 print(string.format("Loaded Functions in: %.6f seconds", os.clock() - startTime))
