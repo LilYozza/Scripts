@@ -331,3 +331,4 @@ end)
 --===========================================================================================--
 Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)end)
 
+getgenv().MLoaded = true

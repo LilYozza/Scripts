@@ -577,11 +577,13 @@ local Games = {
 	}
 }
 repeat task.wait()until game:IsLoaded()
+getgenv().MLoaded = false
 local _g = Games[game.PlaceId] or Games[game.GameId]
 if _g then
     print("Running:",_g.Name)
     local s,e = pcall(function()
-        loadstring(game:HttpGet(_g.Script))()
+        spawn(function() loadstring(game:HttpGet(_g.Script))()end) task.wait(5)
+        if not MLoaded then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()end
     end)
     if not s then
         print(e)

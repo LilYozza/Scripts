@@ -6,6 +6,7 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
+local Troll = wCreateFolder("Troll")
 
 -->Base Variables<--
 local RoundParts = Workspace:FindFirstChild("RoundParts")
@@ -74,7 +75,7 @@ Auto:Toggle("Auto Win",function(bool)
     end)
 end)
 
-
+--[[
 Auto:Toggle("No Slide",function(bool)
     shared.ToggleNS=bool
     spawn(function()
@@ -84,6 +85,7 @@ Auto:Toggle("No Slide",function(bool)
         end
     end)
 end)
+]]--
 
 Auto:Toggle("Free Shield",function(bool)
     shared.ToggleFS=bool
@@ -99,7 +101,7 @@ Auto:Toggle("Mine Trail",function(bool)
     shared.ToggleMT=bool
     spawn(function()
         while shared.ToggleMT do
-            shopBuy("Landmine")
+            --shopBuy("Landmine")
             local backpack = Player:WaitForChild("Backpack")
             local tool = backpack:WaitForChild("Landmine", 5)
             if tool then
@@ -107,10 +109,21 @@ Auto:Toggle("Mine Trail",function(bool)
                 Player.Character:WaitForChild("Landmine") task.wait(0.1)
                 SendKey(0x74)
             end
-            task.wait(0.5)
+            task.wait()
         end
     end)
 end)
+
+local pSelect
+
+local pDropList = Auto:Dropdown("Select Player",GetDisplayNames(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    pSelect = GetPlayerByDisplayName(SItem)
+end)
+
+
+
+Players.ChildAdded:Connect(function() pDropList:Refresh(GetDisplayNames()) end)
+Players.ChildRemoved:Connect(function() pDropList:Refresh(GetDisplayNames()) end)
 
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
