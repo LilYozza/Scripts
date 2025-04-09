@@ -120,33 +120,42 @@ end)
 
 
 
-local range = 15
+local range
+local RangeSA = Misc:Slider("Aura Range",{
+	['default'] = 15;['min'] = 0;['max'] = 5000;['precise'] = true;},function(value)
+    spawn(function()
+	    range = value
+    end)
+end)
+
 local SACon
 Misc:Toggle("Sword Aura",function(bool)
 	shared.ToggleSA = bool
-	if shared.ToggleSA then
-		SACon = game:GetService("RunService").RenderStepped:Connect(function()
-			local p = Players:GetPlayers()
-			for i = 2, #p do 
-                if p[i].Character then
-                    local v = p[i].Character
-                    if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
-                        local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
-                        if tool and tool:FindFirstChild("Handle") then
-                            tool:Activate()
-                            for i,v in next, v:GetChildren() do
-                                if v:IsA("BasePart") then
-                                    firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
+    spawn(function()
+        if shared.ToggleSA then
+            SACon = game:GetService("RunService").RenderStepped:Connect(function()
+                local p = Players:GetPlayers()
+                for i = 2, #p do 
+                    if p[i].Character then
+                        local v = p[i].Character
+                        if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
+                            local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+                            if tool and tool:FindFirstChild("Handle") then
+                                tool:Activate()
+                                for i,v in next, v:GetChildren() do
+                                    if v:IsA("BasePart") then
+                                        firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
+                                    end
                                 end
                             end
                         end
                     end
                 end
-			end
-		end)
-	else
-		if SACon then SACon:Disconnect() end
-	end
+            end)
+        else
+            if SACon then SACon:Disconnect() end
+        end
+    end)
 end)
 
 --============================================Fly==========================================--
