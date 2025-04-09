@@ -95,16 +95,5 @@ Auto:Toggle("Free Shield",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto",function(bool)
-    shared.Toggle=bool
-    spawn(function()
-        while shared.Toggle do
-            task.wait()
-        end
-    end)
-end)
-
-
-
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
