@@ -95,5 +95,22 @@ Auto:Toggle("Free Shield",function(bool)
     end)
 end)
 
+Auto:Toggle("Mine Trail",function(bool)
+    shared.ToggleMT=bool
+    spawn(function()
+        while shared.ToggleMT do
+            shopBuy("Landmine")
+            local backpack = Player:WaitForChild("Backpack")
+            local tool = backpack:WaitForChild("Landmine", 5)
+            if tool then
+                tool.Parent = Player.Character
+                Player.Character:WaitForChild("Landmine") task.wait(0.1)
+                SendKey(0x74)
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
+
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
