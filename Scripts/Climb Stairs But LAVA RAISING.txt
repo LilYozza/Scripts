@@ -1,0 +1,83 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local itemSelect = "All"
+local itemsTable = {}
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function getItems()
+    local t = {}
+        for _,v in pairs(Workspace:GetChildren()) do
+            local tPart = v:FindFirstChild("TouchPart") and v.TouchPart:IsA("BasePart") and v.TouchPart:FindFirstChildWhichIsA("TouchTransmitter")
+            if tPart and not FindInTable(t, v.Name) then
+                table.insert(t, v)
+            end
+        end
+    return t
+end itemsTable = getItems()
+
+
+Auto:Button("Start",function()
+    spawn(function()
+        MoveTo(Workspace:FindFirstChild("loser"), Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Finish",function()
+    spawn(function()
+        MoveTo(Workspace:FindFirstChild("winner"), Vector3.new(0,5,0))
+    end)
+end)
+
+local DropList = Auto:Dropdown("All",{"All", table.unpack(itemsTable)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    itemSelect = SItem
+end)
+
+Auto:Button("Give Item",function()
+    spawn(function()
+        if itemSelect then
+            -- if all
+            if itemSelect == "All" then
+                for _,v in pairs(itemsTable) do
+                    Touch(v.TouchPart)
+                end
+            else
+                local item = FindInTable(itemsTable, itemSelect)
+                Touch(item.TouchPart)
+            end
+        end
+    end)
+end)
+
+local Btn
+for _,v in pairs(Workspace:GetChildren()) do if v.Name == "Button" and v:FindFirstChild("ProximityPrompt") then Btn = v end end
+
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            --TOUCH WINNER
+            if Btn then
+                Touch(Workspace:FindFirstChild("winner"),0.5)
+                --REBIRTH
+                MoveTo(Btn, Vector3.new(0,5,0), nil, true, fireproximityprompt(Btn.ProximityPrompt))
+                repeat task.wait() until not shared.ToggleAW or Player.Team.Name == "loser"
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
