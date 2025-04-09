@@ -1,0 +1,110 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local RoundParts = Workspace:FindFirstChild("RoundParts")
+local FinishCheck = RoundParts:FindFirstChild("FinishCheck")
+
+local Map = Workspace:FindFirstChild("Map")
+local WinnersArea = Map:FindFirstChild("WinnersArea")
+local Lobby = Map:FindFirstChild("Lobby")
+
+local selectItem
+local shopItems = {"Banana", "Landmine", "Sword", "Helemt", "Shield"}
+
+
+-->Non Return Functions<--
+local function shopBuy(_item) --input string
+    local t = {
+        ["name"] = _item,
+        ["price"] = 0
+    }
+    game:GetService("ReplicatedStorage").Remotes.FromClient.ShopPurchase:FireServer(t)
+end
+
+-->Return Functions<--
+
+Auto:Button("Start",function()
+    spawn(function()
+        MoveTo(Lobby:FindFirstChildWhichIsA("SpawnLocation"))
+    end)
+end)
+
+
+Auto:Button("Finish",function()
+    spawn(function()
+        MoveTo(FinishCheck, Vector3.new(0,-15,0))
+    end)
+end)
+
+
+local DropList = Auto:Dropdown("Select Item",shopItems,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    selectItem = SItem
+end)
+
+
+Auto:Button("Get Item",function()
+    spawn(function()
+        if selectItem then
+            shopBuy(selectItem)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            if FinishCheck and WinnersArea then
+                local back = GetPos()
+                Touch(FinishCheck)
+                -- TOUCH TELEPORT BACK
+                Touch(WinnersArea.FinishArea.Teleporter,0.1)
+                MoveTo(back)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Toggle("No Slide",function(bool)
+    shared.ToggleNS=bool
+    spawn(function()
+        while shared.ToggleNS do
+            game:GetService("ReplicatedStorage").Remotes.FromClient.SetLocation:FireServer("Spawn")
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Free Shield",function(bool)
+    shared.ToggleFS=bool
+    spawn(function()
+        while shared.ToggleFS do
+            shopBuy("Shield")
+            task.wait(30)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            task.wait()
+        end
+    end)
+end)
+
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
