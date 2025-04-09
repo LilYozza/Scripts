@@ -16,13 +16,10 @@ local Swords = {"Final Hero", "Darkheart", "ClassicSword", "StarterSword", "SCAR
 
 local BasePlate = Workspace:FindFirstChild("BasePlate")
 
--->Non Return Functions<--
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-
 -->Getting Data<--
     -->Tables<--
 
-local otherItemTable = {"Pickaxe", "Diamond", "Torch"}
+local otherItemTable = {"Pickaxe", "Diamond", "Torch", "BlackMatter"}
 
 local function GetTycoons()for _,v in pairs(Tycoons:GetChildren())do table.insert(TycoonList, v.Name)end if TycoonList then table.sort(TycoonList,function(a, b)return a:byte() < b:byte() end) end end GetTycoons()
 local function UpdateItems()
@@ -181,6 +178,76 @@ Auto:Button("Alien Hunt",function(bool)
      end)
 end)
 
+local range = 15
+local SACon
+Auto:Toggle("Alien Aura",function(bool)
+	shared.ToggleAA1 = bool
+	if shared.ToggleAA1 then
+		SACon = game:GetService("RunService").RenderStepped:Connect(function()
+            local Aliens = Workspace:FindFirstChild("Aliens")
+            if Aliens then 
+                for i = 1, #Aliens:GetChildren() do 
+                    if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") then
+                        local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+                        if tool and tool:FindFirstChild("Handle") then
+                            tool:Activate()
+                            for i,v in next, v:GetChildren() do
+                                if v:IsA("BasePart") then
+                                    firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+		end)
+	else
+		if SACon then SACon:Disconnect() end
+	end
+end)
+
+
+local CrystalCave = BasePlate:FindFirstChild("CrystalCave")
+local Crystals = CrystalCave:FindFirstChild("Crystals")
+
+
+Auto:Toggle("Auto Mine",function(bool)
+	shared.ToggleAM = bool
+    spawn(function()
+        while shared.ToggleAM do
+            if shared.ToggleAM then
+                if Crystals then
+                    for _,v in pairs(Crystals:GetChildren())do
+                        local cHealth = v:FindFirstChild("Health")
+                        if cHealth and cHealth.Value > 0 then
+                            local hasPick = Player.Character:FindFirstChild("Pickaxe")
+                            if not hasPick then
+                                for _, tool in ipairs(Player.Backpack:GetChildren()) do
+                                    if tool:IsA("Tool") and tool.Name == "Pickaxe" then
+                                        tool.Parent = Player.Character
+                                        task.wait()
+                                        break
+                                    end
+                                end
+                            end
+                            hasPick = Player.Character:FindFirstChild("Pickaxe")
+                            if hasPick and shared.ToggleAM then
+                                hasPick:Activate()
+                                Touch(hasPick.head, v)
+                            end
+                        end
+                    end
+                end
+            else
+                local tool = Player.Character:FindFirstChildOfClass("Tool")
+                if tool then tool.Parent = Player.Backpack end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
 
 
 
@@ -190,6 +257,7 @@ end)
 
 
 local PickaxeGiver = BasePlate:FindFirstChild("PickaxeGiver")
+local BlackMatter = BasePlate:FindFirstChild("BlackMatter")
 local debounce = true
 Item:Button("Get Item",function()
     spawn(function()
@@ -213,6 +281,11 @@ Item:Button("Get Item",function()
                 elseif ItemSelect == "Pickaxe" then
                     if PickaxeGiver then
                         Touch(PickaxeGiver.Handle)
+                    end
+
+                elseif ItemSelect == "BlackMatter" then
+                    if BlackMatter then
+                        Touch(BlackMatter.Giver)
                     end
                 end
             else
