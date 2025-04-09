@@ -186,7 +186,7 @@ Auto:Toggle("Alien Aura",function(bool)
 		SACon = game:GetService("RunService").RenderStepped:Connect(function()
             local Aliens = Workspace:FindFirstChild("Aliens")
             if Aliens then 
-                for i = 1, #Aliens:GetChildren() do 
+                for _,v in pairs(Aliens:GetChildren()) do
                     if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") then
                         local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
                         if tool and tool:FindFirstChild("Handle") then
@@ -205,6 +205,23 @@ Auto:Toggle("Alien Aura",function(bool)
 		if SACon then SACon:Disconnect() end
 	end
 end)
+
+Auto:Toggle("Alien Drops",function(bool)
+    shared.toggleAD = bool
+    spawn (function()
+        while shared.toggleAD do
+            for _,v in pairs(Workspace:GetChildren())do
+                if v.Name == "Rain1" and v:IsA("BasePart") then
+                    Touch(v,0.1)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+
 
 
 local CrystalCave = BasePlate:FindFirstChild("CrystalCave")
@@ -243,6 +260,29 @@ Auto:Toggle("Auto Mine",function(bool)
                 if tool then tool.Parent = Player.Backpack end
             end
             task.wait()
+        end
+    end)
+end)
+
+local RubyShop = BasePlate:FindFirstChild("RubyShop")
+Auto:Toggle("Auto Sell",function(bool)
+	shared.ToggleAS = bool
+    spawn(function()
+        while shared.ToggleAS do
+            local tool = Player.Character:FindFirstChild("Ruby")
+            if not tool then
+                for _, tool in ipairs(Player.Backpack:GetChildren()) do
+                    if tool:IsA("Tool") and tool.Name == "Ruby" then
+                        tool.Parent = Player.Character
+                        task.wait()
+                        break
+                    end
+                end
+            end
+            if tool and RubyShop then
+                Touch(RubyShop.Model.Part)
+            end             
+            task.wait(0.2)
         end
     end)
 end)
