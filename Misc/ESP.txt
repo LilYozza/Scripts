@@ -123,18 +123,20 @@ getgenv().ESPOn = function()
 	workCon = workspace.ChildAdded:Connect(function(part)
 		if Players:FindFirstChild(part.Name) then
 			repeat task.wait()until part
-			local _char = player.Character or player.CharacterAdded:Wait()
-			if _char then
-				local _player = Players:GetPlayerFromCharacter(_char)
-				if _player and not PlayerCon[_player.UserId] then 
-					local _head = _char:WaitForChild("Head")
-					AddESP(_player)
-					PlayerCon[_player.UserId] = _player.CharacterAdded:Connect(function()
-						local _head = _char:WaitForChild("Head")
-						AddESP(_player)
-					end)
-				end
-			end
+            if player then
+                local _char = player.Character or player.CharacterAdded:Wait()
+                if _char then
+                    local _player = Players:GetPlayerFromCharacter(_char)
+                    if _player and not PlayerCon[_player.UserId] then 
+                        local _head = _char:WaitForChild("Head")
+                        AddESP(_player)
+                        PlayerCon[_player.UserId] = _player.CharacterAdded:Connect(function()
+                            local _head = _char:WaitForChild("Head")
+                            AddESP(_player)
+                        end)
+                    end
+                end
+            end
 		end
 	end)
 	
