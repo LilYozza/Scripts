@@ -114,7 +114,7 @@ Auto:Toggle("Mine Trail",function(bool)
     shared.ToggleMT=bool
     spawn(function()
         while shared.ToggleMT do
-            --shopBuy("Landmine")
+            shopBuy("Landmine")
             local backpack = Player:WaitForChild("Backpack")
             local tool = backpack:WaitForChild("Landmine", 5)
             if tool then
@@ -122,7 +122,7 @@ Auto:Toggle("Mine Trail",function(bool)
                 Player.Character:WaitForChild("Landmine") task.wait(0.1)
                 SendKey(0x74)
             end
-            task.wait()
+            task.wait(0.6)
         end
     end)
 end)
