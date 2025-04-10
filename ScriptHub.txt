@@ -578,6 +578,10 @@ local Games = {
 	[97807976116293] = {
 		Name = 'Climb Stairs But LAVA RAISING',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%20Stairs%20But%20LAVA%20RAISING.txt'
+	},
+	[15666161643] = {
+		Name = 'RAGE QUIT OBBY',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/RAGE%20QUIT%20OBBY.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
