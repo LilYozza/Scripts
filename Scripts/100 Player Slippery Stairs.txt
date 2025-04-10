@@ -75,24 +75,37 @@ Auto:Toggle("Auto Win",function(bool)
     end)
 end)
 
---[[
+
+
 Auto:Toggle("No Slide",function(bool)
     shared.ToggleNS=bool
     spawn(function()
-        while shared.ToggleNS do
-            game:GetService("ReplicatedStorage").Remotes.FromClient.SetLocation:FireServer("Spawn")
-            task.wait()
+        if shared.ToggleNS then
+            while shared.ToggleNS do
+                if Player.Character then
+                    Player.Character.Ragdoll.RagdollClient.Disabled = true
+                    local fallAni = Player.Character.Animate:FindFirstChild("fall")
+                    if fallAni then fallAni:Destroy() end
+                end
+                task.wait()
+            end
+        else
+            Player.Character.Ragdoll.RagdollClient.Disabled = false
         end
     end)
 end)
-]]--
 
 Auto:Toggle("Free Shield",function(bool)
     shared.ToggleFS=bool
     spawn(function()
         while shared.ToggleFS do
-            shopBuy("Shield")
-            task.wait(30)
+            if Player.Character then
+                local shield = Player.Character:FindFirstChild("Shield")
+                if not shield then
+                    shopBuy("Shield") task.wait(1)
+                end
+            end
+            task.wait()
         end
     end)
 end)
@@ -116,10 +129,14 @@ end)
 
 local pSelect
 
-local pDropList = Auto:Dropdown("Select Player",GetDisplayNames(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local pDropList = Troll:Dropdown("Select Player",GetDisplayNames(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     pSelect = GetPlayerByDisplayName(SItem)
 end)
 
+Troll:Button("Execute",function()
+    spawn(function()
+    end)
+end)
 
 
 Players.ChildAdded:Connect(function() pDropList:Refresh(GetDisplayNames()) end)
