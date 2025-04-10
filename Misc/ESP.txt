@@ -123,7 +123,7 @@ getgenv().ESPOn = function()
 	workCon = workspace.ChildAdded:Connect(function(part)
 		if Players:FindFirstChild(part.Name) then
 			repeat task.wait()until part
-			local _char = part.Character
+			local _char = player.Character or player.CharacterAdded:Wait()
 			if _char then
 				local _player = Players:GetPlayerFromCharacter(_char)
 				if _player and not PlayerCon[_player.UserId] then 
