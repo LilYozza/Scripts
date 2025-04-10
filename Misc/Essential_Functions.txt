@@ -22,8 +22,11 @@ local _sHelp = {
     ["RemovePart"] = "RemovePart(Part(Can Be Table / Part))",
     ["SortTableByNumber"] = "SortTableByNumber(Table)",
     ["SortTableByName"] = "SortTableByName(Table)",
+    ["SortTableByDistance"] = "SortTableByDistance(Table, Part)",
     ["RemoveFromTable"] = "RemoveFromTable(Table, Item)",
     ["PrintTable"] = "PrintTable(Table)",
+    ["GetElementFromDictionary"] = "GetElementFromDictionary(Table, Element)",
+    ["GetPositionFromTable"] = "GetPositionFromTable(Table, Object)",
     ["SendKey"] = "SendKey(Key)",
     ["fromSuffixString"] = "fromSuffixString(Value, Table(Suffixes))",
     ["NextTeam"] = "NextTeam(Player, Table)",
@@ -38,6 +41,7 @@ local _sHelp = {
     ["ReturnTableAsString"] = "ReturnTableAsString(Table)",
     ["Timer"] = "Timer(Time(seconds))",
     ["PathFind"] = "PathFind(Part, Color) - STILL IN WIP",
+    ["MakePath"] = "MakePath(Part, Color) - STILL IN WIP",
     ["CreateTextLabel"] = "CreateTextLabel(Text, Color, Position)",
     ["CreateBillBoard"] = "CreateBillBoard()",
     ["Tag"] = "Tag(Part, Bool?(Add OR Remove), Settings1, Settings2)",
@@ -224,6 +228,18 @@ getgenv().SortTableByName = function(_tbl) -- ONLY ACCEPTS TABLES WITH .NAME PRO
     return _tbl
 end
 
+getgenv().SortTableByDistance = function(_tbl, _part)
+    if _tbl and typeof(_tbl) == "table" then
+        _part = _part or Player.Character:WaitForChild("HumanoidRootPart")
+        table.sort(_tbl, function(a, b)
+            return (a.Position - _part.Position).Magnitude < (b.Position - _part.Position).Magnitude
+        end)
+        return _tbl
+    else
+        warn("SortTableByDistance: Is Nil or Not a Table")
+    end
+end
+
 getgenv().RemoveFromTable = function(_tbl, _item)
 	if _tbl and typeof(_tbl) == "table" then
 		for _,v in pairs(_tbl)do
@@ -250,6 +266,31 @@ getgenv().PrintTable = function (_tbl)
 	else
 		warn("PrintTable: Bad Values")
 	end
+end
+
+getgenv().GetElementFromDictionary = function(_tbl, index)
+    if _tbl and typeof(_tbl) == "table" then
+        index = index or 1
+        for _,v in pairs(_tbl) do
+            if _ == index then return v end
+        end
+        return nil  -- Return nil if index is out of range
+    else
+        warn("GetElementFromDictionary: Table is nil or not a Table")
+    end
+end
+
+getgenv().GetPositionFromTable = function(_tbl, value)
+    if _tbl and typeof(_tbl) == "table" then
+        for i, v in pairs(_tbl) do
+            if v == value then
+                return i  -- Return the index (position) of the matching element
+            end
+        end
+        return nil  -- Return nil if the value is not found
+    else
+        warn("GetPositionFromTable: Table is nil or not a Table")
+    end
 end
 
 getgenv().SendKey = function(_key)
@@ -386,12 +427,9 @@ getgenv().GetPlayerByDisplayName = function(_displayName)
 	end
 end
 
-getgenv().GetClosestPart = function(_part, _tbl)
-    if typeof(_part) == "table" then
-        _tbl = _part
-        _part = Player.Character:WaitForChild("HumanoidRootPart")
-    end
-	if _part and _part:IsA("BasePart") and _tbl then
+getgenv().GetClosestPart = function(_tbl, _part)
+    _part = _part or Player.Character:WaitForChild("HumanoidRootPart")
+	if _tbl and typeof(_tbl) == "table" and _part:IsA("BasePart") then
 		local _s
 		local _min = math.huge
 		for _,v in pairs(_tbl)do
@@ -527,16 +565,40 @@ end
 local gameParts
 local PathfindingService = game:GetService("PathfindingService")
 
-getgenv().PathFind = function(_part, _col) -- _part = Part to waypoint to / _col = Colour of Waypoints (can be null)
+getgenv().PathFind = function(_part) -- _part = Part to waypoint to / _col = Colour of Waypoints (can be null)
     if not _part or not _part:IsA("BasePart") then warn ("PathFind: Bad Values....(Part)") return end
-    if not _col then _col = brickColor.new("White") end
+
+    local path = PathfindingService:CreatePath()
+    local hum = Player.Character:WaitForChild("Humanoid")
+    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+    path:ComputeAsync(hrp.Position, _part.Position)
+    local waypoints = path:GetWaypoints()
+    
+    for i, waypoint in pairs(waypoints) do
+        hum:MoveTo(waypoint.Position)
+        hum.MoveToFinished:Wait()
+    end
+
+    hum:MoveTo(_part.Position)
+
+    -- (Part, Color)
+    -- Get Part
+    -- Show Path to part
+    -- Update Path To Part
+end
+
+getgenv().MakePath = function(_part, _col) -- _part = Part to waypoint to / _col = Colour of Waypoints (can be null)
+    print("Making Path for:", _part)
+
+    if not _part or not _part:IsA("BasePart") then warn ("PathFind: Bad Values....(Part)") return end
+    if not _col then _col = BrickColor.new("White") end
 
     if not game.Workspace:FindFirstChild("_gameParts") then
         gameParts = Instance.new("Folder")
         gameParts.Parent = game.Workspace
-        gameParts.Name = "gameParts"
+        gameParts.Name = "_gameParts"
     else
-            gameParts = game.Workspace:FindfirstChild("_gameParts")
+        gameParts = game.Workspace:FindfirstChild("_gameParts")
     end
 
     local path = PathfindingService:CreatePath()
@@ -546,8 +608,6 @@ getgenv().PathFind = function(_part, _col) -- _part = Part to waypoint to / _col
     local waypoints = path:GetWaypoints()
     
     for i, waypoint in pairs(waypoints) do
-        hum:MoveTo(waypoint.Postion)
-        hum.MoveToFinish:Wait(2)
 
         local part = Instance.new("Part")
         part.Shape = "Ball"
@@ -560,14 +620,7 @@ getgenv().PathFind = function(_part, _col) -- _part = Part to waypoint to / _col
    
     end
 
-    print("Made Path For:", _part)
-
-    hum:MoveTo(_part.Position)
-
-    -- (Part, Color)
-    -- Get Part
-    -- Show Path to part
-    -- Update Path To Part
+    print("Done")
 end
 
 getgenv().FindItem = function(_s, _p, _t) -- _s = String to find / _p = item to search in / _t = exact match or not
