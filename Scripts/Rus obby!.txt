@@ -1,0 +1,53 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+
+local Checkpoints = Workspace:FindFirstChild("Checkpoints")
+local Level = Player.leaderstats:FindFirstChild("Level")
+
+local CheckpointsTbl = Checkpoints:GetChildren()
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            local chk = Checkpoints[Level.Value + 1]
+            if chk then Touch(chk, 0.3) end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Next",function()
+    spawn(function()
+        local _next = Checkpoints:FindFirstChild(tonumber(GetClosestPart(CheckpointsTbl).Name) + 1)
+        if _next then MoveTo(_next, Vector3.new(0,5,0)) end
+    end)
+end)
+
+Auto:Button("Current",function()
+    spawn(function()
+        MoveTo(Checkpoints[Level.Value], Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Previous",function()
+    spawn(function()
+        local _next = Checkpoints:FindFirstChild(tonumber(GetClosestPart(CheckpointsTbl).Name) - 1)
+        if _next then MoveTo(_next, Vector3.new(0,5,0)) end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
