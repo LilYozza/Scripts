@@ -398,6 +398,7 @@ getgenv().GetClosestPart = function(_part, _tbl)
 			if v:IsA("BasePart") or v:IsA("CFrame") then
 				local _dis = GetDistance(_part, v)
 				if _dis and _dis < _min then
+                    _min = _dis
 					_s = v
 				end
 			else
