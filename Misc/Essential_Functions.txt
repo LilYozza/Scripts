@@ -623,6 +623,75 @@ getgenv().MakePath = function(_part, _col) -- _part = Part to waypoint to / _col
     print("Done")
 end
 
+getgenv().TestPath = function(target)
+    -- Validations
+    if not target or not target:IsA("BasePart") then return end
+
+    -- Services & References
+    local PathfindingService = game:GetService("PathfindingService")
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+    local character = Player.Character or Player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    -- Path Setup
+    local path = PathfindingService:CreatePath({
+        AgentRadius = 0.5,
+        AgentHeight = 5,
+        AgentCanJump = true,
+        WaypointSpacing = 1
+    })
+
+    -- Try computing path (with position adjustments)
+    local function computePath()
+        local startPos = hrp.Position
+        local endPos = target.Position
+
+        -- Try different Y offsets if path fails
+        for _, yOffset in ipairs({0, 2, -2, 5}) do
+            local adjustedStart = startPos + Vector3.new(0, yOffset, 0)
+            local adjustedEnd = endPos + Vector3.new(0, yOffset, 0)
+
+            local success, err = pcall(function()
+                path:ComputeAsync(adjustedStart, adjustedEnd)
+            end)
+
+            if success and path.Status == Enum.PathStatus.Success then
+                return true
+            end
+        end
+        return false
+    end
+
+    -- Attempt pathfinding (max 3 tries)
+    local pathFound = false
+    for i = 1, 3 do
+        if computePath() then
+            pathFound = true
+            break
+        end
+        task.wait(0.5)
+    end
+
+    -- If path found, move along waypoints
+    if pathFound then
+        for _, waypoint in ipairs(path:GetWaypoints()) do
+            humanoid:MoveTo(waypoint.Position)
+            humanoid.MoveToFinished:Wait()
+
+            if waypoint.Action == Enum.PathWaypointAction.Jump then
+                humanoid.Jump = true
+                task.wait(0.3)
+            end
+        end
+    else
+        -- Fallback: Teleport if no path found
+        warn("No valid path found. Using fallback teleport.")
+        hrp.CFrame = CFrame.new(target.Position + Vector3.new(0, 3, 0))
+    end
+end
+
 getgenv().FindItem = function(_s, _p, _t) -- _s = String to find / _p = item to search in / _t = exact match or not
     if _s and typeof(_s) == "string" then
         if _t == nil then _t = true end
