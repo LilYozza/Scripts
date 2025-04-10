@@ -121,7 +121,7 @@ end)
 
 
 
-local range
+local range = 15
 local RangeSA = Misc:Slider("Aura Range",{
 	['default'] = 15;['min'] = 0;['max'] = 5000;['precise'] = true;},function(value)
     spawn(function()
