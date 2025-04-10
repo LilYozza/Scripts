@@ -387,6 +387,10 @@ getgenv().GetPlayerByDisplayName = function(_displayName)
 end
 
 getgenv().GetClosestPart = function(_part, _tbl)
+    if typeof(_part) == "table" then
+        _tbl = _part
+        _part = Player.Character:WaitForChild("HumanoidRootPart")
+    end
 	if _part and _part:IsA("BasePart") and _tbl then
 		local _s
 		local _min = math.huge
