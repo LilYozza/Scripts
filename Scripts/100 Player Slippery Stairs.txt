@@ -6,7 +6,7 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
-local Troll = wCreateFolder("Troll")
+local Troll = w:CreateFolder("Troll")
 
 -->Base Variables<--
 local RoundParts = Workspace:FindFirstChild("RoundParts")
