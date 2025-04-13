@@ -288,6 +288,53 @@ Auto:Toggle("Auto Sell",function(bool)
 end)
 
 
+local cashCon
+Auto:Toggle("Collect Money",function(bool)
+	shared.ToggleFM = bool
+    spawn(function()
+        if shared.ToggleFM then
+            cashCon = Workspace.ChildAdded:Connect(function(_part)
+                repeat task.wait() until _part
+                if _part.Name == "Robux" and _part:FindFirstChildWhichIsA("TouchTransmitter") then
+                    Touch(_part)
+                end
+            end)
+            while shared.ToggleFM do
+                -- Check if tool
+                -- if tool then spam
+                -- else stop
+                if Player.Character then
+                    for _,v in pairs(Player.Character:GetChildren()) do
+                        if v.Name == "GoldenStaff" and v:IsA("Tool") then
+                            v:Activate()
+                        end
+                    end
+                
+                
+                end
+                --local tool = Player.Character:FindFirstChild("GoldenStaff")
+                --if tool then
+                    --tool:Activate()
+                --end
+                task.wait()
+            end
+        else
+            if cashCon then cashCon:Disconnect() cashCon = nil end
+        end
+    end)
+end)
+
+Auto:Button("Equip Staffs",function(bool)
+    spawn(function()
+        for _,v in pairs(Player.Backpack:GetChildren())do
+            if v.Name == "GoldenStaff" and v:IsA("Tool") and Player.Character then
+                v.Parent = Player.Character
+            end
+        end
+     end)
+end)
+
+
 
 
 
