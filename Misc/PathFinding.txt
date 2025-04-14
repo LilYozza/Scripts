@@ -1,0 +1,274 @@
+getgenv().PathFind = function(_part) -- _part = Part to waypoint to / _col = Colour of Waypoints (can be null)
+    if not _part or not _part:IsA("BasePart") then warn ("PathFind: Bad Values....(Part)") return end
+
+    local path = PathfindingService:CreatePath()
+    local hum = Player.Character:WaitForChild("Humanoid")
+    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+    path:ComputeAsync(hrp.Position, _part.Position)
+    local waypoints = path:GetWaypoints()
+    
+    for i, waypoint in pairs(waypoints) do
+        hum:MoveTo(waypoint.Position)
+        hum.MoveToFinished:Wait()
+    end
+
+    hum:MoveTo(_part.Position)
+
+    -- (Part, Color)
+    -- Get Part
+    -- Show Path to part
+    -- Update Path To Part
+end
+
+getgenv().MakePath = function(_part, _col) -- _part = Part to waypoint to / _col = Colour of Waypoints (can be null)
+    print("Making Path for:", _part)
+
+    if not _part or not _part:IsA("BasePart") then warn ("PathFind: Bad Values....(Part)") return end
+    if not _col then _col = BrickColor.new("White") end
+
+    if not game.Workspace:FindFirstChild("_gameParts") then
+        gameParts = Instance.new("Folder")
+        gameParts.Parent = game.Workspace
+        gameParts.Name = "_gameParts"
+    else
+        gameParts = game.Workspace:FindfirstChild("_gameParts")
+    end
+
+    local path = PathfindingService:CreatePath()
+    local hum = Player.Character:WaitForChild("Humanoid")
+    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+    path:ComputeAsync(hrp.Position, _part.Position)
+    local waypoints = path:GetWaypoints()
+    
+    for i, waypoint in pairs(waypoints) do
+
+        local part = Instance.new("Part")
+        part.Shape = "Ball"
+        part.Material = "Neon"
+        part.Size = Vector3.new(0.5, 0.5, 0.5)
+        part.Position = waypoint.Position
+        part.Anchored = true
+        part.CanCollide = false
+        part.Parent = gameParts
+   
+    end
+
+    print("Done")
+end
+
+local function getBlockedDirections(distance)
+    distance = distance or 8
+    local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return {} end
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {Player.Character}
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.IgnoreWater = true
+
+    local directions = {
+        {name = "center", vector = root.CFrame.LookVector},
+        {name = "right", vector = (root.CFrame * CFrame.Angles(0, math.rad(15), 0)).LookVector},
+        {name = "left", vector = (root.CFrame * CFrame.Angles(0, math.rad(-15), 0)).LookVector},
+        -- {name = "up", vector = (root.CFrame * CFrame.Angles(math.rad(15), 0, 0)).LookVector}  -- Uncomment for upward check
+    }
+
+    local blocked = {}
+
+    for _, dir in ipairs(directions) do
+        local result = workspace:Raycast(root.Position, dir.vector * distance, raycastParams)
+        if result and result.Instance.CanCollide then
+            table.insert(blocked, {
+                direction = dir.name,
+                instance = result.Instance,
+                position = result.Position
+            })
+        end
+    end
+
+    return blocked
+end
+
+local function turn90Degrees(clockwise)
+    local humanoid = Player.Character:FindFirstChild("Humanoid")
+    local root = Player.Character:FindFirstChild("HumanoidRootPart")
+    if not humanoid or not root then return end
+
+    -- Store initial state
+    local wasAutoRotating = humanoid.AutoRotate
+    humanoid.AutoRotate = false
+    
+    -- Calculate target rotation
+    local direction = clockwise and -1 or 1
+    local targetCFrame = root.CFrame * CFrame.Angles(0, math.rad(90) * direction, 0)
+    
+    -- Smooth rotation using deltaTime
+    local start = os.clock()
+    while os.clock() - start < 0.3 do
+        local alpha = (os.clock() - start) / 0.3
+        root.CFrame = root.CFrame:Lerp(targetCFrame, alpha * 2) -- Faster lerp for snappier turn
+        task.wait()
+    end
+    
+    -- Finalize rotation and movement
+    root.CFrame = targetCFrame
+    humanoid.AutoRotate = wasAutoRotating
+    
+    -- Immediate movement in new direction
+    humanoid:MoveTo(root.Position + root.CFrame.LookVector * 4) -- Short forward burst
+    humanoid.MoveToFinished:Wait()
+end
+
+local function runUntilWall()
+    local humanoid = Player.Character:FindFirstChild("Humanoid")
+    local root = Player.Character:FindFirstChild("HumanoidRootPart")
+    if not humanoid or not root then return end
+
+    humanoid.AutoRotate = false
+    humanoid:MoveTo(root.Position + root.CFrame.LookVector * 100)
+
+    while true do
+        -- Use your existing getBlockedDirections function
+        local blocked = getBlockedDirections(5) -- Short detection range
+        
+        -- Check if center path is blocked
+        local centerBlocked = false
+        for _, blockage in ipairs(blocked) do
+            if blockage.direction == "center" then
+                centerBlocked = true
+                break
+            end
+        end
+
+        if centerBlocked then
+            -- Use your existing turn logic
+            local clear = {left = true, right = true}
+            for _, blockage in ipairs(blocked) do
+                if blockage.direction == "left" then clear.left = false end
+                if blockage.direction == "right" then clear.right = false end
+            end
+
+            if clear.left then
+                turn90Degrees(false) -- Left turn
+            elseif clear.right then
+                turn90Degrees(true) -- Right turn
+            else
+                -- 180 turn if both sides blocked
+                turn90Degrees(false)
+                turn90Degrees(false)
+            end
+        end
+        
+        task.wait(0.1) -- Check 10 times per second
+    end
+end
+
+getgenv().TestPath = function(targetPart)
+    local humanoid = Player.Character:FindFirstChild("Humanoid")
+    if not humanoid then return end
+
+    local path = PathfindingService:CreatePath({
+        AgentRadius = 2,
+        AgentHeight = 5,
+        AgentCanJump = true,
+        WaypointSpacing = 2,
+    })
+
+    local targetPos = targetPart.Position
+    local root = humanoid.Parent.HumanoidRootPart
+    local lastPosition = root.Position
+    local stuckTimer = 0
+    local attemptCount = 0
+
+    -- CHECKS TO CANCEL PATHFIND
+    spawn(function()
+        repeat
+            if not humanoid or humanoid.Health <= 0 then
+                print("Player has Died - stopping")
+                return
+            end
+
+            if humanoid.MoveDirection.Magnitude > 0 then
+                print("Player took control - stopping")
+                return
+            end
+
+            if (root.Position - targetPos).Magnitude < 4 then
+                print("Player Finished - stopping")
+                return
+            end
+
+            -- CHECK IF PLAYER IS STUCK (HASNT MOVED)
+            task.wait()
+        until true
+    end)
+
+    -- Main loop
+    while (root.Position - targetPos).Magnitude > 4 do
+        -- Check if player took control
+
+        -- Recalculate path
+        path:ComputeAsync(root.Position, targetPos)
+
+        local blockedDirections = getBlockedDirections(15)
+        if #blockedDirections > 0 then
+            print("Path blocked - switching to wall avoidance mode")
+            runUntilWall() -- Takes over movement until manually stopped
+            return -- Exit pathfinding
+        end
+        --[[
+        local blockedDirections = getBlockedDirections(15)
+        if #blockedDirections > 0 then
+            print("Blocked directions detected:")
+            for _, blockage in ipairs(blockedDirections) do
+                print(string.format("• %s direction blocked by %s at %s",
+                    blockage.direction:upper(),
+                    blockage.instance.Name,
+                    tostring(blockage.position)))
+            end
+
+            -- Determine clear directions
+            local clear = {center = true, left = true, right = true}
+            for _, blockage in ipairs(blockedDirections) do
+                clear[blockage.direction] = false
+            end
+
+            -- Choose turn direction (priority: left > right > 180 turn)
+            if clear.left then
+                turn90Degrees(false)  -- Turn left
+            elseif clear.right then
+                turn90Degrees(true)   -- Turn right
+            else
+                -- 180 turn if both sides blocked
+                turn90Degrees(false)
+                turn90Degrees(false)
+            end
+
+            -- Move in new direction
+            --local humanoid = Player.Character:FindFirstChildOfClass("Humanoid")
+            --humanoid:MoveTo(humanoid.RootPart.Position + humanoid.RootPart.CFrame.LookVector * 20)
+            --humanoid.MoveToFinished:Wait()
+            task.wait(1)
+        end
+        --]]
+        
+        if path.Status == Enum.PathStatus.Success then
+            print("Found Path - Moving now")
+
+            for _, waypoint in pairs(path:GetWaypoints()) do
+                humanoid:MoveTo(waypoint.Position)
+                humanoid.MoveToFinished:Wait()
+            end
+        else
+            local startPos = root.Position
+            
+            if (root.Position - startPos).Magnitude < 1 then
+                print("Failed to progress - recalculating")
+            end
+
+            humanoid:MoveTo(humanoid.Parent.HumanoidRootPart.Position + (targetPos - humanoid.Parent.HumanoidRootPart.Position).Unit * 10)
+        end
+        
+    end
+    print("Pathfinding Finished")
+end
