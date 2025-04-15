@@ -1,10 +1,7 @@
-print("Version 5.0.3")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
 local Player = Players.LocalPlayer
-
-local PlayerCon = {}
 
 local NameTagColor = Color3.fromRGB(255,0,0)
 local DistanceTagColor = Color3.fromRGB(0,0,255)
@@ -15,33 +12,25 @@ local NameTagPosition = UDim2.new(0,0,0,0)
 --local HealthTagPosition = UDim2.new(0,0,0.6,0)
 local HealthTagPosition = UDim2.new(0,0,0,-15)
 
-local function GetPDistance(player)
-	local Playerchar = Player.Character
-	local char = player.Character
-	if Playerchar and char then
-		return math.floor((Playerchar.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude + 0.5) 
+local function GetPDistance(_player)
+	if Player.Character and _player.Character then
+        local myHrp, Hrp = Player.Character:FindFirstChild("HumanoidRootPart"), _player.Character:FindFirstChild("HumanoidRootPart")
+        if myHrp and Hrp then
+		    return math.floor((myHrp.Position - Hrp.Position).Magnitude + 0.5) 
+        end
 	end
 end
 
-local function CreateTextLabel(name, parent, color, position)
+local function CreateTextLabel(args)
 	-- Creates Name Tag --
 	local newText = Instance.new("TextLabel")
-	-- Data --
-	newText.Name = name
-	newText.Parent = parent
-	newText.Size = UDim2.new(1,0,0.3,0)
-	newText.Position = position
-	newText.BackgroundTransparency = 1
-	--newText.TextScaled = true
 
-	-- Text --
-	newText.TextSize = 13
-	newText.Font = Enum.Font.Legacy
-	newText.TextColor3 = color
+    for _,v in pairs(args) do
+        newText[_] = v
+    end
 end
 
 local function CreateTag(part)
-	if part:FindFirstChild("PlayerTag") then return end
 	-- Creates BillBoard --
 	local newBillBoard = Instance.new("BillboardGui")
 	-- Data --
@@ -51,135 +40,92 @@ local function CreateTag(part)
 	newBillBoard.Size = UDim2.new(0, 250,0, 100)
 	newBillBoard.ExtentsOffset = Vector3.new(0,1,0)
 
+	CreateTextLabel({
+        Name = "NameTag", 
+        Parent = newBillBoard, 
+        TextColor3 = NameTagColor, 
+        Position = NameTagPosition,
+        TextSize = 13,
+        Font = Enum.Font.Legacy,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1,0,0.3,0)
+    })
 
-	CreateTextLabel("NameTag", newBillBoard, NameTagColor, NameTagPosition)
-	--CreateTextLabel("DistanceTag", newBillBoard, DistanceTagColor, DistanceTagPosition)
-	CreateTextLabel("HealthTag", newBillBoard, HealthTagColor, HealthTagPosition)
+	CreateTextLabel({
+        Name = "HealthTag", 
+        Parent = newBillBoard, 
+        TextColor3 = HealthTagColor, 
+        Position = HealthTagPosition,
+        TextSize = 13,
+        Font = Enum.Font.Legacy,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1,0,0.3,0)
+    })
 
 end
 
-local function AddESP(player)
-	-- ADD TAG TO PLAYER
-	local char = player.Character
-	if char then
-		local _head = char:FindFirstChild("Head")
+local function AddESP(_player)
+	if _player.Character then
+		local _head = _player.Character:FindFirstChild("Head")
 		if _head then
-			local _tag = _head:FindFirstChild("PlayerTag")
-			if not _tag then CreateTag(_head) end
-		end
-	end
-end
-
-local function RemoveESP(player)
-	if PlayerCon[player.UserId] then PlayerCon[player.UserId]:Disconnect() end
-	local char = player.Character
-	if char then
-		local _head = char:FindFirstChild("Head")
-		if _head then
-			local _tag = _head:FindFirstChild("PlayerTag")
-			if _tag then _tag:Destroy() end
-		end
-	end
-end
-
-local function UpdateTag(player)
-	if player ~= nil then
-		local char = player.Character
-		local MyChar =Player.Character
-
-		if char and MyChar then
-
-			local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
-			local Find3 = char:FindFirstChild("HumanoidRootPart")
-			local Find4 = char:FindFirstChildOfClass("Humanoid")
-
-			if Find2 and Find3 then
-				local Tag = player.Character.Head:FindFirstChild("PlayerTag")
-				if not Tag then return end
-
-				local PlayerName = player.DisplayName
-				local Distance = GetPDistance(player)
-				local Health = math.floor(char.Humanoid.Health + 0.5)
-
-				Tag.NameTag.Text = PlayerName.."["..Distance.."]"
-				--Tag.DistanceTag.Text = "Distance: "..Distance
-				Tag.HealthTag.Text = "Health: "..Health
-			end
-		end
-	end
-end
-
-local AllPlayerCon, AllPlayerRemoveCon, workCon
-getgenv().ESPOn = function()
-	--ON PLAYERS JOINING GAME
-	AllPlayerCon = Players.PlayerAdded:Connect(function(player)
-		--ON NEW CHARACTER FROM PLAYER
-		PlayerCon[player.UserId] = player.CharacterAdded:Connect(function(char)
-			local _head = char:WaitForChild("Head")
-			AddESP(player)
-		end)
-	end)
-	
-	workCon = workspace.ChildAdded:Connect(function(part)
-		if Players:FindFirstChild(part.Name) then
-			repeat task.wait()until part
-            if player then
-                local _char = player.Character or player.CharacterAdded:Wait()
-                if _char then
-                    local _player = Players:GetPlayerFromCharacter(_char)
-                    if _player and not PlayerCon[_player.UserId] then 
-                        local _head = _char:WaitForChild("Head")
-                        AddESP(_player)
-                        PlayerCon[_player.UserId] = _player.CharacterAdded:Connect(function()
-                            local _head = _char:WaitForChild("Head")
-                            AddESP(_player)
-                        end)
-                    end
-                end
+			if not _head:FindFirstChild("PlayerTag") then 
+                CreateTag(_head)
             end
 		end
-	end)
-	
-	--ON PLAYER LEAVING GaME
-	AllPlayerRemoveCon = Players.PlayerRemoving:Connect(function(player)
-		RemoveESP(player)
-	end)
-
-	for _,v in pairs(Players:GetPlayers())do
-		spawn(function()
-			if v ~= Player then
-				PlayerCon[v.UserId] = v.CharacterAdded:Connect(function(char) 
-					local _head = char:WaitForChild("Head")
-					AddESP(v)
-				end)
-				AddESP(v)
-			end
-		end)
 	end
+end
 
-	--RUN SERICE BIND
-	RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
-		for _,v in pairs(Players:GetPlayers())do
-			if v ~= Player then 
-				AddESP(v)
-				UpdateTag(v) 
-			end
+local function RemoveESP(_player)
+	if _player.Character then
+		local _head = _player.Character:FindFirstChild("Head")
+		if _head then
+            local tag = _head:FindFirstChild("PlayerTag")
+			if tag then tag:Destroy() end
 		end
+	end
+end
+
+local function UpdateTag(_player)
+	if not (_player and _player.Character) then return end
+
+	local character = _player.Character
+	local head = character:FindFirstChild("Head")
+	local humanoid = character:FindFirstChild("Humanoid")
+
+	if not (head and humanoid) then return end
+
+	local tag = head:FindFirstChild("PlayerTag")
+	if not tag then return end
+
+	local name = _player.DisplayName
+	local distance = GetPDistance(_player) or 0
+	local health = math.floor(humanoid.Health + 0.5)
+    if not (name and distance and health) then return end
+
+	tag.NameTag.Text = string.format("%s[%d]", name, distance)
+	tag.HealthTag.Text = "Health: " .. health
+end
+
+getgenv().ESPOn = function()
+
+	--Adds / Updates 
+	RunService:BindToRenderStep("UpdateESP", Enum.RenderPriority.Character.Value, function()
+        for _, v in pairs(Players:GetPlayers()) do
+            if v ~= Player then
+                task.spawn(function()
+                    AddESP(v)
+                    UpdateTag(v)
+                end)
+            end
+        end
 	end)
 
 end
 
 getgenv().ESPOff = function()
 	RunService:UnbindFromRenderStep("UpdateESP")
-	
-	if workCon then workCon:Disconnect() end
-	if AllPlayerCon then AllPlayerCon:Disconnect() end
-	if AllPlayerRemoveCon then AllPlayerRemoveCon:Disconnect() end
 
 	for _,v in pairs(Players:GetPlayers())do
 		if v ~= Player then RemoveESP(v) end
 	end
 end
-
-
-
