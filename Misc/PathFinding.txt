@@ -8,24 +8,36 @@ local Player = Players.LocalPlayer
 local function checkForWall(_hrp, _direction, _distance)
     _direction = _direction or _hrp.CFrame.LookVector
     _distance = _distance or 10
-    local origin = _hrp.Position + _hrp.CFrame.LookVector * 1 + Vector3.new(0, 2, 0)  -- raise ray a bit to avoid ground
+    local origin = _hrp.Position + _hrp.CFrame.LookVector * 1 + Vector3.new(0, 2, 0)
     local rayDirection = _direction.Unit * _distance
 
     local params = RaycastParams.new()
     params.FilterType = Enum.RaycastFilterType.Blacklist
-    params.FilterDescendantsInstances = { _hrp.Parent } -- exclude self character
+    params.FilterDescendantsInstances = { _hrp.Parent }
     params.IgnoreWater = true
 
     local result = workspace:Raycast(origin, rayDirection, params)
 
     if result and result.Instance and result.Instance.CanCollide then
-        -- Exclude player characters
         for _, player in ipairs(game.Players:GetPlayers()) do
             if player.Character and result.Instance:IsDescendantOf(player.Character) then
-                return nil
+                result = nil
+                break
             end
         end
-        return result.Instance
+        if result then return result.Instance end
+    end
+
+    -- Fallback: check small radius around origin
+    local overlapParams = OverlapParams.new()
+    overlapParams.FilterType = Enum.RaycastFilterType.Blacklist
+    overlapParams.FilterDescendantsInstances = { _hrp.Parent }
+
+    local nearbyParts = workspace:GetPartBoundsInRadius(origin, 2, overlapParams)
+    for _, part in ipairs(nearbyParts) do
+        if part.CanCollide then
+            return part
+        end
     end
 
     return nil
@@ -41,7 +53,9 @@ local function checkState(_hum)
 end
 
 local function getPath(_hrp, _target)
-    local path = PathfindingService:CreatePath()
+    local path = PathfindingService:CreatePath({
+        AgentCanJump = true,
+    })
     path:ComputeAsync(_hrp.Position, _target.Position)
     return path
 end
@@ -49,6 +63,7 @@ end
 local function MovePlayer(_hrp, _hum, _target, _dir)
 
      local directions = {
+        target = (_target.Position - _hrp.Position).Unit,
         forward = _hrp.CFrame.LookVector,
         left = _hrp.CFrame:VectorToWorldSpace(Vector3.new(-1, 0, 0)),
         right = _hrp.CFrame:VectorToWorldSpace(Vector3.new(1, 0, 0))
@@ -71,38 +86,25 @@ local function MovePlayer(_hrp, _hum, _target, _dir)
         end
     else
         --METHOD OF FINDING PATH
-        print("Path Not Found")
+        --print("Path Not Found")
 
         local ch = checkForWall(_hrp, directions.forward, 10)
         if ch then 
             --print("Ran into:", ch.Name)
-            local ch2 = checkForWall(_hrp, directions.left, 10)
-            if ch2 then
-                -- go right
-                
-                local b = math.random(0, 1) == 1
-                if b then
+            local ch2 = checkForWall(_hrp, directions.target, 10)
+            if not ch2 then
+                print("Going To Target")
+                _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
+            else
+                local ch3 = checkForWall(_hrp, directions.left, 10)
+                if ch3 then
                     print("Left is Blocked, Going right")
                     _hum:MoveTo(_hrp.Position + directions.right * 10)
                 else
-                    print("Left is Blocked, Going To Target")
-                    _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
-                end
-            else
-                -- go left
-                
-                local b = math.random(0, 1) == 1
-                if b then
-                    print("Right is Blocked, Going Left")
-                    _hum:MoveTo(_hrp.Position + directions.left * 10)
-                else
-                    print("Left is Blocked, Going To Target")
-                    _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
+                print("Right is Blocked, Going Left")
+                _hum:MoveTo(_hrp.Position + directions.left * 10)
                 end
             end
-
-
-
             _hum.MoveToFinished:Wait(1)
             return false
         else
