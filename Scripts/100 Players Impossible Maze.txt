@@ -1,0 +1,90 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Misc = Workspace:FindFirstChild("Misc")
+local Spawns = Misc:FindFirstChild("Spawns")
+
+local teleSelect = "Spawn"
+local teleTable = {"Spawn", "1", "2", "3"}
+local SortedSpawns = SortTableByDistance(Spawns:GetChildren(), Workspace:FindFirstChildWhichIsA("SpawnLocation"))
+
+
+-->Non Return Functions<--
+local function removePM()
+    for _, modifier in pairs(workspace:GetDescendants()) do
+        if modifier:IsA("PathfindingModifier") then
+            modifier:Destroy()
+        end
+    end
+end removePM()
+
+-->Return Functions<--
+local function getStage()
+    return GetClosestPart(SortedSpawns)
+end
+
+local function getNextStage()
+    local curr = GetClosestPart(SortedSpawns)
+    return SortedSpawns[GetPositionFromTable(SortedSpawns, curr)+1]
+end
+
+local DropList = Auto:Dropdown("Spawn",teleTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    teleSelect = SItem
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        if teleSelect == "Spawn" then
+            MoveTo(Workspace:FindFirstChildWhichIsA("SpawnLocation"), Vector3.new(0,5,0))
+        else
+            MoveTo(SortedSpawns[tonumber(teleSelect)], Vector3.new(0,5,0))
+        end
+    end)
+end)
+
+Auto:Toggle("MovingWalls",function(bool)
+    shared.ToggleMW=bool
+    spawn(function()
+        for _,v in pairs(Misc.MovingWalls:GetDescendants())do
+            if v:IsA("BasePart") then v.CanCollide = not shared.ToggleMW end
+        end
+    end)
+end)
+
+Auto:Button("Easy",function(bool)
+    shared.ToggleE=bool
+    spawn(function()
+        local Trap = Misc:FindFirstChild("Trap")
+        if Trap then Trap:Destroy()end
+    end)
+end)
+
+Auto:Button("Execute",function()
+    spawn(function()
+        --PathFind(getNextStage())
+        print("Testing With:", SortedSpawns[tonumber(teleSelect)], teleSelect)
+        PathFind(SortedSpawns[tonumber(teleSelect)])
+        --MoveTo(getNextStage())
+        --print(getNextStage())
+    end)
+end)
+
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            task.wait()
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
