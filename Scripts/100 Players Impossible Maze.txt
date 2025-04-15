@@ -8,6 +8,7 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
+local Mobs = Workspace:FindFirstChild("Mobs")
 local Misc = Workspace:FindFirstChild("Misc")
 local Spawns = Misc:FindFirstChild("Spawns")
 
@@ -49,20 +50,12 @@ Auto:Button("Teleport",function()
     end)
 end)
 
-Auto:Toggle("MovingWalls",function(bool)
-    shared.ToggleMW=bool
-    spawn(function()
-        for _,v in pairs(Misc.MovingWalls:GetDescendants())do
-            if v:IsA("BasePart") then v.CanCollide = not shared.ToggleMW end
-        end
-    end)
-end)
-
 Auto:Button("Easy",function(bool)
     shared.ToggleE=bool
     spawn(function()
-        local Trap = Misc:FindFirstChild("Trap")
-        if Trap then Trap:Destroy()end
+        local Trap, MoveWall = Misc:FindFirstChild("Trap"), Misc:FindFirstChild("MovingWalls")
+        if Trap then Trap:Destroy() end
+        if MoveWall then MoveWall:Destroy() end
     end)
 end)
 
@@ -76,6 +69,51 @@ Auto:Button("Execute",function()
     end)
 end)
 
+Auto:Toggle("Auto Spin",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            --Get Wheel
+            --Activate Wheel
+            --game:GetService("ReplicatedStorage").Remote.FortuneWheel.RF.give_reward:InvokeServer()
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Collect Coins",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            for _,v in pairs(Misc.Coins:GetChildren()) do
+                local coin = v:FindFirstChild("Coin")
+                if coin then Touch(coin, 0.3) end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local enemyTbl = {}
+Auto:Toggle("Mob ESP",function(bool)
+    shared.ToggleME=bool
+    spawn(function()
+        if shared.ToggleME then
+            for _,v in pairs(Mobs:GetChildren()) do
+                local hrp = v:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local tag = Tag(hrp, true, v.Name)
+                    table.insert(enemyTbl, tag)
+                end
+            end
+        else
+            for _,v in pairs(enemyTbl) do
+                Tag(v[1], false)
+            end
+        end
+    end)
+end)
 
 Auto:Toggle("Auto",function(bool)
     shared.Toggle=bool
