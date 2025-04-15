@@ -5,11 +5,11 @@ local Player = Players.LocalPlayer
 
 
 
-
-
-local function checkForWall(_hrp, direction)
-    local origin = _hrp.Position + Vector3.new(0, 2, 0)  -- raise ray a bit to avoid ground
-    local rayDirection = direction.Unit * 5
+local function checkForWall(_hrp, _direction, _distance)
+    _direction = _direction or _hrp.CFrame.LookVector
+    _distance = _distance or 10
+    local origin = _hrp.Position + _hrp.CFrame.LookVector * 1 + Vector3.new(0, 2, 0)  -- raise ray a bit to avoid ground
+    local rayDirection = _direction.Unit * _distance
 
     local params = RaycastParams.new()
     params.FilterType = Enum.RaycastFilterType.Blacklist
@@ -31,50 +31,6 @@ local function checkForWall(_hrp, direction)
     return nil
 end
 
-local function moveUntilWall(_hrp, _hum, dirt, _dir)
-    print("moveUntilWall")
-
-        _hum:MoveTo(_hrp.Position + _dir * 5) -- for the first move
-        _hum.MoveToFinished:Wait()
-
-    while true do
-        _hum:MoveTo(_hrp.Position + _hrp.CFrame.LookVector * 5)
-        _hum.MoveToFinished:Wait()
-
-        --break when wall
-        if checkForWall(_hrp, dirt.forward) then break end
-
-        task.wait()
-    end
-    print("Finished moveUntilWall")
-    return
-end
-
-local function MovePlayerWithWallCheck(_hrp, _hum, _target)
-
-    local directions = {
-        forward = _hrp.CFrame.LookVector,
-        left = _hrp.CFrame:VectorToWorldSpace(Vector3.new(-1, 0, 0)),
-        right = _hrp.CFrame:VectorToWorldSpace(Vector3.new(1, 0, 0))
-    }
-
-    -- Move towards the target (front direction)
-    local frontWall = checkForWall(_hrp, directions.forward)
-    local leftWall = checkForWall(_hrp, directions.left)
-    local rightWall = checkForWall(_hrp, directions.right)
-
-    -- Check for walls and move accordingly
-    if not frontWall then
-        moveUntilWall(_hrp, _hum, directions, _hrp.Position + directions.forward * 10)
-    elseif not leftWall then
-        moveUntilWall(_hrp, _hum, directions, _hrp.Position + directions.left * 10)
-    elseif not rightWall then
-        moveUntilWall(_hrp, _hum, directions, _hrp.Position + directions.right * 10)
-    else
-        print("No path available, blocking on all sides.")
-    end
-    return
-end
 
 local function checkState(_hum)
     local state, type = true
@@ -90,8 +46,15 @@ local function getPath(_hrp, _target)
     return path
 end
 
+local function MovePlayer(_hrp, _hum, _target, _dir)
 
-local function MovePlayer(_hrp, _hum, _target)
+     local directions = {
+        forward = _hrp.CFrame.LookVector,
+        left = _hrp.CFrame:VectorToWorldSpace(Vector3.new(-1, 0, 0)),
+        right = _hrp.CFrame:VectorToWorldSpace(Vector3.new(1, 0, 0))
+    }   
+
+    _dir = _dir or _hrp.CFrame.LookVector
     local path = getPath(_hrp, _target)
     if path.Status == Enum.PathStatus.Success then
         print("Path Found")
@@ -99,45 +62,104 @@ local function MovePlayer(_hrp, _hum, _target)
             if waypoint.Action == Enum.PathWaypointAction.Jump then
                 _hum.Jump = true
             end
-            print("Moving", _hum, waypoint.Position)
             _hum:MoveTo(waypoint.Position)
+
+            local state, type = checkState(_hum)
+            if not state then print(type) break end
+            
             _hum.MoveToFinished:Wait()
         end
     else
         --METHOD OF FINDING PATH
         print("Path Not Found")
-        MovePlayerWithWallCheck(_hrp, _hum, _target)
+
+        local ch = checkForWall(_hrp, directions.forward, 10)
+        if ch then 
+            --print("Ran into:", ch.Name)
+            local ch2 = checkForWall(_hrp, directions.left, 10)
+            if ch2 then
+                -- go right
+                
+                local b = math.random(0, 1) == 1
+                if b then
+                    print("Left is Blocked, Going right")
+                    _hum:MoveTo(_hrp.Position + directions.right * 10)
+                else
+                    print("Left is Blocked, Going To Target")
+                    _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
+                end
+            else
+                -- go left
+                
+                local b = math.random(0, 1) == 1
+                if b then
+                    print("Right is Blocked, Going Left")
+                    _hum:MoveTo(_hrp.Position + directions.left * 10)
+                else
+                    print("Left is Blocked, Going To Target")
+                    _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
+                end
+            end
+
+
+
+            _hum.MoveToFinished:Wait(1)
+            return false
+        else
+            _hum:MoveTo(_hrp.Position + _hrp.CFrame.LookVector * 10)
+        end
     end
+    return true
 end
 
 
-local inputCon
+
+
+
 getgenv().PathFind = function(_target)
+
+    local inputCon
+
     if not _target or not _target:IsA("BasePart") then warn("PathFind: Target Nil or isnt a Part") return end
     local hrp = Player.Character:WaitForChild("HumanoidRootPart")
     local hum = Player.Character:WaitForChild("Humanoid")
 
-    local status = true
+    local dir = hrp.CFrame.LookVector
 
+    if getgenv().PFisRunning then
+        getgenv().PFisRunning = false
+        print("ALREADY RUNNING, STOPPING")
+    end
+
+    
+    getgenv().PFisRunning = true
+    local status = true
     inputCon = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
+        
         if input.UserInputType == Enum.UserInputType.Keyboard then
             print("Pathfinding: Player Took Control - Stopping")
-            if inputCon then inputCon:Disconnect() end
+            status = false
+            inputCon:Disconnect()
             return
         end
     end)
 
-    while status and (hrp.Position - _target.Position).Magnitude > 4 do
+    while status and (hrp.Position - _target.Position).Magnitude > 4 and getgenv().PFisRunning do
         local state, type = checkState(hum)
         if not state then print(type) break end
-        MovePlayer(hrp, hum, _target)
+        if not MovePlayer(hrp, hum, _target, dir) then 
+            -- CHANGE DIR
+            print("Changing Direction")
+            dir = hrp.CFrame:VectorToWorldSpace(Vector3.new(-1, 0, 0))
+        end
         task.wait()
     end
 
     --Close Connections / Events
-    if inputCon then inputCon:Disconnect() end
+    inputCon:Disconnect()
     print("Pathfinding: Finished")
+    getgenv().PFisRunning = false
 end
 
 print("Pathfinding: Loaded")
