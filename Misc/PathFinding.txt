@@ -3,7 +3,12 @@ local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
-
+local function cleanFolder(_folder)
+    for _,v in pairs(_folder:GetChildren())do
+        v:Destroy()
+    end
+    return _folder
+end
 
 local function checkForWall(_hrp, _direction, _distance)
     _direction = _direction or _hrp.CFrame.LookVector
@@ -91,7 +96,7 @@ local function MovePlayer(_hrp, _hum, _target, _dir)
         local ch = checkForWall(_hrp, directions.forward, 10)
         if ch then 
             --print("Ran into:", ch.Name)
-            local ch2 = checkForWall(_hrp, directions.target, 10)
+            local ch2 = checkForWall(_hrp, directions.target, 100)
             if not ch2 then
                 print("Going To Target")
                 _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
@@ -114,6 +119,89 @@ local function MovePlayer(_hrp, _hum, _target, _dir)
     return true
 end
 
+local function UpdateDynamicPath(pathInstance, playerPosition)
+    local waypoints = pathInstance:GetWaypoints()
+    local thresholdSq = 9  -- 3 studs squared
+    local firstUnreached = 1
+    
+    for i = 1, #waypoints do
+        local delta = waypoints[i].Position - playerPosition
+        local distanceSq = delta.X * delta.X + delta.Y * delta.Y + delta.Z * delta.Z
+        
+        if distanceSq <= thresholdSq then
+            firstUnreached = i + 1
+        else
+            break
+        end
+    end
+    
+    return {unpack(waypoints, firstUnreached)}
+end
+
+-- Visual drawer (modified)
+local function DrawPath(waypoints)
+    if script:FindFirstChild("PathVisuals") then
+        script.PathVisuals:Destroy()
+    end
+
+    local folder = Workspace:FindFirstChild("PathVisuals")
+    if not folder then
+        folder = Instance.new("Folder")
+        folder.Name = "PathVisuals"
+        folder.Parent = workspace -- CRUCIAL CHANGE: Parent to workspace instead of script
+    else cleanFolder(folder) end
+
+
+
+    for _, waypoint in pairs(waypoints) do
+        local part = Instance.new("Part")
+        part.Shape = Enum.PartType.Ball
+        part.Size = Vector3.new(1.5, 1.5, 1.5)
+        part.Position = waypoint.Position + Vector3.new(0, 2, 0) -- Raise above ground
+        part.Anchored = true
+        part.CanCollide = false
+        part.Material = Enum.Material.Neon
+        part.Color = Color3.new(0, 1, 0)
+        part.Parent = folder
+    end
+end
+
+-- Main path handler (FIXED)
+local pathConnection
+getgenv().ShowPath = function(_target, _toggle)
+    if not _target or not _target:IsA("BasePart") then print("Nil or not part") return end
+    if not _toggle then 
+        pathConnection:Disconnect()
+        print("Removed") -- TEMP FEATURE
+        task.wait(0.5)
+        local folder = Workspace:FindFirstChild("PathVisuals")
+        cleanFolder(folder)
+        return
+    end
+
+    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
+    local humanoid = Player.Character:WaitForChild("Humanoid")
+
+
+    pathConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        local path = PathfindingService:CreatePath()
+        path:ComputeAsync(hrp.Position + hrp.CFrame.LookVector, _target.Position)
+        if path.Status == Enum.PathStatus.Success then
+            --local remainingPath = UpdateDynamicPath(path, hrp.Position)
+            DrawPath(path:GetWaypoints())
+        else
+            warn("Path blocked!")
+        end
+
+
+        if (hrp.Position - _target.Position).Magnitude < 4 then
+            pathConnection[#pathConnection]:Disconnect()
+            print("Show Path Finished")
+            return
+        end
+
+    end)
+end
 
 
 

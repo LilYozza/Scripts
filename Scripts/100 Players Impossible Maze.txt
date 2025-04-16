@@ -10,7 +10,10 @@ local Auto = w:CreateFolder("Auto")
 -->Base Variables<--
 local Mobs = Workspace:FindFirstChild("Mobs")
 local Misc = Workspace:FindFirstChild("Misc")
+
 local Spawns = Misc:FindFirstChild("Spawns")
+local Givers = Misc:FindFirstChild("Givers")
+local Wheel = Givers:FindFirstChild("Wheel")
 
 local teleSelect = "Spawn"
 local teleTable = {"Spawn", "1", "2", "3"}
@@ -56,10 +59,17 @@ Auto:Button("Easy",function(bool)
         local Trap, MoveWall = Misc:FindFirstChild("Trap"), Misc:FindFirstChild("MovingWalls")
         if Trap then Trap:Destroy() end
         if MoveWall then MoveWall:Destroy() end
+        for _,v in pairs(Mobs:GetDescendants())do
+            if v.Name:lower():match("hitbox") or v:IsA("Script") then
+                v:Destroy()
+            end
+        end
+        local healthScript = Player.Character:FindFirstChild("Health")
+        if healthScript then healthScript:Destroy() end
     end)
 end)
 
-Auto:Button("Execute",function()
+Auto:Button("PathFind",function()
     spawn(function()
         --PathFind(getNextStage())
         print("Testing With:", SortedSpawns[tonumber(teleSelect)], teleSelect)
@@ -69,12 +79,18 @@ Auto:Button("Execute",function()
     end)
 end)
 
+Auto:Toggle("Show Path",function(bool)
+    shared.ToggleSP=bool
+    spawn(function()
+        ShowPath(SortedSpawns[tonumber(teleSelect)], shared.ToggleSP)
+    end)
+end)
+
 Auto:Toggle("Auto Spin",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do
-            --Get Wheel
-            --Activate Wheel
+            fireproximityprompt(Wheel.Wheel.ProximityPrompt) task.wait(1)
             --game:GetService("ReplicatedStorage").Remote.FortuneWheel.RF.give_reward:InvokeServer()
             task.wait(1)
         end
