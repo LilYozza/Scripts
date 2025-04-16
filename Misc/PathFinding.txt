@@ -153,25 +153,17 @@ local function DrawPath(waypoints)
 
 
 
-    for _, waypoint in pairs(waypoints) do
+    for i = 3, #waypoints do -- DOESNT SHOW THE 2 POINTS IN / BEHIND CHARACTER
+        local waypoint = waypoints[i]
         local part = Instance.new("Part")
         part.Shape = Enum.PartType.Ball
         part.Size = Vector3.new(1.5, 1.5, 1.5)
-        part.Position = waypoint.Position + Vector3.new(0, 2, 0) -- Raise above ground
+        part.Position = waypoint.Position + Vector3.new(0, 2, 0)
         part.Anchored = true
         part.CanCollide = false
         part.Material = Enum.Material.Neon
         part.Color = Color3.new(0, 1, 0)
         part.Parent = folder
-    end
-end
-
-getgenv().Clean = function(_folder)
-    _folder = _folder or Workspace
-    for _, modifier in pairs(_folder:GetDescendants()) do
-        if modifier:IsA("PathfindingModifier") then
-            modifier:Destroy()
-        end
     end
 end
 
@@ -198,8 +190,6 @@ getgenv().ShowPath = function(_target, _toggle)
         if path.Status == Enum.PathStatus.Success then
             --local remainingPath = UpdateDynamicPath(path, hrp.Position)
             DrawPath(path:GetWaypoints())
-        else
-            warn("Path blocked!")
         end
 
 
@@ -212,7 +202,14 @@ getgenv().ShowPath = function(_target, _toggle)
     end)
 end
 
-
+getgenv().Clean = function(_folder)
+    _folder = _folder or Workspace
+    for _, modifier in pairs(_folder:GetDescendants()) do
+        if modifier:IsA("PathfindingModifier") then
+            modifier:Destroy()
+        end
+    end
+end
 
 
 getgenv().PathFind = function(_target)
