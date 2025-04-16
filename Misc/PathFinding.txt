@@ -166,6 +166,15 @@ local function DrawPath(waypoints)
     end
 end
 
+getgenv().Clean = function(_folder)
+    _folder = _folder or Workspace
+    for _, modifier in pairs(_folder:GetDescendants()) do
+        if modifier:IsA("PathfindingModifier") then
+            modifier:Destroy()
+        end
+    end
+end
+
 -- Main path handler (FIXED)
 local pathConnection
 getgenv().ShowPath = function(_target, _toggle)
