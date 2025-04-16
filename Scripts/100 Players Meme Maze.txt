@@ -1,0 +1,118 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))() Clean() -- PATHFINDING CLEANUP()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+
+local GameData = Workspace:FindFirstChild("GameData")
+local GameMap = Workspace:FindFirstChild("GameMap")
+
+local Misc = GameMap:FindFirstChild("Misc")
+local Wheel = Misc.Givers:FindFirstChild("Wheel")
+
+-->Non Return Functions<--
+
+
+-->Return Functions<--
+local function getCheckpoints()
+    local t = {}
+    local sp = Misc:FindFirstChild("SpawnLocation")
+    if sp then sp.Parent = GameData:FindFirstChild("1") end
+
+    for _,v in pairs(GameData:GetChildren()) do
+        local point = v:FindFirstChildWhichIsA("SpawnLocation")
+        if point and not table.find(t, point.Parent) then table.insert(t, point.Parent) end
+    end
+    return t
+end
+
+local function getCoins()
+    local t = {}
+    for _,v in pairs(GameMap:GetChildren()) do
+        local coins = v:FindFirstChild("Coins")
+        if coins then table.insert(t, coins) end
+    end
+    return t
+end
+
+local pointTable = SortTableByName(getCheckpoints())
+local sTeleport = pointTable[1].SpawnLocation
+
+local DropList = Auto:Dropdown("1",pointTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sTeleport = pointTable[tonumber(SItem)].SpawnLocation
+
+    if shared.ToggleSP then
+        showPath(sTeleport, false) task.wait(1)
+        showPath(sTeleport, true)
+    end
+end)
+
+Auto:Button("Teleport",function(bool)
+    spawn(function()
+        print(sTeleport.Parent)
+        MoveTo(sTeleport, Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("PathFind",function(bool)
+    spawn(function()
+        --NOT ADDING YET!!!!
+    end)
+end)
+
+Auto:Toggle("Show Path",function(bool)
+    shared.ToggleSP=bool
+    spawn(function()
+        ShowPath(sTeleport, shared.ToggleSP)
+    end)
+end)
+
+Auto:Button("Easy",function(bool)
+    spawn(function()
+        for _,v in pairs(GameMap:GetChildren())do
+            local trap = v:FindFirstChild("Traps")
+            if trap then trap:Destroy() end
+
+            local other = v:FindFirstChild("Other")
+            if other then other:Destroy() end
+
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Spin",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            fireproximityprompt(Wheel.Wheel.ProximityPrompt) task.wait(1)
+            --game:GetService("ReplicatedStorage").Remote.FortuneWheel.RF.give_reward:InvokeServer()
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Collect Coins",function(bool)
+    shared.ToggleCC=bool
+    local coins = getCoins()
+    spawn(function()
+        while shared.ToggleCC do
+            for _,v in pairs(coins) do
+                for j,k in pairs(v:GetChildren())do
+                    local coin = k:FindFirstChild("Coin")
+                    if shared.ToggleCC and coin then Touch(coin, 0.3) end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

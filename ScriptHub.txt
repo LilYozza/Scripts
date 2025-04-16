@@ -602,6 +602,10 @@ local Games = {
 	[18652884352] = {
 		Name = '100 Players Impossible Maze',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Players%20Impossible%20Maze.txt'
+	},
+	[103502138774608] = {
+		Name = '100 Players Meme Maze',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Players%20Meme%20Maze.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
