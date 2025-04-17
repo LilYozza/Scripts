@@ -11,6 +11,9 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 -->Base Variables<--
 local Player = Players.LocalPlayer
 
+-- Mouse Click Signals
+local Signals = {'MouseButton1Down','MouseButton1Up', 'MouseButton1Click', 'Activated'}
+
 local _sHelp = {
 
     ["Touch"] = "Touch(PartWithTouchTransmittter, PartToTouchIt, TimeToWaitAfter)",
@@ -28,6 +31,7 @@ local _sHelp = {
     ["GetElementFromDictionary"] = "GetElementFromDictionary(Table, Element)",
     ["GetPositionFromTable"] = "GetPositionFromTable(Table, Object)",
     ["SendKey"] = "SendKey(Key)",
+    ["SendClick"] = "SendClick(GUIButton)",
     ["fromSuffixString"] = "fromSuffixString(Value, Table(Suffixes))",
     ["NextTeam"] = "NextTeam(Player, Table)",
     ["PrevTeam"] = "PrevTeam(Player, Table)",
@@ -298,6 +302,16 @@ getgenv().SendKey = function(_key)
 		VirtualInputManager:SendKeyEvent(true, _key, false, game)
 	else
 		warn("SendKey: Bad Values")
+	end
+end
+
+getgenv().SendClick = function(_button)
+	if _button then
+        for i,v in pairs(Signals) do
+            firesignal(_button[v])
+        end
+	else
+		warn("SendClick: Bad Values")
 	end
 end
 
