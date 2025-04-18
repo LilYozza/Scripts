@@ -200,13 +200,20 @@ Auto:Toggle("Auto Harvest", function(bool)
 	shared.ToggleAH = bool
 	spawn(function()
 		while shared.ToggleAH do
-			for _, prompt in ipairs(Plants_Physical:GetDescendants()) do
-				if prompt:IsA("ProximityPrompt") and prompt.Parent and prompt.Parent:IsDescendantOf(Plants_Physical) then
-					fireproximityprompt(prompt)
-					task.wait() -- tiny yield to reduce lag spike
-				end
+			for _, v in pairs(Plants_Physical:GetChildren()) do
+                local fruit = v:FindFirstChild("Fruits")
+                if fruit then
+                    for j, k in pairs(fruit:GetChildren()) do
+                        for __,_v in pairs(k:GetChildren()) do
+                            local prompt = _v:FindFirstChildWhichIsA("ProximityPrompt")
+                            if prompt and shared.ToggleAH then
+                                fireproximityprompt(prompt) task.wait()
+                            end
+                        end
+                    end
+                end
 			end
-			task.wait(0.3)
+			task.wait()
 		end
 	end)
 end)
