@@ -8,8 +8,9 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
-
+local Plant = w:CreateFolder("Plant")
 local Shop = w:CreateFolder("Shop")
+
 
 -->Base Variables<--
 local pMoney = Player:WaitForChild("leaderstats"):FindFirstChild("Sheckles")
@@ -26,6 +27,8 @@ local gearItems = SortTableByName(Gear_Models:GetChildren())
 
 local sItem1 = seedItems[1]
 local sItem2 = gearItems[1]
+
+local blacklistPlant = {}
 
 local questGui = Player.PlayerGui:FindFirstChild("DailyQuests_UI")
 
@@ -92,12 +95,12 @@ end
 local function getSeeds()
     --Check Current Hand or Backpack
     local tool, seed = Player.Character:FindFirstChildWhichIsA("Tool"); seed = tool and tool:FindFirstChild("Plant_Name")
-    if seed then 
+    if seed and not table.find(blacklistPlant, seed.Value) then 
         return seed.Parent 
     else
         for _,v in pairs(Player.Backpack:GetChildren()) do
             local pN = v:FindFirstChild("Plant_Name")
-            if pN then return v end
+            if pN and not table.find(blacklistPlant, pN.Value) then return v end
         end
     end
     return
@@ -152,7 +155,7 @@ local function checkPos(_pos)
 		if pos1 then
 			local p1 = Vector3.new(pos1.Position.X, 0, pos1.Position.Z)
 			local p2 = Vector3.new(_pos.X, 0, _pos.Z)
-			if (p1 - p2).Magnitude <= 2 then
+			if (p1 - p2).Magnitude <= 1 then
 				return false
 			end
 		end
@@ -191,29 +194,7 @@ Auto:Button("Sell",function()
 end)
 
 
-Auto:Toggle("Auto Plant",function(bool)
-    shared.ToggleAP = bool
-    spawn(function()
-        while shared.ToggleAP do
-            local seed = getSeeds()
-            if seed then
-                if not Player.Character:FindFirstChild(seed) then
-                    seed.Parent = Player.Character
-                    task.wait(0.3)
-                end
 
-                for _, pos in pairs(points) do
-                    if not shared.ToggleAP then return end
-                    local PName = seed:FindFirstChild("Plant_Name")
-                    if PName and checkPos(pos + Vector3.new(0, 0.1, 0)) then
-                        plantItem(pos, PName.Value)
-                    end
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
-end)
 
 Auto:Toggle("Auto Harvest", function(bool)
 	shared.ToggleAH = bool
@@ -282,6 +263,7 @@ Auto:Button("Toggle Grid",function()
         else
             grid = Instance.new("Folder")
             grid.Parent = Workspace
+            grid.Name = "Grid"
             for _,v in pairs(Workspace:GetChildren()) do
                 if v.Name == "Part" and v.Color == Color3.fromRGB(255, 0, 0) then
                     v:Destroy()
@@ -300,6 +282,65 @@ Auto:Button("Toggle Grid",function()
 
     end)
 
+end)
+
+local plantSelect
+local PlantList = Plant:Dropdown("Select Seed",seedItems,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    plantSelect = SItem
+end)
+
+Plant:Button("BlackList",function()
+    spawn(function()
+        if plantSelect and not table.find(blacklistPlant, plantSelect) then
+            table.insert(blacklistPlant, plantSelect)
+        end
+    end)
+end)
+
+
+Plant:Toggle("Auto Plant",function(bool)
+    shared.ToggleAP = bool
+    spawn(function()
+        while shared.ToggleAP do
+            local seed = getSeeds()
+            if seed then
+                if not Player.Character:FindFirstChild(seed) then
+                    seed.Parent = Player.Character
+                    task.wait(0.3)
+                end
+
+                for _, pos in pairs(points) do
+                    if not shared.ToggleAP then return end
+                    
+                    local PName = seed:FindFirstChild("Plant_Name")
+                    if PName and checkPos(pos + Vector3.new(0, 0.1, 0)) then
+                        plantItem(pos, PName.Value)
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+Plant:Toggle("Plant Hand",function(bool)
+    shared.TogglePH = bool
+    spawn(function()
+        while shared.TogglePH do
+            local tool, seed = Player.Character:FindFirstChildWhichIsA("Tool"); seed = tool and tool:FindFirstChild("Plant_Name")
+            if seed and seed.Parent then
+                seed = seed.Parent
+                for _, pos in pairs(points) do
+                    if not shared.TogglePH then return end
+                    local PName = seed:FindFirstChild("Plant_Name")
+                    if PName and checkPos(pos + Vector3.new(0, 0.1, 0)) then
+                        plantItem(pos, PName.Value) task.wait()
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
 end)
 
 local DropList1 = Shop:Dropdown(sItem1.Name,seedItems,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
