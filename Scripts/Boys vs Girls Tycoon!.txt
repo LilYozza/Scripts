@@ -1,0 +1,128 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Items = w:CreateFolder("Items")
+
+
+
+local Plots = Workspace:FindFirstChild("Plots")
+local Plot = Player:WaitForChild("Plot")
+local pCash = (function() for _,v in pairs(Player.leaderstats:GetChildren()) do if v.Name:match("Cash") then return v end end end)()
+
+-- WAIT UNTIL TYCOON
+repeat task.wait() until Plot.Value ~= nil
+
+
+-->Base Variables<--
+local sCollect = false
+local Tycoon = Plot.Value.Tycoon
+
+local CashCollectors = Tycoon:FindFirstChild("CashCollectors")
+local CollectCash = CashCollectors.Model.Pad
+local CashToCollect = CashCollectors.Model.Screen.SurfaceGui.TextLabel
+local Pads = Tycoon:FindFirstChild("Pads")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function getItems()
+    local t = {}
+    for _,v in pairs(Plots:GetDescendants()) do
+        if (v:FindFirstChild("Handle") or v:FindFirstChildWhichIsA("Tool")) and v:FindFirstChild("TouchPart") then
+            if not FindInTable(t, v.Name) then table.insert(t, v) end
+        end
+    end
+    return t
+end
+
+
+Auto:Button("Home",function()
+    spawn(function()
+        MoveTo(Tycoon.Spawn, Vector3.new(0,0.5,0))
+    end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            Touch(CollectCash, 1)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Smart Collect",function(bool)
+    shared.ToggleSC=bool sCollect = shared.ToggleSC
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            for _,v in pairs(Pads:GetChildren()) do
+                local tPart = v:FindFirstChild("Button")
+                if tPart and not v:FindFirstChild("Lifetime") then
+                    local price = fromSuffixString(v.BillboardGui.Price.Text) or 0
+                    if sCollect and fromSuffixString(CashToCollect.Text) + pCash.Value >= price then Touch(CollectCash, 0.3) end
+                    if price <= pCash.Value then Touch(tPart, 0.3) end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Remove Doors",function()
+    spawn(function()
+        for _,v in pairs(Plots:GetDescendants()) do
+            if v.Name == "Laser Door" and v:FindFirstChild("TouchPart") and v:FindFirstChild("Lasers") then
+                v.TouchPart:Destroy()
+                for j, k in pairs(v.Lasers:GetChildren()) do
+                    if k:IsA("BasePart") then k.BrickColor = BrickColor.new("Lime green") end
+                end
+            end
+        end
+    end)
+end)
+
+local sItem
+local itemTable = getItems()
+
+local DropList = Items:Dropdown("Select Item", itemTable, true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sItem = FindInTable(itemTable, SItem)
+end)
+
+Items:Button("Give Item",function(bool)
+    spawn(function() 
+        if sItem and sItem:FindFirstChild("TouchPart") then Touch(sItem.TouchPart) end
+    end)
+end)
+
+Items:Button("Give All",function(bool)
+    spawn(function() 
+        for _,v in pairs(getItems()) do
+            local tPart = v:FindFirstChild("TouchPart")
+            if tPart then Touch(tPart) end
+        end
+    end)
+end)
+
+
+Items:Button("Refresh",function(bool)
+    spawn(function() 
+        itemTable = getItems()
+        DropList:Refresh(itemTable)
+    end)
+end)
+
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
