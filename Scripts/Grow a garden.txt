@@ -1,0 +1,328 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+
+local VirtualUser = game:GetService("VirtualUser")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+local Shop = w:CreateFolder("Shop")
+
+-->Base Variables<--
+local pMoney = Player.leaderstats:FindFirstChild("Sheckles")
+local NPCS = Workspace:WaitForChild("NPCS")
+local Farm = Workspace:WaitForChild("Farm")
+
+local Steven = NPCS:FindFirstChild("Steven")
+
+local Seed_Models = ReplicatedStorage:WaitForChild("Seed_Models")
+local Gear_Models = ReplicatedStorage:WaitForChild("Gear_Models")
+
+local seedItems = SortTableByName(Seed_Models:GetChildren())
+local gearItems = SortTableByName(Gear_Models:GetChildren())
+
+local sItem1 = seedItems[1]
+local sItem2 = gearItems[1]
+
+local questGui = Player.PlayerGui:FindFirstChild("DailyQuests_UI")
+
+-->Non Return Functions<--
+local function buySeed(_item, _amt)
+    _amt = _amt or 1
+    for i = 1, _amt do
+        --print("Buying:", _item)
+        ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuySeedStock"):FireServer(_item)
+    end
+    
+    return
+end
+
+local function buyGear(_item, _amt)
+    _amt = _amt or 1
+    for i = 1, _amt do
+        --print("Buying:", _item)
+        ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuyGearStock"):FireServer(_item)
+    end
+    
+    return
+end
+
+local function plantItem(_pos, _item)
+    --ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer({_pos, _item})
+    local args = {
+        [1] = _pos,
+        [2] = _item
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
+    --print("Planted:", _pos, _item)
+    return
+end
+
+local function sellAll()
+    ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Sell_Inventory"):FireServer()
+    return
+end
+
+local function getWeight()
+    local total = 0
+    for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        local weight = v:FindFirstChild("Weight")
+        if weight then
+            total = total + weight.Value
+        end
+    end
+    return total
+end
+
+-->Return Functions<--
+local function getFarm(_player)
+    for _,v in pairs(Farm:GetChildren()) do
+        local owner = v.Important.Data:FindFirstChild("Owner")
+        if owner and owner.Value == _player.Name then
+            return v
+        end
+    end
+    return
+end
+
+local function getSeeds()
+    --Check Current Hand or Backpack
+    local tool, seed = Player.Character:FindFirstChildWhichIsA("Tool"); seed = tool and tool:FindFirstChild("Plant_Name")
+    if seed then 
+        return seed.Parent 
+    else
+        for _,v in pairs(Player.Backpack:GetChildren()) do
+            local pN = v:FindFirstChild("Plant_Name")
+            if pN then return v end
+        end
+    end
+    return
+end
+
+
+
+local function checkStock(_seed) --Input String
+    local Seed_Shop = Player.PlayerGui:FindFirstChild("Seed_Shop")
+    if Seed_Shop then
+        local plant = Seed_Shop.Frame.ScrollingFrame:FindFirstChild(_seed)
+        if plant then
+            local Stock = fromSuffixString(plant.Main_Frame.Stock_Text.Text)
+            local Price = fromSuffixString(plant.Main_Frame.Cost_Text.Text)
+
+            return Stock, Price
+        end
+    end
+    return 0
+end
+
+-- POST VARIABLES
+local pFarm = getFarm(Player)
+local spawnPoint = pFarm:FindFirstChild("Spawn_Point")
+local Important = pFarm:FindFirstChild("Important")
+
+local Plant_Locations = Important:FindFirstChild("Plant_Locations")
+local Plants_Physical = Important:FindFirstChild("Plants_Physical")
+
+local function getGridPoints(rows, columns, margin)
+    local points = {}
+    for _,v in pairs(Plant_Locations:GetChildren()) do
+	    local surfaceSize = Vector2.new(v.Size.X, v.Size.Z)
+	    local cellWidth = (surfaceSize.X - margin * 2) / columns
+	    local cellHeight = (surfaceSize.Y - margin * 2) / rows
+
+        for row = 0, rows - 1 do
+            for col = 0, columns - 1 do
+                local x = v.Position.X - surfaceSize.X / 2 + margin + cellWidth / 2 + col * cellWidth
+                local z = v.Position.Z - surfaceSize.Y / 2 + margin + cellHeight / 2 + row * cellHeight
+                local y = v.Position.Y + v.Size.Y / 2 -- top surface
+                table.insert(points, Vector3.new(x, y, z))
+            end
+        end
+    end
+	return points
+end
+
+local function checkPos(_pos)
+	for _, v in pairs(Plants_Physical:GetChildren()) do
+		local pos1 = v:FindFirstChild("1")
+		if pos1 and (pos1.Position - _pos).Magnitude <= 3 then
+			return false -- found one within 1 stud
+		end
+	end
+	return true -- none found
+end
+
+local points = getGridPoints(20,10,0)
+Auto:Button("Home",function()
+    spawn(function()
+        MoveTo(spawnPoint, Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Quests",function()
+    spawn(function()
+        local frame = questGui.Frame
+        if frame.Visible then
+            questGui.Show_VAL.Value = false
+            frame.Visible = false
+        else
+            questGui.Show_VAL.Value = true
+            frame.Visible = true
+        end
+    end)
+end)
+
+Auto:Button("Sell",function()
+    spawn(function()
+-- Get the button instance
+        local back = GetPos()
+        MoveTo(Steven.HumanoidRootPart, Vector3.new(-5, 0 ,0)) task.wait(0.3)
+        sellAll() task.wait()
+        MoveTo(back)
+    end)
+end)
+
+
+Auto:Toggle("Auto Plant",function(bool)
+    shared.ToggleAP = bool
+    spawn(function()
+        while shared.ToggleAP do
+            local seed = getSeeds()
+            if seed then
+                if not Player.Character:FindFirstChild(seed) then
+                    seed.Parent = Player.Character
+                    task.wait(0.3)
+                end
+
+                for _, pos in pairs(points) do
+                    if not shared.ToggleAP then return end
+                    local PName = seed:FindFirstChild("Plant_Name")
+                    if PName and checkPos(pos + Vector3.new(0, 0.1, 0)) then
+                        plantItem(pos, PName.Value)
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Harvest",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            for _,v in pairs(Plants_Physical:GetDescendants()) do
+                if v:IsA("ProximityPrompt") then
+                    fireproximityprompt(v)
+                end
+            end
+            task.wait(0.3)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            for _,v in pairs(seedItems) do
+                if not shared.ToggleAB then break end
+                local stock, price = checkStock(v.Name)
+                if stock and stock > 0 and price and price <= pMoney.Value then
+                    buySeed(v.Name) task.wait(0.3)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local sWeight = 50
+
+Auto:Slider("Sell At Weight",{
+    min = 1;
+    max = 50;
+    precise = true; -- max 2 decimals
+},function(value) sWeight = value end)
+
+Auto:Toggle("Auto Sell",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            -- CHECK PLAYER INV
+            for _,v in pairs(Player.Backpack:GetChildren()) do
+                local Weight = v:FindFirstChild("Weight")
+                if Weight and sWeight <= getWeight() then
+                    local back = GetPos()
+                    MoveTo(Steven.HumanoidRootPart, Vector3.new(-5, 0 ,0)) task.wait(0.3)
+                    sellAll() task.wait()
+                    MoveTo(back)
+                    break
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+
+Auto:Toggle("Auto",function(bool)
+    shared.Toggle=bool
+    spawn(function()
+        while shared.Toggle do
+            task.wait()
+        end
+    end)
+end)
+
+
+
+Auto:Button("Show Grid",function()
+    spawn(function()
+
+        for _,v in pairs(Workspace:GetChildren()) do
+            if v.Name == "Part" and v.Color == Color3.fromRGB(255, 0, 0) then
+                v:Destroy()
+            end
+        end
+
+        for _, pos in pairs(points) do
+            local dot = Instance.new("Part")
+            dot.Size = Vector3.new(0.2, 0.2, 0.2)
+            dot.Anchored = true
+            dot.Position = pos + Vector3.new(0, 0.1, 0)
+            dot.Color = Color3.fromRGB(255, 0, 0)
+            dot.Parent = workspace
+        end        
+
+    end)
+
+end)
+
+local DropList1 = Shop:Dropdown(sItem1.Name,seedItems,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sItem1 = SItem
+end)
+
+Shop:Button("Buy",function()
+    spawn(function()
+        buySeed(sItem1)
+    end)
+end)
+
+local DropList2 = Shop:Dropdown(sItem2.Name,gearItems,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sItem2 = SItem
+end)
+
+Shop:Button("Buy",function()
+    spawn(function()
+        buyGear(sItem2)
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
