@@ -1,0 +1,81 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local Map = Workspace:FindFirstChild("Map")
+local FinishPortal = Map:FindFirstChild("FinishPortal")
+local Spawns = Workspace:FindFirstChild("Spawns")
+local topCFrame = CFrame.new(1174.13806, 1229.99988, 41.2409477, 0.0205068961, 5.87270321e-08, -0.999789715, -1.75350703e-08, 1, 5.83797188e-08, 0.999789715, 1.63341962e-08, 0.0205068961)
+
+-->Non Return Functions<--
+local function checkPart(_part)
+    if _part and _part.Name == "Boulder" and _part:IsA("BasePart") then
+
+        local p1 = _part:WaitForChild("TouchInterest", 2)
+        local p2 = _part:WaitForChild("Hitbox", 2)
+        --local p3 = _part:WaitForChild("TouchInterest", 2)
+
+        _part.CanCollide = false
+        if p1 then p1:Destroy() end
+        if p2 then p2:Destroy() end
+        --if p3 then p3:Destroy() end
+
+
+    end
+end
+
+-->Return Functions<--
+
+Auto:Button("Top",function()
+    spawn(function()
+        MoveTo(topCFrame, Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Spawn",function()
+    spawn(function()
+        MoveTo(Spawns:FindFirstChildWhichIsA("SpawnLocation"), Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            MoveTo(topCFrame, Vector3.new(0,-100,0))
+            local point = FinishPortal:WaitForChild("Portal", 5)
+            if point then Touch(point) end
+            task.wait(1)
+        end
+    end)
+end)
+
+local bCon
+Auto:Toggle("Easy Boulder",function(bool)
+    shared.ToggleEB=bool
+    spawn(function()
+        if shared.ToggleEB then
+            bCon = Workspace.ChildAdded:Connect(function(_part)
+                checkPart(_part)
+            end)
+
+            for _,v in pairs(Workspace:GetChildren()) do
+                checkPart(v)
+            end
+        else
+            if bCon then bCon:Disconnect() end
+        end
+    end)
+end)
+
+
+
+
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
