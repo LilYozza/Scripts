@@ -12,7 +12,7 @@ local Auto = w:CreateFolder("Auto")
 local Shop = w:CreateFolder("Shop")
 
 -->Base Variables<--
-local pMoney = Player.leaderstats:FindFirstChild("Sheckles")
+local pMoney = Player:WaitForChild("leaderstats"):FindFirstChild("Sheckles")
 local NPCS = Workspace:WaitForChild("NPCS")
 local Farm = Workspace:WaitForChild("Farm")
 
@@ -149,11 +149,15 @@ end
 local function checkPos(_pos)
 	for _, v in pairs(Plants_Physical:GetChildren()) do
 		local pos1 = v:FindFirstChild("1")
-		if pos1 and (pos1.Position - _pos).Magnitude <= 3 then
-			return false -- found one within 1 stud
+		if pos1 then
+			local p1 = Vector3.new(pos1.Position.X, 0, pos1.Position.Z)
+			local p2 = Vector3.new(_pos.X, 0, _pos.Z)
+			if (p1 - p2).Magnitude <= 2 then
+				return false
+			end
 		end
 	end
-	return true -- none found
+	return true
 end
 
 local points = getGridPoints(20,10,0)
@@ -211,18 +215,19 @@ Auto:Toggle("Auto Plant",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto Harvest",function(bool)
-    shared.ToggleAH=bool
-    spawn(function()
-        while shared.ToggleAH do
-            for _,v in pairs(Plants_Physical:GetDescendants()) do
-                if v:IsA("ProximityPrompt") then
-                    fireproximityprompt(v)
-                end
-            end
-            task.wait(0.3)
-        end
-    end)
+Auto:Toggle("Auto Harvest", function(bool)
+	shared.ToggleAH = bool
+	spawn(function()
+		while shared.ToggleAH do
+			for _, prompt in ipairs(Plants_Physical:GetDescendants()) do
+				if prompt:IsA("ProximityPrompt") and prompt.Parent and prompt.Parent:IsDescendantOf(Plants_Physical) then
+					fireproximityprompt(prompt)
+					task.wait() -- tiny yield to reduce lag spike
+				end
+			end
+			task.wait(0.3)
+		end
+	end)
 end)
 
 Auto:Toggle("Auto Buy",function(bool)
@@ -269,36 +274,29 @@ Auto:Toggle("Auto Sell",function(bool)
     end)
 end)
 
-
-
-Auto:Toggle("Auto",function(bool)
-    shared.Toggle=bool
-    spawn(function()
-        while shared.Toggle do
-            task.wait()
-        end
-    end)
-end)
-
-
-
-Auto:Button("Show Grid",function()
+Auto:Button("Toggle Grid",function()
     spawn(function()
 
-        for _,v in pairs(Workspace:GetChildren()) do
-            if v.Name == "Part" and v.Color == Color3.fromRGB(255, 0, 0) then
-                v:Destroy()
+        local grid = Workspace:FindFirstChild("Grid")
+        if grid then grid:Destroy()
+        else
+            grid = Instance.new("Folder")
+            grid.Parent = Workspace
+            for _,v in pairs(Workspace:GetChildren()) do
+                if v.Name == "Part" and v.Color == Color3.fromRGB(255, 0, 0) then
+                    v:Destroy()
+                end
             end
-        end
 
-        for _, pos in pairs(points) do
-            local dot = Instance.new("Part")
-            dot.Size = Vector3.new(0.2, 0.2, 0.2)
-            dot.Anchored = true
-            dot.Position = pos + Vector3.new(0, 0.1, 0)
-            dot.Color = Color3.fromRGB(255, 0, 0)
-            dot.Parent = workspace
-        end        
+            for _, pos in pairs(points) do
+                local dot = Instance.new("Part")
+                dot.Size = Vector3.new(0.2, 0.2, 0.2)
+                dot.Anchored = true
+                dot.Position = pos + Vector3.new(0, 0.1, 0)
+                dot.Color = Color3.fromRGB(255, 0, 0)
+                dot.Parent = grid
+            end        
+        end
 
     end)
 
