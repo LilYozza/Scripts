@@ -1,0 +1,113 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Admin = w:CreateFolder("Admin")
+local Pets = w:CreateFolder("Pets")
+
+-->Base Variables<--
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+function Round(num)
+    return math.floor(num / 10 + 0.5) * 10
+end
+
+
+Auto:Toggle("Auto Dig",function(bool)
+    shared.ToggleAD=bool
+    spawn(function()
+        while shared.ToggleAD do
+            Remotes:WaitForChild("DigEvent"):FireServer()
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            for _,v in pairs(Workspace:GetChildren()) do
+                local winPart = v:FindFirstChild("WinPart")
+                if winPart then Touch(winPart, 0.1) end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Admin:Button("Infinite Money",function()
+    spawn(function()
+        Remotes:WaitForChild("AddRewardEvent"):FireServer("Cash", math.huge)
+    end)
+end)
+
+Admin:Button("Infinite Spins",function()
+    spawn(function()
+       Remotes:WaitForChild("AddRewardEvent"):FireServer("Spins", 10000000)
+    end)
+end)
+
+local args = {
+    [1] = "Spins",
+    [2] = 1
+}
+
+
+
+Admin:Toggle("Give Diamonds",function(bool)
+    shared.ToggleGD=bool
+    spawn(function()
+        while shared.ToggleGD do
+            Remotes:WaitForChild("GemEvent"):FireServer(1000)
+            task.wait()
+        end
+    end)
+end)
+
+Pets:Toggle("Give Mythic",function(bool)
+    shared.ToggleGM=bool
+    spawn(function()
+        while shared.ToggleGM do
+            Remotes:WaitForChild("SpinPrizeEvent"):FireServer(4)
+            task.wait()
+        end
+    end)
+end)
+
+
+local sMerge = 50
+Pets:Slider("Merge At %",{
+    min = 10; -- min value of the slider
+    max = 100; -- max value of the slider
+    precise = true; -- max 2 decimals
+},function(value)
+    sMerge = Round(value)
+end)
+
+Pets:Toggle("Auto Merge",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do
+            for _,v in pairs(Player.Pets:GetChildren()) do
+                if v and not v.Name:match("Gold") then
+                    ReplicatedStorage:WaitForChild("PetRemotes"):WaitForChild("PetCraftEvent"):FireServer(v.Name, sMerge) task.wait()
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
