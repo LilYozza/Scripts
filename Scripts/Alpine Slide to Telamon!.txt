@@ -4,6 +4,7 @@ local Essential_Functions = loadstring(game:HttpGet("https://raw.githubuserconte
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
 local Auto = w:CreateFolder("Auto")
 
@@ -30,7 +31,21 @@ end
 local Coins = folders[1]
 local Coins2 = folders[2]
 
+local Worlds = Workspace:FindFirstChild("Worlds")
+local Regen1 = Worlds.World1:FindFirstChild("RegenButtons")
+local Regen2 = Worlds.World2:FindFirstChild("RegenButtons")
+
+local RegenButtons = {table.unpack(Regen1:GetChildren()), table.unpack(Regen2:GetChildren())}
+
 -->Non Return Functions<-
+local function getRegen()
+    local t = {}
+    for _,v in pairs(RegenButtons) do
+        local b = v:FindFirstChild("Button")
+        table.insert(t, b)
+    end
+    return GetClosestPart(t)
+end
 
 local function SpawnCart(_sCart)
     if _sCart then 
@@ -41,11 +56,9 @@ local function SpawnCart(_sCart)
 
         newName = newName .. "_001"
 
-        local args = {
-            [1] = workspace.RegenButtons.Regen,
-            [2] = newName
-        }
-        game:GetService("ReplicatedStorage").SpawnCart:InvokeServer(unpack(args))
+        local r = getRegen().Parent
+        --game:GetService("ReplicatedStorage"):WaitForChild("CanUseRegen"):InvokeServer(r)
+        game:GetService("ReplicatedStorage").SpawnCart:InvokeServer(r, newName)
     end
 end
 
@@ -79,23 +92,19 @@ Auto:Button("Start",function()
     Touch(ToStart)
 end)
 
+Auto:Button("Flip",function()
+    game:GetService("ReplicatedStorage"):WaitForChild("FlipHandler"):WaitForChild("RemoteFunction"):InvokeServer()
+end)
+
 
 Auto:Toggle("Collect Coins",function(bool)
     shared.Toggle1=bool
     spawn(function()
         while shared.Toggle1 do
-            for _, folder in ipairs({Coins, Coins2}) do
-                if folder then
-                    for _, v in ipairs(folder:GetChildren()) do
-                        local part = v:FindFirstChild("HumanoidRootPart")
-                        if part and shared.Toggle1 then
-                            local hum = Player.Character:FindFirstChild("Humanoid")
-                            if hum and hum.Sit then
-                                Touch(part)
-                            end
-                        end
-                    end
-                end
+            for _, v in pairs({table.unpack(Coins:GetChildren()), table.unpack(Coins2:GetChildren())}) do
+                local coin = v:FindFirstChild("HumanoidRootPart")
+                local hum = Player.Character:WaitForChild("Humanoid")
+                if coin and hum.Sit == true then Touch(coin) end
             end
             task.wait()
         end
@@ -151,8 +160,8 @@ end)
 
 local function toggleCart(_cart, _toggle)
     if _cart then
-        
-        local driver = _cart:FindFirstChild("Driver")
+        local driver = _cart:WaitForChild("Driver",5)
+        task.wait(1)
         if driver and driver.Occupant == Player.Character:WaitForChild("Humanoid") then
             return
         end
@@ -163,24 +172,38 @@ local function toggleCart(_cart, _toggle)
             end
         end
     end
+    return
 end
 
 local con1
-local LiveCarts = game:GetService("Workspace").Carts
+local PCConnection
+
+local LiveCarts = game:GetService ("Workspace").Carts
 Auto:Toggle("No Collide",function(bool)
     shared.Toggle3=bool
     spawn(function()
+        for _,v in pairs(LiveCarts:GetChildren()) do
+            toggleCart(v, not shared.Toggle3)
+        end
         if shared.Toggle3 then
             con1 = LiveCarts.ChildAdded:Connect(function(_c)
-                task.wait(2)
-                toggleCart(_c, 0)
+                toggleCart(_c, false)
+            end)
+            PCConnection = RunService.Stepped:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= Player and player.Character then
+                        for _, v in pairs(player.Character:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                v.CanCollide = false
+                            end
+                        end
+                    end
+                end
             end)
 
         else
-            con1:Disconnect()
-        end
-        for _,v in pairs(LiveCarts:GetChildren()) do
-            toggleCart(v, not shared.Toggle3)
+            con1:Disconnect() con1 = nil
+            PCConnection:Disconnect() PCConnection = nil
         end
     end)
 end)
