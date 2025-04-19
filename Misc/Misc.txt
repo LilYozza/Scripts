@@ -315,6 +315,13 @@ Dev:Button("Remote Spy",function()
         webImport("ui/main")	
     end)
 end)
+
+Dev:Button("Easy Spy",function()
+	spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+    end)
+end)
+
 Misc:DestroyGui()
 
 --========================================CONNECTIONS========================================--
