@@ -19,6 +19,8 @@ local _end = game:GetService("Workspace").End
 local WinPad = _end.WinnersTeamer
 local ToStart = _end.Teleport.Part
 
+local blackCart = {}
+
 --local Coins = game:GetService("Workspace").Coins
 local folders = {}
 
@@ -104,7 +106,7 @@ Auto:Toggle("Collect Coins",function(bool)
             for _, v in pairs({table.unpack(Coins:GetChildren()), table.unpack(Coins2:GetChildren())}) do
                 local coin = v:FindFirstChild("HumanoidRootPart")
                 local hum = Player.Character:WaitForChild("Humanoid")
-                if coin and hum.Sit == true then Touch(coin) end
+                if shared.Toggle1 and coin and hum.Sit == true then Touch(coin) end
             end
             task.wait()
         end
@@ -159,36 +161,26 @@ Auto:Button("Vote",function()
 end)
 
 local function toggleCart(_cart, _toggle)
-    if _cart then
-        local driver = _cart:WaitForChild("Driver",5)
-        task.wait(1)
-        if driver and driver.Occupant == Player.Character:WaitForChild("Humanoid") then
-            return
-        end
-        for _,v in pairs(_cart:GetDescendants()) do
-            if v:IsA("Part") then
-                v.CanCollide = _toggle
-                
-            end
+    local driver = _cart:WaitForChild("Driver", 5)
+    local hum = Player.Character:WaitForChild("Humanoid", 5)
+
+    if (driver and driver.Occupant == hum) or table.find(blackCart, _cart) then if not table.find(blackCart, _cart) then table.insert(blackCart, _cart) end return end
+    for _,v in pairs(_cart:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.CanCollide = _toggle
         end
     end
     return
 end
 
-local con1
-local PCConnection
 
+local PCConnection
 local LiveCarts = game:GetService ("Workspace").Carts
 Auto:Toggle("No Collide",function(bool)
     shared.Toggle3=bool
     spawn(function()
-        for _,v in pairs(LiveCarts:GetChildren()) do
-            toggleCart(v, not shared.Toggle3)
-        end
+
         if shared.Toggle3 then
-            con1 = LiveCarts.ChildAdded:Connect(function(_c)
-                toggleCart(_c, false)
-            end)
             PCConnection = RunService.Stepped:Connect(function()
                 for _, player in pairs(Players:GetPlayers()) do
                     if player ~= Player and player.Character then
@@ -199,10 +191,14 @@ Auto:Toggle("No Collide",function(bool)
                         end
                     end
                 end
+
+                for _,v in pairs(LiveCarts:GetChildren()) do
+                    toggleCart(v, false)
+                end
+
             end)
 
         else
-            con1:Disconnect() con1 = nil
             PCConnection:Disconnect() PCConnection = nil
         end
     end)
@@ -211,13 +207,8 @@ end)
 local _bool1 = false
 Auto:Button("Stop/Go",function()
     spawn(function()
-        if _bool1 then
-            _bool1 = false
-            Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
-        else
-            _bool1 = true
-            Player.Character:WaitForChild("HumanoidRootPart").Anchored = true
-        end
+        _bool1 = not _bool1
+        Player.Character:WaitForChild("HumanoidRootPart").Anchored = _bool1
     end)
 end)
 
