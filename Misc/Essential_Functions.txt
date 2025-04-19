@@ -85,9 +85,11 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime, _func, _funcWa
 	end
 	if _basePart then
         if typeof(_basePart) == "CFrame"  then
-		    Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart + _offset
+		    Player.Character:SetPrimaryPartCFrame(_basePart + _offset)
+        elseif typeof(_basePart) == "Vector3" then
+            Player.Character:SetPrimaryPartCFrame(CFrame.new(_basePart + _offset))
         elseif _basePart:IsA("BasePart") then
-            Player.Character:WaitForChild("HumanoidRootPart").CFrame = _basePart.CFrame + _offset
+            Player.Character:SetPrimaryPartCFrame(_basePart.CFrame + _offset)
         end
         if _func and type(_func) == "function" then
             _func()
@@ -97,7 +99,7 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime, _func, _funcWa
         end
         if oldPos and _back then
             task.wait(_backTime)
-            Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos
+           Player.Character:SetPrimaryPartCFrame(oldPos)
         end
 	else
 		warn("MoveTo: Bad Values...")
