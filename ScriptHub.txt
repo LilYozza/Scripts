@@ -628,8 +628,8 @@ local Games = {
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Addictive%20Apple%20Game.txt'
 	},
 	[81440632616906] = {
-		Name = 'Dig to Earth's CORE!',
-		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Dig%20to%20Earth's%20CORE!.txt'
+		Name = 'Dig to Earths CORE!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Dig%20to%20Earths%20CORE!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
