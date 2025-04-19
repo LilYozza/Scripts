@@ -1,0 +1,207 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+
+local StarterGui = game:GetService("StarterGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Upgrade = w:CreateFolder("Upgrades")
+local Potion = w:CreateFolder("Potions")
+
+-->Base Variables<--
+local Maps = Workspace:FindFirstChild("Maps")
+local Apples = Workspace:FindFirstChild("Apples")
+local Upgrades = Player:FindFirstChild("Upgrades")
+
+--REMOVING ANNOYING POP UP
+Player.PlayerGui.PopupGui.Enabled = false
+
+
+local UpgradeHelp = StarterGui.MainGui.Frames:FindFirstChild("UpgradesHelp")
+local PotionsHelp = StarterGui.MainGui.Frames:FindFirstChild("PotionsHelp")
+
+-->Non Return Functions<--
+local function buyShop(_item)
+    ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("UpgradeFunction"):InvokeServer(_item)
+end
+
+local function buyPotion(_item)
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("BuyForCoinsFunction"):InvokeServer("potion", _item)
+end
+
+-->Return Functions<--
+
+function timeToSeconds(time)
+    local minutes, seconds = time:match("^(%d+):(%d+)$")
+    if minutes and seconds then
+        return tonumber(minutes) * 60 + tonumber(seconds)
+    end
+    return 0
+end
+
+local function getUpgrades()
+    local t = {}
+    if UpgradeHelp then
+        local frame = UpgradeHelp.Contents.ScrollingFrame
+        if frame then
+            for _,v in pairs(frame:GetChildren()) do
+                if v:IsA("Frame") and not table.find(t, v.Name) then
+                    table.insert(t, v.Name)
+                end
+            end
+        end
+    end
+    return t
+end
+
+local function getPotions()
+    local t = {}
+    if UpgradeHelp then
+        local frame = PotionsHelp.Contents.ScrollingFrame
+        if frame then
+            for _,v in pairs(frame:GetChildren()) do
+                if v:IsA("Frame") and not table.find(t, v.Name) then
+                    table.insert(t, v.Name)
+                end
+            end
+        end
+    end
+    return t
+end
+
+local function getPrice(_item)
+    local nextPrice = Upgrades:FindFirstChild(_item.."NextPrice")
+    if nextPrice then return nextPrice.Value end
+    return math.huge
+end
+
+local function getTime(_item)
+    local ref
+    pcall(function() ref = Player.PlayerGui.PotionGui.Potions:FindFirstChild(_item) end)
+    if ref then
+        return timeToSeconds(ref.TimeLeft.Text)
+    end
+    return 0
+end
+
+
+local function getpCoins() -- REFERENCE ONLY
+    local ref
+    pcall(function() ref = Player.PlayerGui.ButtonsGui.Left.Coins.ValueLabel end)
+    return ref
+end
+
+local pCoins = getpCoins()
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            for _,v in pairs(Apples:GetChildren()) do
+                if v then Touch(v,0.1) end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Unlock Doors",function(bool)
+    shared.ToggleUD=bool
+    spawn(function()
+        for _,v in pairs(Maps:GetChildren()) do 
+            local b = v:FindFirstChild("Barrier")
+            if b then b.CanCollide = not shared.ToggleUD end
+        end
+    end)
+end)
+
+local sUpgrade = "All"
+local UpgradesTable = getUpgrades()
+local sUpgradeTable = {}
+
+local UDropList1 = Upgrade:Dropdown("All",UpgradesTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sUpgrade = SItem
+end)
+
+Upgrade:Button("Add",function()
+    spawn(function()
+        if not table.find(sUpgradeTable, sUpgrade) then table.insert(sUpgradeTable, sUpgrade) end
+    end)
+end)
+
+Upgrade:Button("Remove",function()
+    spawn(function()
+        if table.find(sUpgradeTable, sUpgrade) then RemoveFromTable(sUpgradeTable, sUpgrade) end
+    end)
+end)
+
+Upgrade:Button("Clear",function()
+    spawn(function() sUpgradeTable = {} end)
+end)
+
+Upgrade:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleAU=bool
+    spawn(function()
+        while shared.ToggleAU do
+            local t = {}
+            if table.find(sUpgradeTable, "All") then t = UpgradesTable else t = sUpgradeTable end
+            for _,v in pairs(t) do
+                local cM, price = fromSuffixString(pCoins.Text), getPrice(v)
+                if shared.ToggleAU and cM >= price then
+                    buyShop(v) task.wait(1)
+                 end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+--==================================
+
+local sPotion = "All"
+local PotionTable = getPotions()
+local sPotionTable = {}
+
+local PDropList1 = Potion:Dropdown("All",PotionTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPotion = SItem
+end)
+
+Potion:Button("Add",function()
+    spawn(function()
+        if not table.find(sPotionTable, sPotion) then table.insert(sPotionTable, sPotion) end
+    end)
+end)
+
+Potion:Button("Remove",function()
+    spawn(function()
+        if table.find(sPotionTable, sPotion) then RemoveFromTable(sPotionTable, sPotion) end
+    end)
+end)
+
+Potion:Button("Clear",function()
+    spawn(function() sPotionTable = {} end)
+end)
+
+Potion:Toggle("Auto Potion",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do
+            local t = {}
+            if table.find(sPotionTable, "All") then t = PotionTable else t = sPotionTable end
+            for _,v in pairs(t) do
+                local timer = getTime(v)
+                if shared.ToggleAP and timer <= 0 then
+                    buyPotion(v) task.wait(1)
+                 end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
