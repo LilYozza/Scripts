@@ -7,9 +7,13 @@ local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 local Crate = w:CreateFolder("Crate")
+local Positions = w:CreateFolder("Positions")
+local Other = w:CreateFolder("Other")
 
 -->Base Variables<--
-local robuxItems = {"Scythe", "Infinite", "Lightning Bolt", "Red Orb"} --Red Orb is bugged (not robux item)
+local robuxItems = {"Scythe", "Infinite", "Lightning Bolt"}
+local blacklistItems = {"Red Orb", "Dynamite", "C4", "Nuke", "Golden Nuke", "Grenade", "Firework"} -- Throwables kinda halt auto
+
 local pCoins = Player:WaitForChild("leaderstats").Coins
 local Settings = Workspace:WaitForChild("Settings")
 
@@ -26,7 +30,7 @@ local Crates = Rs:FindFirstChild("Crates")
 -->Return Functions<--
 local function sortByPrice(t)
     local sorted = {}
-    for _, v in pairs(t) do if v:FindFirstChild("Price") and not table.find(robuxItems, v.Name) then table.insert(sorted, v) end end
+    for _, v in pairs(t) do if v:FindFirstChild("Price") and not table.find(robuxItems, v.Name) and not table.find(blacklistItems, v.Name) then table.insert(sorted, v) end end
     table.sort(sorted, function(a, b) return a.Price.Value < b.Price.Value end)
     return sorted
 end
@@ -454,7 +458,7 @@ Auto:Toggle("Reset Check",function(bool)
         while shared.ToggleRC do
             if #DestroyedLocations:GetChildren() <= 0 then
                 local world = getWorld()
-                MoveTo(world.CloseMine, Vector3.new(0,5,0)) --TOP
+                MoveTo(world.CloseMine, Vector3.new(0,0,0)) --TOP
             end
             task.wait()
         end
@@ -462,10 +466,28 @@ Auto:Toggle("Reset Check",function(bool)
 end)
 
 
-
-Auto:Button("Reset Tables",function()
+Other:Button("Reset Tables",function()
     spawn(function()
         resetTables()
+    end)
+end)
+
+Other:Button("Clear Blacklist",function()
+    spawn(function()
+        blacklistItems = {}
+    end)
+end)
+
+local sPoint
+Positions:Button("Set Point",function()
+    spawn(function()
+        sPoint = GetPos()
+    end)
+end)
+
+Positions:Button("Move To",function()
+    spawn(function()
+        if sPoint then MoveTo(sPoint) end
     end)
 end)
 
