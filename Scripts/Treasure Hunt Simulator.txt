@@ -9,7 +9,7 @@ local Auto = w:CreateFolder("Auto")
 local Crate = w:CreateFolder("Crate")
 
 -->Base Variables<--
-local robuxItems = {"Scythe", "Infinite", "Lightning Bolt"}
+local robuxItems = {"Scythe", "Infinite", "Lightning Bolt", "Red Orb"} --Red Orb is bugged (not robux item)
 local pCoins = Player:WaitForChild("leaderstats").Coins
 local Settings = Workspace:WaitForChild("Settings")
 
@@ -82,10 +82,9 @@ local function getWeight(_pack)
 end
 
 
-local Rebirth = Player.PlayerGui.Gui:FindFirstChild("Rebirth")
 local function getRebirthCost()
-    if Rebirth then
-        local amount = Rebirth.Needed.Coins.Amount
+    local amount = Player.PlayerGui:WaitForChild("Gui", 10).Rebirth.Needed.Coins.Amount
+    if amount then
         return fromSuffixString(amount.Text)
     end
     return math.huge
@@ -126,12 +125,19 @@ end)
 
 Auto:Button("Teleport",function()
     spawn(function()
-        print(sIsland)
         if sIsland and sIsland:FindFirstChild("Teleport") then
             MoveTo(sIsland.Teleport, Vector3.new(0,5,0))
         end
     end)
 end)
+
+Auto:Button("Top",function()
+    spawn(function()
+        local world = getWorld()
+        if world then MoveTo(world.Teleport, Vector3.new(0,5,0)) end
+    end)
+end)
+
 
 local mineAt = 10
 Auto:Slider("Mine Range",{
@@ -164,6 +170,19 @@ Auto:Toggle("Auto Mine",function(bool)
     shared.ToggleAM=bool
     spawn(function()
         while shared.ToggleAM do
+            for _,v in pairs(SandBlocks:GetChildren()) do
+                if v:FindFirstChild("Chest") then
+                    local dis = GetDistance(v)
+                    if dis <= mineAt then
+                        local tool = getTool()
+                        if shared.ToggleAC and v and tool and tool:FindFirstChild("RemoteClick") then
+                            if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
+                            tool.RemoteClick:FireServer(v) 
+                            task.wait()
+                        end
+                    end
+                end
+            end
             for _,v in pairs(SandBlocks:GetChildren()) do
                 local dis = GetDistance(v)
                 if dis <= mineAt then
@@ -327,10 +346,16 @@ end)
 
 
 local function checkOwned(_tbl, _item)
-    local status = Rs:WaitForChild("Events"):WaitForChild("CheckIfOwned"):InvokeServer(_item.Name)
-    if Rs and table.find(_tbl, _item) then RemoveFromTable(_tbl, _item) return true end
-    return
+    local status = Rs:WaitForChild("Events"):WaitForChild("CheckIfOwned"):InvokeServer(_item or _item.Name)
+    if status and table.find(_tbl, _item) then 
+        RemoveFromTable(_tbl, _item) 
+        return true
+    end
+    return false
 end
+
+--local ttt = checkOwned(petsTable, "Duck")
+--print("Here", ttt)
 
 Auto:Toggle("Auto Pet", function(bool)
     shared.ToggleAPP = bool
