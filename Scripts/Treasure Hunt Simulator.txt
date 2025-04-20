@@ -458,7 +458,8 @@ Auto:Toggle("Reset Check",function(bool)
         while shared.ToggleRC do
             if #DestroyedLocations:GetChildren() <= 0 then
                 local world = getWorld()
-                MoveTo(world.CloseMine, Vector3.new(0,0,0)) --TOP
+                MoveTo(world.CloseMine, Vector3.new(0,5,0)) --TOP
+                task.wait(5)
             end
             task.wait()
         end
