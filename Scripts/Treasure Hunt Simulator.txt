@@ -1,0 +1,427 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local Rs = game:GetService("ReplicatedStorage")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Crate = w:CreateFolder("Crate")
+
+-->Base Variables<--
+local robuxItems = {"Scythe", "Infinite", "Lightning Bolt"}
+local pCoins = Player:WaitForChild("leaderstats").Coins
+local Settings = Workspace:WaitForChild("Settings")
+
+local SandBlocks = Workspace:FindFirstChild("SandBlocks")
+
+local Backpacks = Rs:FindFirstChild("Backpacks")
+local Shovels = Rs:FindFirstChild("Shovels")
+local Pets = Rs:FindFirstChild("Pets")
+local Islands = Rs:FindFirstChild("Islands")
+local Crates = Rs:FindFirstChild("Crates")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function sortByPrice(t)
+    local sorted = {}
+    for _, v in pairs(t) do if v:FindFirstChild("Price") and not table.find(robuxItems, v.Name) then table.insert(sorted, v) end end
+    table.sort(sorted, function(a, b) return a.Price.Value < b.Price.Value end)
+    return sorted
+end
+
+
+local function getPack()
+    if Player.Character then
+        for _,v in pairs(Player.Character:GetChildren()) do
+            local Counter = v:FindFirstChild("Counter")
+            if v:IsA("Model") and Counter then
+                return v
+            end
+        end
+    end
+    return
+end
+
+local function getTool()
+    if Player.Character then
+        return Player.Backpack:FindFirstChildWhichIsA("Tool") or Player.Character:FindFirstChildWhichIsA("Tool")
+    end
+end
+
+local function getPet()
+    if Player.Character then
+        local petHolder = Player.Character:FindFirstChild("PetHolder")
+        if petHolder then return petHolder:GetChildren()[1] end
+    end
+    return
+end
+
+local function getNextItem(_t, _item)
+    if _item then
+        for i, v in ipairs(_t) do
+            if v.Name == _item.Name then
+                return _t[i + 1]
+            end
+        end
+    end
+end
+
+local function getWeight(_pack)
+    if _pack then
+        local Counter = _pack:FindFirstChild("Counter")
+        if Counter then
+            local a, b = Counter.SurfaceGui.TextLabel.Text:match("([^/]+)/([^/]+)")
+            return fromSuffixString(a), fromSuffixString(b)
+        end
+    end
+    return 0
+end
+
+
+local Rebirth = Player.PlayerGui.Gui:FindFirstChild("Rebirth")
+local function getRebirthCost()
+    if Rebirth then
+        local amount = Rebirth.Needed.Coins.Amount
+        return fromSuffixString(amount.Text)
+    end
+    return math.huge
+end
+
+local function getSell()
+    local t = {}
+    for _,v in pairs(Workspace:GetChildren()) do
+        local sb = v:FindFirstChild("ShopBase")
+        if v.Name == "SellHut" and sb then table.insert(t, sb) end
+    end
+    return GetClosestPart(t)
+end
+
+local function getWorld() --USES getSell() Temp, must change later lol
+    local p = getSell()
+    if p and p:FindFirstChild("Island") then
+        return p:FindFirstChild("Island").Value
+    end
+end
+
+--POST VAIRABLES
+local backPacksTable = sortByPrice(Backpacks:GetChildren())
+local shovelsTable = sortByPrice(Shovels:GetChildren())
+local petsTable = sortByPrice(Pets:GetChildren())
+local islandsTable = SortTableByName(Islands:GetChildren())
+local cratesTable = Crates:GetChildren()
+
+
+local sIsland = islandsTable[1]
+local DropList = Auto:Dropdown(sIsland.Name,islandsTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sIsland = FindInTable(islandsTable, SItem)
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        print(sIsland)
+        if sIsland and sIsland:FindFirstChild("Teleport") then
+            MoveTo(sIsland.Teleport, Vector3.new(0,5,0))
+        end
+    end)
+end)
+
+local mineAt = 10
+Auto:Slider("Mine Range",{
+    min = 1; -- min value of the slider
+    max = math.huge; -- max value of the slider
+    precise = true; -- max 2 decimals
+},function(value)
+    mineAt = value
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            if pCoins.Value >= getRebirthCost() then
+                Rs:WaitForChild("Events"):WaitForChild("Rebirth"):FireServer()
+                print("Rebirthing")
+                task.wait(1)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Mine",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do
+            for _,v in pairs(SandBlocks:GetChildren()) do
+                local dis = GetDistance(v)
+                if dis <= mineAt then
+                    local tool = getTool()
+                    if shared.ToggleAM and v and tool and tool:FindFirstChild("RemoteClick") then
+                        if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
+                        tool.RemoteClick:FireServer(v) 
+                        task.wait()
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Chest",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            for _,v in pairs(SandBlocks:GetChildren()) do
+                if v:FindFirstChild("Chest") then
+                    local dis = GetDistance(v)
+                    if dis <= mineAt then
+                        local tool = getTool()
+                        if shared.ToggleAC and v and tool and tool:FindFirstChild("RemoteClick") then
+                            if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
+                            tool.RemoteClick:FireServer(v) 
+                            task.wait()
+                        end
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+local sellAt = math.huge
+Auto:Slider("Sell At",{
+    min = 1; -- min value of the slider
+    max = math.huge; -- max value of the slider
+    precise = true; -- max 2 decimals
+},function(value)
+    sellAt = value
+end)
+
+Auto:Toggle("Auto Sell",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            local bPack = getPack()
+            local sell = getSell()
+            if bPack and sell then
+                local cW, bW = getWeight(bPack)
+                if cW >= sellAt or cW >= bW then
+                    MoveTo(sell.Position, Vector3.new(0,5,0), true, 0.5) task.wait(1)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Pack",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do
+            local bPack = getPack()
+            if bPack then
+                local nextItem = getNextItem(backPacksTable, bPack)
+                local world = getWorld()
+                if nextItem and nextItem.Price.Value <= pCoins.Value then
+                    local rWorld = nextItem:FindFirstChild("Island")
+                    if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
+                        Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
+                        print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
+                    else
+                        print("Player Must be in:", rWorld.Value.Name, "to buy Pack")
+                        local point = FindInTable(islandsTable, rWorld.Value.Name)
+                        MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
+                        -- if not brought then skip (Remove - Temp Fix)
+                        RemoveFromTable(backPacksTable, nextItem)
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Tool",function(bool)
+    shared.ToggleAT=bool
+    spawn(function()
+        while shared.ToggleAT do
+            local tool = getTool()
+            if tool then
+                local nextItem = getNextItem(shovelsTable, tool)
+                local world = getWorld()
+                if nextItem and nextItem.Price.Value <= pCoins.Value then
+                    local rWorld = nextItem:FindFirstChild("Island")
+                    if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
+                        Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
+                        print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
+                    else
+                        print("Player Must be in:", rWorld.Value.Name, "to buy Tool")
+                        local point = FindInTable(islandsTable, rWorld.Value.Name)
+                        MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
+                        -- if not brought then skip (Remove - Temp Fix)
+                        RemoveFromTable(shovelsTable, nextItem)
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Pet",function(bool) -- HAS TO CHECK WORLD FOR PET
+    shared.ToggleAPP=bool
+    spawn(function()
+        while shared.ToggleAPP do
+
+            local pet = getPet()
+            local nextItem = getNextItem(petsTable, pet) or petsTable[1]
+            local world = getWorld()
+
+            if world and nextItem and nextItem.Price.Value <= pCoins.Value then
+                local rWorld = nextItem:FindFirstChild("Island")
+                if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
+                    Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
+                    print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
+                else
+                    print("Player Must be in:", rWorld.Value.Name, "to buy Pet", nextItem.Name)
+                    local point = FindInTable(islandsTable, rWorld.Value.Name)
+                    MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
+                    -- if not brought then skip (Remove - Temp Fix)
+                    RemoveFromTable(petsTable, nextItem)
+                end
+            end
+
+            task.wait()
+        end
+    end)
+end)
+
+local cCon
+Auto:Toggle("Collect Coins",function(bool) -- HAS TO CHECK WORLD FOR PET
+    shared.ToggleCC=bool
+    spawn(function()
+        if shared.ToggleCC then
+            cCon = Workspace.ChildAdded:Connect(function(_part)
+                if _part.Name == "Coin" then
+                    local t = _part:WaitForChild("TouchInterest", 2)
+                    if t then Touch(_part) end
+                end
+            end)
+            for _,v in pairs(Workspace:GetChildren()) do
+                if v and v.Name == "Coin" and v:FindFirstChildWhichIsA("TouchTransmitter") then
+                    Touch(v)
+                end
+            end
+        else
+            cCon:Disconnect() cCon = nil
+        end
+    end)
+end)
+
+Auto:Toggle("Collapse Timer", function(bool)
+    shared.ToggleCT = bool
+    spawn(function()
+        -- Find or create the ScreenGui
+        local gui = Player.PlayerGui:FindFirstChild("CollapseTimerGui")
+        if not gui then
+            gui = Instance.new("ScreenGui")
+            gui.Name = "CollapseTimerGui"
+            gui.ResetOnSpawn = false
+            gui.Parent = Player.PlayerGui
+        end
+
+        -- Find or create the TextLabel
+        local tLabel = gui:FindFirstChild("CollapseTimer")
+        if not tLabel then
+            local label = Instance.new("TextLabel")
+            label.Name = "CollapseTimer"
+            label.AnchorPoint = Vector2.new(0.5, 0)
+            label.Position = UDim2.new(0.5, 0, 0, -30)
+            label.Size = UDim2.new(0, 200, 0, 30)
+            label.BackgroundTransparency = 0.3
+            label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            label.TextColor3 = Color3.new(1, 1, 1)
+            label.Font = Enum.Font.SourceSansBold
+            label.TextScaled = true
+            label.Parent = gui
+            tLabel = label
+        end
+        tLabel.Visible = shared.ToggleCT
+        while shared.ToggleCT do
+            local seconds = Settings.TimeUntilCollapse.Value or 0
+            local min = math.floor(seconds / 60)
+            local sec = seconds % 60
+            tLabel.Text = string.format("%02d:%02d", min, sec)
+            task.wait()
+        end
+    end)
+end)
+
+--POST VAIRABLES
+
+
+Auto:Button("Reset Tables",function()
+    spawn(function()
+        backPacksTable = sortByPrice(Backpacks:GetChildren())
+        shovelsTable = sortByPrice(Shovels:GetChildren())
+        petsTable = sortByPrice(Pets:GetChildren())
+        islandsTable = SortTableByName(Islands:GetChildren())
+    end)
+end)
+
+
+
+
+local pSelect = Player.Name
+local sCrate
+
+local cDropList1 = Crate:Dropdown("Select Crate",cratesTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sCrate = FindInTable(cratesTable, SItem)
+end)
+
+local cDropList2 = Crate:Dropdown(pSelect,Players:GetPlayers(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sCrate = FindInTable(cratesTable, SItem)
+end)
+
+
+Crate:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+           
+            if sCrate then
+                local price = sCrate:FindFirstChild("CoinsCost")
+                if price and price.Value <= pCoins.Value then
+                    Rs:WaitForChild("Events"):WaitForChild("BuyCrate"):FireServer(sCrate, pSelect, 1) task.wait(0.3)
+                    print("Buying Crate:", sCrate.Name)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Crate:Toggle("Auto Open",function(bool)
+    shared.ToggleAO=bool
+    spawn(function()
+        while shared.ToggleAO do
+            if sCrate then
+                Rs:WaitForChild("Events"):WaitForChild("SendOpenCrate"):FireServer(sCrate) task.wait(0.3)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Players.ChildAdded:Connect(function() cDropList2:Refresh(Players:GetPlayers()) end)
+Players.ChildRemoved:Connect(function() cDropList2:Refresh(Players:GetPlayers()) end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
