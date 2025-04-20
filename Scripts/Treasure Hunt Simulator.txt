@@ -179,7 +179,7 @@ Auto:Toggle("Auto Mine",function(bool)
                     if dis <= mineAt then
                         local tool = getTool()
                         if shared.ToggleAC and v and tool and tool:FindFirstChild("RemoteClick") then
-                            if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
+                            if tool.Parent ~= Player.Character then Rs:WaitForChild("Events"):WaitForChild("EquipShovel"):FireServer(tool.Name) tool.Parent = Player.Character end
                             tool.RemoteClick:FireServer(v) 
                             task.wait()
                         end
@@ -192,7 +192,7 @@ Auto:Toggle("Auto Mine",function(bool)
                 if dis <= mineAt then
                     local tool = getTool()
                     if shared.ToggleAM and v and tool and tool:FindFirstChild("RemoteClick") then
-                        if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
+                        if tool.Parent ~= Player.Character then Rs:WaitForChild("Events"):WaitForChild("EquipShovel"):FireServer(tool.Name) tool.Parent = Player.Character end
                         tool.RemoteClick:FireServer(v) 
                         task.wait()
                     end
@@ -236,13 +236,14 @@ Auto:Toggle("Mine Down", function(bool)
                     shortest = dy
                     closest = v
                 end
-                if not shared.ToggleMD then return end
+                
             end
 
             if  closest then
-                if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
+                if tool.Parent ~= Player.Character then Rs:WaitForChild("Events"):WaitForChild("EquipShovel"):FireServer(tool.Name) tool.Parent = Player.Character end
                 tool.RemoteClick:FireServer(closest)
             end
+            if not shared.ToggleMD then return end
             task.wait()
         end
     end)
