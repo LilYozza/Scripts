@@ -160,9 +160,8 @@ Auto:Toggle("Auto Rebirth",function(bool)
                 local back = GetPos()
                 Rs:WaitForChild("Events"):WaitForChild("Rebirth"):FireServer()
                 resetTables()
-                print("Rebirthing")
-                task.wait(1)
                 MoveTo(back)
+                task.wait(1)
             end
             task.wait()
         end
@@ -213,12 +212,14 @@ Auto:Toggle("Mine Down", function(bool)
             local tool = getTool()
             if not (char and tool and tool:FindFirstChild("RemoteClick")) then
                 task.wait()
+                if not shared.ToggleMD then return end
                 continue
             end
 
             local hrp = char:FindFirstChild("HumanoidRootPart")
             if not hrp then
                 task.wait()
+                if not shared.ToggleMD then return end
                 continue
             end
 
@@ -235,13 +236,13 @@ Auto:Toggle("Mine Down", function(bool)
                     shortest = dy
                     closest = v
                 end
+                if not shared.ToggleMD then return end
             end
 
             if  closest then
                 if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
                 tool.RemoteClick:FireServer(closest)
             end
-            if not shared.ToggleMD then return end
             task.wait()
         end
     end)
@@ -307,7 +308,7 @@ Auto:Toggle("Auto Pack",function(bool)
                     local rWorld = nextItem:FindFirstChild("Island")
                     if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
                         Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
-                        print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
+                        --print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                     else
                         print("Player Must be in:", rWorld.Value.Name, "to buy Pack")
                         --local point = FindInTable(islandsTable, rWorld.Value.Name)
@@ -335,7 +336,7 @@ Auto:Toggle("Auto Tool",function(bool)
                     local rWorld = nextItem:FindFirstChild("Island")
                     if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
                         Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
-                        print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
+                        --print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                     else
                         print("Player Must be in:", rWorld.Value.Name, "to buy Tool")
                         --local point = FindInTable(islandsTable, rWorld.Value.Name)
@@ -379,7 +380,7 @@ Auto:Toggle("Auto Pet", function(bool)
                     Rs.Events.Checkout:FireServer(nextItem.Name) task.wait(0.5)
                     Rs:WaitForChild("Events"):WaitForChild("EquipPet"):FireServer(nextItem.Name) task.wait(0.5)
                     
-                    print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
+                    --print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                 else
                     RemoveFromTable(petsTable, nextItem)
                 end
@@ -460,7 +461,7 @@ Auto:Toggle("Reset Check",function(bool)
         while shared.ToggleRC do
             if #DestroyedLocations:GetChildren() <= 0 then
                 local world = getWorld()
-                MoveTo(world.CloseMine, Vector3.new(0,5,0)) --TOP
+                MoveTo(world.CloseMine, Vector3.new(3,5,3)) --TOP
                 task.wait(5)
             end
             task.wait()
