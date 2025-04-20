@@ -145,10 +145,12 @@ Auto:Toggle("Auto Rebirth",function(bool)
     spawn(function()
         while shared.ToggleAR do
             if pCoins.Value >= getRebirthCost() then
+                local back = GetPos()
                 Rs:WaitForChild("Events"):WaitForChild("Rebirth"):FireServer()
                 resetTables()
                 print("Rebirthing")
                 task.wait(1)
+                MoveTo(back)
             end
             task.wait()
         end
@@ -295,9 +297,9 @@ Auto:Toggle("Auto Pet",function(bool) -- HAS TO CHECK WORLD FOR PET
                     Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
                     print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                 else
-                    print("Player Must be in:", rWorld.Value.Name, "to buy Pet", nextItem.Name)
-                    local point = FindInTable(islandsTable, rWorld.Value.Name)
-                    MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
+                    --print("Player Must be in:", rWorld.Value.Name, "to buy Pet", nextItem.Name)
+                    --local point = FindInTable(islandsTable, rWorld.Value.Name)
+                   -- MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
                     -- if not brought then skip (Remove - Temp Fix)
                     RemoveFromTable(petsTable, nextItem)
                 end
