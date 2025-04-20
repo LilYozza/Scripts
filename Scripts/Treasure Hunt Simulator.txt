@@ -106,11 +106,15 @@ local function getWorld() --USES getSell() Temp, must change later lol
 end
 
 --POST VAIRABLES
-local backPacksTable = sortByPrice(Backpacks:GetChildren())
-local shovelsTable = sortByPrice(Shovels:GetChildren())
-local petsTable = sortByPrice(Pets:GetChildren())
-local islandsTable = SortTableByName(Islands:GetChildren())
+local backPacksTable, shovelsTable, petsTable, islandsTable
 local cratesTable = Crates:GetChildren()
+
+local function resetTables()
+    backPacksTable = sortByPrice(Backpacks:GetChildren())
+    shovelsTable = sortByPrice(Shovels:GetChildren())
+    petsTable = sortByPrice(Pets:GetChildren())
+    islandsTable = SortTableByName(Islands:GetChildren())
+end resetTables()
 
 
 local sIsland = islandsTable[1]
@@ -142,6 +146,7 @@ Auto:Toggle("Auto Rebirth",function(bool)
         while shared.ToggleAR do
             if pCoins.Value >= getRebirthCost() then
                 Rs:WaitForChild("Events"):WaitForChild("Rebirth"):FireServer()
+                resetTables()
                 print("Rebirthing")
                 task.wait(1)
             end
@@ -369,10 +374,7 @@ end)
 
 Auto:Button("Reset Tables",function()
     spawn(function()
-        backPacksTable = sortByPrice(Backpacks:GetChildren())
-        shovelsTable = sortByPrice(Shovels:GetChildren())
-        petsTable = sortByPrice(Pets:GetChildren())
-        islandsTable = SortTableByName(Islands:GetChildren())
+        resetTables()
     end)
 end)
 
