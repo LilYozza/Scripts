@@ -241,8 +241,8 @@ Auto:Toggle("Auto Pack",function(bool)
                         print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                     else
                         print("Player Must be in:", rWorld.Value.Name, "to buy Pack")
-                        local point = FindInTable(islandsTable, rWorld.Value.Name)
-                        MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
+                        --local point = FindInTable(islandsTable, rWorld.Value.Name)
+                        --MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
                         -- if not brought then skip (Remove - Temp Fix)
                         RemoveFromTable(backPacksTable, nextItem)
                     end
@@ -269,8 +269,8 @@ Auto:Toggle("Auto Tool",function(bool)
                         print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                     else
                         print("Player Must be in:", rWorld.Value.Name, "to buy Tool")
-                        local point = FindInTable(islandsTable, rWorld.Value.Name)
-                        MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
+                        --local point = FindInTable(islandsTable, rWorld.Value.Name)
+                        --MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
                         -- if not brought then skip (Remove - Temp Fix)
                         RemoveFromTable(shovelsTable, nextItem)
                     end
