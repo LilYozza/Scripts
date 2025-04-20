@@ -186,6 +186,7 @@ Auto:Toggle("Auto Mine",function(bool)
                         end
                     end
                 end
+                if not shared.ToggleAM then return end
             end
             for _,v in pairs(SandBlocks:GetChildren()) do
                 local dis = GetDistance(v)
@@ -197,6 +198,7 @@ Auto:Toggle("Auto Mine",function(bool)
                         task.wait()
                     end
                 end
+                if not shared.ToggleAM then return end
             end
             task.wait()
         end
@@ -235,11 +237,11 @@ Auto:Toggle("Mine Down", function(bool)
                 end
             end
 
-            if closest then
+            if  closest then
                 if tool.Parent ~= Player.Character then tool.Parent = Player.Character end
                 tool.RemoteClick:FireServer(closest)
             end
-
+            if not shared.ToggleMD then return end
             task.wait()
         end
     end)
