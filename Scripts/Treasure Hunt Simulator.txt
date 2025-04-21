@@ -50,7 +50,12 @@ end
 
 local function getTool()
     if Player.Character then
-        return Player.Backpack:FindFirstChildWhichIsA("Tool") or Player.Character:FindFirstChildWhichIsA("Tool")
+        local tool = Player.Backpack:FindFirstChildWhichIsA("Tool") or Player.Character:FindFirstChildWhichIsA("Tool")
+        if tool then
+            return tool
+        else
+            --
+        end
     end
 end
 
@@ -455,10 +460,23 @@ Auto:Toggle("Collapse Timer", function(bool)
 end)
 
 --POST VAIRABLES
+local pCon1
 local DestroyedLocations = Workspace:FindFirstChild("DestroyedLocations")
 Auto:Toggle("Reset Check",function(bool)
     shared.ToggleRC=bool
     spawn(function()
+        if shared.ToggleRC then
+            pCon1 = Player.CharacterAdded:Connect(function(char)
+                if shared.ToggleRC then
+                    char:WaitForChild("HumanoidRootPart")
+                    local world = FindInTable(islandsTable, sIsland.Name)
+                    MoveTo(world.CloseMine, Vector3.new(3,5,3))
+                end
+            end)
+        else
+            pCon1:Disconnect() pCon1 = nil
+        end
+
         while shared.ToggleRC do
             if #DestroyedLocations:GetChildren() <= 0 then
                 local world = getWorld()
