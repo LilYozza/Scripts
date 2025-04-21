@@ -25,9 +25,26 @@ local Pets = Rs:FindFirstChild("Pets")
 local Islands = Rs:FindFirstChild("Islands")
 local Crates = Rs:FindFirstChild("Crates")
 
+local lastBrought
+local backPacksTable, shovelsTable, petsTable, islandsTable
+
 -->Non Return Functions<--
 
 -->Return Functions<--
+local function checkOwned(_tbl, _item)
+    if _tbl then
+        local status = Rs:WaitForChild("Events"):WaitForChild("CheckIfOwned"):InvokeServer(_item or _item.Name)
+        if status and table.find(_tbl, _item) then 
+            RemoveFromTable(_tbl, _item) 
+            return true
+        end
+    else
+        _item = _tbl
+        return Rs:WaitForChild("Events"):WaitForChild("CheckIfOwned"):InvokeServer(_item or _item.Name)
+    end
+    return false
+end
+
 local function sortByPrice(t)
     local sorted = {}
     for _, v in pairs(t) do if v:FindFirstChild("Price") and not table.find(robuxItems, v.Name) and not table.find(blacklistItems, v.Name) then table.insert(sorted, v) end end
@@ -48,13 +65,22 @@ local function getPack()
     return
 end
 
+local function ReequipItem()
+    local firstItem = shovelsTable[1]
+    if firstItem and lastBrought then
+        Rs:WaitForChild("Events"):WaitForChild("EquipShovel"):FireServer(firstItem.Name) print("Equiped First:", firstItem.Name) task.wait(1)
+        Rs:WaitForChild("Events"):WaitForChild("EquipShovel"):FireServer(lastBrought) print("Equiped Last", lastBrought) task.wait(1)
+        return true
+    end
+end
+
 local function getTool()
     if Player.Character then
         local tool = Player.Backpack:FindFirstChildWhichIsA("Tool") or Player.Character:FindFirstChildWhichIsA("Tool")
         if tool then
             return tool
         else
-            --
+            if ReequipItem() then getTool() end
         end
     end
 end
@@ -115,8 +141,8 @@ local function getWorld() --USES getSell() Temp, must change later lol
     end
 end
 
---POST VAIRABLES
-local backPacksTable, shovelsTable, petsTable, islandsTable
+
+
 local cratesTable = Crates:GetChildren()
 
 local function resetTables()
@@ -146,6 +172,14 @@ Auto:Button("Top",function()
         if world then MoveTo(world.Teleport, Vector3.new(0,5,0)) end
     end)
 end)
+
+Auto:Button("Mine",function()
+    spawn(function()
+        local world = getWorld()
+        MoveTo(world.CloseMine, Vector3.new(3,5,3))
+    end)
+end)
+
 
 
 local mineAt = 10
@@ -310,13 +344,17 @@ Auto:Toggle("Auto Pack",function(bool)
             if bPack then
                 local nextItem = getNextItem(backPacksTable, bPack)
                 local world = getWorld()
+
+                if nextItem and checkOwned(backPacksTable, nextItem) then task.wait() continue end
+
                 if nextItem and nextItem.Price.Value <= pCoins.Value then
                     local rWorld = nextItem:FindFirstChild("Island")
                     if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
                         Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
+            
                         --print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                     else
-                        print("Player Must be in:", rWorld.Value.Name, "to buy Pack")
+                        --print("Player Must be in:", rWorld.Value.Name, "to buy Pack")
                         --local point = FindInTable(islandsTable, rWorld.Value.Name)
                         --MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
                         -- if not brought then skip (Remove - Temp Fix)
@@ -338,13 +376,17 @@ Auto:Toggle("Auto Tool",function(bool)
             if tool then
                 local nextItem = getNextItem(shovelsTable, tool)
                 local world = getWorld()
+
+                if nextItem and checkOwned(shovelsTable, nextItem) then task.wait() continue end
+
                 if nextItem and nextItem.Price.Value <= pCoins.Value then
                     local rWorld = nextItem:FindFirstChild("Island")
                     if (rWorld and rWorld.Value.Name == world.Name) or not rWorld then 
                         Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name) task.wait(1)
+                        lastBrought = nextItem.Name
                         --print("Brought", nextItem.Name, "For:", nextItem.Price.Value)
                     else
-                        print("Player Must be in:", rWorld.Value.Name, "to buy Tool")
+                        --print("Player Must be in:", rWorld.Value.Name, "to buy Tool")
                         --local point = FindInTable(islandsTable, rWorld.Value.Name)
                         --MoveTo(point.Teleport, Vector3.new(0,5,0), true, 0.5, Rs:WaitForChild("Events"):WaitForChild("Checkout"):FireServer(nextItem.Name), 1) task.wait(1)
                         -- if not brought then skip (Remove - Temp Fix)
@@ -358,14 +400,7 @@ Auto:Toggle("Auto Tool",function(bool)
 end)
 
 
-local function checkOwned(_tbl, _item)
-    local status = Rs:WaitForChild("Events"):WaitForChild("CheckIfOwned"):InvokeServer(_item or _item.Name)
-    if status and table.find(_tbl, _item) then 
-        RemoveFromTable(_tbl, _item) 
-        return true
-    end
-    return false
-end
+
 
 --local ttt = checkOwned(petsTable, "Duck")
 --print("Here", ttt)
