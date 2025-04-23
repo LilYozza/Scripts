@@ -11,6 +11,8 @@ local Auto = w:CreateFolder("Auto")
 local Plant = w:CreateFolder("Plant")
 local Shop = w:CreateFolder("Shop")
 
+local EasterEvent
+
 
 -->Base Variables<--
 local pMoney = Player:WaitForChild("leaderstats"):FindFirstChild("Sheckles")
@@ -31,6 +33,13 @@ local sItem2 = gearItems[1]
 local blacklistPlant = {}
 
 local questGui = Player.PlayerGui:FindFirstChild("DailyQuests_UI")
+local Easter_Shop = Player.PlayerGui:FindFirstChild("Easter_Shop")
+
+-- GAME EVENTS --
+local Poppy = Workspace:FindFirstChild("Poppy")
+if Poppy then
+    EasterEvent = w:CreateFolder("EasterEvent")
+end
 
 -->Non Return Functions<--
 local function buySeed(_item, _amt)
@@ -38,10 +47,15 @@ local function buySeed(_item, _amt)
     for i = 1, _amt do
         --print("Buying:", _item)
         ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuySeedStock"):FireServer(_item)
+        if Poppy then
+            ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuyEasterStock"):FireServer(_item) --ME being Lazy lol
+        end
     end
     
     return
 end
+
+
 
 local function buyGear(_item, _amt)
     _amt = _amt or 1
@@ -60,7 +74,7 @@ local function plantItem(_pos, _item)
         [2] = _item
     }
 
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
+    ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
     --print("Planted:", _pos, _item)
     return
 end
@@ -92,26 +106,43 @@ local function getFarm(_player)
     return
 end
 
-local function getSeeds()
-    --Check Current Hand or Backpack
-    local tool, seed = Player.Character:FindFirstChildWhichIsA("Tool"); seed = tool and tool:FindFirstChild("Plant_Name")
-    if seed and not table.find(blacklistPlant, seed.Value) then 
-        return seed.Parent 
+local function getSeeds(_name)
+    -- Check Current Hand or Backpack
+    local tool = Player.Character:FindFirstChildWhichIsA("Tool")
+    if tool and tool.Name:find("Seed") and not table.find(blacklistPlant, tool.Name) then
+        return tool
     else
-        for _,v in pairs(Player.Backpack:GetChildren()) do
-            local pN = v:FindFirstChild("Plant_Name")
-            if pN and not table.find(blacklistPlant, pN.Value) then return v end
+        for _, v in pairs(Player.Backpack:GetChildren()) do
+            if v:IsA("Tool") and v.Name:find("Seed") and not table.find(blacklistPlant, v.Name) then
+                return v
+            end
         end
     end
     return
 end
 
+local function getPlant(_name)
+    -- Check hand
+    local tool = Player.Character:FindFirstChildWhichIsA("Tool")
+    if tool and (not _name or tool.Name:find(_name)) then
+        return tool
+    end
+
+    -- Check backpack
+    for _, v in pairs(Player.Backpack:GetChildren()) do
+        if v:IsA("Tool") and (not _name or v.Name:find(_name)) then
+            return v
+        end
+    end
+
+    return
+end
 
 
 local function checkStock(_seed) --Input String
     local Seed_Shop = Player.PlayerGui:FindFirstChild("Seed_Shop")
     if Seed_Shop then
-        local plant = Seed_Shop.Frame.ScrollingFrame:FindFirstChild(_seed)
+        local plant = Seed_Shop.Frame.ScrollingFrame:FindFirstChild(_seed) or Easter_Shop.Frame.ScrollingFrame:FindFirstChild(_seed)
         if plant then
             local Stock = fromSuffixString(plant.Main_Frame.Stock_Text.Text)
             local Price = fromSuffixString(plant.Main_Frame.Cost_Text.Text)
@@ -164,6 +195,51 @@ local function checkPos(_pos)
 end
 
 local points = getGridPoints(20,10,0)
+
+--=================================== EASTER EVENT ===================================
+
+if Poppy then
+
+--local PoppyHrp = Poppy:FindFirstChild("HumanoidRootPart")
+
+EasterEvent:Button("Easter Shop",function()
+    spawn(function()
+        Easter_Shop.Enabled = not Easter_Shop.Enabled
+    end)
+end)
+
+
+  
+EasterEvent:Button("Sell All",function()
+    spawn(function()
+        local plant = getPlant("Gold")
+        if plant then
+            if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterShopService"):FireServer("SubmitHeldPlant")
+        end
+    end)
+end)
+
+
+EasterEvent:Toggle("Auto Sell",function(bool)
+    shared.ToggleEEAS=bool
+    spawn(function()
+        while shared.ToggleEEAS do
+            -- CHECK PLAYER INV
+            local plant = getPlant("Gold")
+            if plant then
+                if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterShopService"):FireServer("SubmitHeldPlant")
+            end
+            task.wait(0.3)
+        end
+    end)
+end)
+
+
+end
+--===================================================================================
+
 Auto:Button("Home",function()
     spawn(function()
         MoveTo(spawnPoint, Vector3.new(0,5,0))
@@ -172,14 +248,7 @@ end)
 
 Auto:Button("Quests",function()
     spawn(function()
-        local frame = questGui.Frame
-        if frame.Visible then
-            questGui.Show_VAL.Value = false
-            frame.Visible = false
-        else
-            questGui.Show_VAL.Value = true
-            frame.Visible = true
-        end
+        questGui.Enabled = not questGui.Enabled
     end)
 end)
 
@@ -194,29 +263,25 @@ Auto:Button("Sell",function()
 end)
 
 
-
-
 Auto:Toggle("Auto Harvest", function(bool)
-	shared.ToggleAH = bool
-	spawn(function()
-		while shared.ToggleAH do
-			for _, v in pairs(Plants_Physical:GetChildren()) do
-                local fruit = v:FindFirstChild("Fruits")
-                if fruit then
-                    for j, k in pairs(fruit:GetChildren()) do
-                        for __,_v in pairs(k:GetChildren()) do
-                            local prompt = _v:FindFirstChildWhichIsA("ProximityPrompt")
-                            if prompt and shared.ToggleAH then
-                                fireproximityprompt(prompt) task.wait()
-                            end
-                        end
+    shared.ToggleAH = bool
+    spawn(function()
+        while shared.ToggleAH do
+            for _, v in pairs(Plants_Physical:GetChildren()) do
+                for __, _v in pairs(v:GetDescendants()) do
+                    if _v and _v:IsA("ProximityPrompt") then
+                        -- Fire in parallel to prevent backlogging
+                        task.spawn(function()
+                            fireproximityprompt(_v)
+                        end)
                     end
                 end
-			end
-			task.wait()
-		end
-	end)
+            end
+            task.wait(0.5) -- Slight wait to avoid excessive CPU load
+        end
+    end)
 end)
+
 
 Auto:Toggle("Auto Buy",function(bool)
     shared.ToggleAB=bool
@@ -319,9 +384,9 @@ Plant:Toggle("Auto Plant",function(bool)
                 for _, pos in pairs(points) do
                     if not shared.ToggleAP then return end
                     
-                    local PName = seed:FindFirstChild("Plant_Name")
-                    if PName and checkPos(pos + Vector3.new(0, 0.1, 0)) then
-                        plantItem(pos, PName.Value)
+                    local match = seed.Name:match("^(.-)%s*Seed")
+                    if match and checkPos(pos + Vector3.new(0, 0.1, 0)) then
+                        plantItem(pos, match)
                     end
                 end
             end
@@ -339,9 +404,9 @@ Plant:Toggle("Plant Hand",function(bool)
                 seed = seed.Parent
                 for _, pos in pairs(points) do
                     if not shared.TogglePH then return end
-                    local PName = seed:FindFirstChild("Plant_Name")
-                    if PName and checkPos(pos + Vector3.new(0, 0.1, 0)) then
-                        plantItem(pos, PName.Value) task.wait()
+                    local match = seed.Name:match("^(.-)%s*Seed")
+                    if match and checkPos(pos + Vector3.new(0, 0.1, 0)) then
+                        plantItem(pos, match)
                     end
                 end
             end
@@ -369,6 +434,8 @@ Shop:Button("Buy",function()
         buyGear(sItem2)
     end)
 end)
+
+
 
 
 local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
