@@ -276,9 +276,11 @@ end
 
 getgenv().GetElementFromDictionary = function(_tbl, index)
     if _tbl and typeof(_tbl) == "table" then
-        index = index or 1
+        local count = 1
+        index = index or count
         for _,v in pairs(_tbl) do
-            if _ == index then return v end
+            if count == index or _ == index then return v end
+            count = count + 1
         end
         return nil  -- Return nil if index is out of range
     else
