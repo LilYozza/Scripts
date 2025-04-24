@@ -11,7 +11,7 @@ local Positions = w:CreateFolder("Positions")
 local Other = w:CreateFolder("Other")
 
 -->Base Variables<--
-local robuxItems = {"Scythe", "Infinite", "Lightning Bolt"}
+local robuxItems = {"Scythe", "Infinite", "Lightning Bolt", "Black Hole"}
 local blacklistItems = {"Red Orb", "Dynamite", "C4", "Nuke", "Golden Nuke", "Grenade", "Firework"} -- Throwables kinda halt auto
 
 local pCoins = Player:WaitForChild("leaderstats").Coins
@@ -376,7 +376,6 @@ Auto:Toggle("Auto Tool",function(bool)
             if tool then
                 local nextItem = getNextItem(shovelsTable, tool)
                 local world = getWorld()
-
                 if nextItem and checkOwned(shovelsTable, nextItem) then task.wait() continue end
 
                 if nextItem and nextItem.Price.Value <= pCoins.Value then
