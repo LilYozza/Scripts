@@ -472,7 +472,7 @@ end
 getgenv().FindInTable = function(_tbl, _item)
 	if _tbl and typeof(_tbl) == "table" and _item and typeof(_item) == "string" then
 		for _,v in pairs(_tbl)do
-			if v.Name == _item then
+			if v.Name == _item or _ == _item then
 				return v
 			end
 		end
