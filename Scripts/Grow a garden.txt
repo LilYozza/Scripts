@@ -164,16 +164,18 @@ local Plants_Physical = Important:FindFirstChild("Plants_Physical")
 local function getGridPoints(rows, columns, margin)
     local points = {}
     for _,v in pairs(Plant_Locations:GetChildren()) do
-	    local surfaceSize = Vector2.new(v.Size.X, v.Size.Z)
-	    local cellWidth = (surfaceSize.X - margin * 2) / columns
-	    local cellHeight = (surfaceSize.Y - margin * 2) / rows
+        if v:IsA("BasePart") then
+            local surfaceSize = Vector2.new(v.Size.X, v.Size.Z)
+            local cellWidth = (surfaceSize.X - margin * 2) / columns
+            local cellHeight = (surfaceSize.Y - margin * 2) / rows
 
-        for row = 0, rows - 1 do
-            for col = 0, columns - 1 do
-                local x = v.Position.X - surfaceSize.X / 2 + margin + cellWidth / 2 + col * cellWidth
-                local z = v.Position.Z - surfaceSize.Y / 2 + margin + cellHeight / 2 + row * cellHeight
-                local y = v.Position.Y + v.Size.Y / 2 -- top surface
-                table.insert(points, Vector3.new(x, y, z))
+            for row = 0, rows - 1 do
+                for col = 0, columns - 1 do
+                    local x = v.Position.X - surfaceSize.X / 2 + margin + cellWidth / 2 + col * cellWidth
+                    local z = v.Position.Z - surfaceSize.Y / 2 + margin + cellHeight / 2 + row * cellHeight
+                    local y = v.Position.Y + v.Size.Y / 2 -- top surface
+                    table.insert(points, Vector3.new(x, y, z))
+                end
             end
         end
     end
