@@ -264,14 +264,22 @@ getgenv().RemoveFromTable = function(_tbl, _item)
 	end
 end
 
-getgenv().PrintTable = function (_tbl)
-	if _tbl and typeof(_tbl) == "table" then
-		for _,v in pairs(_tbl)do
-			print(v)
-		end
-	else
-		warn("PrintTable: Bad Values")
-	end
+getgenv().PrintTable = function(_tbl, indent)
+    indent = indent or ""
+    
+    if _tbl and typeof(_tbl) == "table" then
+        for k, v in pairs(_tbl) do
+            if typeof(v) == "table" then
+                print(indent .. tostring(k) .. " = {")
+                PrintTable(v, indent .. "  ")
+                print(indent .. "}")
+            else
+                print(indent .. tostring(k) .. " = " .. tostring(v))
+            end
+        end
+    else
+        warn("PrintTable: Bad Values")
+    end
 end
 
 getgenv().GetElementFromDictionary = function(_tbl, index)
