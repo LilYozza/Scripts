@@ -634,6 +634,10 @@ local Games = {
 	[1345139196] = {
 		Name = 'Treasure Hunt Simulator',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Treasure%20Hunt%20Simulator.txt'
+	},
+	[110345898280451] = {
+		Name = 'Semi Truck Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Semi%20Truck%20Obby.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()

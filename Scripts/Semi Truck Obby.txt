@@ -1,0 +1,162 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local MapF = w:CreateFolder("Map")
+
+-->Base Variables<--
+local replaceTable = {"IceParts", "KillBrick", "Conveyor"}
+local Trucks = Workspace:WaitForChild("Trucks")
+local pStage = Player:WaitForChild("leaderstats").Stage
+local Checkpoints = Workspace:WaitForChild("Checkpoints")
+
+local checkpointAmt = #Checkpoints:GetChildren()
+local Map = Workspace:WaitForChild("Map")
+local replaceTable = {"IceParts", "RedParts", "VanishParts", "YellowParts", "RedElevator"}
+
+-->Non Return Functions<--
+
+local function createPart(className, props)
+    local _newPart = Instance.new(className)
+    if _newPart then
+        for _,v in pairs(props) do 
+            _newPart[_] = v
+        end
+        print(_newPart.Position.Y)
+    end
+    return _newPart
+end
+
+local partStorage = {}
+local y1 = 1 
+
+local function Replace(part)
+    if partStorage[part] then return end
+
+    local replacementPart = Instance.new("Part")
+    replacementPart.Size = part.Size
+    replacementPart.CFrame = part.CFrame
+    replacementPart.Anchored = true
+    replacementPart.BrickColor = BrickColor.new("Lime green")
+
+    if part:IsDescendantOf(Map.RedElevator) then replacementPart.CanCollide = false end
+    --replacementPart.CanCollide = part.Position.Y <= y1
+
+    replacementPart.Parent = part.Parent
+
+    part.Parent = nil
+    partStorage[replacementPart] = part
+end
+
+local function RevertAll()
+    for replacementPart, originalPart in pairs(partStorage) do
+        originalPart.Parent = replacementPart.Parent
+        replacementPart:Destroy()
+    end
+    partStorage = {}
+end
+
+
+-->Return Functions<--
+local function getTruck(_player)
+    _player = _player or Player
+    for _,v in pairs(Trucks:GetChildren()) do
+        if v.Name:match(_player.Name) then return v end
+    end
+end
+
+
+Auto:Button("Skip",function()
+    spawn(function()
+        local truck = getTruck()
+        local stage = Checkpoints:FindFirstChild(pStage.Value + 1)
+        if stage and truck then 
+            Touch(stage.CheckpointCollider, truck.TractorCab.VehicleSeat) 
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Complete",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            local truck = getTruck()
+            local stage = Checkpoints:FindFirstChild(pStage.Value + 1)
+            if stage and truck then 
+                Touch(stage.CheckpointCollider, truck.TractorCab.VehicleSeat) 
+            end
+            task.wait(0.3)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            if pStage.Value >= checkpointAmt then
+                game:GetService("ReplicatedStorage"):WaitForChild("PlayerPrestigeRequest"):FireServer()
+                task.wait(1)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+
+MapF:Toggle("No Fall",function(bool)
+    shared.ToggleNF=bool
+    spawn(function()
+        if shared.ToggleNF then
+            local noFallPart = Workspace:FindFirstChild("noFallPart") or
+            createPart("Part", {
+                Name = "noFallPart",
+                Parent = Workspace,
+                Position = Vector3.new(0, -0.5, -0.35),
+                Anchored = true,
+                Transparency = 0.85,
+                Size = Vector3.new(2000,1,2000),
+                BrickColor = BrickColor.new("Lime green")
+            })
+        else
+            local noFallPart = Workspace:FindFirstChild("noFallPart")
+            if noFallPart then noFallPart:Destroy() end
+        end
+
+    end)
+end)
+MapF:Toggle("Easy",function(bool)
+    shared.ToggleR=bool
+    spawn(function()
+        if shared.ToggleR then
+            for i,p in pairs(replaceTable) do
+                local folder = Map:FindFirstChild(p)
+                if folder then
+                    for _,v in pairs(folder:GetDescendants()) do
+                        if v:IsA("BasePart") then
+                            Replace(v)
+                        end
+                    end
+                end
+            end
+        else
+            RevertAll()
+        end
+    end)
+end)
+
+
+
+
+
+Auto:Button("Auto",function()
+    spawn(function()
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
