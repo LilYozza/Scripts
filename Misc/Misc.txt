@@ -4,6 +4,8 @@ local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/Li
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
 local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))()
 local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))()
+
+local Tools = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/Tools.txt'))()
 --===========================================================================================--
 
 local HttpService = game:GetService("HttpService")
@@ -57,19 +59,12 @@ end)
 
 --====================================DropDown Player List===================================--
 local DropList = GPlayers:Dropdown("Select Player",GetDisplayNames(),true,function(SItem)
-	for _,v in pairs(Players:GetChildren())do if  v.DisplayName==SItem then PlayerSelect_M = v break end end
+	PlayerSelect_M = GetPlayerByDisplayName(SItem)
 end)
 --===========================================================================================--
 
 --===================================Player List Controller==================================--
 --local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
-local function AddPlayer()
-    DropList:Refresh(GetDisplayNames())
-end
-local function RemovePlayer()
-    DropList:Refresh(GetDisplayNames())
-end
-local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
 
 local function invisible()
 	local Char  = Player.Character
@@ -116,46 +111,6 @@ GPlayers:Button("TeleportTo",function()
 	spawn (function()
 		if PlayerSelect_M then Player.Character:WaitForChild("HumanoidRootPart").CFrame=PlayerSelect_M.Character:WaitForChild("HumanoidRootPart").CFrame end
 	end)
-end)
-
-
-
-local range = 15
-local RangeSA = Misc:Slider("Aura Range",{
-	['default'] = 15;['min'] = 0;['max'] = 5000;['precise'] = true;},function(value)
-    spawn(function()
-	    range = value
-    end)
-end)
-
-local SACon
-Misc:Toggle("Sword Aura",function(bool)
-	shared.ToggleSA = bool
-    spawn(function()
-        if shared.ToggleSA then
-            SACon = game:GetService("RunService").RenderStepped:Connect(function()
-                local p = Players:GetPlayers()
-                for i = 2, #p do 
-                    if p[i].Character then
-                        local v = p[i].Character
-                        if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
-                            local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
-                            if tool and tool:FindFirstChild("Handle") then
-                                tool:Activate()
-                                for i,v in next, v:GetChildren() do
-                                    if v:IsA("BasePart") then
-                                        firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-        else
-            if SACon then SACon:Disconnect() end
-        end
-    end)
 end)
 
 --============================================Fly==========================================--
@@ -255,6 +210,54 @@ Misc:Button("3rd Person",function()
 	Player.CameraMinZoomDistance = 0
 end)
 
+local stPlayer = "All"
+local tDropList1 = Tools:Dropdown(stPlayer,{"All", table.unpack(GetDisplayNames())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    if SItem == "All" then stPlayer = SItem else
+        stPlayer = GetPlayerByDisplayName(SItem)
+    end
+end)
+
+local range = math.huge
+local RangeSA = Tools:Slider("Aura Range",{
+	['default'] = 15;['min'] = 0;['max'] = math.huge;['precise'] = true;},function(value)
+    spawn(function()
+	    range = value
+    end)
+end)
+
+local mCon
+Tools:Toggle("Select (b)",function(bool)
+	shared.TogglePS = bool
+    spawn(function()
+        if shared.TogglePS then
+            mCon = mouse.KeyDown:Connect(function(key)
+                if key:lower() == "b" then
+                    local p,d = GetMousePlayer()
+                    if p then stPlayer = p end
+                end
+            end)
+        else
+            if mCon then mCon:Disconnect() end
+        end
+    end)
+end)
+
+
+Tools:Toggle("Sword Aura",function(bool)
+	shared.ToggleSA = bool
+    spawn(function()
+        SwordAura(shared.ToggleSA, stPlayer, range)
+    end)
+end)
+
+Tools:Toggle("Banana Peel",function(bool)
+	shared.ToggleBP = bool
+    spawn(function()
+        UseAura(shared.ToggleBP, stPlayer, "BananaPeel", range)
+    end)
+end)
+
+
 Dev:Button("Rejoin Server",function()
 	spawn(function()
         TeleportService:Teleport(game.PlaceId, Player)
@@ -322,17 +325,23 @@ Dev:Button("Easy Spy",function()
     end)
 end)
 
+Dev:Button("Reset",function()
+	spawn(function()
+        loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/ScriptHub.txt'))()
+    end)
+end)
+
 Misc:DestroyGui()
 
 --========================================CONNECTIONS========================================--
 Players.PlayerAdded:Connect(function(player)
-	player.CharacterAdded:Connect(function()
-		AddPlayer(player)
-	end)
+    tDropList1:Refresh({"All", table.unpack(GetDisplayNames())})
+    DropList:Refresh(GetDisplayNames())
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-	RemovePlayer(player)
+    tDropList1:Refresh({"All", table.unpack(GetDisplayNames())})
+    DropList:Refresh(GetDisplayNames())
 end)
 
 --===========================================================================================--
