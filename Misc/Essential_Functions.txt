@@ -497,7 +497,7 @@ getgenv().MatchTable = function(_tbl, _item)
     if _tbl and typeof(_tbl) == "table" then
         for _,v in pairs(_tbl) do
             local n = v.Name or v
-            if n:match(_item) then return v end
+            if _item:match(n) then return v end
         end
     else
         warn("MatchTable: Bad Values...(Table nil or not a Table)")
