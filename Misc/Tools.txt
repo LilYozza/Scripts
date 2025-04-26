@@ -1,0 +1,145 @@
+--[[
+    TO DO
+
+-- Sword Arura function
+
+-- Banana
+
+
+
+]]
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+local function FindPlayer(_player) --i Should only do Usernames and not displaynames lol
+    for _,v in pairs(Players:GetPlayers()) do
+        if v.Name == _player or v.DisplayName == _player then
+            return v
+        end
+    end
+end
+
+local function ToolUse(_part)
+    local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+    if tool and tool:FindFirstChild("Handle") then
+        tool:Activate()
+        for _,v in pairs(_part:GetDescendants()) do
+            if v:IsA("BasePart") then
+                firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
+            end
+        end
+    end
+end
+
+local function ToolPartUse(_hrp, _part)
+    if typeof(_part) == "Instance" and _part:IsA("BasePart") then 
+        firetouchinterest(_part,_hrp,0)firetouchinterest(_part,_hrp,1)
+        return
+    elseif typeof(_part) == "Instance" then
+        _part = _part:GetDescendants()
+    end
+    for _,v in pairs(_part) do
+        if v:IsA("BasePart") then
+            firetouchinterest(v,_hrp,0)firetouchinterest(v,_hrp,1)
+        end
+    end
+end
+
+getgenv().Attack = function(_in, _range)
+    _range = _range or math.huge
+    if typeof(_in) == "string" then --HANDLES STRINGS
+        if _in:lower() == "all" then AttackAll(_range) end
+        local p = FindPlayer(_in) if p then _in = p else return end
+    end
+
+
+    local hrp = (_in and _in:FindFirstChild("HumanoidRootPart")) or (_in and _in.Character and _in.Character:FindFirstChild("HumanoidRootPart")) or false
+    local hum = (_in and _in:FindFirstChild("Humanoid")) or (_in and _in.Character and _in.Character:FindFirstChild("Humanoid")) or false
+    if hrp and hum then
+        if hum.Health > 0 and Player:DistanceFromCharacter(hrp.Position) <= _range then
+            ToolUse(_in)
+            --print("Attacked:", _in)
+        end
+    else
+        --warn("Not A Player or Character") --SPAM
+    end
+end
+
+
+getgenv().AttackAll = function(_range)
+    for _,v in pairs(Players:GetPlayers()) do
+        if v ~= Player then
+            Attack(v, _range)
+        end
+    end
+end
+
+local rCon1
+getgenv().SwordAura = function(_toggle, _in, _range)
+    _range = _range or math.huge
+    if _toggle then
+        rCon1 = RunService.RenderStepped:Connect(function()
+            if _in then Attack(_in, _range) else AttackAll(_range) end
+        end)
+    else
+        if rCon1 then rCon1:Disconnect() rCon1 = nil end
+    end
+end
+--============================================================================================================================================================
+
+getgenv().UseToolPart = function(_in, _part, _range)
+    _range = _range or math.huge
+    if typeof(_in) == "string" then --HANDLES STRINGS
+        if _in:lower() == "all" then UseToolAll(_part, _range) return end
+        local p = FindPlayer(_in) if p then _in = p else return end
+    end
+
+    if typeof(_part) == "string" then
+        local t = {}
+        for _,v in pairs(workspace:GetChildren()) do
+            if v.Name == _part then
+                if v:IsA("BasePart") then table.insert(t, v) end
+                --[[
+                for i, item in ipairs(v:GetDescendants()) do
+                    if item:IsA("BasePart") then table.insert(t, item) end
+                end
+                ]]--
+            end
+        end
+        
+        if #t == 0 then return end
+        _part = t
+    end
+
+    local hrp = (_in and _in:FindFirstChild("HumanoidRootPart")) or (_in and _in.Character and _in.Character:FindFirstChild("HumanoidRootPart")) or false
+    local hum = (_in and _in:FindFirstChild("Humanoid")) or (_in and _in.Character and _in.Character:FindFirstChild("Humanoid")) or false
+    if hrp and hum and _part then
+        if hum.Health > 0 and Player:DistanceFromCharacter(hrp.Position) <= _range then
+            ToolPartUse(hrp, _part)
+            --print("Used", _part, "On:", _in)
+        end
+    else
+        --warn(_in, "Not A Player or Character or", _part, "Not A Part or Nil") --COMMENTED CAUSE IT SPAMMED
+    end
+end
+
+getgenv().UseToolAll = function(_part, _range)
+    for _,v in pairs(Players:GetPlayers()) do
+        if v ~= Player then
+            UseToolPart(v, _part, _range)
+        end
+    end
+end
+
+local rCon2
+getgenv().UseAura = function(_toggle, _in, _part, _range)
+    _range = _range or math.huge
+    if _toggle then
+        rCon2 = RunService.RenderStepped:Connect(function()
+            if _in then UseToolPart(_in, _part, _range) else UseToolAll(_part, _range) end
+        end)
+    else
+        if rCon2 then rCon2:Disconnect() rCon2 = nil end
+    end
+end
