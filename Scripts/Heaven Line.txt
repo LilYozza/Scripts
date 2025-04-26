@@ -1,0 +1,68 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
+local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local Rs = game:GetService("ReplicatedStorage")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local gifts = {"gift250MillDuration", "gift1", "giftHalo", "giftWings"}
+local Fly = Rs:WaitForChild("Fly")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+Auto:Toggle("Auto Enter",function(bool)
+    shared.ToggleAE=bool
+    spawn(function()
+        while shared.ToggleAE do
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("enterHeaven"):FireServer()
+            task.wait(0.3)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Cut",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("moveUpInQueue"):FireServer(100, 100)
+            task.wait(0.3)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("rebirth"):FireServer()
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Claim Gifts",function(bool)
+    shared.ToggleCG=bool
+    spawn(function()
+        while shared.ToggleCG do
+            for _,v in pairs(gifts) do
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("claimReward"):FireServer(v) task.wait(1)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Button("Fly",function()
+    spawn(function()
+        Fly(Player)
+    end)
+end)
+
+
+local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
