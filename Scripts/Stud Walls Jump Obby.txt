@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -105,6 +106,7 @@ Auto:Button("Previous",function()
         MoveTo(Checkpoints[tonumber(_curr.Name) - 1], Vector3.new(0,5,0))
     end)
 end)
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -84,6 +85,7 @@ Auto:Toggle("Auto Rebirth",function(bool)
         end
     end)
 end)
+
 
 
 

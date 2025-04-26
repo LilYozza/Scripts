@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -162,6 +163,7 @@ Auto:Toggle("Auto Raid",function(bool)
 end)
 
 Auto:Button("AFK",function()spawn(function()MoveTo(StandSensei.Circle,Vector3.new(0,3,0))end)end)
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -163,6 +164,7 @@ Eggs:Toggle("Auto Hatch",function(bool)
         end) if not s then print(e) end
     end)
 end)
+
 
 
 

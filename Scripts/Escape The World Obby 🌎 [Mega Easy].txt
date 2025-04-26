@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -49,6 +50,7 @@ Auto:Button("Remove KillParts",function()
         if v.Name == "KillPart" then v:Destroy() end
     end
 end)
+
 
 
 

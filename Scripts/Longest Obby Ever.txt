@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -39,6 +40,7 @@ local offset = 1
 Auto:Toggle("Auto Rebirth",function(bool)
     isRebith=bool
 end)
+
 
 
 

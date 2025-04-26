@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 local _LOADCFRAME = CFrame.new(-13, 2050.2002, -5.99999905, 1, 0, 0, 0, 1, 0, 0, 0, 1)+Vector3.new(0,10,0)
 
 local Players=game:GetService("Players")
@@ -166,6 +167,7 @@ ItemMenu:Button("Clear Inv",function()
         if _Head then Touch(_Head, 1)end
     end)
 end)
+
 
 
 

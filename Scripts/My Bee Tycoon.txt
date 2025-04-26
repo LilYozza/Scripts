@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -85,6 +86,7 @@ Auto:Toggle("Auto Reward",function(bool)
         wait(5) end 
     end)
 end)
+
 
 
 

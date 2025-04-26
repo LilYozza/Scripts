@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -46,6 +47,7 @@ end)
 Auto:Toggle("Auto Rebirth",function(bool)
     shared.toggle3 = bool Touch(Portal,1)
 end)
+
 
 
 

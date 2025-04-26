@@ -1,0 +1,339 @@
+local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
+
+--======================================FUNCTION IMPORTS=====================================--
+local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
+local Chams = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Chams.txt'))()
+local Fly = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Fly.txt'))()
+--===========================================================================================--
+
+local HttpService = game:GetService("HttpService")
+local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+local TeleportService = game:GetService("TeleportService")
+
+local Virtual=game:GetService("VirtualUser")
+local RunService = game:GetService("RunService")
+local Players=game:GetService("Players")
+local Player=Players.LocalPlayer
+local mouse = Player:GetMouse()
+
+e = library:CreateWindow("Other")
+
+local GPlayers = e:CreateFolder("Players")
+local Misc = e:CreateFolder("Misc")
+local Tools = e:CreateFolder("Tools")
+local Dev = e:CreateFolder("Dev")
+
+local PlayerSelect_M
+local PlayerList_M={}
+
+-->Functions<--
+--local function ReturnPlayer(character)for _,v in pairs(Players:GetChildren())do if v.Name==character.Name then return v end end end
+
+--========================================PLAYER ESP========================================--
+GPlayers:Toggle("Player ESP",function(bool)
+	spawn(function()
+		shared.ToggleESP = bool
+		if shared.ToggleESP then
+			ESPOn()
+		else
+			ESPOff()
+		end
+	end)
+end)
+--===========================================================================================--
+
+--=======================================PLAYER CHAMS=======================================--
+GPlayers:Toggle("Player Chams",function(bool)
+	shared.ToggleCham = bool 
+	spawn(function()
+		if shared.ToggleCham then
+			PlayerChamsOn()
+		else
+			PlayerChamsOff()
+		end
+	end)
+end)
+--===========================================================================================--
+
+--====================================DropDown Player List===================================--
+local DropList = GPlayers:Dropdown("Select Player",GetDisplayNames(),true,function(SItem)
+	for _,v in pairs(Players:GetChildren())do if  v.DisplayName==SItem then PlayerSelect_M = v break end end
+end)
+--===========================================================================================--
+
+--===================================Player List Controller==================================--
+--local function RemoveItem(t,i)if t then for _,v in pairs(t)do if v==i then table.remove(t,_) break end end end end
+local function AddPlayer()
+    DropList:Refresh(GetDisplayNames())
+end
+local function RemovePlayer()
+    DropList:Refresh(GetDisplayNames())
+end
+local function GetPlayers()if not PlayerList_M[1] then for _,v in pairs(Players:GetChildren())do table.insert(PlayerList_M, v.DisplayName)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end DropList:Refresh(PlayerList_M)end GetPlayers()
+
+local function invisible()
+	local Char  = Player.Character
+	local touched = false
+	local tpdback = false
+	local box = Instance.new('Part')
+	box.Anchored = true
+	box.CanCollide = true
+	box.Size = Vector3.new(10,1,10)
+	box.Position = Vector3.new(0,10000,0)
+	box.Parent = workspace
+	local boxTouched = box.Touched:connect(function(part)
+		if (part.Parent.Name == Player.Name) then
+			if touched == false then
+				touched = true
+				local function apply()
+					local no = Char.HumanoidRootPart:Clone()
+					wait(.25)
+					Char.HumanoidRootPart:Destroy()
+					no.Parent = Char
+					Char:MoveTo(loc)
+					touched = false
+				end
+				if Char then
+					apply()
+				end
+			end
+		end
+	end)
+	repeat wait() until Char
+	local cleanUp
+	cleanUp = Player.CharacterAdded:connect(function(char)
+		boxTouched:Disconnect()
+		box:Destroy()
+		cleanUp:Disconnect()
+	end)
+	loc = Char.HumanoidRootPart.Position
+	Char:MoveTo(box.Position + Vector3.new(0,.5,0))    
+end
+
+--===========================================================================================--
+
+GPlayers:Button("TeleportTo",function()
+	spawn (function()
+		if PlayerSelect_M then Player.Character:WaitForChild("HumanoidRootPart").CFrame=PlayerSelect_M.Character:WaitForChild("HumanoidRootPart").CFrame end
+	end)
+end)
+
+
+
+local range = 15
+local RangeSA = Misc:Slider("Aura Range",{
+	['default'] = 15;['min'] = 0;['max'] = 5000;['precise'] = true;},function(value)
+    spawn(function()
+	    range = value
+    end)
+end)
+
+local SACon
+Misc:Toggle("Sword Aura",function(bool)
+	shared.ToggleSA = bool
+    spawn(function()
+        if shared.ToggleSA then
+            SACon = game:GetService("RunService").RenderStepped:Connect(function()
+                local p = Players:GetPlayers()
+                for i = 2, #p do 
+                    if p[i].Character then
+                        local v = p[i].Character
+                        if v and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HumanoidRootPart") and Player:DistanceFromCharacter(v.HumanoidRootPart.Position) <= range then
+                            local tool = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+                            if tool and tool:FindFirstChild("Handle") then
+                                tool:Activate()
+                                for i,v in next, v:GetChildren() do
+                                    if v:IsA("BasePart") then
+                                        firetouchinterest(tool.Handle,v,0)firetouchinterest(tool.Handle,v,1)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            if SACon then SACon:Disconnect() end
+        end
+    end)
+end)
+
+--============================================Fly==========================================--
+local _conFly = {}
+Misc:Toggle("Fly",function(bool)
+	shared.ToggleFly = bool
+	spawn (function()
+		if shared.ToggleFly then 
+			_conFly = Init()
+		else 
+			FlyOff()
+			for _,v in pairs(_conFly)do _conFly[_]:Disconnect()end
+		end
+	end)
+end)
+--===========================================================================================--
+Misc:Button("Invisible",function()
+	spawn (function()
+        invisible()
+    end)
+end)
+
+local PCConnection
+Misc:Toggle("PCollide",function(bool)
+	shared.MiscPC = bool
+	spawn (function()
+        if shared.MiscPC then
+            PCConnection = RunService.Stepped:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= Player and player.Character then
+                        for _, v in pairs(player.Character:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                v.CanCollide = false
+                            end
+                        end
+                    end
+                end
+            end)            
+        else
+            if PCConnection then PCConnection:Disconnect() PCConnection = nil end
+        end
+    end)
+end)
+
+Misc:Toggle("Anchor",function(bool)
+	shared.MiscA = bool
+	spawn (function()
+        local hrp = GetHrp()
+        if hrp then
+            hrp.Anchored = shared.MiscA
+        end
+    end)
+end)
+
+Misc:Toggle("Full Bright",function(bool)
+	shared.Misc2 = bool
+	spawn (function()FullBright()end)
+end)
+
+Misc:Toggle("Infinite Jump",function(bool)
+	shared.Misc3 = bool
+	spawn (function()
+		game:GetService("UserInputService").JumpRequest:Connect(function()
+			if shared.Misc3 then
+				Player.character:WaitForChild("Humanoid"):ChangeState("Jumping")
+			end
+		end)
+	end)
+end)
+
+Misc:Toggle("Teleport",function(bool)
+	shared.Misc4 = bool
+	spawn(function()
+		mouse.KeyDown:Connect(function(key)
+			if key == "q" and shared.Misc4 then
+				if mouse.Target then
+					Player.character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + 5, mouse.Hit.z)
+				end
+			end
+		end)
+	end)
+end)
+
+local Speed = Misc:Slider("Walk Speed",{
+	['default'] = 16;['min'] = 0;['max'] = 500;['precise'] = true;},function(value)
+	Player.Character.Humanoid.WalkSpeed = value
+	local Players = game:GetService("Players")
+	Player.CharacterAdded:Connect(function()
+		local _hum = Player.Character:WaitForChild("Humanoid",10)
+		if _hum then _hum.WalkSpeed = value end
+	end)
+end)
+
+Misc:Button("3rd Person",function()
+	Player.CameraMode = 'Classic'
+	Player.CameraMaxZoomDistance = 150
+	Player.CameraMinZoomDistance = 0
+end)
+
+Dev:Button("Rejoin Server",function()
+	spawn(function()
+        TeleportService:Teleport(game.PlaceId, Player)
+    end)
+end)
+
+Dev:Button("Next Server",function()
+	spawn(function()
+        if httprequest then
+            local servers = {}
+            local req = httprequest({Url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true", game.PlaceId)})
+            local body = HttpService:JSONDecode(req.Body)
+
+            if body and body.data then
+                for i, v in next, body.data do
+                    if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.id ~= game.JobId then
+                        table.insert(servers, 1, v.id)
+                    end
+                end
+            end
+
+            if #servers > 0 then
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], Player)
+            else
+                return notify("Serverhop", "Couldn't find a server.")
+            end
+        else
+            notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+        end
+    end)
+end)
+
+
+
+Dev:Button("Dex Explorer",function()
+	spawn(function()
+        --loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua", true))()
+	    loadstring(game:HttpGet("https://gist.githubusercontent.com/DinosaurXxX/b757fe011e7e600c0873f967fe427dc2/raw/ee5324771f017073fc30e640323ac2a9b3bfc550/dark%2520dex%2520v4"))()
+    end)
+end)
+
+Dev:Button("Infinite Yield",function()
+	spawn(function()
+	    loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/Infinite%20Yield.txt"))()
+    end)
+end)
+
+Dev:Button("Remote Spy",function()
+	spawn(function()
+        local owner = "Upbolt"
+        local branch = "revision"
+
+        local function webImport(file)
+            return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
+        end
+
+        webImport("init")
+        webImport("ui/main")	
+    end)
+end)
+
+Dev:Button("Easy Spy",function()
+	spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+    end)
+end)
+
+Misc:DestroyGui()
+
+--========================================CONNECTIONS========================================--
+Players.PlayerAdded:Connect(function(player)
+	player.CharacterAdded:Connect(function()
+		AddPlayer(player)
+	end)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	RemovePlayer(player)
+end)
+
+--===========================================================================================--
+Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)end)

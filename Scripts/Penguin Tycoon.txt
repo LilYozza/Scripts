@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -83,6 +84,7 @@ end)
 Auto:Button("Spawn Teleport",function()
     Player.character:WaitForChild("HumanoidRootPart").CFrame = Tycoon:FindFirstChild("Spawn").CFrame
 end)
+
 
 
 

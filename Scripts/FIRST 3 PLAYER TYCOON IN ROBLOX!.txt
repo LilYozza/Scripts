@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -411,6 +412,7 @@ Item:Button("Potion Shop", function()
         end
     end)
 end)
+
 
 
 

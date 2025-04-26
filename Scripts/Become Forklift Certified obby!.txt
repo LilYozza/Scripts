@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -133,6 +134,7 @@ Auto:Toggle("No Fall",function(bool)
 
     end)
 end)
+
 
 
 

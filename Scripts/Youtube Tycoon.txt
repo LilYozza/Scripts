@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -321,6 +322,7 @@ Auto:Button("Delete Doors",function()
         for key, value in pairs(Tycoons:GetDescendants()) do if value.Name == "Lasers" then value:Destroy() end end
     end)
 end)
+
 
 
 

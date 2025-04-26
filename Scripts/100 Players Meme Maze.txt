@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))() Clean() -- PATHFINDING CLEANUP()
 
 
@@ -110,6 +111,7 @@ Auto:Toggle("Collect Coins",function(bool)
         end
     end)
 end)
+
 
 
 

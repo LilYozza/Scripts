@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players=game:GetService("Players")
@@ -617,6 +618,7 @@ Other:Button("Script #1",function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/Amenteso/robloxscripts/main/Key.lua",true))()
 	end)
 end)
+
 
 
 

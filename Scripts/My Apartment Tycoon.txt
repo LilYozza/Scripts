@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -52,6 +53,7 @@ end)
 Auto:Button("Give Items",function()
     spawn(function() for _,v in pairs(Tycoons:GetDescendants()) do if v:IsA("TouchTransmitter") and v.Parent.Parent:FindFirstChild("WeaponName") then FireTouch(0.3,v.Parent) end end end)
 end)
+
 
 
 

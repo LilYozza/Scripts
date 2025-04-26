@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -107,6 +108,7 @@ if Hunt then EggHunt:Toggle("Egg Hunt",function(bool) --Really Old Code (Will Pa
     end)
 end)end
  
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -95,6 +96,7 @@ Auto:Button("All Items",function()
         end
     end)
 end)
+
 
 
 

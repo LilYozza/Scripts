@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -187,6 +188,7 @@ if Workspace:FindFirstChild("Candies")then local Candies= Workspace:FindFirstChi
         end
     end)
 end)end
+
 
 
 

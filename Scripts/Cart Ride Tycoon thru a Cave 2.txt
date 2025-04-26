@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -390,6 +391,7 @@ Tickets:Toggle("Big Drop",function(bool)
         end
     end)
 end)
+
 
 
 

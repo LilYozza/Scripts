@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -65,6 +66,7 @@ local BonusArea = game:GetService("Workspace")["Christmas Update"].Zones.KingOfH
 Auto:Button("KingOfHill",function(bool)
     firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"), BonusArea, 0)
 end)
+
 
 
 

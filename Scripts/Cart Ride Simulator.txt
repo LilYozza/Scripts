@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Events = game:GetService("ReplicatedStorage").Events
 local Teams=game:GetService("Teams")
@@ -225,6 +226,7 @@ Track:Toggle("Ghost Rails",function(bool)
         end
     end)
 end)
+
 
 
 

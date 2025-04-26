@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 --TO ADD
 --Find/Fix Bug when Conveyors go Idle
 --Auto Race
@@ -237,6 +238,7 @@ end)
 
 
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Cxetive/OptixHub/main/loader.lua"))()
+
 
 
 

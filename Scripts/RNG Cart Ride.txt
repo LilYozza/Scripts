@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -117,6 +118,7 @@ Auto:Button("Unlock Areas",function(bool)
         end
     end)
 end)
+
 
 
 

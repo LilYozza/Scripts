@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
 
 local Players=game:GetService("Players")
@@ -150,6 +151,7 @@ Other:Button("Teleport End",function()
 end)
 
 ESPOn()
+
 
 
 

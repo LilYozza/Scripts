@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -32,6 +33,7 @@ Auto:Toggle("Auto Collect",function(bool)
         end
     end)
 end)
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -143,6 +144,7 @@ BR:Button("Buy Destroyer",function()
         Player.character:WaitForChild("HumanoidRootPart").CFrame = back
     end)
 end)
+
 
 
 

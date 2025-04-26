@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -30,6 +31,7 @@ Auto:Button("Auto Catch",function(bool)
         MoveTo(back)
     end)
 end)
+
 
 
 

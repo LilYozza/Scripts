@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 -->TO DO<--
     -->No Teleport (After Wins)
     
@@ -298,6 +299,7 @@ DamageMenu:Toggle("Auto Kill",function(bool)
         if not shared.ToggleAK then game:GetService("ReplicatedStorage").AutoDamage:FireServer(false)end
     end)
 end)
+
 
 
 

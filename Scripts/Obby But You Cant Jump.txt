@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -57,6 +58,7 @@ Auto:Button("Prev",function()
         end
     end)
 end)
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -203,6 +204,7 @@ Auto:Toggle("Auto Try",function(bool)
         end _hrp.Anchored = false
     end)
 end)
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -106,6 +107,7 @@ end)
 
 Players.ChildAdded:Connect(function() DropList:Refresh(GetDisplayNames()) end)
 Players.ChildRemoved:Connect(function() DropList:Refresh(GetDisplayNames()) end)
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -65,6 +66,7 @@ Auto:Button("Other",function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ToraIsMe2/ToraIsMe2/main/0zombiebattle", true))()
     end)
 end)
+
 
 
 

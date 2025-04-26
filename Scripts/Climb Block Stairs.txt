@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -49,6 +50,7 @@ Auto:Button("Swap",function()
         if PlayerSelect then SwapWith(PlayerSelect) end
     end)
 end)
+
 
 
 

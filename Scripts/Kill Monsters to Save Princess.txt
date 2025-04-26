@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Events = game:GetService("ReplicatedStorage").Remote
 local Players=game:GetService("Players")
@@ -173,6 +174,7 @@ Other:Button("sexyhub",function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/ovahpawer/sexyhub/main/Kill%20Monsters%20to%20Save%20Princess'))()
     end)
 end)
+
 
 
 

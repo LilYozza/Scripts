@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -43,6 +44,7 @@ Auto:Button("Get Weapons",function()
         if v:IsA("ClickDetector") and v:FindFirstAncestor("Model"):FindFirstChild("WeaponModel") then fireclickdetector(v) task.wait() end
     end end)
 end)
+
 
 
 

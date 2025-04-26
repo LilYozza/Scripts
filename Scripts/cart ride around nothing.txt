@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -500,6 +501,7 @@ Items:Button("Fly Potion",function()
         local it=FindItem("expensive flight potion") it=it:Clone()it.Parent=Player.Backpack it1=it:Clone() it1.Parent=game.ReplicatedStorage end
     end)
 end)
+
 
 
 

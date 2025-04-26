@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -288,6 +289,7 @@ end)
 
 Players.PlayerAdded:Connect(function()PlayerSelectDP:Refresh({"All", unpack(GetDisplayNames())})end)
 Players.PlayerRemoving:Connect(function()PlayerSelectDP:Refresh({"All", unpack(GetDisplayNames())}) end)
+
 
 
 

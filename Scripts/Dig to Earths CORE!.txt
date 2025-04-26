@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -104,6 +105,7 @@ Pets:Toggle("Auto Merge",function(bool)
         end
     end)
 end)
+
 
 
 

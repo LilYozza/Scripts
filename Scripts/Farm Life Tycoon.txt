@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -73,6 +74,7 @@ end)
 
 Auto:Button("Disconnect Conntions",function()
 spawn(function() E1:Disconnect() E2:Disconnect() if P1 then P1:Disconnect() end E3:Disconnect() print("Disconnected Events") end)end)
+
 
 
 

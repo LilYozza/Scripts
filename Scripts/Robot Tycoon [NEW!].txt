@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -100,6 +101,7 @@ end)
 local function AddPlayer(player)if not table.find(PlayerList,player.DisplayName) then table.insert(PlayerList, player.DisplayName)DropList:Refresh(PlayerList)end end
 local function RemovePlayer(player)if table.find(PlayerList,player.DisplayName) then RemoveItem(PlayerList, player.DisplayName)DropList:Refresh(PlayerList)end end
 local function GetPlayers()if not PlayerList[1] then table.insert(PlayerList, "All")for _,v in pairs(Players:GetChildren())do table.insert(PlayerList, v.DisplayName)DropList:Refresh(PlayerList)v.CharacterAdded:Connect(function()AddPlayer(v)end)end end end GetPlayers()
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -72,6 +73,7 @@ Auto:Toggle("Auto Win[WIP]",function(bool)
         end
     end)
 end)
+
 
 
 

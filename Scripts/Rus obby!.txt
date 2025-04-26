@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -46,6 +47,7 @@ Auto:Button("Previous",function()
         if _next then MoveTo(_next, Vector3.new(0,5,0)) end
     end)
 end)
+
 
 
 

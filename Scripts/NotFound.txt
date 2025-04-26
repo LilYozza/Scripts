@@ -1,2 +1,4 @@
+w = library:CreateWindow("Main")
+
 
 

@@ -1,72 +1,78 @@
 ﻿#Persistent
 
-; Get the script's directory
 scriptDir := A_ScriptDir
 
-; Create GUI
 Gui, Add, Text, x10 y10, Folder Path:
 Gui, Add, Button, x150 y10 w100 h30 gBrowseFolder, Open Folder
 Gui, Add, Edit, x10 y50 w300 h25 vSearchTerm, ; Input for line to find
 Gui, Add, Edit, x10 y90 w300 h25 vReplaceTerm, ; Input for new line
 Gui, Add, CheckBox, x10 y130 vDeleteLine, Delete Matching Lines
-Gui, Add, Button, x10 y170 w100 h30 gProcessFiles, Process Files
-Gui, Show, w320 h220, File Processor
+Gui, Add, CheckBox, x150 y130 vInsertMode, Insert into Matching Lines
+Gui, Add, Edit, x10 y170 w145 h25 vInsertLineNum, Line Number to Insert At
+Gui, Add, Edit, x165 y170 w145 h25 vInsertLineText, Line to Insert
+Gui, Add, Button, x10 y210 w100 h30 gProcessFiles, Process Files
+Gui, Show, w320 h260, File Processor
 
-; Set the folder path to the script's directory
 GuiControl,, FolderPath, % scriptDir
-
 return
 
 BrowseFolder:
-    ; Open the folder explorer in the script's directory
-    FileSelectFolder, folderPath, % scriptDir, 3, Select Folder
-    if (folderPath != "")
-    {
-        GuiControl,, FolderPath, % folderPath
-    }
+FileSelectFolder, folderPath, % scriptDir, 3, Select Folder
+if (folderPath != "")
+    GuiControl,, FolderPath, % folderPath
 return
 
 ProcessFiles:
-    Gui, Submit ; Get values from input fields
-    if (folderPath = "")
-    {
-        MsgBox, Please select a folder.
-        return
-    }
-    if (SearchTerm = "")
-    {
-        MsgBox, Please enter the line to find.
-        return
-    }
+Gui, Submit
 
-    Loop, Files, % folderPath "\*.txt"
-    {
-        FileRead, fileContent, % A_LoopFileFullPath
+if (folderPath = "") {
+    MsgBox, Please select a folder.
+    return
+}
 
-        ; Loop through each line in the file
-        lines := StrSplit(fileContent, "`n")
-        newContent := ""
-        
+Loop, Files, % folderPath "\*.txt"
+{
+    FileRead, fileContent, % A_LoopFileFullPath
+    lines := StrSplit(fileContent, "`n")
+    newContent := ""
+
+    ; If InsertLineNum and InsertLineText provided, do insert-at-line-number
+    if (InsertLineNum != "" && InsertLineText != "")
+    {
+        InsertAt := InsertLineNum + 0
+        loopCount := lines.Length()
+        Loop % loopCount + 1
+        {
+            if (A_Index = InsertAt)
+                newContent .= InsertLineText . "`n"
+            if (A_Index <= loopCount)
+                newContent .= lines[A_Index] . "`n"
+        }
+    }
+    else
+    {
         for index, line in lines
         {
-            if InStr(line, SearchTerm) ; Check if the line contains the search term
+            if InStr(line, SearchTerm)
             {
                 if (DeleteLine)
-                    continue ; Skip this line (effectively deletes it)
+                    continue
+                else if (InsertMode)
+                    newContent .= line . ReplaceTerm . "`n"
                 else
-                    newContent .= StrReplace(line, SearchTerm, ReplaceTerm) . "`n" ; Replace the term
+                    newContent .= StrReplace(line, SearchTerm, ReplaceTerm) . "`n"
             }
             else
-                newContent .= line . "`n" ; Keep the line unchanged
+                newContent .= line . "`n"
         }
-
-        ; Save the modified content back to the file
-        FileDelete, % A_LoopFileFullPath
-        FileAppend, % newContent, % A_LoopFileFullPath
     }
 
-    MsgBox, Process complete!
+    FileDelete, % A_LoopFileFullPath
+    FileAppend, % newContent, % A_LoopFileFullPath
+}
+
+ExitApp
 return
 
 GuiClose:
-    ExitApp
+ExitApp

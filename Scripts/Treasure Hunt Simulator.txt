@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Rs = game:GetService("ReplicatedStorage")
 local Players=game:GetService("Players")
@@ -592,6 +593,7 @@ end)
 
 Players.ChildAdded:Connect(function() cDropList2:Refresh(Players:GetPlayers()) end)
 Players.ChildRemoved:Connect(function() cDropList2:Refresh(Players:GetPlayers()) end)
+
 
 
 

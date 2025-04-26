@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Rs = game:GetService("ReplicatedStorage")
 local Players=game:GetService("Players")
@@ -61,6 +62,7 @@ Auto:Button("Fly",function()
         Fly(Player)
     end)
 end)
+
 
 
 

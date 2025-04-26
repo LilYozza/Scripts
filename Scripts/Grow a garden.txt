@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local VirtualUser = game:GetService("VirtualUser")
@@ -434,6 +435,7 @@ Shop:Button("Buy",function()
         buyGear(sItem2)
     end)
 end)
+
 
 
 

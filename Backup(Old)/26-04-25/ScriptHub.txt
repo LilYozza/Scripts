@@ -1,0 +1,665 @@
+local Games = {
+    [8328351891] = {
+        Name = "Mega Mansion Tycoon",
+        Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Mansion%20Tycoon.txt'
+    },
+    [35397735] = {
+        Name = "Scuba Diving at Quill Lake",
+        Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Scuba%20Diving%20at%20Quill%20Lake.txt'
+    },
+	[321778215] = {
+		Name = "Royale High",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Royale%20High.txt'
+	},
+	[7971857341] = {
+		Name = "YouTube Tycoon",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Youtube%20Tycoon.txt'
+	},
+	[28382335] = {
+		Name = "Zombie Survival Tycoon",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zombie%20Survival%20Tycoon.txt'
+	},
+	[7050008107] = {
+		Name = "Hospital Tycoon",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Hospital%20Tycoon.txt'
+	},
+	[5345933661] = {
+		Name = "2 Player Computer Tycoon",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Computer%20Tycoon.txt'
+	},
+	[2768379856] = {
+		Name = "3008",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/3008.txt'
+	},
+	[1020232214] = {
+		Name = "FIRST 3 PLAYER TYCOON IN ROBLOX!",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FIRST%203%20PLAYER%20TYCOON%20IN%20ROBLOX!.txt'
+	},
+	[6283640837] = {
+		Name = "Escape Super Fat Guy Obby",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Super%20Fat%20Guy%20Obby.txt'
+	},
+	[7951464846] = {
+		Name = "Penguin Tycoon",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Penguin%20Tycoon.txt'
+	},
+	[6374779901] = {
+		Name = "Escape Easy Choko Fun Obby Parkour",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Choko%20Fun%20Obby%20Parkour.txt'
+	},
+	[8003084678] = {
+		Name = "oMega Obby Parkour 525 Stages!",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/oMega%20Obby%20Parkour%20525%20Stages!.txt'
+	},
+	[8891045283] = {
+		Name = "[135] Find The Bacons",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B135%5D%20Find%20The%20Bacons.txt'
+	},
+	[8651851179] = {
+		Name = "[174] Find The Pandas",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5B174%5D%20Find%20The%20Pandas.txt'
+	},
+	[3587619225] = {
+		Name = "Mega Easy Obby 🌟 775 Stages!",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mega%20Easy%20Obby%20%F0%9F%8C%9F%20775%20Stages!.txt'
+	},
+	[9099326192] = {
+		Name = "GREAT SCHOOL BREAKOUT!",
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GREAT%20SCHOOL%20BREAKOUT!.txt'
+	},
+	[8712817601] = {
+		Name = "BARRY'S PRISON RUN! (First Person Obby!)",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/BARRYS%20PRISON%20RUN!.txt'
+	},
+	[6939111033] = {
+		Name = "Escape Papa Pizza's Pizzeria!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Papa%20Pizzas%20Pizzeria!.txt'
+	},
+	[2028593804] = {
+		Name = "Escape The Dungeon Obby!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Dungeon%20Obby!.txt'
+	},
+	[7839281987] = {
+		Name = "Escape Mr Funnys ToyShop!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Mr%20Funnys%20ToyShop!.txt'
+	},
+	[6153766069] = {
+		Name = "Escape The Carnival of Terror Obby!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Carnival%20of%20Terror%20Obby!.txt'
+	},
+	[5809883124] = {
+		Name = 'Easy 800 Stages Obby [NEW STAGES]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20800%20Stages%20Obby%20[NEW%20STAGES].txt'
+	},
+	[6496746583] = {
+		Name = "Escape The World Obby 🌎 [Mega Easy]",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20World%20Obby%20%F0%9F%8C%8E%20%5BMega%20Easy%5D.txt'
+	},
+	[7378813434] = {
+		Name = "Cotton Obby!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cotton%20Obby!.txt'
+	},
+	[6847090259] = {
+		Name = "Bulked Up",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bulked%20Up.txt'
+	},
+	[6939849554] = {
+		Name = "Cart Ride Tycoon thru a Cave 2",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Tycoon%20thru%20a%20Cave%202.txt'
+	},
+	[281489669] = {
+		Name = "[SPELLS] Wizard Tycoon - 2 Player",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BSPELLS%5D%20Wizard%20Tycoon%20-%202%20Player.txt'
+	},
+	[4913581664] = {
+		Name = "Cart Ride Into Rdite!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Into%20Rdite!.txt'
+	},
+	[8270679637] = {
+		Name = "Cart Ride Into Poppy!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Into%20Poppy!.txt'
+	},
+	[5963376918] = {
+		Name = "Anime Tycoon",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Tycoon.txt'
+	},
+	[3440262694] = {
+		Name = "Airport Tycoon!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Airport%20Tycoon.txt'
+	},
+	[574407221] = {
+		Name = "Super Hero Tycoon",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Hero%20Tycoon.txt'
+	},
+	[6677985923] = {
+		Name = "Millionaire Empire Tycoon",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Millionaire%20Empire%20Tycoon.txt'
+	},
+	[3451663900] = {
+		Name = "raise a floppa",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/raise%20a%20floppa.txt'
+	},
+	[7591156407] = {
+		Name = "My School Tycoon",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20School%20Tycoon.txt'
+	},
+	[6035061795] = {
+		Name = "My Supermarket",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Supermarket.txt'
+	},
+	[5865858426] = {
+		Name = "Retail Tycoon 2",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Retail%20Tycoon%202.txt'
+	},
+	[7219650554] = {
+		Name = "Escape Easy Obby Parkour!",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20Easy%20Obby%20Parkour!.txt'
+	},
+	[5650369483] = {
+		Name = "Tiny Difficulty Chart Obby Remastered",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tiny%20Difficulty%20Chart%20Obby%20Remastered.txt'
+	},
+	[8146731988] = {
+		Name = "Ultra Power Tycoon",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Ultra%20Power%20Tycoon.txt'
+	},
+	[6492279150] = {
+		Name = "Two Player Obby 2",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Two%20Player%20Obby%202.txt'
+	},
+	[8596003516] = {
+		Name = "[UPD4]Ninja Troop Tycoon",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/%5BUPD4%5DNinja%20Troop%20Tycoon.txt'
+	},
+	[9103460924] = {
+		Name = "Sword Factory X",
+		Script =  'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sword%20Factory%20X.txt'
+	},
+	[3823781113] = {
+		Name = '[UPDATE] Saber Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Saber%20WIP.txt'
+	},
+	[7059049638] = {
+		Name = 'Gas Station Tycoon [CAR WASH]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Gas%20Station%20Tycoon%20%5BCAR%20WASH%5D.txt'
+	},
+	[5320510816] = {
+		Name = 'Farm Life Tycoon 🥕',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Farm%20Life%20Tycoon.txt'
+	},
+	[5485374801] = {
+		Name = 'Sonic Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Sonic%20Tycoon.txt'
+	},
+	[8749261952] = {
+		Name = 'My Apartment Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Apartment%20Tycoon.txt'
+	},
+	[6220133106] = {
+		Name = 'Police Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Police%20Tycoon.txt'
+	},
+	[5534174456] = {
+		Name = 'Tropical Resort Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tropical%20Resort%20Tycoon.txt'
+	},
+	[8647122680] = {
+		Name = 'Super Car Tycoon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Car%20Tycoon!.txt'
+	},
+	[6538660276] = {
+		Name = 'Super Villain Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Super%20Villain%20Tycoon.txt'
+	},
+	[5310443220] = {
+		Name = 'GOD TYCOON',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/GOD%20TYCOON.txt'
+	},
+	[2340851751] = {
+		Name = 'SpiderMan Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/SpiderMan%20Tycoon.txt'
+	},
+	[8504215216] = {
+		Name = 'My Bee Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/My%20Bee%20Tycoon.txt'
+	},
+	[3605598334] = {
+		Name = 'SCP Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/SCP%20Tycoon.txt'
+	},
+	[8458060781] = {
+		Name = 'Evil Genius Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Evil%20Genius%20Tycoon.txt'
+	},
+	[10456811278] = {
+		Name = 'Milk Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Milk%20Tycoon.txt'
+	},
+	[7632911345] = {
+		Name = 'Firefighter Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Firefighter%20Simulator.txt'
+	},
+	[6772424226] = {
+		Name = '2 Player Millionaire Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/2%20Player%20Millionaire%20Tycoon.txt'
+	},
+	[9898710720] = {
+		Name = 'Money Tycoon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Money%20Tycoon!.txt'
+	},
+	[10660791703] = {
+		Name = 'cart ride around nothing',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/cart%20ride%20around%20nothing.txt'
+	},
+	[9912491609] = {
+		Name = 'How far can you jump',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/How%20far%20can%20you%20jump.txt'
+	},
+	[10681346822] = {
+		Name = 'Roblox but every second you get +1 Jump Power',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20but%20every%20second%20you%20get%20+1%20Jump%20Power.txt'
+	},
+	[6447164733] = {
+		Name = 'Climb Block Stairs',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%20Block%20Stairs.txt'
+	},
+	[10617080113] = {
+		Name = 'The Impossible Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/The%20Impossible%20Obby.txt'
+	},
+	[7180042682] = {
+		Name = 'MilitaryTycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/MilitaryTycoon.txt'
+	},
+	[6938764986] = {
+		Name = 'AirPlane Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/AirPlane%20Simulator.txt'
+	},
+	[10809467765] = {
+		Name = 'Zipline Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zipline%20Obby.txt'
+	},
+	[10526921593] = {
+		Name = 'CHAIR RACING',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/CHAIR%20RACING.txt'
+	},
+	[7952502098] = {
+		Name = 'Impossible Glass Bridge Obby! (Squid Game)',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20Glass%20Bridge%20Obby!%20(Squid%20Game).txt'
+	},
+	[7502726087] = {
+		Name = 'Be a Hero',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Be%20a%20Hero.txt'
+	},
+	[10738647949] = {
+		Name = 'Roblox But You Get Taller Every Second',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Roblox%20But%20You%20Get%20Taller%20Every%20Second.txt'
+	},
+	[10979991953] = {
+		Name = 'Max Speed Update 3',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Max%20Speed%20Update%203.txt'
+	},
+	[8884334497] = {
+		Name = 'Mining Clicker Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Mining%20Clicker%20Simulator.txt'
+	},
+	[3102144307] = {
+		Name = 'Anime Clicker Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Clicker%20Simulator.txt'
+	},
+	[10151870864] = {
+		Name = '[Update!] Ice Factory Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[Update!]%20Ice%20Factory%20Tycoon.txt'
+	},
+	[6794368433] = {
+		Name = 'Be a Spider! Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Be%20a%20Spider!%20Tycoon.txt'
+	},
+	[4503457673] = {
+		Name = 'Dragon Ball Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Dragon%20Ball%20Tycoon.txt'
+	},
+	[10828925984] = {
+		Name = 'Robot Tycoon [NEW!]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Robot%20Tycoon%20[NEW!].txt'
+	},
+	[5275822877] = {
+		Name = 'Cart + Car Ride into GigaNoob',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20+%20Car%20Ride%20into%20GigaNoob.txt'
+	},
+	[6545522774] = {
+		Name = '[NEW] 2 Player YouTube Tycoon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[NEW]%202%20Player%20YouTube%20Tycoon!.txt'
+	},
+	[10919241870] = {
+		Name = '[HALLOWEEN] Rarity Factory Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[HALLOWEEN]%20Rarity%20Factory%20Tycoon.txt'
+	},
+	[5670292785] = {
+		Name = '[SUPER TANK UPDATE] Undead Defense Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[SUPER%20TANK%20UPDATE]%20Undead%20Defense%20Tycoon.txt'
+	},
+	[5740246170] = {
+		Name = 'Tower Simulator (BETA!)',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Tower%20Simulator%20(BETA!).txt'
+	},
+	[10726371567] = {
+		Name = 'Find The Simpsons [154]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Find%20The%20Simpsons%20[154].txt'
+	},
+	[10977918334] = {
+		Name = '[NEW] Merge Droppers!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[NEW]%20Merge%20Droppers!.txt'
+	},
+	[10920409126] = {
+		Name = 'Anime Fusion Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Fusion%20Tycoon.txt'
+	},
+	[10893141806] = {
+		Name = 'Truck Factory Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Truck%20Factory%20Tycoon.txt'
+	},
+	[10984838211] = {
+		Name = '[DESERT MAP] Battlefield Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/[DESERT%20MAP]%20Battlefield%20Tycoon.txt'
+	},
+	[10951003026] = {
+		Name = 'Bee Empire Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bee%20Empire%20Tycoon.txt'
+	},
+	[9862832367] = {
+		Name = 'Never-Ending Cart Ride',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Never-Ending%20Cart%20Ride.txt'
+	},
+	[10836305188] = {
+		Name = 'FALL [Impossible]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FALL%20[Impossible].txt'
+	},
+	[3240343305] = {
+		Name = 'Forgotten Memories',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Forgotten%20Memories.txt'
+	},
+	[6828235261] = {
+		Name = 'FNAF Coop',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FNAF%20Coop.txt'
+	},
+	[9705460681] = {
+		Name = 'The Ants Underground Kingdom',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/The%20Ants%20Underground%20Kingdom.txt'
+	},
+	[11800876530] = {
+		Name = '+1 Blocks Every Second',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/+1%20Blocks%20Every%20Second.txt'
+	},
+	[4072288216] = {
+		Name = 'Cart Ride Delivery Service',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Delivery%20Service.txt'
+	},
+	[11874473440] = {
+		Name = 'Car Factory Tycoon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Car%20Factory%20Tycoon!.txt'
+	},
+	[11544799867] = {
+		Name = 'Hollywood Mansion Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Hollywood%20Mansion%20Tycoon.txt'
+	},
+	[11877743732] = {
+		Name = 'Zombie Battle Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Zombie%20Battle%20Tycoon.txt'
+	},
+	[5818771056] = {
+		Name = 'Alpine Slide to Telamon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Alpine%20Slide%20to%20Telamon!.txt'
+	},
+	[10129750406] = {
+		Name = 'Climb 2000 Stairs to VIP Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%202000%20Stairs%20to%20VIP%20Obby.txt'
+	},
+	[11806348769] = {
+		Name = 'Cart Ride Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Cart%20Ride%20Simulator.txt'
+	},
+	[11756661207] = {
+		Name = 'Stairs Of RAGE!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Stairs%20Of%20RAGE!.txt'
+	},
+	[11133411183] = {
+		Name = 'Walk to school in OHIO',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Walk%20to%20school%20in%20OHIO.txt'
+	},
+	[7967092071] = {
+		Name = 'Guess the Emoji',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Guess%20the%20Emoji.txt'
+	},
+	[3266192001] = {
+		Name = 'Kill Monsters to Save Princess',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Kill%20Monsters%20to%20Save%20Princess.txt'
+	},
+	[10679961467] = {
+		Name = '5050 Pick A Door Obby!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/5050%20Pick%20A%20Door%20Obby!.txt'
+	},
+	[11912525919] = {
+		Name = 'Every Second You Get +1',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Second%20You%20Get%20+1.txt'
+	},
+	[10945472407] = {
+		Name = 'Strong Muscle Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Strong%20Muscle%20Simulator.txt'
+	},
+	[11319403460] = {
+		Name = 'Coal Miner Tycoon 2 [2.1.7]',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Coal%20Miner%20Tycoon%202%20[2.1.7].txt'
+	},
+	[9641256228] = {
+		Name = 'Impossible Glass Bridge Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20Glass%20Bridge%20Obby.txt'
+	},
+	[128578546442311] = {
+		Name = 'Escape The Pit',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Pit.txt'
+	},
+	[14409837735] = {
+		Name = 'Only Run!!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Only%20Run!!.txt'
+	},
+	[5818771056] = {
+		Name = 'Alpine Slide to Telamon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Alpine%20Slide%20to%20Telamon!.txt'
+	},
+	[18738679670] = {
+		Name = 'Pick Right Path to RICH!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Pick%20Right%20Path%20to%20RICH!.txt'
+	},
+	[15037674330] = {
+		Name = 'Longest Obby Ever',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Longest%20Obby%20Ever.txt'
+	},
+	[12413830324] = {
+		Name = 'Stud Jump Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Stud%20Jump%20Obby.txt'
+	},
+	[6875469709] = {
+		Name = 'STRONGEST PUNCH SIMULATOR',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/STRONGEST%20PUNCH%20SIMULATOR.txt'
+	},
+	[10272636261] = {
+		Name = 'Infinite Tower Tycoon',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Infinite%20Tower%20Tycoon.txt'
+	},
+	[12114398020] = {
+		Name = 'Every Second You Get +1 Points',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Second%20You%20Get%20+1%20Points.txt'
+	},
+	[87583185172012] = {
+		Name = 'Impossible SQUID Bridge (Squid Game)',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Impossible%20SQUID%20Bridge%20(Squid%20Game).txt'
+	},
+	[109644231059364] = {
+		Name = 'Maze Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Maze%20Simulator.txt'
+	},
+	[17524285289] = {
+		Name = 'Scythe Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Scythe%20Simulator.txt'
+	},
+	[17723028298] = {
+		Name = 'Win Obby Break into the Concert',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Win%20Obby%20Break%20into%20the%20Concert.txt'
+	},
+	[18993029136] = {
+		Name = 'RNG Cart Ride',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/RNG%20Cart%20Ride.txt'
+	},
+	[11166344460] = {
+		Name = 'Easy Stud Jumps Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Easy%20Stud%20Jumps%20Obby.txt'
+	},
+	[13027675420] = {
+		Name = 'Effortless Tower',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Effortless%20Tower.txt'
+	},
+	[13949837806] = {
+		Name = 'World Food Tower',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/World%20Food%20Tower.txt'
+	},
+	[12933818947] = {
+		Name = 'Collapsing Tower',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Collapsing%20Tower.txt'
+	},
+	[18768675350] = {
+		Name = 'Every Click +1 Jump',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Click%20+1%20Jump.txt'
+	},
+	[13057041140] = {
+		Name = 'Every Second Stud Jumps Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Every%20Second%20Stud%20Jumps%20Obby.txt'
+	},
+	[16732694052] = {
+		Name = 'fisch',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/fisch.txt'
+	},
+	[4523856444] = { --12931609417
+		Name = 'Color or Die',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Color%20or%20Die.txt'
+	},
+	[12062249395] = {
+		Name = 'Stud Long Jumps Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Stud%20Long%20Jumps%20Obby.txt'
+	},
+	[4642134795] = {
+		Name = 'Obby But You Cant Jump',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Obby%20But%20You%20Cant%20Jump.txt'
+	},
+	[10696132968] = {
+		Name = 'Win Obby and Get',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Win%20Obby%20and%20Get.txt'
+	},
+	[15313073197] = {
+		Name = 'Anime Combats Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Combats%20Simulator.txt'
+	},
+	[84421264392487] = {
+		Name = 'Blue Train Coaster',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Blue%20Train%20Coaster.txt'
+	},
+	[92335351779065] = {
+		Name = 'Catch All 456 Noobs',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Catch%20All%20456%20Noobs.txt'
+	},
+	[11346638227] = {
+		Name = 'FALL BUT 100 PLAYERS',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/FALL%20BUT%20100%20PLAYERS.txt'
+	},
+	[132177827387692] = {
+		Name = '100 Player Slippery Stairs',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Player%20Slippery%20Stairs.txt'
+	},
+	[97807976116293] = {
+		Name = 'Climb Stairs But LAVA RAISING',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Climb%20Stairs%20But%20LAVA%20RAISING.txt'
+	},
+	[15666161643] = {
+		Name = 'RAGE QUIT OBBY',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/RAGE%20QUIT%20OBBY.txt'
+	},
+	[11958679291] = {
+		Name = 'Rus obby!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Rus%20obby!.txt'
+	},
+	[126956674398707] = {
+		Name = 'Win UGC Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Win%20UGC%20Obby.txt'
+	},
+	[140317247681516] = {
+		Name = 'Jump Clicker',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Jump%20Clicker.txt'
+	},
+	[12167899110] = {
+		Name = 'Stud Walls Jump Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Stud%20Walls%20Jump%20Obby.txt'
+	},
+	[18652884352] = {
+		Name = '100 Players Impossible Maze',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Players%20Impossible%20Maze.txt'
+	},
+	[103502138774608] = {
+		Name = '100 Players Meme Maze',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Players%20Meme%20Maze.txt'
+	},
+	[126884695634066] = {
+		Name = 'Grow a garden',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Grow%20a%20garden.txt'
+	},
+	[13033713206] = {
+		Name = 'Become Forklift Certified obby!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Become%20Forklift%20Certified%20obby!.txt'
+	},
+	[100760208242053] = {
+		Name = 'Boys vs Girls Tycoon!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Boys%20vs%20Girls%20Tycoon!.txt'
+	},
+	[85410484554427] = {
+		Name = '100 Player Down Hill Smash!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Player%20Down%20Hill%20Smash!.txt'
+	},
+	[91645930004953] = {
+		Name = 'Addictive Apple Game',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Addictive%20Apple%20Game.txt'
+	},
+	[81440632616906] = {
+		Name = 'Dig to Earths CORE!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Dig%20to%20Earths%20CORE!.txt'
+	},
+	[1345139196] = {
+		Name = 'Treasure Hunt Simulator',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Treasure%20Hunt%20Simulator.txt'
+	},
+	[110345898280451] = {
+		Name = 'Semi Truck Obby',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Semi%20Truck%20Obby.txt'
+	},
+	[108616176683580] = {
+		Name = 'Heaven Line',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Heaven%20Line.txt'
+	}
+}
+repeat task.wait()until game:IsLoaded()
+
+getgenv().library = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt'))()
+getgenv().Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
+local _g = Games[game.PlaceId] or Games[game.GameId]
+if _g then
+    print("Running:",_g.Name)
+    local s,e = pcall(function()
+        spawn(function() loadstring(game:HttpGet(_g.Script))()end)
+    end)
+    if not s then
+        print(e) print("Error Loading",_g.Name, "Script... Reloading....")
+    end
+else
+     print("No Script Found For Game")
+end
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

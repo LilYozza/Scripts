@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -74,6 +75,7 @@ end)
 Auto:Button("Give Items",function()
     spawn(function() for _,v in pairs(PurchasedBuildings:GetDescendants()) do if v:IsA("ProximityPrompt") and v.Parent:FindFirstChild("Sphere.007") then FireProximity(v.Parent:FindFirstChild("Sphere.007"), v) end end end)
 end)
+
 
 
 

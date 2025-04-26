@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -276,6 +277,7 @@ if ChristmasEvent then
         end)
     end)
 end
+
 
 
 

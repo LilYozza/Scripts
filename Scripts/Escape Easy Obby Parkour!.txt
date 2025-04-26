@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -29,6 +30,7 @@ Auto:Button("Give Items",function()
         end
     end)
 end)
+
 
 
 

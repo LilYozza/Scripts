@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 --Dynamic Variables (Changes If Needed To)
 local TurnTrackCheck = 30
@@ -264,6 +265,7 @@ TrackMenu:Toggle("Auto Toggle",function(bool)
         end
     end)
 end)
+
 
 
 

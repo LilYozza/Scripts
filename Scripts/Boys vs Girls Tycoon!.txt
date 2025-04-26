@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
 
 
@@ -119,6 +120,7 @@ Items:Button("Refresh",function(bool)
         DropList:Refresh(itemTable)
     end)
 end)
+
 
 
 

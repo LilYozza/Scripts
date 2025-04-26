@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -90,6 +91,7 @@ Auto:Toggle("Pet Upgrade",function(bool)
         end
     end)
 end)
+
 
 
 

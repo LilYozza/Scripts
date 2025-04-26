@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -436,6 +437,7 @@ if AssassianEvent then
 		end)
 	end)
 end
+
 
 
 

@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -121,6 +122,7 @@ Auto:Toggle("Fire All",function(bool) --IDK WHAT IT DOES ???? LOL
     task.wait()end)task.wait()if not s then print(e)end end
     end)
 end)
+
 
 
 

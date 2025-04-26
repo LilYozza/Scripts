@@ -1,3 +1,4 @@
+w = library:CreateWindow("Main")
 
 
 local Players=game:GetService("Players")
@@ -94,6 +95,7 @@ Auto:Button("Remove Doors",function()
         for _,v in pairs(Tycoon2:GetDescendants())do if v.Name=="OwnerOnlyDoor" and v.Parent.Name=="PurchasedObjects" and not v:FindFirstAncestor(Tycoon.Name) then for i,p in pairs(v:GetDescendants())do if p:IsA("TouchTransmitter") then p:Destroy()end if p:IsA("BasePart")then p.BrickColor=BrickColor.new("Lime green")end end end if v.Name=="kat1" and v:FindFirstAncestor("PurchasedObjects") and not v:FindFirstAncestor(Tycoon.Name) then if v:FindFirstChild("TouchInterest") then v.TouchInterest:Destroy()end end end
     end)
 end)
+
 
 
 
