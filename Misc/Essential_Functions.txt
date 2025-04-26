@@ -49,7 +49,8 @@ local _sHelp = {
     ["CreateTextLabel"] = "CreateTextLabel(Text, Color, Position)",
     ["CreateBillBoard"] = "CreateBillBoard()",
     ["Tag"] = "Tag(Part, Bool?(Add OR Remove), Settings1, Settings2)",
-    ["FindItem"] = "FindItem(Name, PartOrNot, MatchType)"
+    ["FindItem"] = "FindItem(Name, PartOrNot, MatchType)",
+    ["Repeat"] = "Repeat(Function, Bool, Timeout)"
 }
 
 
@@ -606,6 +607,21 @@ getgenv().FindItem = function(_s, _p, _t) -- _s = String to find / _p = item to 
         return _tb
     else
         warn("FindItem: Bad Values...(No String To Search)")
+    end
+end
+
+getgenv().Repeat = function(_func, _bool, _timeout, _checkSpeed)
+    if _func and typeof(_func) == "function" then
+        _bool = _bool or false
+        _timeout = _timeout or 10
+        _checkSpeed = _checkSpeed or 0.1
+
+
+        local timer = true
+        spawn(function() task.wait(_timeout) timer = false end)
+        repeat _func() task.wait(_checkSpeed) until _bool or not timer
+    else
+        warn("Repeat: Bad Values...(Function nil or not a Function)")
     end
 end
 
