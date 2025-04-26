@@ -645,20 +645,21 @@ local Games = {
 	}
 }
 repeat task.wait()until game:IsLoaded()
-getgenv().MLoaded = false
+
+getgenv().library = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt'))()
+getgenv().Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
+
 local _g = Games[game.PlaceId] or Games[game.GameId]
 if _g then
     print("Running:",_g.Name)
     local s,e = pcall(function()
-        spawn(function() loadstring(game:HttpGet(_g.Script))()end) task.wait(5)
-        if not MLoaded then loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()end
+        spawn(function() loadstring(game:HttpGet(_g.Script))()end)
     end)
     if not s then
-        print(e)
-        print("Error Loading",_g.Name, "Script... Reloading....")
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))()
+        print(e) print("Error Loading",_g.Name, "Script... Reloading....")
     end
 else
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/NotFound.txt'))() print("No Script Found For Game")
+     print("No Script Found For Game")
 end
 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()

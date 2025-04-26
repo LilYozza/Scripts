@@ -5,7 +5,6 @@
 --Auto BuyNext Conveyor
 local RaceCar = "Feeat 500"
 
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
 local Lighting = game:GetService("Lighting")
 local Players=game:GetService("Players")
@@ -240,4 +239,6 @@ end)
 --loadstring(game:HttpGet("https://raw.githubusercontent.com/Cxetive/OptixHub/main/loader.lua"))()
 
 
-local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+
+
+

@@ -253,7 +253,6 @@ Auto:Toggle("Avoid Enemies",function(bool)
 end)end
 
 Other:Button("Other",function()spawn(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/GMWJKIHGJIWNHIOWNHIUJHYW536363/Reapers-Hub/reaperrr/Free%20Script.lua"))()end)end)
-local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
 
 if game.PlaceId==8482713490 then 
 local Remotes = game:GetService("ReplicatedStorage").Remotes
@@ -363,3 +362,5 @@ end)
 
 
 end
+
+

@@ -1,5 +1,4 @@
 local _LOADCFRAME = CFrame.new(-13, 2050.2002, -5.99999905, 1, 0, 0, 0, 1, 0, 0, 0, 1)+Vector3.new(0,10,0)
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -168,4 +167,6 @@ ItemMenu:Button("Clear Inv",function()
     end)
 end)
 
-local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+
+
+

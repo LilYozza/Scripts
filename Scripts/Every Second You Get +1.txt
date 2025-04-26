@@ -1,7 +1,6 @@
 -->TO DO<--
     -->No Teleport (After Wins)
     
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -300,4 +299,6 @@ DamageMenu:Toggle("Auto Kill",function(bool)
     end)
 end)
 
-local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+
+
+

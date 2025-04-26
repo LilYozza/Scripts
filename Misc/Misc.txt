@@ -1,7 +1,4 @@
 local FullBright = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/FullBright.txt'))
-if not EFLoaded then
-    local Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
-end
 
 --======================================FUNCTION IMPORTS=====================================--
 local ESP = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/ESP.txt'))()
@@ -19,9 +16,12 @@ local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
 local mouse = Player:GetMouse()
 
-local GPlayers = w:CreateFolder("Players")
-local Misc = w:CreateFolder("Misc")
-local Dev = w:CreateFolder("Dev")
+e = library:CreateWindow("Other")
+
+local GPlayers = e:CreateFolder("Players")
+local Misc = e:CreateFolder("Misc")
+local Tools = e:CreateFolder("Tools")
+local Dev = e:CreateFolder("Dev")
 
 local PlayerSelect_M
 local PlayerList_M={}
@@ -337,5 +337,3 @@ end)
 
 --===========================================================================================--
 Player.Idled:connect(function()Virtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)task.wait(1)Virtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)end)
-
-getgenv().MLoaded = true

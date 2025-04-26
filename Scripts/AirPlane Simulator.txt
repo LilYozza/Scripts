@@ -1,4 +1,3 @@
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt')))()w = library:CreateWindow("Main")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -29,4 +28,5 @@ Other:Button("Execute Script",function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Marco8642/science/main/airplane%20simulator", true))()
 end)
 
-local Miscload = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+
+
