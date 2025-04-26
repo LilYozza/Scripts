@@ -41,6 +41,7 @@ local _sHelp = {
     ["GetPlayerByDisplayName"] = "GetPlayerByDisplayName(Player)",
     ["GetClosestPart"] = "GetClosestPart(Table, Part)",
     ["FindInTable"] = "FindInTable(Table, Item)",
+    ["MatchTable"] = "MatchTable(Table, Item)",
     ["ReverseTable"] = "ReverseTable(Table)",
     ["ReturnTableAsString"] = "ReturnTableAsString(Table)",
     ["Timer"] = "Timer(Time(seconds))",
@@ -490,6 +491,17 @@ getgenv().FindInTable = function(_tbl, _item)
 	else
 		warn("FindInTable: Bad Values...")
 	end
+end
+
+getgenv().MatchTable = function(_tbl, _item)
+    if _tbl and typeof(_tbl) == "table" then
+        for _,v in pairs(_tbl) do
+            local n = v.Name or v
+            if n:match(_item) then return v end
+        end
+    else
+        warn("MatchTable: Bad Values...(Table nil or not a Table)")
+    end
 end
 
 getgenv().ReverseTable = function(_tbl)
