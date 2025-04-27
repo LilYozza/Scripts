@@ -126,7 +126,7 @@ end
 local function getSeeds(_name)
     -- Check Current Hand or Backpack
     local tool = Player.Character:FindFirstChildWhichIsA("Tool")
-    if tool and tool.Name:find("Seed") and not MatchTable(blacklistPlant, v.Name) then
+    if tool and tool.Name:find("Seed") and not MatchTable(blacklistPlant, tool.Name) then
         return tool
     else
         for _, v in pairs(Player.Backpack:GetChildren()) do
