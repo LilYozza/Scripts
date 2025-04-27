@@ -6,6 +6,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
+-- GAME EVENTS --
+local Poppy = Workspace:FindFirstChild("Poppy")
+if Poppy then EasterEvent = w:CreateFolder("EasterEvent") end
+
+local SeedPack = Workspace:FindFirstChild("SeedPack")
+if SeedPack then SeedPackEvent = w:CreateFolder("SeedPack Event") end
+
 local Auto = w:CreateFolder("Auto")
 local Plant = w:CreateFolder("Plant")
 local Shop = w:CreateFolder("Shop")
@@ -31,22 +38,30 @@ local sItem2 = gearItems[1]
 
 local blacklistPlant = {}
 
-local questGui = Player.PlayerGui:FindFirstChild("DailyQuests_UI")
-local Easter_Shop = Player.PlayerGui:FindFirstChild("Easter_Shop")
-local SeedSack_UI = Player.PlayerGui:FindFirstChild("FreeSeedSack_UI")
+local Easter_Shop, SeedSack_UI
+local questGui = Player.PlayerGui:WaitForChild("DailyQuests_UI")
+local gearShop = Player.PlayerGui:WaitForChild("Gear_Shop")
+local seedShop = Player.PlayerGui:WaitForChild("Seed_Shop")
 
--- GAME EVENTS --
-local Poppy = Workspace:FindFirstChild("Poppy")
-if Poppy then
-    EasterEvent = w:CreateFolder("EasterEvent")
-end
 
-local SeedPack = Workspace:FindFirstChild("SeedPack")
-if SeedPack then
-    SeedPackEvent = w:CreateFolder("SeedPackEvent")
-end
+
 
 -->Non Return Functions<--
+local function checkString(input)
+    local result = input
+    for i = 2, #input do
+        if input:sub(i, i):match("%u") then
+            if input:sub(i-1, i-1) ~= " " then
+                result = result:sub(1, i-1) .. " " .. result:sub(i)
+                break
+            end
+        end
+    end
+    return result
+end
+
+print(checkString("WateringCan"))
+
 local function buySeed(_item, _amt)
     _amt = _amt or 1
     for i = 1, _amt do
@@ -60,12 +75,11 @@ local function buySeed(_item, _amt)
     return
 end
 
-
-
 local function buyGear(_item, _amt)
+    _item = checkString(_item)
     _amt = _amt or 1
     for i = 1, _amt do
-        --print("Buying:", _item)
+        print("Buying:", _item)
         ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuyGearStock"):FireServer(_item)
     end
     
@@ -114,11 +128,11 @@ end
 local function getSeeds(_name)
     -- Check Current Hand or Backpack
     local tool = Player.Character:FindFirstChildWhichIsA("Tool")
-    if tool and tool.Name:find("Seed") and not table.find(blacklistPlant, tool.Name) then
+    if tool and tool.Name:find("Seed") and not MatchTable(blacklistPlant, v.Name) then
         return tool
     else
         for _, v in pairs(Player.Backpack:GetChildren()) do
-            if v:IsA("Tool") and v.Name:find("Seed") and not table.find(blacklistPlant, v.Name) then
+            if v:IsA("Tool") and v.Name:find("Seed") and not MatchTable(blacklistPlant, v.Name) then
                 return v
             end
         end
@@ -126,23 +140,30 @@ local function getSeeds(_name)
     return
 end
 
-local function getPlant(_name)
+local function getPlant(_name, _weight)
+    _weight = _weight or 0
+
     -- Check hand
     local tool = Player.Character:FindFirstChildWhichIsA("Tool")
     if tool and (not _name or tool.Name:find(_name)) then
-        return tool
+        -- Check if the weight is greater than the specified weight
+        if tool:FindFirstChild("Weight") and tool.Weight.Value > _weight then
+            return tool
+        end
     end
 
     -- Check backpack
     for _, v in pairs(Player.Backpack:GetChildren()) do
         if v:IsA("Tool") and (not _name or v.Name:find(_name)) then
-            return v
+            -- Check if the weight is greater than the specified weight
+            if v:FindFirstChild("Weight") and v.Weight.Value > _weight then
+                return v
+            end
         end
     end
 
     return
 end
-
 
 local function checkStock(_seed) --Input String
     local Seed_Shop = Player.PlayerGui:FindFirstChild("Seed_Shop")
@@ -206,6 +227,7 @@ local points = getGridPoints(20,10,0)
 --=================================== EASTER EVENT ===================================
 
 if Poppy then
+Easter_Shop = Player.PlayerGui:FindFirstChild("Easter_Shop")
 EasterEvent:Button("Easter Shop",function()
     spawn(function()
         Easter_Shop.Enabled = not Easter_Shop.Enabled
@@ -244,16 +266,27 @@ end
 
 --=================================== SEED PACK GIVER EVENT ===================================
 if SeedPack then
-
+SeedSack_UI = Player.PlayerGui:FindFirstChild("FreeSeedSack_UI")
 local DataService = ReplicatedStorage.Modules.DataService
 local mData = require(DataService)
+
+local function toString(...)
+    local s = {...}
+    return tostring(s[1]) .. "  " .. tostring(s[2])
+end
 
 local function getInfo()
     local pData = mData:GetData()
     local pInfo = pData.SeedPackGiverInfo.RequiredPlantInfo
-    return tostring(pInfo.RequiredPlant) .. "  " .. tostring(pInfo.RequiredPlantSize or "")
-end
 
+    local plant = pInfo.RequiredPlant
+    local mutation = pInfo.RequiredPlantMutation or false
+    if mutation then 
+        plant =  "[" .. tostring(mutation).. "] " .. tostring(pInfo.RequiredPlant)
+    end
+
+    return  plant, pInfo.RequiredPlantSize
+end
 
 SeedPackEvent:Button("Open Event",function()
     spawn(function()
@@ -261,7 +294,7 @@ SeedPackEvent:Button("Open Event",function()
     end)
 end)
 
-local label1 = SeedPackEvent:Label(getInfo(),{
+local label1 = SeedPackEvent:Label(toString(getInfo()),{
     TextSize = 25; -- Self Explaining
     TextColor = Color3.fromRGB(255,255,255);
     BgColor = Color3.fromRGB(69,69,69);
@@ -269,7 +302,7 @@ local label1 = SeedPackEvent:Label(getInfo(),{
 
 task.spawn(function()
     while true do
-        label1:Refresh(getInfo())
+        label1:Refresh(toString(getInfo()))
         task.wait(1)
     end
 end)
@@ -283,12 +316,58 @@ SeedPackEvent:Button("Give Plant",function()
         end
     end)
 end)
+
+SeedPackEvent:Toggle("Auto Give",function(bool)
+    shared.ToggleEPAG=bool
+    spawn(function()
+        while shared.ToggleEPAG do
+            -- CHECK PLAYER INV
+            local rPlant, rSize = getInfo()
+            local plant = getPlant(rPlant, rSize)
+            if plant then
+                if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
+                ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
+            end
+            task.wait(5)
+        end
+    end)
+end)
+
+SeedPackEvent:Toggle("Spam Give",function(bool)
+    shared.ToggleEPSG=bool
+    spawn(function()
+        while shared.ToggleEPSG do
+            -- CHECK PLAYER INV
+            local rPlant, rSize = getInfo()
+            local plant = getPlant(rPlant, rSize)
+            if plant then
+                if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
+                ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+
 end
 --=============================================================================================
 
 Auto:Button("Home",function()
     spawn(function()
         MoveTo(spawnPoint, Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Seed Shop",function()
+    spawn(function()
+        seedShop.Enabled = not seedShop.Enabled
+    end)
+end)
+
+Auto:Button("Gear Shop",function()
+    spawn(function()
+        gearShop.Enabled = not gearShop.Enabled
     end)
 end)
 
@@ -441,18 +520,22 @@ Plant:Toggle("Auto Plant",function(bool)
     end)
 end)
 
-Plant:Toggle("Plant Hand",function(bool)
+Plant:Toggle("Plant Hand", function(bool)
     shared.TogglePH = bool
     spawn(function()
         while shared.TogglePH do
-            local tool, seed = Player.Character:FindFirstChildWhichIsA("Tool"); seed = tool and tool:FindFirstChild("Plant_Name")
-            if seed and seed.Parent then
-                seed = seed.Parent
-                for _, pos in pairs(points) do
-                    if not shared.TogglePH then return end
-                    local match = seed.Name:match("^(.-)%s*Seed")
-                    if match and checkPos(pos + Vector3.new(0, 0.1, 0)) then
-                        plantItem(pos, match)
+            local tool = Player.Character:FindFirstChildWhichIsA("Tool")
+            if tool then
+                -- Check if the tool's name matches the seed pattern
+                local match = tool.Name:match("^(.-)%s*Seed")
+                if match then
+                    -- If it matches, use the seed's parent
+                    local seed = tool.Parent
+                    for _, pos in pairs(points) do
+                        if not shared.TogglePH then return end
+                        if checkPos(pos + Vector3.new(0, 0.1, 0)) then
+                            plantItem(pos, match)
+                        end
                     end
                 end
             end
@@ -480,11 +563,3 @@ Shop:Button("Buy",function()
         buyGear(sItem2)
     end)
 end)
-
-
-
-
-
-
-
-
