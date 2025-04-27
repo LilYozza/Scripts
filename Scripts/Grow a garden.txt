@@ -77,7 +77,7 @@ local function buyGear(_item, _amt)
     _item = checkString(_item)
     _amt = _amt or 1
     for i = 1, _amt do
-        print("Buying:", _item)
+        --print("Buying:", _item)
         ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuyGearStock"):FireServer(_item)
     end
     
@@ -166,7 +166,8 @@ end
 local function checkStock(_seed) --Input String
     local Seed_Shop = Player.PlayerGui:FindFirstChild("Seed_Shop")
     if Seed_Shop then
-        local plant = Seed_Shop.Frame.ScrollingFrame:FindFirstChild(_seed) or Easter_Shop.Frame.ScrollingFrame:FindFirstChild(_seed)
+        local plant = Seed_Shop.Frame.ScrollingFrame:FindFirstChild(_seed)
+        if not plant and Easter_Shop then plant = Easter_Shop.Frame.ScrollingFrame:FindFirstChild(_seed) end
         if plant then
             local Stock = fromSuffixString(plant.Main_Frame.Stock_Text.Text)
             local Price = fromSuffixString(plant.Main_Frame.Cost_Text.Text)
