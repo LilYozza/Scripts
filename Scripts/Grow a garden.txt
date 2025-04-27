@@ -7,10 +7,10 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 -- GAME EVENTS --
-local Poppy = Workspace:FindFirstChild("Poppy")
+local Poppy = Workspace:WaitForChild("Poppy", 2)
 if Poppy then EasterEvent = w:CreateFolder("EasterEvent") end
 
-local SeedPack = Workspace:FindFirstChild("SeedPack")
+local SeedPack = Workspace:WaitForChild("SeedPack", 2)
 if SeedPack then SeedPackEvent = w:CreateFolder("SeedPack Event") end
 
 local Auto = w:CreateFolder("Auto")
@@ -59,8 +59,6 @@ local function checkString(input)
     end
     return result
 end
-
-print(checkString("WateringCan"))
 
 local function buySeed(_item, _amt)
     _amt = _amt or 1
