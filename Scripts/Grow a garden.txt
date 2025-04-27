@@ -21,7 +21,7 @@ local Farm = Workspace:WaitForChild("Farm")
 local Steven = NPCS:FindFirstChild("Steven")
 
 local Seed_Models = ReplicatedStorage:WaitForChild("Seed_Models")
-local Gear_Models = ReplicatedStorage:WaitForChild("Gear_Models")
+local Gear_Models = ReplicatedStorage:WaitForChild("ObjectModels")
 
 local seedItems = SortTableByName(Seed_Models:GetChildren())
 local gearItems = SortTableByName(Gear_Models:GetChildren())
@@ -33,11 +33,17 @@ local blacklistPlant = {}
 
 local questGui = Player.PlayerGui:FindFirstChild("DailyQuests_UI")
 local Easter_Shop = Player.PlayerGui:FindFirstChild("Easter_Shop")
+local SeedSack_UI = Player.PlayerGui:FindFirstChild("FreeSeedSack_UI")
 
 -- GAME EVENTS --
 local Poppy = Workspace:FindFirstChild("Poppy")
 if Poppy then
     EasterEvent = w:CreateFolder("EasterEvent")
+end
+
+local SeedPack = Workspace:FindFirstChild("SeedPack")
+if SeedPack then
+    SeedPackEvent = w:CreateFolder("SeedPackEvent")
 end
 
 -->Non Return Functions<--
@@ -200,9 +206,6 @@ local points = getGridPoints(20,10,0)
 --=================================== EASTER EVENT ===================================
 
 if Poppy then
-
---local PoppyHrp = Poppy:FindFirstChild("HumanoidRootPart")
-
 EasterEvent:Button("Easter Shop",function()
     spawn(function()
         Easter_Shop.Enabled = not Easter_Shop.Enabled
@@ -216,7 +219,7 @@ EasterEvent:Button("Sell All",function()
         local plant = getPlant("Gold")
         if plant then
             if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
-            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterShopService"):FireServer("SubmitHeldPlant")
+            ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("EasterShopService"):FireServer("SubmitHeldPlant")
         end
     end)
 end)
@@ -230,16 +233,58 @@ EasterEvent:Toggle("Auto Sell",function(bool)
             local plant = getPlant("Gold")
             if plant then
                 if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
-                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterShopService"):FireServer("SubmitHeldPlant")
+                ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("EasterShopService"):FireServer("SubmitHeldPlant")
             end
             task.wait(0.3)
         end
     end)
 end)
-
-
 end
---===================================================================================
+--=============================================================================================
+
+--=================================== SEED PACK GIVER EVENT ===================================
+if SeedPack then
+
+local DataService = ReplicatedStorage.Modules.DataService
+local mData = require(DataService)
+
+local function getInfo()
+    local pData = mData:GetData()
+    local pInfo = pData.SeedPackGiverInfo.RequiredPlantInfo
+    return tostring(pInfo.RequiredPlant) .. "  " .. tostring(pInfo.RequiredPlantSize or "")
+end
+
+
+SeedPackEvent:Button("Open Event",function()
+    spawn(function()
+        SeedSack_UI.Enabled = not SeedSack_UI.Enabled
+    end)
+end)
+
+local label1 = SeedPackEvent:Label(getInfo(),{
+    TextSize = 25; -- Self Explaining
+    TextColor = Color3.fromRGB(255,255,255);
+    BgColor = Color3.fromRGB(69,69,69);
+})
+
+task.spawn(function()
+    while true do
+        label1:Refresh(getInfo())
+        task.wait(1)
+    end
+end)
+
+
+SeedPackEvent:Button("Give Plant",function()
+    spawn(function()
+        local plant = Player.Character:FindFirstChildWhichIsA("Tool")
+        if plant then
+           ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
+        end
+    end)
+end)
+end
+--=============================================================================================
 
 Auto:Button("Home",function()
     spawn(function()
