@@ -62,6 +62,17 @@ local _sHelp = {
 -->FUNCTIONS TO ADD<--
 -->Remove From Table (READY TO TEST)
 
+local function getPosition(input)
+    if typeof(input) == "CFrame" then
+        return input.Position
+    elseif typeof(input) == "Vector3" then
+        return input
+    elseif typeof(input) == "Instance" and input:IsA("BasePart") then
+        return input.Position
+    end
+    return nil
+end
+
 --> Non Return Functions <--
 getgenv().Touch = function(_touchPart, _basePart, _timeout)
 	if _basePart and typeof(_basePart) == "number" then 
@@ -411,16 +422,22 @@ getgenv().PrevTeam = function(_player, _sortedTbl)
 end
 
 getgenv().GetDistance = function(_p1, _p2)
-	if _p1 and (_p1:IsA("BasePart") or _p1:IsA("CFrame")) then
-		if not _p2 then 
-			_p2 = Player.Character:WaitForChild("HumanoidRootPart") 
-		elseif _p2 and (not _p2:IsA("BasePart") and not _p2:IsA("CFrame") and not _p2:IsA("SpawnLocation")) then
-			warn("GetDistance: _p2 is not a Part...") return
-		end
-		return (_p1.Position - _p2.Position).Magnitude
-	else
-		warn("GetDistance: Bad Values...")
-	end
+    _p2 = _p2 or Player.Character.PrimaryPart or false
+
+    if _p1 and ((typeof(_p1) == "Instance" and _p1:IsA("BasePart")) or typeof(_p1) == "CFrame" or typeof(_p1) == "Vector3") then
+        if _p2 and ((typeof(_p2) == "Instance" and _p2:IsA("BasePart")) or typeof(_p2) == "CFrame" or typeof(_p2) == "Vector3") then
+            local pos1 = getPosition(_p1)
+            local pos2 = getPosition(_p2)
+            
+            return (pos1 - pos2).Magnitude
+        else
+            warn("GetDistance: _p2 has no Position...")
+            return
+        end
+    else
+        warn("GetDistance: _p1 has no Position...")
+        return
+    end
 end
 
 getgenv().TweenPart = function(_part, _des, _speed, _style)
