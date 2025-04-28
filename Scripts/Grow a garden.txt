@@ -140,10 +140,11 @@ end
 
 local function getPlant(_name, _weight)
     _weight = _weight or 0
+    _name = _name:gsub("%[", "%%["):gsub("%]", "%%]")
 
     -- Check hand
     local tool = Player.Character:FindFirstChildWhichIsA("Tool")
-    if tool and (not _name or tool.Name:find(_name)) then
+    if tool and (not _name or tool.Name:match(_name)) then
         -- Check if the weight is greater than the specified weight
         if tool:FindFirstChild("Weight") and tool.Weight.Value > _weight then
             return tool
@@ -152,7 +153,7 @@ local function getPlant(_name, _weight)
 
     -- Check backpack
     for _, v in pairs(Player.Backpack:GetChildren()) do
-        if v:IsA("Tool") and (not _name or v.Name:find(_name)) then
+        if v:IsA("Tool") and (not _name or v.Name:match(_name)) then
             -- Check if the weight is greater than the specified weight
             if v:FindFirstChild("Weight") and v.Weight.Value > _weight then
                 return v
@@ -385,19 +386,21 @@ Auto:Button("Sell",function()
         MoveTo(back)
     end)
 end)
-
+local sWeight = 50
 
 Auto:Toggle("Auto Harvest", function(bool)
     shared.ToggleAH = bool
     spawn(function()
         while shared.ToggleAH do
-            for _, v in pairs(Plants_Physical:GetChildren()) do
-                for __, _v in pairs(v:GetDescendants()) do
-                    if _v and _v:IsA("ProximityPrompt") then
-                        -- Fire in parallel to prevent backlogging
-                        task.spawn(function()
-                            fireproximityprompt(_v)
-                        end)
+            if sWeight > getWeight() then
+                for _, v in pairs(Plants_Physical:GetChildren()) do
+                    for __, _v in pairs(v:GetDescendants()) do
+                        if _v and _v:IsA("ProximityPrompt") then
+                            -- Fire in parallel to prevent backlogging
+                            task.spawn(function()
+                                fireproximityprompt(_v)
+                            end)
+                        end
                     end
                 end
             end
@@ -423,7 +426,7 @@ Auto:Toggle("Auto Buy",function(bool)
     end)
 end)
 
-local sWeight = 50
+
 
 Auto:Slider("Sell At Weight",{
     min = 1;
@@ -435,16 +438,11 @@ Auto:Toggle("Auto Sell",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do
-            -- CHECK PLAYER INV
-            for _,v in pairs(Player.Backpack:GetChildren()) do
-                local Weight = v:FindFirstChild("Weight")
-                if Weight and sWeight <= getWeight() then
-                    local back = GetPos()
-                    MoveTo(Steven.HumanoidRootPart, Vector3.new(-5, 0 ,0)) task.wait(0.3)
-                    sellAll() task.wait()
-                    MoveTo(back)
-                    break
-                end
+            if sWeight <= getWeight() then
+                local back = GetPos()
+                MoveTo(Steven.HumanoidRootPart, Vector3.new(-5, 0 ,0)) task.wait(1)
+                sellAll() MoveTo(back)
+                task.wait(1)
             end
             task.wait(1)
         end
