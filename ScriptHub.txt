@@ -642,6 +642,10 @@ local Games = {
 	[108616176683580] = {
 		Name = 'Heaven Line',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Heaven%20Line.txt'
+	},
+	[85896571713843] = {
+		Name = 'Bubble Gum Simulator INFINITY',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bubble%20Gum%20Simulator%20INFINITY.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()

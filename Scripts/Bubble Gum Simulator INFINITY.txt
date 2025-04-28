@@ -1,0 +1,577 @@
+w = library:CreateWindow("Main")
+
+--[[
+    TO DO
+
+-- Enchantment (maybe)
+-- Remove Hatching Animation
+-- Alien Shop ???
+-- Rifts ???
+-- Auto Race
+-- Auto Potion
+
+-- Auto Gem Genie Quests / Complete
+-- Make Collect Coins removed
+-- Auto Chest (Cooldown Timer) / TweenService
+-- Auto Equip Best
+
+local args = {
+    [1] = "StartGenieQuest",
+    [2] = 3
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Event"):FireServer(unpack(args))
+
+]]
+
+local bubbleQuests = 15 -- NEED TO FIND REAL NUMBER
+
+local Rs = game:GetService("ReplicatedStorage")
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Claims = w:CreateFolder("Claims")
+local Pets = w:CreateFolder("Pets")
+local Spins = w:CreateFolder("Spins")
+
+--Base Variables--
+local sellAt = math.huge
+local Shared = Rs:WaitForChild("Shared")
+local Client = Rs:WaitForChild("Client")
+local RemoteEvent = Shared.Framework.Network.Remote.Event
+local RemoteFunction = Shared.Framework.Network.Remote.Function
+
+local Assets = Rs:WaitForChild("Assets")
+
+local Pickups = Assets:FindFirstChild("Pickups")
+local Chests = Assets:WaitForChild("Chests")
+
+local Flavors = require(Shared.Data.Flavors)
+local Gums = require(Shared.Data.Gum)
+local Eggs = require(Shared.Data.Eggs) Eggs = table.clone(Eggs) -- Removes Attachment from module
+local Worlds = require(Shared.Data.Worlds)
+local Mastery = require(Shared.Data.Mastery)
+local Playtime = require(Shared.Data.Playtime)
+local Prizes = require(Shared.Data.Prizes)
+
+local LocalData = require(Client.Framework.Services.LocalData)
+local PlayerData = LocalData:Get()
+
+-- DEBUGGING --
+local ChunkerManager = require(Shared.Utils.Chunker)
+local test1 = ChunkerManager.new(128,2)
+test1.Mode = "3D"
+
+-- EASTER EVENT --
+local mEasterEggs = Shared.Data:WaitForChild("EasterEggs", 2)
+if mEasterEggs then
+    for k, v in pairs(require(mEasterEggs)) do Eggs[k] = v end
+end
+
+
+-- INFINITY EGG -- cause i cant find the data lol
+Eggs["Infinity Egg"] = {Cost = {Amount = 750000,Currency = "Coins"}}
+local v42 = {["Bubbles"] = PlayerData.Stats.Bubbles,["Eggs"] = PlayerData.Stats.Hatches}
+
+local Rendered = Workspace:FindFirstChild("Rendered")
+local worlds = Workspace:FindFirstChild("Worlds")
+local Overworld = worlds:FindFirstChild("The Overworld")
+local Islands = Overworld:FindFirstChild("Islands")
+
+
+-- UI Variables --
+local ScreenGui = Player.PlayerGui:WaitForChild("ScreenGui")
+
+local GumShop = ScreenGui:WaitForChild("GumShop")
+local Currency = ScreenGui:WaitForChild("HUD").Left.Currency
+local Inventory = ScreenGui:WaitForChild("Inventory")
+local WheelSpin = ScreenGui:WaitForChild("WheelSpin")
+local PlayTime = ScreenGui:WaitForChild("Playtime")
+local Quests = ScreenGui:WaitForChild("Quests")
+local DailyRewards = ScreenGui:WaitForChild("DailyRewards")
+local Season = ScreenGui:WaitForChild("Season")
+
+local PetList = Inventory.Frame.Inner.Pets.Main.ScrollingFrame.Pets
+local QuestList = Quests.Frame.Main.Prizes                  
+local SeasonList = Season.Frame.Content.Rewards.Track
+
+-- LOAD SOME DATA BY UI LOL --
+
+
+--Non Return Functions--
+local function fireEvent(...)
+    RemoteEvent:FireServer(...)
+    --print("Fired:", ...)
+end
+
+local function fireFunction(...)
+    RemoteFunction:InvokeServer(...)
+    --print("Invoked:", ...)
+end
+
+local function getBubbles()
+    local label = Currency:WaitForChild("Bubble").Frame.Label
+    if label then
+        local text = label.Text
+        local first, second = text:match("<stroke.->([%d,]+)<font.->%s*/%s*([%d,]+)")
+        if first and second then
+            return fromSuffixString(first), fromSuffixString(second)
+        end
+    end
+    return
+end
+
+local function getChests()
+    local t = {}
+    for _,v in pairs(Chests:GetChildren()) do
+        if v:IsA("Model") then
+            table.insert(t, v)
+        end
+    end
+    return t
+end
+
+local function getSellPoints()
+    local t = {}
+    for _, v in pairs(worlds:GetDescendants()) do
+        local r = v:FindFirstChild("Root")
+        if v.Name == "Sell" and r then
+            table.insert(t, r)
+        end
+    end
+    return t
+end
+
+
+local function getNames(_tbl)
+    local t = {}
+    for _,v in pairs(_tbl) do
+        table.insert(t, _)
+    end
+    return t
+end
+
+local function getWorlds()
+    local t = {}
+    local islands = GetElementFromDictionary(Worlds).Islands
+    for _,v in pairs(islands) do
+        table.insert(t, v.Name)
+    end
+    return t
+end
+
+local function getPickups()
+    local t = {}
+    for _,v in pairs(Pickups:GetChildren()) do
+        for j,k in pairs(v:GetChildren()) do
+            table.insert(t, k.Name)
+        end
+    end
+    return t
+end
+
+local function worldCheck(_world)
+    local unlock = PlayerData.AreasUnlocked[_world] or false
+    if not unlock then
+        local world = Islands:FindFirstChild(_world)
+        if world then Touch(world.Island.UnlockHitbox) end
+    else
+        return true
+    end
+end
+
+
+local function getWheelInfo()
+    local t = {}
+    t['Amount'] = 0
+    t['FreeSpin'] = false
+    local main = WheelSpin.Frame:FindFirstChild("Main") or false
+    if main then
+        local Spin = main:FindFirstChild("Spin")
+        local Free = main.Buttons:FindFirstChild("Free")
+        
+        if Free.Button.Label.Text:lower():match("free spin") then
+           t['FreeSpin'] = true
+        end
+        local amt = fromSuffixString(Spin.Button.Amount.Label.Text)
+        t["Amount"] = amt
+    end
+    return t
+end
+
+local function getPlaytimeInfo(_num)
+    local t = {}
+    t["Ready"] = false
+    t["Claimed"] = false
+    local main = PlayTime.Frame:FindFirstChild("Main") or false
+    if main then
+        local item = main:FindFirstChild(_num)
+        if item then
+            if item.Button.Label.Text:lower():match("open") then
+                t["Ready"] = true
+            end
+            t["Claimed"] = item.Completed.Visible
+        end
+    end
+    return t
+end
+
+--Return Functions--
+local sellPoints = getSellPoints()
+local ChestTable = getChests()
+local sTeleport = "Spawn"
+local PickupsTable = getPickups()
+
+local bWords = {"Comming Soon"}
+
+local function getPickupsFolder()
+    for _,v in pairs(Rendered:GetChildren()) do
+        local c = v:GetChildren() 
+        if v.Name == "Chunker" and #c > 0 then
+            for j,k in pairs(c) do
+                local p = k:FindFirstChildWhichIsA("BasePart")
+                if not p or k.Name:match("Egg") or table.find(bWords, k.Name) then break end
+                if p and k.Name:match("-") and table.find(PickupsTable, p.Name) then return v end 
+            end
+        end
+    end
+end
+
+local pickupsFolder = getPickupsFolder()
+local DropList1 = Auto:Dropdown(sTeleport,{"Spawn", table.unpack(getWorlds())},true,function(SItem) --truefalse, replaces the current title Dropdown with the option that t
+    sTeleport = SItem
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        local point
+        if sTeleport == "Spawn" then
+            point = "Workspace.Worlds.The Overworld.PortalSpawn"
+        else
+            point = "Workspace.Worlds.The Overworld.Islands."..sTeleport..".Island.Portal.Spawn"
+        end
+        fireEvent("Teleport", point)
+    end)
+end)
+
+
+Auto:Button("Unlock All",function()
+    spawn(function()
+        for _,v in pairs(Islands:GetChildren()) do
+            --local unlock = v.Island:FindFirstChild("UnlockHitbox")
+            --if unlock then Touch(unlock, 1) end
+            worldCheck(v.Name) task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Blow",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            local pBubbles, pMax = getBubbles()
+            if pBubbles < pMax then
+                fireEvent("BlowBubble")
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Slider("Sell at",{
+    min = 0; max = math.huge; precise = true;
+},function(value)
+    if value <= 0 then
+        sellAt = math.huge
+    else
+        sellAt = value
+    end
+end)
+
+Auto:Toggle("Auto Sell",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            local pBubbles, pMax = getBubbles()
+            if pBubbles and pMax and (pBubbles >= sellAt or pBubbles >= pMax) then
+                if GetDistance(sellPoints[1]) <= 50 or GetDistance(sellPoints[2]) <= 50 then
+                    fireEvent("SellBubble")
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Flavor",function(bool)
+    shared.ToggleAF=bool
+    spawn(function()
+        while shared.ToggleAF do
+            for _, v in pairs(Flavors) do
+                if not PlayerData.Flavors[_] and type(v) == "table" and type(v.Cost) == "table" then
+                    local cost = v.Cost
+                    if cost.Currency == "Coins" and cost.Amount <= PlayerData.Coins then
+                        fireEvent("GumShopPurchase", _) task.wait(1)
+                    end
+                end
+            end
+
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Gum",function(bool)
+    shared.ToggleAG=bool
+    spawn(function()
+        while shared.ToggleAG do
+            for _, v in pairs(Gums) do
+                if not PlayerData.Gum[_] and type(v) == "table" and type(v.Cost) == "table" then
+                    local cost = v.Cost
+                    if cost.Currency == "Coins" and cost.Amount <= PlayerData.Coins then
+                        fireEvent("GumShopPurchase", _) task.wait(1)
+                    end
+                end
+            end
+
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Collect Coins",function(bool)
+    shared.ToggleCC=bool
+    spawn(function()
+        while shared.ToggleCC do
+            for _,v in pairs(pickupsFolder:GetChildren()) do
+                local p = v:FindFirstChildWhichIsA("BasePart")
+                if shared.ToggleCC and p and table.find(PickupsTable, p.Name) and p.Transparency == 0 then
+                    --Rs:WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(v.Name)
+                    --p.Transparency = 1
+
+                   --p:Destroy()
+                    --ChunkerManager.Remove(v:GetPivot().Position, p)
+                    --Rs:WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(v.Name)
+                    v:Destroy()
+                    test1:Remove(v:GetPivot().Position, v)
+                    Rs:WaitForChild("Remotes"):WaitForChild("Pickups"):WaitForChild("CollectPickup"):FireServer(v.Name)
+                    task.wait() 
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Mastery",function(bool)
+    shared.ToggleAM=bool
+    spawn(function()
+        while shared.ToggleAM do
+            for _,v in pairs(Mastery.Upgrades) do -- Upgrade Type
+                if not shared.ToggleAM then return end
+                local current = PlayerData.MasteryLevels[_] or 0
+                local nextUpgrade = v.Levels[current + 1] or false
+                if nextUpgrade then
+                    local cost = nextUpgrade.Cost
+                    if (cost.Currency == "Coins" and cost.Amount <= PlayerData.Coins) or (cost.Currency == "Gems" and cost.Amount <= PlayerData.Gems) then
+                        fireEvent("UpgradeMastery", _) task.wait(5)
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Claims:Toggle("Doggy Win",function(bool)
+    shared.ToggleDW=bool
+    spawn(function()
+        while shared.ToggleDW do
+            if PlayerData.DoggyJump.Claimed < 3 then
+                fireEvent("DoggyJumpWin", 3)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Claims:Toggle("Auto Chests",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            for _,v in pairs(ChestTable) do
+                -- THEY CHANGED CHEST METHOD
+                --fireEvent("ClaimChest", v.Name) task.wait(1)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Claims:Toggle("Play Rewards",function(bool)
+    shared.TogglePR=bool
+    spawn(function()
+        while shared.TogglePR do
+            local unlocked = PlayerData.MasteryLevels.Pets or 0
+            if unlocked >= 1 then
+                for _,v in pairs(Playtime.Gifts) do
+                    local playimeInfo = getPlaytimeInfo(_)
+                    if playimeInfo.Ready and not PlayerData.PlaytimeRewards.Claimed[tostring(_)] then
+                        fireFunction("ClaimPlaytime", _) task.wait(0.3) --WILL NEED TO CHECK IF PLAYER HAS CLAIMED ALREADY
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Claims:Toggle("Claim Season",function(bool)
+    shared.ToggleCS=bool
+    spawn(function()
+        while shared.ToggleCS do
+            for _,v in pairs(SeasonList:GetChildren()) do
+                if v:IsA("Frame") then
+                    if v.Action.Button.Visible == true and v.Action.Claimed.Visible == false and v.Action.Button.Label.Text:lower():match("claim") then
+                        fireEvent("ClaimSeason") task.wait(0.3)
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Claims:Toggle("Claim Daily",function(bool)
+    shared.ToggleCD=bool
+    spawn(function()
+        while shared.ToggleCD do
+            if DailyRewards.Login.Visible == true then
+                fireEvent("DailyRewardClaimStars") task.wait(1)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Claims:Toggle("Claim Quests",function(bool)
+    shared.ToggleCQ=bool
+    spawn(function()
+        while shared.ToggleCQ do
+            for v44, v45 in Prizes do
+                local v48 = v45.Key local v49 = v42[v45.Type]
+                local v51 = v49 / v45.Requirement local v52 = math.min(1, v51)
+                local v50 = PlayerData.ClaimedPrizes[v48] ~= nil
+                local v53 = not v50
+                if v53 then v53 = v52 == 1 end
+                if v53 then
+                    local num = v48:match("%d+") num = tonumber(num)
+                    if v48:match("e") then num = num + bubbleQuests end
+                    fireEvent("ClaimPrize", num) task.wait(0.3)
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local eggAmt = 6
+local sEgg, sEggName
+local eggClose = {}
+
+local pDropList1 = Pets:Dropdown("Select Egg",getNames(Eggs),true,function(SItem) --truefalse, replaces the current title Dropdown with the option that t
+    sEgg = FindInTable(Eggs, SItem)
+    sEggName = SItem
+end)
+--[[
+local pDropList2 = Pets:Dropdown("Select Egg",eggClose,true,function(SItem) --truefalse, replaces the current title Dropdown with the option that t
+    sEgg = FindInTable(Eggs, SItem)
+    sEggName = SItem
+end)
+]]--
+
+local pDropList3 = Pets:Dropdown("6",{1,2,3,4,5,6},true,function(SItem) --truefalse, replaces the current title Dropdown with the option that t
+    eggAmt = tonumber(SItem)
+end)
+
+Pets:Toggle("Auto Hatch",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            if sEgg and sEggName then
+                if type(sEgg) == "table" and type(sEgg.Cost) == "table" then
+                    local cost = sEgg.Cost
+                    if cost.Currency == "Coins" and cost.Amount <= PlayerData.Coins then
+                        fireEvent("HatchEgg", sEggName, eggAmt) task.wait(3)
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+Pets:Toggle("Best Pets",function(bool)
+    shared.ToggleBP=bool
+    spawn(function()
+        -- YET TO CODE LOGIC
+    end)
+end)
+
+
+--fireEvent("EquipBestPets")
+
+local tState = true
+local Generic = Rendered:WaitForChild("Generic")
+
+--[[
+spawn(function()
+    while tState do
+        local t = {}
+        for _,v in pairs(Generic:GetChildren()) do
+            local hitbox = v:FindFirstChild("Hitbox")
+            if v.Name:find("Egg") and hitbox and GetDistance(hitbox) <= 20 then
+                table.insert(t, v)
+            end
+        end
+        pDropList2:Refresh(t)
+        task.wait(0.1)
+    end
+end)
+]]--
+
+
+Spins:Toggle("Claim Spin",function(bool)
+    shared.ToggleCS=bool
+    spawn(function()
+        while shared.ToggleCS do
+            if worldCheck("Floating Island") then
+                local freeSpin = getWheelInfo().FreeSpin
+                if freeSpin then fireEvent("ClaimFreeWheelSpin") end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Spins:Toggle("Auto Spin",function(bool)
+    shared.ToggleSAS=bool
+    spawn(function()
+        while shared.ToggleSAS do
+            if worldCheck("Floating Island") then
+                local spinAmount = getWheelInfo().Amount
+                if spinAmount > 0 then
+                    fireFunction("WheelSpin")
+                    task.wait(1)
+                    fireEvent("ClaimWheelSpinQueue")
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
