@@ -55,7 +55,8 @@ local _sHelp = {
     ["Tag"] = "Tag(Part, Bool?(Add OR Remove), Settings1, Settings2)",
     ["FindItem"] = "FindItem(Name, PartOrNot, MatchType)",
     ["Repeat"] = "Repeat(Function, Bool, Timeout)",
-    ["GetMousePlayer"] = "GetMousePlayer() - Returns Player Closest To Mouse"
+    ["GetMousePlayer"] = "GetMousePlayer() - Returns Player Closest To Mouse",
+    ["exportScripts"] = "ExportScripts(_instance, _folderName)",
 }
 
 
@@ -679,6 +680,28 @@ getgenv().GetMousePlayer = function()
 		end
 	end
 	return table.unpack(Closest)
+end
+
+local function ExportScripts(_instance, _folderName)
+    _folderName = _folderName or "Output"
+    if (not _instance and not typeof(_instance) == "Instance") or isfolder(_folderName) then warn("exportScripts: Bad Values...") return end
+    for _, v in ipairs(_instance:GetDescendants()) do
+        if v:IsA("Script") or v:IsA("LocalScript") or v:IsA("ModuleScript") then
+
+            local relativePath = v:GetFullName():gsub("^".._instance:GetFullName(), ""):gsub("%.", "/")
+            local filePath = _folderName .. "/" .. relativePath .. ".lua"
+
+            local folderPath = filePath:match("(.+)/[^/]+%.lua$")
+            if folderPath then
+                if not isfolder(folderPath) then
+                    makefolder(folderPath)
+                end
+            end
+
+            local code = decompile(v)
+            writefile(filePath, code)
+        end
+    end
 end
 
 getgenv().EHelp = function(_func)
