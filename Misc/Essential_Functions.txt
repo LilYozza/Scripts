@@ -56,7 +56,7 @@ local _sHelp = {
     ["FindItem"] = "FindItem(Name, PartOrNot, MatchType)",
     ["Repeat"] = "Repeat(Function, Bool, Timeout)",
     ["GetMousePlayer"] = "GetMousePlayer() - Returns Player Closest To Mouse",
-    ["exportScripts"] = "ExportScripts(_instance, _folderName)",
+    ["ExportScripts"] = "ExportScripts(_instance, _folderName)",
 }
 
 
@@ -441,11 +441,16 @@ getgenv().GetDistance = function(_p1, _p2)
     end
 end
 
-getgenv().TweenPart = function(_part, _des, _speed, _style)
-	if _part and _des and _part:IsA("BasePart") and _des:IsA("BasePart") then
-		if typeof(_des) == "Instance" and _des:IsA("BasePart") then _des = _des.CFrame end
+getgenv().TweenPart = function(_des, _part, _speed, _style)
+    _part = (Player.Character and Player.Character.PrimaryPart) or false
+	if _part and _des and _part:IsA("BasePart") then
+		if typeof(_des) == "Instance" and _des:IsA("BasePart") then
+			_des = _des.CFrame
+		elseif typeof(_des) == "Vector3" then
+			_des = CFrame.new(_des)
+		end
 		if not _speed or typeof(_speed) ~= "number" then _speed = 1 end
-		if not _style  then _style = Enum.EasingStyle.Linear end
+		if not _style then _style = Enum.EasingStyle.Linear end
 		local _tween = TweenService:Create(_part, TweenInfo.new(_speed, _style), {CFrame = _des})
 		_tween:Play()
 		return _tween
