@@ -1,0 +1,7 @@
+w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+Auto:Button("Atlas",function()
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Chris8889/atlasbss/main/script.lua"))()
+    end)
+end)
