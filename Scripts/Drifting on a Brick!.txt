@@ -1,0 +1,73 @@
+w = library:CreateWindow("Main")
+local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+
+
+local assistForce = 10 -- 🔧 small push value!
+
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+Auto:Slider("Force",{
+    min = 0; max = 100; precise = true;
+},function(value) assistForce = value end)
+
+local uis1, uis2, rs
+Auto:Toggle("Assist",function(bool)
+    shared.ToggleA=bool
+    spawn(function()
+        if shared.ToggleA then
+            local moveForward = false
+            local moveBackward = false
+            -- Input handling
+            uis1 = UserInputService.InputBegan:Connect(function(input, gpe)
+                if gpe then return end
+                if input.KeyCode == Enum.KeyCode.W then moveForward = true end
+                if input.KeyCode == Enum.KeyCode.S then moveBackward = true end
+            end)
+            uis2 = UserInputService.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.W then moveForward = false end
+                if input.KeyCode == Enum.KeyCode.S then moveBackward = false end
+            end)     
+            -- Gentle assist loop
+            rs = RunService.Heartbeat:Connect(function(dt)
+                local root = Player.Character and Player.Character:WaitForChild("Root", 10)
+                if not root then return end
+
+                local direction = Vector3.zero
+                if moveForward then
+                    direction = root.CFrame.LookVector * assistForce
+                elseif moveBackward then
+                    direction = -root.CFrame.LookVector * assistForce
+                end
+
+                -- Light push instead of replacing velocity
+                root.Velocity = root.Velocity + (direction * dt)
+            end)
+        else
+            uis1:Disconnect() uis1 = nil
+            uis2:Disconnect() uis2 = nil
+            rs:Disconnect() rs = nil
+        end
+    end)
+end)
+
+
+
+
+
+
+
+

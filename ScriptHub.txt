@@ -650,6 +650,10 @@ local Games = {
 	[1537690962] = {
 		Name = 'Bee Swarm Simulator',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bee%20Swarm%20Simulator.txt'
+	},
+	[6428267216] = {
+		Name = 'Drifting on a Brick!',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Drifting%20on%20a%20Brick!.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
