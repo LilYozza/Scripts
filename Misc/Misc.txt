@@ -325,6 +325,25 @@ Dev:Button("Easy Spy",function()
     end)
 end)
 
+Dev:Button("Executor",function()
+	spawn(function()
+        local execW = library:CreateWindow("Executor")
+        local execf = execW:CreateFolder("Executor")
+
+        local exeString
+        
+        execf:Box("Script","string",function(value)
+            exeString = value
+        end)
+        execf:Button("Reset",function()
+            spawn(function()
+                loadstring(exeString)()
+            end)
+        end)
+    end)
+end)
+
+
 Dev:Button("Reset",function()
 	spawn(function()
         loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/ScriptHub.txt'))()
