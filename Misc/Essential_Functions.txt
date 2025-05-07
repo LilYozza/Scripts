@@ -9,6 +9,7 @@ local TweenService = game:GetService("TweenService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
 -->Base Variables<--
+local VbaseTable = {"root", "base"} -- Names to Match to get Vehicle Root
 local Player = Players.LocalPlayer
 
 local Mouse = Player:GetMouse()
@@ -687,7 +688,7 @@ getgenv().GetMousePlayer = function()
 	return table.unpack(Closest)
 end
 
-local function ExportScripts(_instance, _folderName)
+getgenv().ExportScripts = function(_instance, _folderName)
     _folderName = _folderName or "Output"
     if (not _instance and not typeof(_instance) == "Instance") or isfolder(_folderName) then warn("exportScripts: Bad Values...") return end
     for _, v in ipairs(_instance:GetDescendants()) do
@@ -706,6 +707,28 @@ local function ExportScripts(_instance, _folderName)
             local code = decompile(v)
             writefile(filePath, code)
         end
+    end
+end
+
+
+getgenv().GetVehicle = function(_player, _name)
+    _player = _player or Player
+    if _name and not table.find(VbaseTable, _name:lower()) then table.insert(VbaseTable, _name:lower()) end
+    local hum = _player and _player.Character and _player.Character:WaitForChild("Humanoid", 5)
+    if hum then
+        local model = hum.SeatPart and hum.SeatPart:FindFirstAncestorOfClass("Model")
+        if model then
+            if model.PrimaryPart then return model.PrimaryPart end
+            for _, part in ipairs(model:GetDescendants()) do
+                if part:IsA("BasePart") and not part:IsA("Seat") and MatchTable(VbaseTable, part.Name:lower()) then
+                    return part
+                else
+                    warn("Couldnt Find Part")
+                end
+            end
+        end
+    else
+        warn("GetVehicle: Couldnt Find Character")
     end
 end
 

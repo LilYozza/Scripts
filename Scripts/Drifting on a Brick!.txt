@@ -1,6 +1,4 @@
 w = library:CreateWindow("Main")
-local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
-
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
