@@ -1,0 +1,120 @@
+w = library:CreateWindow("Main")
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+local Auto = w:CreateFolder("Auto")
+local Troll = w:CreateFolder("Troll")
+
+local rs = game:GetService("ReplicatedStorage")
+local buildRemote = rs:WaitForChild("CurrentGame"):WaitForChild("Sleds"):WaitForChild("Blueprints"):WaitForChild("BuildBlueprint"):WaitForChild("BuildBlueprint_m"):WaitForChild("BuildBlueprint")
+
+
+-->Base Variables<--
+local sResource = "All"
+
+local currentGame = Workspace:WaitForChild("CurrentGame", 5)
+local Important = currentGame:FindFirstChild("Important")
+local Resources = Important:FindFirstChild("Resources")
+local Doors = Important:FindFirstChild("Doors")
+
+local SpawnPool = currentGame:FindFirstChild("SpawnPool")
+local Blueprints = SpawnPool:FindFirstChild("Blueprints")
+
+
+
+-->Non Return Functions<--
+local function getResource(_name)
+    _name = _name or "All"
+    if _name == "All" then
+        for _,v in pairs(Resources:GetDescendants()) do
+            if v:IsA("TouchTransmitter") then Touch(v.Parent) end
+        end
+    else 
+        for _,v in pairs(Resources:GetChildren()) do
+            local res = v:FindFirstChild(_name)
+            if res then Touch(res.TouchPart) end
+        end
+    end
+end
+
+local function checkTrain(_train)
+    local UI = _train:FindFirstChild("UI")
+    if UI then
+        local TextLabel = UI.BillboardGui.TextLabel
+        if TextLabel and TextLabel.Text ~= "100%" then
+            return true
+        end
+    end
+end
+
+-->Return Functions<--
+
+
+local resourceType = Resources:FindFirstChild("Set1"):GetChildren()
+local DropList = Auto:Dropdown(sResource,{sResource, table.unpack(resourceType)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sResource = SItem
+end)
+
+Auto:Toggle("Auto Gather",function(bool)
+    shared.ToggleAG=bool
+    spawn(function()
+        while shared.ToggleAG do
+            getResource(sResource)
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Build",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            spawn(function()
+                local train = Player:FindFirstChild("LastBlueprint")
+                if train and train.Value ~= nil and checkTrain(train.Value) then
+                    buildRemote:InvokeServer(train.Value)
+                end
+            end)
+            task.wait(0.1)
+        end
+    end)
+end)
+
+Auto:Toggle("No Wall",function(bool)
+    shared.ToggleNW=bool
+    spawn(function()
+        for _,v in pairs(Doors:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = not shared.ToggleNW
+            end
+        end
+    end)
+end)
+
+Troll:Toggle("Auto Build",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            spawn(function()
+                for _,v in pairs(Blueprints:GetChildren()) do
+                    if checkTrain(v) then
+                        buildRemote:InvokeServer(v)
+                    end
+                end
+            end)
+            task.wait(0.1)
+        end
+    end)
+end)
+
+Auto:Button("Gamepasses",function()
+    spawn(function()
+        for _,v in pairs(Player.DataSave:GetDescendants()) do
+            if v:IsA("BoolValue") then
+                v.Value = true
+            end
+        end
+    end)
+end)
