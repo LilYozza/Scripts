@@ -722,8 +722,6 @@ getgenv().GetVehicle = function(_player, _name)
             for _, part in ipairs(model:GetDescendants()) do
                 if part:IsA("BasePart") and not part:IsA("Seat") and MatchTable(VbaseTable, part.Name:lower()) then
                     return part
-                else
-                    warn("Couldnt Find Part")
                 end
             end
         end
