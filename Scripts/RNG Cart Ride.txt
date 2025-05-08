@@ -127,7 +127,7 @@ Auto:Button("Unlock Areas",function(bool)
 end)
 
 Auto:Slider("Force",{
-    min = 0; max = 100; precise = true;
+    min = 0; max = 1000; precise = true;
 },function(value) assistForce = value end)
 
 local uis1, uis2, rs
