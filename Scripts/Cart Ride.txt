@@ -1,0 +1,214 @@
+w = library:CreateWindow("Main")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+
+
+local assistForce = 10
+
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local originalColors = {}
+local sPlayer = "All"
+
+local SpawnLocation = Workspace:FindFirstChild("SpawnLocation")
+local WinnersSpawn = Workspace:FindFirstChild("WinnersSpawn")
+
+local ActiveCarts = Workspace:WaitForChild("ActiveCarts", 5)
+
+-->Non Return Functions<--
+local function selectCart(_cart, _toggle)
+    local visual = _cart:FindFirstChild("CartVisuals")
+    if not visual then return end
+
+    for _, part in ipairs(visual:GetDescendants()) do
+        if part:IsA("BasePart") then
+            if _toggle == 1 then
+                originalColors[part] = part.Color
+                part.Color = Color3.fromRGB(0, 255, 0)
+            elseif _toggle == 0 and originalColors[part] then
+                part.Color = originalColors[part]
+            end
+        end
+    end
+end
+
+local function pressBtn(_cart, _btn)
+    if not _cart then return end
+    local Buttons = _cart:FindFirstChild("Buttons")
+    if Buttons then
+        local btn = Buttons:FindFirstChild(_btn)
+        if btn then
+            fireclickdetector(btn.ClickDetector)
+        end
+    end
+end
+
+local function CartBtn(_player, _btn)
+    _player = _player or "All"
+    if not _btn then return end
+
+    if _player == "All" then
+        for _,v in pairs(ActiveCarts:GetChildren()) do
+            if v ~= GetVehicleModel(Player) then
+                pressBtn(v, _btn)
+            end
+        end
+    else
+        local veh = GetVehicleModel(GetPlayerByDisplayName(_player))
+        if veh then
+            pressBtn(veh, _btn)
+        end
+    end
+
+end
+
+-->Return Functions<--
+
+
+Auto:Button("Start",function()
+    spawn(function()
+        MoveTo(SpawnLocation, Vector3.new(0,5,0))
+    end)
+end)
+
+Auto:Button("Finish",function()
+    spawn(function()
+         MoveTo(WinnersSpawn, Vector3.new(0,5,0))
+    end)
+end)
+
+local DropList1 = Auto:Dropdown(sPlayer,{sPlayer, table.unpack(GetDisplayNames())},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPlayer = SItem
+end)
+
+
+Auto:Toggle("Up",function(bool)
+    shared.ToggleU=bool
+    spawn(function()
+        while shared.ToggleU do
+            CartBtn(sPlayer, "Up")
+            task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Toggle("Down",function(bool)
+    shared.ToggleD=bool
+    spawn(function()
+        while shared.ToggleD do
+            CartBtn(sPlayer, "Down")
+            task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Button("Break",function()
+    spawn(function()
+        CartBtn(sPlayer, "Start")
+    end)
+end)
+
+-->Return Functions<--
+Auto:Slider("Force",{
+    min = 0; max = 1000; precise = true;
+},function(value) assistForce = value end)
+
+local uis1, uis2, rs
+Auto:Toggle("Assist",function(bool)
+    shared.ToggleA=bool
+    spawn(function()
+        if shared.ToggleA then
+            local moveForward = false
+            local moveBackward = false
+            -- Input handling
+            uis1 = UserInputService.InputBegan:Connect(function(input, gpe)
+                if gpe then return end
+                if input.KeyCode == Enum.KeyCode.W then moveForward = true end
+                if input.KeyCode == Enum.KeyCode.S then moveBackward = true end
+            end)
+            uis2 = UserInputService.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.W then moveForward = false end
+                if input.KeyCode == Enum.KeyCode.S then moveBackward = false end
+            end)     
+            -- Gentle assist loop
+            rs = RunService.Heartbeat:Connect(function(dt)
+                local root = Player.Character and Player.Character:WaitForChild("Humanoid", 5).SeatPart
+                if not root then return end
+
+                local direction = Vector3.zero
+                if moveForward then
+                    direction = root.CFrame.LookVector * assistForce
+                elseif moveBackward then
+                    direction = -root.CFrame.LookVector * assistForce
+                end
+
+                -- Light push instead of replacing velocity
+                root.Velocity = root.Velocity + (direction * dt)
+            end)
+        else
+            uis1:Disconnect() uis1 = nil
+            uis2:Disconnect() uis2 = nil
+            rs:Disconnect() rs = nil
+        end
+    end)
+end)
+
+local _bool1 = false
+Auto:Button("Stop/Go",function()
+    spawn(function()
+        _bool1 = not _bool1
+        Player.Character:WaitForChild("HumanoidRootPart").Anchored = _bool1
+    end)
+end)
+
+local function toggleCarts(_toggle)
+    for _,v in pairs(ActiveCarts:GetChildren()) do
+        if v ~= GetVehicleModel(Player) then
+            for j,k in pairs(v:GetDescendants()) do
+                if k:IsA("BasePart") then
+                    k.CanCollide = _toggle
+                end
+            end
+        end
+    end
+    return
+end
+
+local PCConnection
+Auto:Toggle("No Collide",function(bool)
+    shared.Toggle3=bool
+    spawn(function()
+
+        if shared.Toggle3 then
+            PCConnection = RunService.Stepped:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= Player and player.Character then
+                        for _, v in pairs(player.Character:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                v.CanCollide = false
+                            end
+                        end
+                    end
+                end
+                local hum = Player.Character and Player.Character:WaitForChild("Humanoid")
+                if hum and hum.Sit == true then
+                    toggleCarts(false)
+                end
+            end)
+
+        else
+            if PCConnection then PCConnection:Disconnect() PCConnection = nil end
+            toggleCarts(true)
+        end
+    end)
+end)
+
+
+Players.ChildAdded:Connect(function() DropList1:Refresh({sPlayer, table.unpack(GetDisplayNames())}) end)
+Players.ChildRemoved:Connect(function() DropList1:Refresh({sPlayer, table.unpack(GetDisplayNames())}) end)
