@@ -30,7 +30,7 @@ local function CreateTextLabel(args)
     end
 end
 
-local function CreateTag(part)
+local function CreateTag(part, teamCol)
 	-- Creates BillBoard --
 	local newBillBoard = Instance.new("BillboardGui")
 	-- Data --
@@ -43,7 +43,7 @@ local function CreateTag(part)
 	CreateTextLabel({
         Name = "NameTag", 
         Parent = newBillBoard, 
-        TextColor3 = NameTagColor, 
+        TextColor3 = teamCol or NameTagColor, 
         Position = NameTagPosition,
         TextSize = 13,
         Font = Enum.Font.Legacy,
@@ -68,8 +68,9 @@ local function AddESP(_player)
 	if _player.Character then
 		local _head = _player.Character:FindFirstChild("Head")
 		if _head then
-			if not _head:FindFirstChild("PlayerTag") then 
-                CreateTag(_head)
+			if not _head:FindFirstChild("PlayerTag") then
+                local teamColor = _player.Team and _player.Team.TeamColor.Color
+                CreateTag(_head, teamColor)
             end
 		end
 	end
