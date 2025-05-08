@@ -1,23 +1,40 @@
 w = library:CreateWindow("Main")
 
+local RunService = game:GetService("RunService")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 
+
 -->Base Variables<--
-local carts=Workspace:FindFirstChild("carts")
-local PlayerSelect="All"
+local PlayerSelect = "All"
 
 -->Tables<--
-local PlayerList={"All"}
 
 -->Non Return Functions<--
-local function Touch(p,t)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,0)firetouchinterest(Player.Character:WaitForChild("HumanoidRootPart"),p,1)task.wait(t)end
-local function MoveTo(p,offset)Player.Character:WaitForChild("HumanoidRootPart").CFrame=p.CFrame+offset end
 
 -->Return Functions<--
-local function fromSuffixString(s) local suffixes = {"K", "M", "B", "T", "Q"} found = false if s == "0" then return 0 end if s:match("$") then s = string.gsub(s, '%$', "") end if s:match(",") then s = string.gsub(s, '%,', "") end if s:match("+") then s = string.gsub(s, '%+', "") end for i, value in ipairs(suffixes) do if s:match(value) then found = true end end if found == false then return tonumber(s) end local n, suffix = string.match(s, "(.*)(%a)$") if n and suffix then local i = table.find(suffixes, suffix) or 0 return tonumber(n) * math.pow(10, i * 3) end return tonumber(s) end
+local function getCartFolder()
+    for _,v in pairs(Workspace:GetChildren()) do
+        local c1 = v:GetChildren()[1]
+        if c1 then 
+            if c1.Name:lower():match("click to spawn")then
+                return v
+            end
+        end
+    end
+end
+local function getCartBtn(_toggle)
+    local pCart = GetVehicleModel(Player)
+    if pCart then
+        local btn = pCart:FindFirstChild(_toggle)
+        return btn
+    end
+end
+
+local upBtn, downBtn, onBtn
+local Carts = getCartFolder()
 
 Auto:Button("Op Cart",function()
     spawn(function()local s,e=pcall(function()
@@ -31,23 +48,17 @@ Auto:Button("Op Cart",function()
     end)
 end)
 
-local PlayerDropList = Auto:Dropdown("All",PlayerList,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    PlayerSelect = SItem
-end)
 
 Auto:Toggle("Speed Up",function(bool)
     shared.ToggleSU=bool
     spawn(function()
-        while shared.ToggleSU do local s,e=pcall(function()
-            local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
-            if PlayerSelect=="All"then
-                for _,v in pairs(carts:GetDescendants())do
-                    if shared.ToggleSU and v.Parent~=PCart.Parent and v.Name=="Up" and v:FindFirstChild("Click")then
-                        fireclickdetector(v.Click)
-                    end
-                end
+        while shared.ToggleSU do
+            if upBtn then
+                fireclickdetector(upBtn.Click)
+            else
+                upBtn = getCartBtn("Up")
             end
-            task.wait()end)task.wait()if not s then print(e)end
+            task.wait()
         end
     end)
 end)
@@ -55,30 +66,130 @@ end)
 Auto:Toggle("Speed Down",function(bool)
     shared.ToggleSD=bool
     spawn(function()
-        while shared.ToggleSD do local s,e=pcall(function()
-            local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
-            if PlayerSelect=="All"then
-                for _,v in pairs(carts:GetDescendants())do
-                    if shared.ToggleSD and v.Parent~=PCart.Parent and v.Name=="Down" and v:FindFirstChild("Click")then
-                        fireclickdetector(v.Click)
-                    end
-                end
+        while shared.ToggleSD do
+            if downBtn then
+                fireclickdetector(downBtn.Click)
+            else
+                downBtn = getCartBtn("Down")
             end
-            task.wait()end)task.wait()if not s then print(e)end
+            task.wait()
         end
     end)
 end)
 
 Auto:Button("Break",function()
     spawn(function()
-    if PlayerSelect=="All"then
-        local PCart=Player.Character:WaitForChild("Humanoid").SeatPart
-        for _,v in pairs(carts:GetDescendants())do
-            if v.Name=="On" and v.Parent~=PCart.Parent and  v:FindFirstChild("Click")then
-                fireclickdetector(v.Click)
+        if not onBtn then onBtn = getCartBtn("On") end
+        if onBtn then
+            fireclickdetector(onBtn.Click)
+        end
+    end)
+end)
+
+local function toggleCarts(_toggle)
+    for _,v in pairs(Carts:GetChildren()) do
+        for j,k in pairs(v:GetChildren()) do
+            if k:IsA("Model") and k.Name == "Cart" and k ~= GetVehicleModel(Player) then
+                for i,part in pairs(k:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = _toggle end
+                end
             end
         end
     end
+    return
+end
+
+
+local PCConnection
+Auto:Toggle("No Collide",function(bool)
+    shared.Toggle3=bool
+    spawn(function()
+
+        if shared.Toggle3 then
+            PCConnection = RunService.Stepped:Connect(function()
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= Player and player.Character then
+                        for _, v in pairs(player.Character:GetDescendants()) do
+                            if v:IsA("BasePart") then
+                                v.CanCollide = false
+                            end
+                        end
+                    end
+                end
+                local hum = Player.Character and Player.Character:WaitForChild("Humanoid")
+                if hum and hum.Sit == true then
+                    toggleCarts(false)
+                end
+            end)
+
+        else
+            if PCConnection then PCConnection:Disconnect() PCConnection = nil end
+            toggleCarts(true)
+        end
+    end)
+end)
+
+local _bool1 = false
+Auto:Button("Stop/Go",function()
+    spawn(function()
+        _bool1 = not _bool1
+        Player.Character:WaitForChild("HumanoidRootPart").Anchored = _bool1
+    end)
+end)
+
+-->Base Variables<--
+local player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+
+
+local assistForce = 10
+
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+Auto:Slider("Force",{
+    min = 0; max = 1000; precise = true;
+},function(value) assistForce = value end)
+
+local uis1, uis2, rs
+Auto:Toggle("Assist",function(bool)
+    shared.ToggleA=bool
+    spawn(function()
+        if shared.ToggleA then
+            local moveForward = false
+            local moveBackward = false
+            -- Input handling
+            uis1 = UserInputService.InputBegan:Connect(function(input, gpe)
+                if gpe then return end
+                if input.KeyCode == Enum.KeyCode.W then moveForward = true end
+                if input.KeyCode == Enum.KeyCode.S then moveBackward = true end
+            end)
+            uis2 = UserInputService.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.W then moveForward = false end
+                if input.KeyCode == Enum.KeyCode.S then moveBackward = false end
+            end)     
+            -- Gentle assist loop
+            rs = RunService.Heartbeat:Connect(function(dt)
+                local root = Player.Character and Player.Character:WaitForChild("Humanoid", 5).SeatPart
+                if not root then return end
+
+                local direction = Vector3.zero
+                if moveForward then
+                    direction = root.CFrame.LookVector * assistForce
+                elseif moveBackward then
+                    direction = -root.CFrame.LookVector * assistForce
+                end
+
+                -- Light push instead of replacing velocity
+                root.Velocity = root.Velocity + (direction * dt)
+            end)
+        else
+            uis1:Disconnect() uis1 = nil
+            uis2:Disconnect() uis2 = nil
+            rs:Disconnect() rs = nil
+        end
     end)
 end)
 
