@@ -730,6 +730,18 @@ getgenv().GetVehicle = function(_player, _name)
     end
 end
 
+getgenv().GetVehicleModel = function(_player, _name)
+    _player = _player or Player
+    if _name and not table.find(VbaseTable, _name:lower()) then table.insert(VbaseTable, _name:lower()) end
+    local hum = _player and _player.Character and _player.Character:WaitForChild("Humanoid", 5)
+    if hum then
+        local model = hum.SeatPart and hum.SeatPart:FindFirstAncestorOfClass("Model")
+        if model then
+            return model
+        end
+    end
+end
+
 getgenv().EHelp = function(_func)
     for _,v in pairs(_sHelp) do
         if _func and string.find(_, _func) then
