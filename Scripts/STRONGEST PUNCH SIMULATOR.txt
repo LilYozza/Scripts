@@ -91,7 +91,7 @@ Auto:Toggle("Auto Collect",function(bool)
                     for __,_v in pairs(firstItem:GetChildren()) do
                         local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
                         if part and shared.ToggleAC then
-                            Touch(_v, 0.6)
+                            Touch(_v, 0.5)
                             break
                         end
                     end
