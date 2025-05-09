@@ -1,25 +1,46 @@
 w = library:CreateWindow("Main")
 
-
+local rs = game:GetService("ReplicatedStorage")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
-local Stage = Player.leaderstats.WORLD
-local Boosts = game:GetService("Workspace").Map.Stages.Boosts
+local Stage = Player:WaitForChild("leaderstats").WORLD
+
+local Map = Workspace:WaitForChild("Map")
+local Stages = Map:FindFirstChild("Stages")
+
+
+local Boosts = Stages:FindFirstChild("Boosts")
+local TerrainWalls = Stages:FindFirstChild("TerrainWalls")
+local SafeZones = Stages:FindFirstChild("SafeZones")
 
 -->Non Return Functions<--
+local function fireEvent(...)
+    rs.RemoteEvent:FireServer({...})
+    --print("Fired Remote:", ...)
+end
 
-local args2 = {
-    [1] = {
-        [1] = "Activate_Punch"
-    }
-}
-
+local function fireFunction(...)
+     rs.RemoteFunction:InvokeServer({...})
+    --print("Fired Function:", ...)   
+end
 
 -->Return Functions<--
+local function getBoosts(_stage)
+    _stage = _stage or Stage.Value
+    local world = Boosts:FindFirstChild(_stage)
+    return world
+end
+
+local function getSafeZone(_stage)
+    _stage = _stage or Stage.Value
+    local world = SafeZones:FindFirstChild(_stage)
+    return world
+end
+
 local function sortByItemName(items)
     local sortedItems = {table.unpack(items)} -- Create a copy to avoid modifying the original table
     table.sort(sortedItems, function(a, b)
@@ -35,11 +56,20 @@ local function sortByItemName(items)
     return sortedItems
 end
 
-Auto:Toggle("Auto Punch",function(bool)
-    shared.Toggle2=bool
+Auto:Button("Safe Zone",function()
     spawn(function()
-        while shared.Toggle2 do
-            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args2))
+        local stage = getSafeZone()
+        if stage then
+            MoveTo(stage:GetChildren()[1], Vector3.new(0,5,0))
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Punch",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do
+            fireEvent("Activate_Punch")
             task.wait(1)
         end
     end)
@@ -47,51 +77,77 @@ end)
 
 
 Auto:Toggle("Auto Collect",function(bool)
-    shared.Toggle=bool
+    shared.ToggleAC=bool
     spawn(function()
-        while shared.Toggle do
-            local curStage = Boosts:FindFirstChild(Stage.Value)
+        while shared.ToggleAC do
+            local curStage = getBoosts()
             if curStage then
 
                 local newTable = sortByItemName(curStage:GetChildren())
+                local firstItem = newTable[1]
 
-                for _,v in pairs(newTable)do
-
-                    if curStage.Name ~= tostring(Stage.Value) or not shared.Toggle then
-                        break
-                    end
-
-                    for __,_v in pairs(v:GetChildren()) do
+                if firstItem and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
+                    for __,_v in pairs(firstItem:GetChildren()) do
                         local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
-                        if part and shared.Toggle then
-                            Touch(_v)
+                        if part and shared.ToggleAC then
+                            Touch(_v, 0.6)
                             break
                         end
                     end
-                    task.wait(0.6)
                 end
+
             end
             task.wait()
         end
     end)
 end)
 
-local args = {
-    [1] = {
-        [1] = "UpgradeCurrentPet"
-    }
-}
-
-Auto:Toggle("Pet Upgrade",function(bool)
-    shared.Toggle1=bool
+Auto:Toggle("Next World",function(bool)
+    shared.ToggleNW=bool
     spawn(function()
-        while shared.Toggle1 do
-            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+        while shared.ToggleNW do
+            fireEvent("WarpPlrToOtherMap", "Next")
             task.wait(1)
         end
     end)
 end)
 
+Auto:Toggle("Safe Zone",function(bool)
+    shared.ToggleSZ=bool
+    spawn(function()
+        while shared.ToggleSZ do
+            local stage = getSafeZone()
+            if stage then
+                local point = stage:GetChildren()[1]
+                local Distance = GetDistance(point)
+                if point and Distance and Distance > 5 then
+                    MoveTo(point, Vector3.new(0,5,0))
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Pet Upgrade",function(bool)
+    shared.TogglePU=bool
+    spawn(function()
+        while shared.TogglePU do -- CHECK IF CAN
+            fireEvent("UpgradeCurrentPet")
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("No Walls",function(bool)
+    shared.ToggleNW=bool
+    spawn(function()
+        while shared.ToggleNW do
+            Workspace.Terrain:Clear()
+            task.wait(1)
+        end
+    end)
+end)
 
 
 

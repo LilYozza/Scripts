@@ -483,6 +483,10 @@ local Games = {
 		Name = 'STRONGEST PUNCH SIMULATOR',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/STRONGEST%20PUNCH%20SIMULATOR.txt'
 	},
+	[7215881810] = {
+		Name = 'NO LIMIT STRONGEST PUNCH SIMULATOR',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/STRONGEST%20PUNCH%20SIMULATOR.txt'
+	},
 	[10272636261] = {
 		Name = 'Infinite Tower Tycoon',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Infinite%20Tower%20Tycoon.txt'
