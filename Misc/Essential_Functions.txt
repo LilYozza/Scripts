@@ -81,10 +81,8 @@ getgenv().Touch = function(_touchPart, _basePart, _timeout)
 		_timeout = _basePart 
 		_basePart = nil
 	end
-	if not _basePart then
-		_basePart = Player.Character:WaitForChild("HumanoidRootPart")
-	end	
-	if _touchPart and _touchPart:IsA("BasePart") and _basePart:IsA("BasePart") then
+    _basePart = _basePart or Player.Character and Player.Character:WaitForChild("HumanoidRootPart")
+	if _basePart and _touchPart and _touchPart:IsA("BasePart") and _basePart:IsA("BasePart") then
 		firetouchinterest(_basePart, _touchPart, 0)
 		firetouchinterest(_basePart, _touchPart, 1)
 	else
@@ -424,7 +422,7 @@ getgenv().PrevTeam = function(_player, _sortedTbl)
 end
 
 getgenv().GetDistance = function(_p1, _p2)
-    _p2 = _p2 or Player.Character.PrimaryPart or false
+    _p2 = _p2 or (Player.Character and Player.Character.PrimaryPart) or false
 
     if _p1 and ((typeof(_p1) == "Instance" and _p1:IsA("BasePart")) or typeof(_p1) == "CFrame" or typeof(_p1) == "Vector3") then
         if _p2 and ((typeof(_p2) == "Instance" and _p2:IsA("BasePart")) or typeof(_p2) == "CFrame" or typeof(_p2) == "Vector3") then
