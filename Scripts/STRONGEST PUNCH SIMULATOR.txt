@@ -107,7 +107,7 @@ Auto:Toggle("Next World",function(bool)
     spawn(function()
         while shared.ToggleNW do
             fireEvent("WarpPlrToOtherMap", "Next")
-            task.wait(1)
+            task.wait(0.3)
         end
     end)
 end)
