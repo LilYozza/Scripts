@@ -1,3 +1,4 @@
+local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 w = library:CreateWindow("Main")
 
 local rs = game:GetService("ReplicatedStorage")
@@ -5,6 +6,17 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 local Auto = w:CreateFolder("Auto")
+
+local dataToSave = {
+    ["Auto Punch"] = shared.ToggleAP,
+    ["Auto Collect"] = shared.ToggleAC,
+    ["Next World"] = shared.ToggleNW,
+    ["Safe Zone"] = shared.ToggleSZ,
+    ["Pet Upgrade"] = shared.TogglePU,
+    ["No Walls"] = shared.ToggleNW
+}
+
+SaveManager(dataToSave)
 
 -->Base Variables<--
 local Stage = Player:WaitForChild("leaderstats").WORLD
@@ -148,10 +160,3 @@ Auto:Toggle("No Walls",function(bool)
         end
     end)
 end)
-
-
-
-
-
-
-
