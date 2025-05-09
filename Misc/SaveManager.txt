@@ -64,6 +64,8 @@ local function updateTable(_tbl)
     for _, v in pairs(_tbl) do
         if shared[v] then
             t[_] = shared[v]
+        else
+            t[_] = v
         end
     end
     return t
@@ -116,8 +118,8 @@ getgenv().LoadManager = function(_override)
                     if item.Type == "Toggle" and v == true then -- UI CHANGES, ADD OTHERES HERE
                         SendClick(item.Button) -- Toggles Gui
                     elseif item.Type == "Slider" then
-                        --item.Input = 
-                        --Set Value
+                        item.Input = v
+                        shared[_] = v -- Temp Fix (var is same name as title)
                     end
                 end
             end

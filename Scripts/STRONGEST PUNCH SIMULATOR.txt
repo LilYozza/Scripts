@@ -150,11 +150,36 @@ Auto:Toggle("No Walls",function(bool)
     end)
 end)
 
+shared.Orbs = 50
+Auto:Slider("Orbs",{
+    min = 1; -- min value of the slider
+    max = 200; -- max value of the slider
+    precise = true; -- max 2 decimals
+},function(value)
+    shared.Orbs = value
+end)
+
+Auto:Toggle("Server Hop",function(bool)
+    shared.ToggleSH=bool
+    spawn(function()
+        while shared.ToggleSH do
+            local curStage = getBoosts()
+            if curStage and #curStage:GetChildren() <= shared.Orbs then
+                NewServer()
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
+
+
 local dataToSave = {
     ["Auto Punch"] = "ToggleAP",
     ["Auto Collect"] = "ToggleAC",
     ["Next World"] = "ToggleNW",
     ["Safe Zone"] = "ToggleSZ",
     ["Pet Upgrade"] = "TogglePU",
-    ["No Walls"] = "ToggleNWW"
+    ["No Walls"] = "ToggleNWW",
+    ["Orbs"] = "Orbs",
+    ["Server Hop"] = "ToggleSH",
 } SaveManager(dataToSave)
