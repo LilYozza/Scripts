@@ -109,7 +109,7 @@ getgenv().LoadManager = function(_override)
             repeat task.wait() until getGui()
             -- May need to remove
             Player.CharacterAdded:Wait()
-            task.wait(5)
+            task.wait(10)
 
             local items = getItems()
             for _,v in pairs(content) do
