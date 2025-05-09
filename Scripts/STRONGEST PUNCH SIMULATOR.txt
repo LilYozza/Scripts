@@ -150,10 +150,10 @@ Auto:Toggle("No Walls",function(bool)
     end)
 end)
 
-shared.Orbs = 50
+shared.Orbs = 250
 Auto:Slider("Orbs",{
     min = 1; -- min value of the slider
-    max = 200; -- max value of the slider
+    max = 1000; -- max value of the slider
     precise = true; -- max 2 decimals
 },function(value)
     shared.Orbs = value
