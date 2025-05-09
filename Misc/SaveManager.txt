@@ -59,11 +59,26 @@ local function getItems(_window) -- Returns All Content within Window
     return t
 end
 
+local updateTable(_tbl)
+    local t = {}
+    for _, v in pairs(_tbl) do
+        if shared[v] then
+            t[_] = shared[v]
+        end
+    end
+    return t
+end
+
 local function saveFile(_tbl, _path)
+    if not _tbl or next(_tbl) == nil then return end -- Check if table is nil or empty
+    _tbl = updateTable(_tbl) -- Gets the Vars of toggles
+
+
     local s,e = pcall(function()
         local jsonString = HttpService:JSONEncode(_tbl)
         writefile(_path, jsonString)
     end)
+
     if s then
         print("Saved Data For", game.gameId)
     else
