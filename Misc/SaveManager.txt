@@ -107,6 +107,7 @@ getgenv().LoadManager = function(_override)
 
             -- WAIT FOR UI
             repeat task.wait() until getGui()
+            task.wait(5)
 
             local items = getItems()
             for _,v in pairs(content) do
@@ -114,8 +115,6 @@ getgenv().LoadManager = function(_override)
                     local item = items[_]
                     if item.Type == "Toggle" and v == true then -- UI CHANGES, ADD OTHERES HERE
                         SendClick(item.Button) -- Toggles Gui
-                        print("Here")
-                        --print("Toggling")
                     elseif item.Type == "Slider" then
                         --item.Input = 
                         --Set Value
