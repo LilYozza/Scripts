@@ -165,7 +165,7 @@ Auto:Toggle("Server Hop",function(bool)
         while shared.ToggleSH do
             local curStage = getBoosts()
             if curStage and #curStage:GetChildren() <= shared.Orbs then
-                NewServer()
+                NewServer() task.wait(5)
             end
             task.wait(0.5)
         end
