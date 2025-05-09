@@ -1,0 +1,131 @@
+--[[
+    Save Structure
+
+    {
+        [Label Name] = {bool/value}, etc.....
+    
+    }
+
+    Functions
+    - LoadManager() -- Find / Loads any config for that gameplace
+    - SaveManager(_data) -- Loads and Saves Data
+
+]]
+local path = "YozzaScriptHub/" .. game.gameId .. ".json"
+makefolder("YozzaScriptHub")
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local HttpService = game:GetService("HttpService")
+
+local Player = Players.LocalPlayer
+
+local function getGui()
+    for _,v in pairs(CoreGui:GetChildren()) do
+        local fnd = v:FindFirstChild("HiI'mSexyDon'tTouchMePls")
+        if fnd then return v end
+    end
+end
+
+local function getWindow(_gui, _name)
+    _gui = gui or getGui()
+    _name = _name or "Main"
+    for _,v in pairs(_gui:GetChildren()) do
+        local title = v:FindFirstChild("Title")
+        if title and title:IsA("TextLabel") and title.Text == _name then
+            return v
+        end
+    end
+end
+
+local function getItems(_window) -- Returns All Content within Window
+    local t = {}
+    _window = _window or getWindow()
+    local content = _window:FindFirstChild("Sections") 
+        and _window.Sections:FindFirstChild("Folder") 
+        and _window.Sections.Folder:FindFirstChild("Folder") 
+        and _window.Sections.Folder.Folder:FindFirstChild("Content")
+    if content then
+        for _,v in pairs(content:GetChildren()) do
+            if v:IsA("ImageLabel") then
+                local Type = v.Name
+                local Title = (v:FindFirstChild("Title") and v.Title.Text) or (v:FindFirstChild("Click") and v.Click:FindFirstChild("Title") and v.Click.Title.Text)
+                local Button = v:FindFirstChild("Tick") or v:FindFirstChild("Button")
+                local Input = v:FindFirstChild("Input")
+                t[Title] = {Type = Type, Title = Title, Button = Button, Input = Input}
+            end
+        end
+    end
+    return t
+end
+
+local function saveFile(_tbl, _path)
+    local s,e = pcall(function()
+        local jsonString = HttpService:JSONEncode(_tbl)
+        writefile(_path, jsonString)
+    end)
+    if s then
+        print("Saved Data For", game.gameId)
+    else
+        warn("Couldnt Save File:", e)
+    end
+end
+
+local function loadFile(_path)
+    local decodedData
+    local s, e = pcall(function()
+        local contents = readfile(_path)
+        decodedData = HttpService:JSONDecode(contents)
+    end)
+    if s then
+        return decodedData
+    else
+        warn("Couldn't Load File:", e)
+    end
+end
+
+getgenv().LoadManager = function(_override)
+    if isfile(path) then
+        -- Read In txt File
+        local content = loadFile(path)
+        if content then
+
+            -- WAIT FOR UI
+            repeat task.wait() until getGui()
+
+            local items = getItems()
+            for _,v in pairs(content) do
+                if items[_] then
+                    local item = items[_]
+                    if item.Type == "Toggle" and v == true then -- UI CHANGES, ADD OTHERES HERE
+                        SendClick(item.Button) -- Toggles Gui
+                        --print("Toggling")
+                    elseif item.Type == "Slider" then
+                        --item.Input = 
+                        --Set Value
+                    end
+                end
+            end
+        end
+
+        print("Loaded Save File For", game.gameId, path)
+    else
+        print("No Save File For:", game.gameId, path)
+        --writefile(path, game.gameId .. ".txt")
+    end
+
+
+end
+
+getgenv().SaveManager = function(_tbl)
+    LoadManager() -- Check if Save Files Exist, if so then load Variables with Toggles
+
+    --saveFile(_tbl, path)
+    game:BindToClose(function() 
+        saveFile(_tbl, path)
+    end)
+
+    Player.AncestryChanged:Connect(function(_, parent)
+        if not parent then saveFile(_tbl, path) end
+    end)    
+end
