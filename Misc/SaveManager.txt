@@ -121,8 +121,10 @@ getgenv().SaveManager = function(_tbl)
     LoadManager() -- Check if Save Files Exist, if so then load Variables with Toggles
 
     --saveFile(_tbl, path)
-    game:BindToClose(function() 
-        saveFile(_tbl, path)
+    Players.ChildRemoved:connect(function(player)
+        if player == Player then
+            saveFile(_tbl, path)
+        end
     end)
 
     Player.AncestryChanged:Connect(function(_, parent)
