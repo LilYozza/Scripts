@@ -59,7 +59,7 @@ local function getItems(_window) -- Returns All Content within Window
     return t
 end
 
-local updateTable(_tbl)
+local function updateTable(_tbl)
     local t = {}
     for _, v in pairs(_tbl) do
         if shared[v] then
