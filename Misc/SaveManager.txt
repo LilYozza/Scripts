@@ -107,6 +107,7 @@ getgenv().LoadManager = function(_override)
 
             -- WAIT FOR UI
             repeat task.wait() until getGui()
+            task.wait(1)
 
             local items = getItems()
             for _,v in pairs(content) do
