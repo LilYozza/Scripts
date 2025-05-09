@@ -114,6 +114,7 @@ getgenv().LoadManager = function(_override)
                     local item = items[_]
                     if item.Type == "Toggle" and v == true then -- UI CHANGES, ADD OTHERES HERE
                         SendClick(item.Button) -- Toggles Gui
+                        print("Here")
                         --print("Toggling")
                     elseif item.Type == "Slider" then
                         --item.Input = 

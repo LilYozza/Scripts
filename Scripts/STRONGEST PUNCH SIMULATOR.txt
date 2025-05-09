@@ -13,7 +13,7 @@ local dataToSave = {
     ["Next World"] = "ToggleNW",
     ["Safe Zone"] = "ToggleSZ",
     ["Pet Upgrade"] = "TogglePU",
-    ["No Walls"] = "ToggleNW"
+    ["No Walls"] = "ToggleNWW"
 }
 
 SaveManager(dataToSave)
@@ -152,9 +152,9 @@ Auto:Toggle("Pet Upgrade",function(bool)
 end)
 
 Auto:Toggle("No Walls",function(bool)
-    shared.ToggleNW=bool
+    shared.ToggleNWW=bool
     spawn(function()
-        while shared.ToggleNW do
+        while shared.ToggleNWW do
             Workspace.Terrain:Clear()
             task.wait(1)
         end
