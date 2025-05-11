@@ -117,7 +117,7 @@ getgenv().LoadManager = function(_override)
                     if item.Type == "Toggle" and v.val and v.val == true then -- UI CHANGES, ADD OTHERES HERE
                         SendClick(item.Button) -- Toggles Gui
                     elseif item.Type == "Slider" and v.val then
-                        item.Input = v.val
+                        item.Input.Value.Text = v.val
                         shared[v.var] = v.val
                     end
                 end
