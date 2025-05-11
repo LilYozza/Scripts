@@ -114,9 +114,9 @@ getgenv().LoadManager = function(_override)
             for _,v in pairs(content) do
                 if items[_] then
                     local item = items[_]
-                    if item.Type == "Toggle" and v == true then -- UI CHANGES, ADD OTHERES HERE
+                    if item.Type == "Toggle" and v.val and v.val == true then -- UI CHANGES, ADD OTHERES HERE
                         SendClick(item.Button) -- Toggles Gui
-                    elseif item.Type == "Slider" then
+                    elseif item.Type == "Slider" and v.val then
                         item.Input = v.val
                         shared[v.var] = v.val
                     end
