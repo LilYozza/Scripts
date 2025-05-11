@@ -2,7 +2,10 @@
     Save Structure
 
     {
-        [Label Name] = {bool/value}, etc.....
+        [Label Name] = {
+            var = "Gobal Var Name",
+            val = "Value"
+        }
     
     }
 
@@ -60,20 +63,16 @@ local function getItems(_window) -- Returns All Content within Window
 end
 
 local function updateTable(_tbl)
-    local t = {}
     for _, v in pairs(_tbl) do
-        if shared[v] then
-            t[_] = shared[v]
-        else
-            t[_] = v
+        if shared[v.var] then
+            v.val = shared[v.var]
         end
     end
-    return t
 end
 
 local function saveFile(_tbl, _path)
     if not _tbl or next(_tbl) == nil then return end -- Check if table is nil or empty
-    _tbl = updateTable(_tbl) -- Gets the Vars of toggles
+    updateTable(_tbl) -- Gets the Vars of toggles
 
 
     local s,e = pcall(function()
@@ -118,8 +117,8 @@ getgenv().LoadManager = function(_override)
                     if item.Type == "Toggle" and v == true then -- UI CHANGES, ADD OTHERES HERE
                         SendClick(item.Button) -- Toggles Gui
                     elseif item.Type == "Slider" then
-                        item.Input = v
-                        shared[_] = v -- Temp Fix (var is same name as title)
+                        item.Input = v.val
+                        shared[v.var] = v.val
                     end
                 end
             end
@@ -135,16 +134,25 @@ getgenv().LoadManager = function(_override)
 end
 
 getgenv().SaveManager = function(_tbl)
+    local saved = false
     LoadManager() -- Check if Save Files Exist, if so then load Variables with Toggles
 
     --saveFile(_tbl, path)
     Players.ChildRemoved:connect(function(player)
         if player == Player then
-            saveFile(_tbl, path)
+            if not saved then
+                saveFile(_tbl, path)
+                saved = true
+            end
         end
     end)
 
     Player.AncestryChanged:Connect(function(_, parent)
-        if not parent then saveFile(_tbl, path) end
+        if not parent then 
+            if not saved then
+                saveFile(_tbl, path)
+                saved = true
+            end
+        end
     end)    
 end
