@@ -744,15 +744,6 @@ getgenv().GetVehicleModel = function(_player, _name)
     end
 end
 
-getgenv().EHelp = function(_func)
-    for _,v in pairs(_sHelp) do
-        if _func and string.find(_, _func) then
-            print(_,":",v)
-        elseif not _func then
-            print(_,":",v)
-        end
-    end
-end
 
 getgenv().NewServer = function()
     if httprequest then
@@ -777,6 +768,34 @@ getgenv().NewServer = function()
         notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
     end    
 end
+
+getgenv().WithinPart = function(_part, _player)
+    if not _part or not _part:IsA("BasePart") then return end
+    _player = _player or Player
+    local hrp = _player.Character and _player.Character:WaitForChild("HumanoidRootPart", 5)
+    if not hrp then return end
+
+    local pos = hrp.Position
+    local size = _part.Size / 2
+    local p = _part.Position
+
+    if pos.X >= p.X - size.X and pos.X <= p.X + size.X and
+       pos.Z >= p.Z - size.Z and pos.Z <= p.Z + size.Z and
+       math.abs(pos.Y - (p.Y + size.Y)) <= 5 then
+        return true
+    end
+end
+
+getgenv().EHelp = function(_func)
+    for _,v in pairs(_sHelp) do
+        if _func and string.find(_, _func) then
+            print(_,":",v)
+        elseif not _func then
+            print(_,":",v)
+        end
+    end
+end
+
 
 getgenv().EFLoaded = true
 print(string.format("Loaded Functions in: %.6f seconds", os.clock() - startTime))
