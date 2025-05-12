@@ -564,7 +564,7 @@ getgenv().Timer = function(_time)
 	end
 end
 
-getgenv().CreateTextLabel = function(text, color, position)
+local function CreateTextLabel(text, color, position)
 
     if not text then text = "" end
     if not color then color = Color3.fromRGB(0,255,0) end
@@ -586,7 +586,7 @@ getgenv().CreateTextLabel = function(text, color, position)
     return newText
 end
 
-getgenv().CreateBillBoard = function()
+local function CreateBillBoard()
     local _defaultBillBoard = Instance.new("BillboardGui")
     _defaultBillBoard.Name = "Tag"
     _defaultBillBoard.AlwaysOnTop = true
@@ -597,28 +597,29 @@ getgenv().CreateBillBoard = function()
 end
 
 local _RenderCon = {}
-getgenv().Tag = function(_p, _b, _text, _s1, _s2) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
+getgenv().Tag = function(_p, _toggle, _args) --_p = Part / _b = true or false to add / remove / _s = Override Tag Properties
     if _p and _p:IsA("BasePart") then
-        if _b == nil then _b = true end
-
+        _args = _args or {}
         local _check = _p:FindFirstChild("Tag")
-        if _b == true then
+        if _toggle == true then
             if _check then _check:Destroy() end
-            if not _text then _text = _p.Name end
-            if not _s1 then _s1 = getgenv().CreateBillBoard() end
-            if not _s2 then _s2 = getgenv().CreateTextLabel(_text) end
 
-            _s2.Parent = _s1
-            _s1.Parent = _p
+            local _text = _args.Text or _p.Name
+            local _col = _args.TextColor or nil
+
+            local _billBoard =  _args.BillBoard or CreateBillBoard()
+            local _textLabel = _args.TextLabel or  CreateTextLabel(_text, _col)
+
+            _textLabel.Parent = _billBoard
+            _billBoard.Parent = _p
 
             _RenderCon[_p] = RunService.Heartbeat:Connect(function(deltaTime)
                 if _p then
-                    _s2.Text = _text .. " [" .. math.ceil(GetDistance(_p)) .. "]"
+                    _textLabel.Text = _text .. " [" .. math.ceil(GetDistance(_p)) .. "]"
                 end
             end)
             
-
-            return {_p, _s1, _s2}
+            return {Part = _p, BillBoard = _billBoard, TextLabel, _textLabel}
         else
             if _RenderCon[_p] then 
                 _RenderCon[_p]:Disconnect()
@@ -628,6 +629,45 @@ getgenv().Tag = function(_p, _b, _text, _s1, _s2) --_p = Part / _b = true or fal
         end
     else
         warn("Tag: Bad Values...(Part(1))")
+    end
+end
+
+local tagtbl = {}
+local tagCon = {}
+getgenv().TagTable = function(_instance, _toggle, _override, _args)
+    _args = _args or {}
+
+    
+    local textCol = _args.TextColor or Color3.fromRGB(0,255,0)
+    if not tagtbl[_instance] then tagtbl[_instance] = {} end
+
+    _override = _override or "HumanoidRootPart"
+    if _instance and typeof(_instance) == "Instance" then
+        if _toggle == true then
+            tagCon[_instance] = _instance.ChildAdded:Connect(function(_part)
+                local firstPart = _part:FindFirstChild(_override) or _part:FindFirstChildWhichIsA("BasePart") or _part
+                if firstPart:IsA("BasePart") and not tagtbl[_instance][firstPart] then
+                    tagtbl[_instance][firstPart] = Tag(firstPart, true, {Text = _part.Name, TextColor = textCol})
+                end
+            end)
+
+            for _,v in pairs(_instance:GetChildren())do
+                 local firstPart = v:FindFirstChild(_override) or v:FindFirstChildWhichIsA("BasePart") or v
+                if firstPart:IsA("BasePart") and not tagtbl[_instance][firstPart] then
+                    tagtbl[_instance][firstPart] = Tag(firstPart, true, {Text = firstPart.Parent.Name, TextColor = textCol})
+                end
+            end
+        else
+            if tagCon[_instance] then
+                tagCon[_instance]:Disconnect() tagCon[_instance] = nil
+            end
+            for _,v in pairs(tagtbl[_instance]) do
+                Tag(v.Part, false)
+                tagtbl[_instance][v.Part] = nil
+            end
+        end
+    else
+        warn("TagTable: Instance is invalid")
     end
 end
 

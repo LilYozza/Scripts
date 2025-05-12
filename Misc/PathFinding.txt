@@ -1,13 +1,39 @@
+-- Requires EssentialFunctions
+--[[
+    To Do
+
+
+
+
+]]--
+
 local UserInputService = game:GetService("UserInputService")
 local PathfindingService = game:GetService("PathfindingService")
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 
+local PFisRunning = false
+local rootFolder = Workspace:FindFirstChild("PathVisuals")
+if not rootFolder then
+    rootFolder = Instance.new("Folder")
+    rootFolder.Parent = Workspace
+    rootFolder.Name = "PathVisuals"
+end
+
+
 local function cleanFolder(_folder)
-    for _,v in pairs(_folder:GetChildren())do
-        v:Destroy()
+    if _folder then
+        for _,v in pairs(_folder:GetChildren())do
+            v:Destroy()
+        end
     end
-    return _folder
+end
+
+local function removeFolder(_folder)
+    if _folder then
+        _folder:Destroy()
+    end
 end
 
 local function checkForWall(_hrp, _direction, _distance)
@@ -57,6 +83,49 @@ local function checkState(_hum)
     return state, type
 end
 
+local stuckCheck = {
+    lastPositions = {},
+    requiredMoveDistance = 2.5,  -- studs to not be considered stuck
+    timeThreshold = 1.2,         -- seconds without moving requiredDistance
+    sampleInterval = 0.3         -- how often to check position
+}
+
+local function CheckStuck(hrp)
+    if not hrp then return false end
+    
+    local currentTime = os.clock()
+    local currentPos = hrp.Position
+    
+    -- Initialize or clean old positions
+    if not stuckCheck.lastPositions[hrp] then
+        stuckCheck.lastPositions[hrp] = {
+            position = currentPos,
+            time = currentTime
+        }
+        return false
+    end
+    
+    local lastData = stuckCheck.lastPositions[hrp]
+    local movedDistance = (currentPos - lastData.position).Magnitude
+    
+    -- If moved sufficiently, reset tracking
+    if movedDistance > stuckCheck.requiredMoveDistance then
+        lastData.position = currentPos
+        lastData.time = currentTime
+        return false
+    end
+    
+    -- Check if we've been stuck for the time threshold
+    if (currentTime - lastData.time) > stuckCheck.timeThreshold then
+        -- Reset after reporting stuck
+        lastData.position = currentPos
+        lastData.time = currentTime
+        return true
+    end
+    
+    return false
+end
+
 local function getPath(_hrp, _target)
     local path = PathfindingService:CreatePath({
         AgentCanJump = true,
@@ -66,54 +135,103 @@ local function getPath(_hrp, _target)
 end
 
 local function MovePlayer(_hrp, _hum, _target, _dir)
+    if not _hrp or not _hum or not _target then
+        warn("Invalid parameters provided to MovePlayer")
+        return false
+    end
 
-     local directions = {
+    -- Improved direction calculation
+    local currentCFrame = _hrp.CFrame
+    local directions = {
         target = (_target.Position - _hrp.Position).Unit,
-        forward = _hrp.CFrame.LookVector,
-        left = _hrp.CFrame:VectorToWorldSpace(Vector3.new(-1, 0, 0)),
-        right = _hrp.CFrame:VectorToWorldSpace(Vector3.new(1, 0, 0))
-    }   
+        forward = currentCFrame.LookVector,
+        left = -currentCFrame.RightVector,  -- More efficient than VectorToWorldSpace
+        right = currentCFrame.RightVector,
+        up = Vector3.new(0, 1, 0)
+    }
+    _dir = _dir or directions.forward
 
-    _dir = _dir or _hrp.CFrame.LookVector
+    -- Pathfinding attempt (keep your existing logic)
     local path = getPath(_hrp, _target)
-    if path.Status == Enum.PathStatus.Success then
-        print("Path Found")
-        for _, waypoint in pairs(path:GetWaypoints()) do
-            if waypoint.Action == Enum.PathWaypointAction.Jump then
-                _hum.Jump = true
-            end
-            _hum:MoveTo(waypoint.Position)
-
-            local state, type = checkState(_hum)
-            if not state then print(type) break end
-            
-            _hum.MoveToFinished:Wait()
+    if path and path.Status == Enum.PathStatus.Success then
+    for _, waypoint in pairs(path:GetWaypoints()) do
+        -- Handle jumping waypoints
+        if waypoint.Action == Enum.PathWaypointAction.Jump then
+            _hum.Jump = true
+            task.wait(0.15) -- Small delay for jump to initiate
         end
-    else
-        --METHOD OF FINDING PATH
-        --print("Path Not Found")
-
-        local ch = checkForWall(_hrp, directions.forward, 10)
-        if ch then 
-            --print("Ran into:", ch.Name)
-            local ch2 = checkForWall(_hrp, directions.target, 100)
-            if not ch2 then
-                print("Going To Target")
-                _hum:MoveTo(_hrp.Position + (_target.Position - _hrp.Position).Unit * 10)
-            else
-                local ch3 = checkForWall(_hrp, directions.left, 10)
-                if ch3 then
-                    print("Left is Blocked, Going right")
-                    _hum:MoveTo(_hrp.Position + directions.right * 10)
-                else
-                print("Right is Blocked, Going Left")
-                _hum:MoveTo(_hrp.Position + directions.left * 10)
-                end
+        
+        -- Start movement
+        _hum:MoveTo(waypoint.Position)
+        
+        -- Movement monitoring
+        local moveStart = os.clock()
+        local lastCheckPos = _hrp.Position
+        
+        while not _hum.MoveToFinished:Wait(0.1) do -- Check every 0.1 seconds
+            -- Enhanced stuck detection during movement
+            if CheckStuck(_hrp) then
+                print("Detected stuck - attempting recovery")
+                _hum.Jump = true
+                -- Try moving diagonally up/right
+                _hum:MoveTo(_hrp.Position + directions.right * 6 + directions.up * 2)
+                break -- Exit this waypoint and move to next
             end
-            _hum.MoveToFinished:Wait(1)
-            return false
+            
+            -- Additional state check
+            local state, reason = checkState(_hum)
+            if not state then 
+                print("Movement interrupted:", reason)
+                break
+            end
+            
+            -- Early exit if close to waypoint
+            if (_hrp.Position - waypoint.Position).Magnitude < 3 then
+                break
+            end
+        end
+        
+        -- Final state check before next waypoint
+        local state, reason = checkState(_hum)
+        if not state then 
+            print("Cannot continue:", reason)
+            break 
+        end
+    end
+    else
+        -- Improved fallback movement with smarter direction selection
+        if CheckStuck() then
+            _hum.Jump = true
+            _hum:MoveTo(_hrp.Position + directions.right * 5 + directions.up * 1.5)
+            task.wait(0.3)
+        end
+
+        -- Check all potential directions
+        local forwardClear = not checkForWall(_hrp, directions.forward, 10)
+        local targetClear = not checkForWall(_hrp, directions.target, math.min(100, (_target.Position - _hrp.Position).Magnitude))
+        local leftClear = not checkForWall(_hrp, directions.left, 8)
+        local rightClear = not checkForWall(_hrp, directions.right, 8)
+
+        -- Priority-based movement
+        if targetClear and (_target.Position - _hrp.Position).Magnitude > 5 then
+            _hum:MoveTo(_hrp.Position + directions.target * 10)
+        elseif forwardClear then
+            _hum:MoveTo(_hrp.Position + directions.forward * 10)
+        elseif leftClear and not rightClear then
+            _hum:MoveTo(_hrp.Position + directions.left * 8)
+        elseif rightClear and not leftClear then
+            _hum:MoveTo(_hrp.Position + directions.right * 8)
+        elseif leftClear and rightClear then
+            -- If both sides clear, pick one randomly to prevent zig-zag
+            if math.random() > 0.5 then
+                _hum:MoveTo(_hrp.Position + directions.left * 8)
+            else
+                _hum:MoveTo(_hrp.Position + directions.right * 8)
+            end
         else
-            _hum:MoveTo(_hrp.Position + _hrp.CFrame.LookVector * 10)
+            -- Completely stuck - jump back
+            _hum.Jump = true
+            _hum:MoveTo(_hrp.Position + (-directions.forward * 5) + directions.up * 2)
         end
     end
     return true
@@ -139,20 +257,8 @@ local function UpdateDynamicPath(pathInstance, playerPosition)
 end
 
 -- Visual drawer (modified)
-local function DrawPath(waypoints)
-    if script:FindFirstChild("PathVisuals") then
-        script.PathVisuals:Destroy()
-    end
-
-    local folder = Workspace:FindFirstChild("PathVisuals")
-    if not folder then
-        folder = Instance.new("Folder")
-        folder.Name = "PathVisuals"
-        folder.Parent = workspace -- CRUCIAL CHANGE: Parent to workspace instead of script
-    else cleanFolder(folder) end
-
-
-
+local function DrawPath(waypoints, _folder)
+    cleanFolder(_folder)
     for i = 3, #waypoints do -- DOESNT SHOW THE 2 POINTS IN / BEHIND CHARACTER
         local waypoint = waypoints[i]
         local part = Instance.new("Part")
@@ -163,42 +269,50 @@ local function DrawPath(waypoints)
         part.CanCollide = false
         part.Material = Enum.Material.Neon
         part.Color = Color3.new(0, 1, 0)
-        part.Parent = folder
+        part.Parent = _folder
     end
 end
 
 -- Main path handler (FIXED)
-local pathConnection
+local pathConnection = {}
+local pathFolders = {}
+
 getgenv().ShowPath = function(_target, _toggle)
     if not _target or not _target:IsA("BasePart") then print("Nil or not part") return end
     if not _toggle then 
-        pathConnection:Disconnect()
-        print("Removed") -- TEMP FEATURE
-        task.wait(0.5)
-        local folder = Workspace:FindFirstChild("PathVisuals")
-        cleanFolder(folder)
+        if pathConnection[_target] then
+            pathConnection[_target]:Disconnect() pathConnection[_target] = nil
+        end
+        removeFolder(pathFolders[_target])
+        print("ShowPath:", _target, "Removed")
         return
     end
 
-    local hrp = Player.Character:WaitForChild("HumanoidRootPart")
-    local humanoid = Player.Character:WaitForChild("Humanoid")
+    local folder = Instance.new("Folder")
+    folder.Parent = rootFolder
+    folder.Name = _target.Name
+    pathFolders[_target] = folder
 
+    pathConnection[_target] = RunService.Heartbeat:Connect(function()
+        local hrp = Player.Character:WaitForChild("HumanoidRootPart", 1)
+        local humanoid = Player.Character:WaitForChild("Humanoid", 1)
+        if hrp and humanoid then
+            if WithinPart(_target) then
+                pathConnection[_target]:Disconnect() pathConnection[_target] = nil
+                removeFolder(pathFolders[_target])
+                print("Show Path Finished")
+                return
+            end
 
-    pathConnection = game:GetService("RunService").Heartbeat:Connect(function()
-        local path = PathfindingService:CreatePath()
-        path:ComputeAsync(hrp.Position + hrp.CFrame.LookVector, _target.Position)
-        if path.Status == Enum.PathStatus.Success then
-            --local remainingPath = UpdateDynamicPath(path, hrp.Position)
-            DrawPath(path:GetWaypoints())
+            local path = PathfindingService:CreatePath()
+            path:ComputeAsync(hrp.Position + hrp.CFrame.LookVector, _target.Position)
+            if path.Status == Enum.PathStatus.Success and pathConnection[_target] then
+                --local remainingPath = UpdateDynamicPath(path, hrp.Position)
+                DrawPath(path:GetWaypoints(), pathFolders[_target])
+            end
+        else 
+            cleanFolder(pathFolders[_target])
         end
-
-
-        if (hrp.Position - _target.Position).Magnitude < 4 then
-            pathConnection[#pathConnection]:Disconnect()
-            print("Show Path Finished")
-            return
-        end
-
     end)
 end
 
@@ -222,13 +336,14 @@ getgenv().PathFind = function(_target)
 
     local dir = hrp.CFrame.LookVector
 
-    if getgenv().PFisRunning then
-        getgenv().PFisRunning = false
+    if PFisRunning then
+        PFisRunning = false
         print("ALREADY RUNNING, STOPPING")
+        return
     end
 
     
-    getgenv().PFisRunning = true
+    PFisRunning = true
     local status = true
     inputCon = UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
@@ -241,7 +356,7 @@ getgenv().PathFind = function(_target)
         end
     end)
 
-    while status and (hrp.Position - _target.Position).Magnitude > 4 and getgenv().PFisRunning do
+    while status and not WithinPart(_target) and PFisRunning do
         local state, type = checkState(hum)
         if not state then print(type) break end
         if not MovePlayer(hrp, hum, _target, dir) then 
@@ -255,7 +370,7 @@ getgenv().PathFind = function(_target)
     --Close Connections / Events
     inputCon:Disconnect()
     print("Pathfinding: Finished")
-    getgenv().PFisRunning = false
+    PFisRunning = false
 end
 
 print("Pathfinding: Loaded")
