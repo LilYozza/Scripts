@@ -9,11 +9,13 @@ local Auto = w:CreateFolder("Auto")
 
 -->Base Variables<--
 
+local NPCData = Workspace:WaitForChild("NPCData")
 local GameData = Workspace:FindFirstChild("GameData")
 local GameMap = Workspace:FindFirstChild("GameMap")
 
 local Misc = GameMap:FindFirstChild("Misc")
 local Wheel = Misc.Givers:FindFirstChild("Wheel")
+local npcSpawns = NPCData:FindFirstChild("Spawns")
 
 -->Non Return Functions<--
 
@@ -71,6 +73,16 @@ Auto:Toggle("Show Path",function(bool)
         ShowPath(sTeleport, shared.ToggleSP)
     end)
 end)
+
+Auto:Toggle("Enemy ESP",function(bool)
+    shared.ToggleEE=bool
+    spawn(function()
+        for _,v in pairs(npcSpawns:GetChildren()) do
+            TagTable(v, shared.ToggleEE, nil, {TextColor = Color3.fromRGB(255,0,0)})
+        end
+    end)
+end)
+
 
 Auto:Button("Easy",function(bool)
     spawn(function()
