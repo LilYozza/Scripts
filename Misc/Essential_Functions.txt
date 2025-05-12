@@ -615,7 +615,8 @@ getgenv().Tag = function(_p, _toggle, _args) --_p = Part / _b = true or false to
 
             _RenderCon[_p] = RunService.Heartbeat:Connect(function(deltaTime)
                 if _p then
-                    _textLabel.Text = _text .. " [" .. math.ceil(GetDistance(_p)) .. "]"
+                    local dis = GetDistance(_p) or 0
+                    _textLabel.Text = _text .. " [" .. math.ceil(dis) .. "]"
                 end
             end)
             
@@ -645,8 +646,8 @@ getgenv().TagTable = function(_instance, _toggle, _override, _args)
     if _instance and typeof(_instance) == "Instance" then
         if _toggle == true then
             tagCon[_instance] = _instance.ChildAdded:Connect(function(_part)
-                local firstPart = _part:FindFirstChild(_override) or _part:FindFirstChildWhichIsA("BasePart") or _part
-                if firstPart:IsA("BasePart") and not tagtbl[_instance][firstPart] then
+                local firstPart = _part:WaitForChild(_override,5) or _part:FindFirstChildWhichIsA("BasePart") or _part
+                if firstPart:IsA("BasePart") then
                     tagtbl[_instance][firstPart] = Tag(firstPart, true, {Text = _part.Name, TextColor = textCol})
                 end
             end)
