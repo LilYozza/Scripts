@@ -30,7 +30,7 @@ local function CreateTextLabel(args)
     end
 end
 
-local function CreateTag(part, teamCol)
+local function CreateTag(part)
 	-- Creates BillBoard --
 	local newBillBoard = Instance.new("BillboardGui")
 	-- Data --
@@ -43,7 +43,7 @@ local function CreateTag(part, teamCol)
 	CreateTextLabel({
         Name = "NameTag", 
         Parent = newBillBoard, 
-        TextColor3 = teamCol or NameTagColor, 
+        TextColor3 = NameTagColor, 
         Position = NameTagPosition,
         TextSize = 13,
         Font = Enum.Font.Legacy,
@@ -69,8 +69,7 @@ local function AddESP(_player)
 		local _head = _player.Character:FindFirstChild("Head")
 		if _head then
 			if not _head:FindFirstChild("PlayerTag") then
-                local teamColor = _player.Team and _player.Team.TeamColor.Color
-                CreateTag(_head, teamColor)
+                CreateTag(_head)
             end
 		end
 	end
@@ -101,9 +100,12 @@ local function UpdateTag(_player)
 	local name = _player.DisplayName
 	local distance = GetPDistance(_player) or 0
 	local health = math.floor(humanoid.Health + 0.5)
+    local teamColor = _player.Team and _player.Team.TeamColor.Color
+
     if not (name and distance and health) then return end
 
 	tag.NameTag.Text = string.format("%s[%d]", name, distance)
+    tag.NameTag.TextColor3 = teamColor or NameTagColor
 	tag.HealthTag.Text = "Health: " .. health
 end
 

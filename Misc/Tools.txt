@@ -117,7 +117,7 @@ getgenv().UseToolPart = function(_in, _part, _range)
     local hrp = (_in and _in:FindFirstChild("HumanoidRootPart")) or (_in and _in.Character and _in.Character:FindFirstChild("HumanoidRootPart")) or false
     local hum = (_in and _in:FindFirstChild("Humanoid")) or (_in and _in.Character and _in.Character:FindFirstChild("Humanoid")) or false
     if hrp and hum and _part then
-        if hum.Health > 0 and Player:DistanceFromCharacter(hrp.Position) <= _range then
+        if hum.Health > 0 and Player:DistanceFromCharacter(hrp.Position) <= _range and ((_teamCheck and not TeamCheck(_in)) or not _teamCheck) then
             ToolPartUse(hrp, _part)
             --print("Used", _part, "On:", _in)
         end
