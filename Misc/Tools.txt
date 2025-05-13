@@ -22,6 +22,16 @@ local function ToolUse(_part)
     end
 end
 
+local function TeamCheck(_p1, _p2)
+    if not _p1 then return end
+    _p2 = _p2 or Player
+
+    if _p1.Team == _p2.Team then
+        return true
+    end
+
+end
+
 local function ToolPartUse(_hrp, _part)
     if typeof(_part) == "Instance" and _part:IsA("BasePart") then 
         firetouchinterest(_part,_hrp,0)firetouchinterest(_part,_hrp,1)
@@ -36,7 +46,8 @@ local function ToolPartUse(_hrp, _part)
     end
 end
 
-getgenv().Attack = function(_in, _range)
+getgenv().Attack = function(_in, _range, _teamCheck)
+    _teamCheck = _teamCheck or true
     _range = _range or math.huge
     if typeof(_in) == "string" then --HANDLES STRINGS
         if _in:lower() == "all" then AttackAll(_range) end
@@ -46,7 +57,8 @@ getgenv().Attack = function(_in, _range)
 
     local hrp = (_in and _in:FindFirstChild("HumanoidRootPart")) or (_in and _in.Character and _in.Character:FindFirstChild("HumanoidRootPart")) or false
     local hum = (_in and _in:FindFirstChild("Humanoid")) or (_in and _in.Character and _in.Character:FindFirstChild("Humanoid")) or false
-    if hrp and hum then
+    
+    if hrp and hum and ((_teamCheck and not TeamCheck(_in)) or not _teamCheck) then
         if hum.Health > 0 and Player:DistanceFromCharacter(hrp.Position) <= _range then
             ToolUse(_in)
             --print("Attacked:", _in)
