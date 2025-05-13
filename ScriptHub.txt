@@ -666,6 +666,10 @@ local Games = {
 	[71778824478828] = {
 		Name = '100 Player Cart Ride',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/100%20Player%20Cart%20Ride.txt'
+	},
+	[5244411056] = {
+		Name = 'Bloxy Bingo',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Bloxy%20Bingo.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
