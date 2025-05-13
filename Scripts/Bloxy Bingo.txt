@@ -28,41 +28,41 @@ function firebutton(button)
     end
 end
 
-Auto:Toggle("Auto Mark",function(bool)
-    shared.ToggleAM=bool
-    spawn(function()
+Auto:Toggle("Auto Mark", function(bool)
+    shared.ToggleAM = bool
+    task.spawn(function()
         while shared.ToggleAM do
             pcall(function()
-                local Cards
-                
-                if SubContainer:FindFirstChild("Blocks") then
-                    Cards = SubContainer.Blocks.Block
-                else
-                    Cards = SubContainer.VerticalScroll.Cards
-                end
-                
+                local Cards = SubContainer:FindFirstChild("Blocks") and SubContainer.Blocks.Block
+                    or SubContainer.VerticalScroll.Cards
+
                 local BingoButton = SubContainer.Buttons.ClaimButton
-                
-                if Cards ~= nil and BingoButton ~= nil then
+
+                if Cards and BingoButton then
                     for _, card in pairs(Cards:GetChildren()) do
                         if card:IsA("Frame") then
-                            if card ~= nil and card:FindFirstChild("Content") ~= nil and card:FindFirstChild("Content"):FindFirstChild("Numbers") ~= nil then
-                                for _, button in pairs(card.Content.Numbers:GetChildren()) do
-                                    firebutton(button)
-                                    wait()
+                            local numbers = card:FindFirstChild("Content")
+                                and card.Content:FindFirstChild("Numbers")
+
+                            if numbers then
+                                for _, button in pairs(numbers:GetChildren()) do
+                                    task.delay(0, function()
+                                        firebutton(button)
+                                    end)
                                 end
-                                
-                                if card ~= nil and card:FindFirstChild("ToGo") ~= nil then
-                                    if card.ToGo.ToGoText.Text == "BINGO!" then
-                                        firebutton(BingoButton)
-                                    end
+
+                                local toGoText = card:FindFirstChild("ToGo")
+                                    and card.ToGo:FindFirstChild("ToGoText")
+
+                                if toGoText and toGoText.Text == "BINGO!" then
+                                    firebutton(BingoButton)
                                 end
                             end
                         end
                     end
                 end
             end)
-            task.wait()
+            task.wait(0.1)
         end
     end)
 end)
