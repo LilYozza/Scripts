@@ -1,6 +1,6 @@
 w = library:CreateWindow("Main")
 --local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
---local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
+local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 
 
@@ -66,3 +66,9 @@ Auto:Toggle("Auto Mark", function(bool)
         end
     end)
 end)
+
+local saveTbl = {
+    ["Auto Mark"] = {var = "ToggleAM"}
+}
+
+SaveManager(saveTbl)
