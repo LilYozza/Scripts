@@ -9,6 +9,7 @@ local Player=game.Players.LocalPlayer
 local Auto = w:CreateFolder("Auto")
 local Admin = w:CreateFolder("Admin")
 local Pets = w:CreateFolder("Pets")
+local Spins = w:CreateFolder("Spins")
 
 -->Base Variables<--
 
@@ -36,7 +37,7 @@ Auto:Toggle("Auto Win",function(bool)
         while shared.ToggleAW do
             for _,v in pairs(Workspace:GetChildren()) do
                 local winPart = v:FindFirstChild("WinPart")
-                if winPart then Touch(winPart, 0.1) end
+                if winPart then MoveTo(winPart, 10) Touch(winPart, 0.5) end
             end
             task.wait()
         end
@@ -82,6 +83,53 @@ Pets:Toggle("Give Mythic",function(bool)
     end)
 end)
 
+local function UnpackToArray(dict)
+    local array = {}
+    for _, value in pairs(dict) do
+        table.insert(array, value)
+    end
+    return array
+end
+
+local function findKeyByValue(tbl, targetValue)
+	for key, value in pairs(tbl) do
+		if value == targetValue then
+			return key
+		end
+	end
+	return nil
+end
+
+local rewards = {
+    [1] = "Some Gems",
+    [2] = "Big Cash",
+    [3] = "1 Spin",
+    [4] = "Op Pet",
+    [5] = "Big Diamonds",
+    [6] = "Small Cash",
+    [7] = "3 Spins",
+    [8] = "x10 Cash",
+    [9] = "Small Diamonds",
+    [10] = "10 Spins",
+}
+
+local sSelect = rewards[1]
+local DropList = Spins:Dropdown(sSelect,UnpackToArray(rewards),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sSelect = findKeyByValue(rewards, SItem)
+end)
+
+Spins:Toggle("Give Spin",function(bool)
+    shared.ToggleGM=bool
+    spawn(function()
+        while shared.ToggleGM do
+            if sSelect then
+                Remotes:WaitForChild("SpinPrizeEvent"):FireServer(tonumber(sSelect)) task.wait(1)
+            end
+            task.wait()
+        end
+    end)
+end)
+
 
 local sMerge = 50
 Pets:Slider("Merge At %",{
@@ -92,19 +140,69 @@ Pets:Slider("Merge At %",{
     sMerge = Round(value)
 end)
 
+local function getCount(parent, name)
+	local count = 0
+	for _, child in ipairs(parent:GetChildren()) do
+		if child.Name == name then
+			count += 1
+		end
+	end
+	return count
+end
+
 Pets:Toggle("Auto Merge",function(bool)
     shared.ToggleAM=bool
     spawn(function()
         while shared.ToggleAM do
             for _,v in pairs(Player.Pets:GetChildren()) do
-                if v and not v.Name:match("Gold") then
-                    ReplicatedStorage:WaitForChild("PetRemotes"):WaitForChild("PetCraftEvent"):FireServer(v.Name, sMerge) task.wait()
+                if v and not v.Name:match("Void") then
+                    if not shared.ToggleAM then break end
+                    --ReplicatedStorage:WaitForChild("PetRemotes"):WaitForChild("PetCraftEvent"):FireServer(v.Name, sMerge) task.wait()
+                    if sMerge > 0 and  getCount(Player.Pets, v.Name) >= (sMerge / 10) then
+                        if not v.Name:match("Gold") and not v.Name:match("Diamond") then
+                            ReplicatedStorage:WaitForChild("PetRemotes"):WaitForChild("GoldPetCraftEvent"):FireServer(v.Name, sMerge)
+                            task.wait(1)
+                            break
+                        elseif v.Name:match("Gold") then
+                            ReplicatedStorage:WaitForChild("PetRemotes"):WaitForChild("DiamondPetCraftEvent"):FireServer(v.Name, sMerge)
+                            task.wait(1)
+                            break
+                        elseif v.Name:match("Diamond") then
+                            ReplicatedStorage:WaitForChild("PetRemotes"):WaitForChild("VoidPetCraftEvent"):FireServer(v.Name, sMerge)
+                            task.wait(1)
+                            break
+                        end
+                        
+                    end
                 end
             end
             task.wait()
         end
     end)
 end)
+
+Pets:Toggle("Auto Hatch",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            local args = {
+                [1] = workspace:WaitForChild("World10"):WaitForChild("Prompts"):WaitForChild("Eggs"):WaitForChild("Egg21")
+            }
+
+            game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("HatchServer"):InvokeServer(unpack(args))
+            task.wait(0.1)
+        end
+    end)
+end)
+
+--[[
+game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("GoldPetCraftEvent"):FireServer(unpack(args))
+game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("DiamondPetCraftEvent"):FireServer(unpack(args))
+game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("VoidPetCraftEvent"):FireServer(unpack(args))
+]]--
+
+
+
 
 
 
