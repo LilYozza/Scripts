@@ -22,11 +22,15 @@ end
 
 local function getPets()
     local t = {}
-    for _,v in pairs(Player.Pets:GetChildren())do
+    for _, v in pairs(Player.Pets:GetChildren()) do
         table.insert(t, v)
     end
+    table.sort(t, function(a, b)
+        return a.Name < b.Name
+    end)
     return t
 end
+
 
 
 Auto:Toggle("Auto Dig",function(bool)
@@ -180,12 +184,13 @@ end)
 
 Pets:Button("Delete",function()
     spawn(function()
-        print(sPet)
         if sPet then
             local name = sPet.Name
             local id = sPet:GetAttribute("PetID")
 
-            game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("DeletePet"):FireServer(name, id)
+            game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("DeletePet"):FireServer(name, id) task.wait(0.1)
+            DropList1:Refresh(getPets())
+            print("Removing:", name, id)
         end  
     end)
 end)
