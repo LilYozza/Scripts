@@ -16,8 +16,16 @@ local Spins = w:CreateFolder("Spins")
 -->Non Return Functions<--
 
 -->Return Functions<--
-function Round(num)
+local function Round(num)
     return math.floor(num / 10 + 0.5) * 10
+end
+
+local function getPets()
+    local t = {}
+    for _,v in pairs(Player.Pets:GetChildren())do
+        table.insert(t, v)
+    end
+    return t
 end
 
 
@@ -35,11 +43,26 @@ Auto:Toggle("Auto Win",function(bool)
     shared.ToggleAW=bool
     spawn(function()
         while shared.ToggleAW do
-            for _,v in pairs(Workspace:GetChildren()) do
-                local winPart = v:FindFirstChild("WinPart")
-                if winPart then MoveTo(winPart, 10) Touch(winPart, 0.5) end
+            local bestWorld = Player:FindFirstChild("BestWorld")
+            if bestWorld then
+                local world = Workspace:FindFirstChild("World"..tostring(bestWorld.value))
+                if world and world:FindFirstChild("WinPart") then 
+                    MoveTo(world.WinPart, Vector3.new(0,30,0)) 
+                    task.wait(11) 
+                    --Touch(world.WinPart, 11) end
+                end
             end
             task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Gold Rush",function(bool)
+    shared.ToggleGR=bool
+    spawn(function()
+        while shared.ToggleGR do
+            ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TreasureEvent"):FireServer("GoldenRushThirdObject10")
+            task.wait(0.3)
         end
     end)
 end)
@@ -149,6 +172,25 @@ local function getCount(parent, name)
 	end
 	return count
 end
+
+local sPet
+local DropList1 = Pets:Dropdown("Select Pet",getPets(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPet = Player.Pets:FindFirstChild(SItem)
+end)
+
+Pets:Button("Delete",function()
+    spawn(function()
+        print(sPet)
+        if sPet then
+            local name = sPet.Name
+            local id = sPet:GetAttribute("PetID")
+
+            game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("DeletePet"):FireServer(name, id)
+        end  
+    end)
+end)
+
+
 
 Pets:Toggle("Auto Merge",function(bool)
     shared.ToggleAM=bool
