@@ -13,6 +13,11 @@ if Poppy then EasterEvent = w:CreateFolder("EasterEvent") end
 local SeedPack = Workspace:WaitForChild("SeedPack", 2)
 if SeedPack then SeedPackEvent = w:CreateFolder("SeedPack Event") end
 
+local NightEvent = Workspace:WaitForChild("NightEvent", 2)
+if NightEvent then eNightEvent = w:CreateFolder("Night Event") end
+
+---------------------------------------------
+
 local Auto = w:CreateFolder("Auto")
 local Plant = w:CreateFolder("Plant")
 local Shop = w:CreateFolder("Shop")
@@ -223,6 +228,47 @@ local function checkPos(_pos)
 end
 
 local points = getGridPoints(20,10,0)
+
+--=================================== Night EVENT ===================================
+if NightEvent then
+Night_Shop = Player.PlayerGui:FindFirstChild("NightEventShop_UI")
+Night_Event = Player.PlayerGui:FindFirstChild("NightQuest_UI")
+
+
+eNightEvent:Button("Night Shop",function()
+    spawn(function()
+        Night_Shop.Enabled = not Night_Shop.Enabled
+    end)
+end)
+
+eNightEvent:Button("Night Event",function()
+    spawn(function()
+        Night_Event.Enabled = not Night_Event.Enabled
+    end)
+end)
+
+eNightEvent:Button("Sell All",function()
+    spawn(function()
+        ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("NightQuestRemoteEvent"):FireServer("SubmitAllPlants")
+    end)
+end)
+
+eNightEvent:Toggle("Auto Sell",function(bool)
+    shared.ToggleNEAS=bool
+    spawn(function()
+        while shared.ToggleNEAS do
+            -- CHECK PLAYER INV
+            local plant = getPlant("Moonlit")
+            if plant then
+                if plant.Parent ~= Player.Character then plant.Parent = Player.Character task.wait(0.3) end
+                ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("NightQuestRemoteEvent"):FireServer("SubmitAllPlants")
+            end
+            task.wait(0.3)
+        end
+    end)
+end)
+
+end
 
 --=================================== EASTER EVENT ===================================
 
@@ -498,7 +544,7 @@ Plant:Toggle("Auto Plant",function(bool)
         while shared.ToggleAP do
             local seed = getSeeds()
             if seed then
-                if not Player.Character:FindFirstChild(seed) then
+                if seed.Parent ~= Player.Character then
                     seed.Parent = Player.Character
                     task.wait(0.3)
                 end
