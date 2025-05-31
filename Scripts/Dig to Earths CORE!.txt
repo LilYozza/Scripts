@@ -242,6 +242,22 @@ Pets:Toggle("Auto Hatch",function(bool)
     end)
 end)
 
+Pets:Toggle("Hatch x3",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            local args = {
+                [1] = workspace:WaitForChild("World10"):WaitForChild("Prompts"):WaitForChild("Eggs"):WaitForChild("Egg21")
+            }
+
+            game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("Hatch3Pets"):InvokeServer(unpack(args))
+            task.wait(0.1)
+        end
+    end)
+end)
+
+
+
 --[[
 game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("GoldPetCraftEvent"):FireServer(unpack(args))
 game:GetService("ReplicatedStorage"):WaitForChild("PetRemotes"):WaitForChild("DiamondPetCraftEvent"):FireServer(unpack(args))
