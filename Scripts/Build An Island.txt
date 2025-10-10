@@ -1,0 +1,70 @@
+w = library:CreateWindow("Main")
+--local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+--local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
+
+--[[
+
+    TO DO
+
+    - Auto Hit Friend Resource
+
+]]--
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local Rs = game:GetService("ReplicatedStorage")
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local sPlot
+local Plots = Workspace:WaitForChild("Plots")
+
+
+-->Non Return Functions<--
+local function ExecuteResource(...)
+    Rs:WaitForChild("Communication"):WaitForChild("HitResource"):FireServer(...)
+end
+
+-->Return Functions<--
+
+local t = {}
+local DropList = Auto:Dropdown("Select Plot",Plots:GetChildren(),true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sPlot = Plots:FindFirstChild(SItem)
+end)
+
+Auto:Toggle("Mine Friends",function(bool)
+    shared.ToggleMF=bool
+    spawn(function()
+        while shared.ToggleMF do
+            if sPlot then
+                local Resources = sPlot:FindFirstChild("Resources")
+                if Resources then
+                    for _,v in pairs(Resources:GetChildren()) do
+                        ExecuteResource(v)
+                        if _ % 5 == 0 then task.wait() end
+                        if not shared.ToggleMF then break end
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Other",function()
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/refs/heads/main/buildanisland.lua"))()
+    end)
+end)
+
+
+-- Update Plots
+Plots.ChildAdded:Connect(function()
+    DropList:Refresh(Plots:GetChildren())
+end)
+
+Plots.ChildRemoved:Connect(function()
+    DropList:Refresh(Plots:GetChildren())
+end)
