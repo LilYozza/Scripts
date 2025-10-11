@@ -42,10 +42,10 @@ local function getPrice(_btn)
 
         -- Check For Robux
         if priceLabel.Text:match("R$") then
-            return math.huge
+            return -1
         end
         
-        local price = fromSuffixString(priceLabel)
+        local price = fromSuffixString(priceLabel.Text)
         if price then
             return price
         end
@@ -66,8 +66,7 @@ Auto:Toggle("Auto Buy",function(bool)
                     local part = v:FindFirstChildWhichIsA("TouchTransmitter")
                     if part then
                         local price = getPrice(v)
-                        if PCash.Value >= price then
-                            print("Buying")
+                        if price >= 0 and PCash.Value >= price then
                             Touch(v,0.3)
                         end
                     end
