@@ -32,6 +32,11 @@ local function getPlot()
     return plot
 end
 
+local function giveMoney()
+        local ShopBought = Rs.ShopBought
+        ShopBought:FireServer("Bandage", -9223372036850000000)
+end
+
 
 
 -->Return Functions<--
@@ -41,8 +46,8 @@ local function getPrice(_btn)
         local priceLabel = BbG:FindFirstChild("Price")
 
         -- Check For Robux
-        if priceLabel.Text:match("R$") then
-            return -1
+        if priceLabel.Text:match("R") then
+            return nil
         end
         
         local price = fromSuffixString(priceLabel.Text)
@@ -66,8 +71,8 @@ Auto:Toggle("Auto Buy",function(bool)
                     local part = v:FindFirstChildWhichIsA("TouchTransmitter")
                     if part then
                         local price = getPrice(v)
-                        if price >= 0 and PCash.Value >= price then
-                            Touch(v,0.3)
+                        if price and PCash.Value >= price then
+                            Touch(v,0.1)
                         end
                     end
                 end
@@ -77,11 +82,28 @@ Auto:Toggle("Auto Buy",function(bool)
     end)
 end)
 
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            local args = {
+                [1] = 244140625,
+                [2] = PCash.Value
+            }
+            if PCash.Value <= 0 then
+                giveMoney()
+                task.wait(4)
+            end
+            Rs:WaitForChild("RebirthEvent"):FireServer(unpack(args))           
+            task.wait()
+        end
+    end)
+end)
+
 
 
 Auto:Button("Inf Money",function()
     spawn(function()
-        local ShopBought = Rs.ShopBought
-        ShopBought:FireServer("Bandage", -9223372036850000000)
+        giveMoney()
     end)
 end)
