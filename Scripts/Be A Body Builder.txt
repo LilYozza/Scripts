@@ -1,0 +1,80 @@
+w = library:CreateWindow("Main")
+--local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+--local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
+
+
+
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local Rs = game:GetService("ReplicatedStorage")
+
+local Auto = w:CreateFolder("Auto")
+
+-->Base Variables<--
+local PCash = Player.leaderstats.Cash
+local PKills = Player.leaderstats.Kills
+local PRebirths = Player.leaderstats.Rebirths
+
+-->Non Return Functions<--
+local function getPlot()
+    local t = {}
+    for _,v in pairs(Workspace:GetChildren()) do
+        if v.Name:match("Plot") and v:IsA("Folder") then
+            local Spawn = v:FindFirstChild("Spawn")
+            if Spawn then
+                table.insert(t, Spawn)
+            end
+        end
+    end
+    local result = SortTableByDistance(t)
+    local plot = result[1].Parent
+    return plot
+end
+
+-->Return Functions<--
+local function getPrice(_btn)
+    local BbG = _btn:FindFirstChild("BillboardGui")
+    if BbG then
+        local priceLabel = BbG:FindFirstChild("Price")
+
+        -- Check For Robux
+        if priceLabel.Text:match("R$") then
+            return math.huge
+        end
+        
+        local price = fromSuffixString(priceLabel)
+        if price then
+            return price
+        end
+    end
+end
+
+Auto:Toggle("Auto Buy",function(bool)
+    shared.ToggleAB=bool
+    spawn(function()
+        while shared.ToggleAB do
+            if Buttons then
+                for _,v in pairs(Buttons:GetChildren()) do
+                    local part = v:FindFirstChild("TouchInterest")
+                    if part then
+                        local price = getPrice(v)
+                        if PCash.Value >= price then
+                            Touch(v,0.3)
+                        end
+                    end
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+
+Auto:Button("Inf Money",function()
+    spawn(function()
+        local ShopBought = Rs.ShopBought
+        ShopBought:FireServer("Bandage", -9223372036850000000)
+    end)
+end)
