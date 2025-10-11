@@ -32,6 +32,8 @@ local function getPlot()
     return plot
 end
 
+
+
 -->Return Functions<--
 local function getPrice(_btn)
     local BbG = _btn:FindFirstChild("BillboardGui")
@@ -50,6 +52,11 @@ local function getPrice(_btn)
     end
 end
 
+-->Post Variables<--
+local Plot = getPlot()
+local Buttons = Plot:WaitForChild("Buttons")
+
+
 Auto:Toggle("Auto Buy",function(bool)
     shared.ToggleAB=bool
     spawn(function()
@@ -60,6 +67,7 @@ Auto:Toggle("Auto Buy",function(bool)
                     if part then
                         local price = getPrice(v)
                         if PCash.Value >= price then
+                            print("Buying")
                             Touch(v,0.3)
                         end
                     end
