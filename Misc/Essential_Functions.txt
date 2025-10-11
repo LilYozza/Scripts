@@ -112,14 +112,16 @@ getgenv().MoveTo = function(_basePart, _offset, _back, _backTime, _func, _funcWa
         elseif _basePart:IsA("BasePart") then
             Player.Character:SetPrimaryPartCFrame(_basePart.CFrame + _offset)
         end
+        if _back then
+            task.wait(_backTime)
+        end
         if _func and type(_func) == "function" then
             _func()
             if _funcWait then
                 task.wait(_funcWait)
             end
         end
-        if oldPos and _back then
-            task.wait(_backTime)
+        if oldPos then
            Player.Character:SetPrimaryPartCFrame(oldPos)
         end
 	else
