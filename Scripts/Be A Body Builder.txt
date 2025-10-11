@@ -56,7 +56,7 @@ Auto:Toggle("Auto Buy",function(bool)
         while shared.ToggleAB do
             if Buttons then
                 for _,v in pairs(Buttons:GetChildren()) do
-                    local part = v:FindFirstChild("TouchInterest")
+                    local part = v:FindFirstChildWhichIsA("TouchTransmitter")
                     if part then
                         local price = getPrice(v)
                         if PCash.Value >= price then
