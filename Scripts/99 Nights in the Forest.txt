@@ -1,0 +1,178 @@
+w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local Rs = game:GetService("ReplicatedStorage")
+
+-->Base Variables<--
+local Map = Workspace:WaitForChild("Map")
+local Landmarks = Map:WaitForChild("Landmarks")
+
+local Items = Workspace:WaitForChild("Items")
+
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+local function getFunctional()
+    local Stronghold = Landmarks:FindFirstChild("Stronghold")
+    if Stronghold then
+        local Functional = Stronghold:FindFirstChild("Functional")
+        return Functional
+    end
+end
+
+local function strongHold()
+    local str = "Waiting"
+    local Functional = getFunctional()
+    if Functional then
+        local Sign = Functional:FindFirstChild("Sign")
+        local EntryDoors = Functional:FindFirstChild("EntryDoors")
+        if Sign and EntryDoors then
+            local doorOpen = EntryDoors:GetAttribute("DoorOpen")
+            local LabelTimer = Sign.SurfaceGui.Frame.Body
+            if doorOpen then
+                str = "Waiting"
+            else
+                if LabelTimer.Text == "00s" then
+                    str = "Ready"
+                else
+                    str = LabelTimer.Text
+                end
+            end
+        end
+    end
+    return str
+end
+
+local function getTriggerZone()
+    local Functional = getFunctional()
+    if Functional then
+        for _,v in pairs(Functional:GetChildren())do
+            if v.Name:match("Wave") then
+                for __, _v in pairs(v:GetDescendants())do
+                    if _v:IsA("BasePart") and _v.Name == "TriggerZone" then
+                        return _v
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function openDoors()
+    local Functional = getFunctional()
+    if Functional then
+        -- OPEN THE DOORS
+        local args = {
+            [1] = "FireAllClients",
+            [2] = Functional:WaitForChild("EntryDoors"),
+            [3] = true
+        }
+
+        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("ToggleDoor"):FireServer(unpack(args))
+    end
+end
+
+local function checkGate()
+    local Functional = getFunctional()
+    if Functional then
+        local FinalGate = Functional:WaitForChild("FinalGate")
+        local origin = FinalGate:GetAttribute("OriginalCF")
+        if origin and origin ~= FinalGate.WorldPivot then
+            return true
+        end
+    end
+end
+
+Auto:Label("Strong Hold:",{
+    TextSize = 25;
+    TextColor = Color3.fromRGB(255,255,255);
+    BgColor = Color3.fromRGB(69,69,69);
+})
+
+local timerLabel = Auto:Label("Loading...",{
+    TextSize = 25;
+    TextColor = Color3.fromRGB(255,255,255);
+    BgColor = Color3.fromRGB(69,69,69);
+})
+
+Auto:Toggle("Stronghold",function(bool)
+    shared.ToggleSh=bool
+    spawn(function()
+        while shared.ToggleSh do
+
+            -- WAIT FOR STRONGHOLD
+            local status = strongHold()
+            if status == "Ready" then
+
+                --OPEN DOORS
+                openDoors()
+                task.wait(1)
+
+                --TRIGGER FIGHT
+                local triggerZone = getTriggerZone()
+                if triggerZone then
+                    MoveTo(triggerZone)
+                    task.wait(5)
+                    --WAIT FOR STORNGHOLD TO FINISH
+                    local open = false
+                    repeat task.wait() MoveTo(triggerZone) open = checkGate() until not shared.ToggleSh or open
+                    print("Passed")
+
+                    task.wait(5)
+                end
+
+            end
+
+            --OPEN DIAMOND CHEST
+            for _,v in pairs(Items:GetChildren())do
+                if v.Name == "Stronghold Diamond Chest" then
+                    local opened = v:GetAttribute("LocalOpened")
+                    local gateOpen = checkGate()
+                    if not opened and gateOpen then
+                        local chest = Items:FindFirstChild("Stronghold Diamond Chest")
+                        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("RequestOpenItemChest"):FireServer(chest)
+                        --game:GetService("ReplicatedStorage").RemoteEvents.RequestTakeDiamonds:FireServer()
+                    end
+                end
+            end
+        
+            -- COLLECT DIAMONDS
+            for _,v in pairs(Items:GetChildren())do
+               if v.Name == "Diamond" then
+                    Rs.RemoteEvents.RequestTakeDiamonds:FireServer(v)
+               end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Remove Coins",function(bool)
+    shared.ToggleRC=bool
+    spawn(function()
+        while shared.ToggleRC do
+            for _,v in pairs(Items:GetChildren())do
+                if v and v.Name == "Coin Stack" then
+                    v:Destroy()
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+
+Auto:Button("Other",function()
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameHub.lua"))()
+    end)
+end)
+
+while task.wait(0.5) do
+    local status = strongHold()
+    timerLabel:Refresh(status)
+end
