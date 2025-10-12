@@ -76,24 +76,6 @@ local function openDoors()
     end
 end
 
-local function getAxe()
-    local bp = Player:WaitForChild("Inventory")
-    for _,v in pairs(bp:GetChildren())do
-        if v.Name:match("Axe") then
-            return v
-        end
-    end
-end
-
-local function checkTool()
-    local char = Player.Character
-    for _,v in pairs(char:GetChildren())do
-        if v.Name == "TooHandle" then
-            return v
-        end
-    end
-end
-
 local function checkGate()
     local Functional = getFunctional()
     if Functional then
@@ -127,6 +109,7 @@ Auto:Toggle("Stronghold",function(bool)
             if status == "Ready" then
 
                 --OPEN DOORS
+                
                 openDoors()
                 task.wait(1)
 
@@ -135,25 +118,18 @@ Auto:Toggle("Stronghold",function(bool)
                 if triggerZone then
                     local Functional = getFunctional()
                     --MoveTo(triggerZone)
-                    MoveTo(Functional:WaitForChild("FinalGate"):WaitForChild("Main"), Vector3.new(0,-10,0))
+                    MoveTo(getFunctional().Parent.WorldPivot)
+                    task.wait(1)
+                    MoveTo(Functional:WaitForChild("FinalGate"):WaitForChild("Main"), Vector3.new(0,-5,5))
                     Touch(triggerZone,0.5) Touch(triggerZone,0.5)
                     task.wait(5)
-
-                    -- Weapon Fix
-                    --[[
-                    local currentTool = checkTool()
-                    if currentTool then
-                        repeat SendKey(0x32) task.wait(1) currentTool = checkTool() until not currentTool
-                    end
-                    SendKey(0x32)
-                    ]]--
 
                     --WAIT FOR STORNGHOLD TO FINISH
                     local open = false
                     repeat task.wait() open = checkGate() until not shared.ToggleSh or open
                     print("Passed")
 
-                    MoveTo(Functional:WaitForChild("FinalGate"):WaitForChild("Main"), Vector3.new(0,-10,0))
+                    MoveTo(Functional:WaitForChild("FinalGate"):WaitForChild("Main"), Vector3.new(0,-5,5))
                     task.wait(5)
                 end
 
@@ -171,7 +147,7 @@ Auto:Toggle("Stronghold",function(bool)
                     end
                 end
             end
-        
+
             -- COLLECT DIAMONDS
             for _,v in pairs(Items:GetChildren())do
                if v.Name == "Diamond" then
