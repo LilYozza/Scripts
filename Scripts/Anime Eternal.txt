@@ -119,7 +119,7 @@ end)
 
 Auto:Button("Other",function()
     spawn(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/LinuxDevBr/Anime-Eternal/refs/heads/main/Script.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/AIHub091/AI-Hub/refs/heads/main/Anime-Eternal/Script.lua"))()
     end)
 end)
 
