@@ -1,0 +1,127 @@
+w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local rs = game:GetService("ReplicatedStorage")
+
+local PGui = Player.PlayerGui
+-->Base Variables<--
+-->Non Return Functions<--
+local function buyUpgrade(_upgrade)
+    local args = {
+        [1] = {
+            ["Upgrading_Name"] = _upgrade,
+            ["Action"] = "_Upgrades",
+            ["Upgrade_Name"] = "Upgrades"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    --print("Brought:", _upgrade)
+end
+
+-->Return Functions<--
+local function getData()
+    local t = {}
+    local Main = PGui:WaitForChild("Main")
+    local Left_Side = Main:WaitForChild("Left_Side")
+    local Stats = Left_Side:WaitForChild("Displays"):WaitForChild("Energy")
+    for _,v in pairs(Stats:GetChildren())do
+        if v:IsA("Frame") then
+            local TextLabel = v:WaitForChild("Main"):FindFirstChild("TextLabel")
+            if TextLabel then
+                t[v.Name] = {
+                    name = v.Name or "Unknown",
+                    label = TextLabel
+                }
+            end
+        end
+    end
+    return t
+end
+
+local function getUpgrades()
+    local t = {}
+    local Upgrades = PGui:WaitForChild("Upgrades")
+    local UpgradeFrame = Upgrades:WaitForChild("Upgrade_Default")
+    local ScrollingFrame = UpgradeFrame:WaitForChild("List_Frame"):WaitForChild("ScrollingFrame")
+    for _,v in pairs(ScrollingFrame:GetChildren())do
+        if v:IsA("Frame") then
+            local buyButton = v:FindFirstChild("BuyButton")
+            if buyButton then
+                local priceLabel = buyButton:WaitForChild("Price_Field"):WaitForChild("TextLabel")
+                local icon = buyButton:WaitForChild("Price_Field"):WaitForChild("Icon")
+                t[v.Name] = {
+                    name = v.Name or "Unknown",
+                    title = v.Title.Text or "Unknown",
+                    price = fromSuffixString(priceLabel.Text),
+                    level = v.Current_Level.Text or "Unknown",
+                    boost = v.Boost.Text or "Unknown",
+                    label = priceLabel,
+                    coins = icon.Image == "rbxassetid://119816620823008" or false
+                }
+            end
+        end
+    end
+    return t
+end
+
+local PlayerData = getData()
+local CoinsLabel = PlayerData.Coins.label
+local DPSLabel = PlayerData.DPS.label
+local EnergyLabel = PlayerData.Energy.label
+
+local UpgradeNames = {}
+local Upgrades = getUpgrades()
+for _,v in pairs(getUpgrades())do
+    if v.coins == true then
+        table.insert(UpgradeNames, _)
+    end
+end
+
+local sUpgrade = ""
+local DropList = Auto:Dropdown("Select Upgrade",{"All",unpack(UpgradeNames)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sUpgrade = SItem
+end)
+
+Auto:Toggle("Buy Upgrade",function(bool)
+    shared.ToggleBU=bool
+    spawn(function()
+        while shared.ToggleBU do
+            if sUpgrade then
+                if sUpgrade == "All" then
+                    for _,v in pairs(Upgrades)do
+                        local coins = fromSuffixString(CoinsLabel.Text) or 0
+                        local price = fromSuffixString(v.label.Text) or math.huge
+                        if v.coins and coins >= price and shared.ToggleBU then
+                            -- PURCHASE
+                            --print("Buying:", v.name, coins, v.price)
+                            buyUpgrade(v.name)
+
+                            task.wait(1)
+                        end
+                    end
+                else
+                    local coins = fromSuffixString(CoinsLabel.Text) or 0
+                    local upgrade = Upgrades[sUpgrade]
+                    local price = fromSuffixString(upgrade.label.Text) or math.huge
+                    if coins >= price then
+                        -- PURCHASE
+                        buyUpgrade(upgrade.name)
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Button("Other",function()
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/LinuxDevBr/Anime-Eternal/refs/heads/main/Script.lua"))()
+    end)
+end)
+
+
+

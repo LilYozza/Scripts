@@ -682,6 +682,10 @@ local Games = {
 	[126509999114328] = {
 		Name = '99 Nights in the Forest',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/99%20Nights%20in%20the%20Forest.txt'
+	},
+	[90462358603255] = {
+		Name = 'Anime Eternal',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Eternal.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
