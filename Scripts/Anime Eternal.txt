@@ -132,13 +132,16 @@ Auto:Toggle("Join Dungeons",function(bool)
                 dungeon.reference.Visible = false
                 if DungeonHelper then
                     local bool1 = false
-                    spawn(function() bool1 = Timer(25) end)
-                    repeat teleportToDungeon() Player.Character:WaitForChild("HumanoidRootPart").Anchored = true task.wait(0.5) until not DungeonHelper or bool1
+                    spawn(function() bool1 = Timer(30) end)
+                    teleportToDungeon() task.wait()
+                    local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+                    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until not DungeonHelper or bool1
                     Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
                 end
-                task.wait(10)
+            elseif dungeon and dungeon.isReady then
+                dungeon.reference.Visible = false
             end
-            task.wait(5)
+            task.wait(10)
         end
     end)
 end)
