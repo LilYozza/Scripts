@@ -354,7 +354,7 @@ end
 getgenv().fromSuffixString = function(_value, _suffixes)
     if _value then
         if not _suffixes then
-            _suffixes = {"K", "M", "B", "T", "Q"}
+            _suffixes = {"K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","Ud","Dd","Td","Qd","Qid","Sxd","Spd","Od","Nd","Vg"}
         end
 
         -- Handle TextLabel
