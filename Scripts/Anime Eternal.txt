@@ -21,6 +21,17 @@ local function buyUpgrade(_upgrade)
     --print("Brought:", _upgrade)
 end
 
+local function joinDungeon(_name)
+    local args = {
+        [1] = {
+            ["Action"] = "_Enter_Dungeon",
+            ["Name"] = _name
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
 -->Return Functions<--
 local function getData()
     local t = {}
@@ -67,6 +78,69 @@ local function getUpgrades()
     return t
 end
 
+local function getCurrentDungeon()
+    local t = {}
+    local Dungeon = PGui:WaitForChild("Dungeon")
+    local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
+    t = {
+        isReady = Dungeon_Notification.Visible,
+        name = Dungeon_Notification:GetAttribute("Dungeon_Name"),
+        reference = Dungeon_Notification
+    }
+    return t
+end
+
+local DungeonHelper = false
+local sDungeon = ""
+local sDungeons = {}
+local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
+
+local t = {}
+local RadiList = Auto:Dropdown("Select Dungeon",Dungeons,true,function(SItem)
+    sDungeon = SItem
+end)
+
+Auto:Button("Add/Remove",function()
+    spawn(function()
+        if table.find(sDungeons, sDungeon) then
+            RemoveFromTable(sDungeons, sDungeon)
+            print("Removed:", sDungeon)
+        else
+            table.insert(sDungeons, sDungeon)
+            print("Added:", sDungeon)
+        end
+    end)
+end)
+
+Auto:Toggle("Join Dungeons",function(bool)
+    shared.ToggleJD=bool
+    spawn(function()
+        while shared.ToggleJD do
+            local dungeon = getCurrentDungeon()
+            if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
+                print("Joining:", dungeon.name)
+                joinDungeon(dungeon.name)
+                dungeon.reference.Visible = false
+                if DungeonHelper then
+                    local bool1 = false
+                    spawn(function() bool1 = Timer(25) end)
+                    repeat Player.Character:WaitForChild("HumanoidRootPart").Anchored = true task.wait() until not DungeonHelper or bool1
+                    Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
+                end
+                task.wait(10)
+            end
+            task.wait(5)
+        end
+    end)
+end)
+
+Auto:Toggle("Helper",function(bool)
+    shared.ToggleDH=bool
+    spawn(function()
+        DungeonHelper = shared.ToggleDH
+    end)
+end)
+
 local PlayerData = getData()
 local CoinsLabel = PlayerData.Coins.label
 local DPSLabel = PlayerData.DPS.label
@@ -75,7 +149,7 @@ local EnergyLabel = PlayerData.Energy.label
 local UpgradeNames = {}
 
 local sUpgrade = "All"
-local DropList = Auto:Dropdown("All",{"All",unpack(UpgradeNames)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropList = Auto:Dropdown("All",{"All",unpack(UpgradeNames)},true,function(SItem)
     sUpgrade = SItem
 end)
 
