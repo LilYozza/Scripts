@@ -73,15 +73,9 @@ local DPSLabel = PlayerData.DPS.label
 local EnergyLabel = PlayerData.Energy.label
 
 local UpgradeNames = {}
-local Upgrades = getUpgrades()
-for _,v in pairs(getUpgrades())do
-    if v.coins == true then
-        table.insert(UpgradeNames, _)
-    end
-end
 
-local sUpgrade = ""
-local DropList = Auto:Dropdown("Select Upgrade",{"All",unpack(UpgradeNames)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local sUpgrade = "All"
+local DropList = Auto:Dropdown("All",{"All",unpack(UpgradeNames)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sUpgrade = SItem
 end)
 
@@ -90,11 +84,11 @@ Auto:Toggle("Buy Upgrade",function(bool)
     spawn(function()
         while shared.ToggleBU do
             if sUpgrade then
+                local Upgrades = getUpgrades()
                 if sUpgrade == "All" then
                     for _,v in pairs(Upgrades)do
                         local coins = fromSuffixString(CoinsLabel.Text) or 0
-                        local price = fromSuffixString(v.label.Text) or math.huge
-                        if v.coins and coins >= price and shared.ToggleBU then
+                        if v.coins and coins >= v.price and shared.ToggleBU then
                             -- PURCHASE
                             --print("Buying:", v.name, coins, v.price)
                             buyUpgrade(v.name)
@@ -105,8 +99,7 @@ Auto:Toggle("Buy Upgrade",function(bool)
                 else
                     local coins = fromSuffixString(CoinsLabel.Text) or 0
                     local upgrade = Upgrades[sUpgrade]
-                    local price = fromSuffixString(upgrade.label.Text) or math.huge
-                    if coins >= price then
+                    if coins >= upgrade.price then
                         -- PURCHASE
                         buyUpgrade(upgrade.name)
                     end
@@ -123,5 +116,25 @@ Auto:Button("Other",function()
     end)
 end)
 
+local upgardeFill = true
+spawn(function()
+    while task.wait(15) and upgardeFill do
+        local Upgrades = getUpgrades()
+        local UpgradeNames = {}
+
+        local count = 0
+        for _,v in pairs(Upgrades)do
+            if v.coins == true then
+                table.insert(UpgradeNames, v.name)
+                count = count + 1
+            end
+        end
+        DropList:Refresh({"All",unpack(UpgradeNames)})
+        if count > 0 then
+            upgardeFill = false
+            print("Completed")
+        end
+    end
+end)
 
 
