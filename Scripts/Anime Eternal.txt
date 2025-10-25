@@ -133,7 +133,9 @@ Auto:Toggle("Join Dungeons",function(bool)
                 if DungeonHelper then
                     local bool1 = false
                     spawn(function() bool1 = Timer(30) end)
-                    teleportToDungeon() task.wait()
+                    for i=1,5 do 
+                        teleportToDungeon() task.wait(0.5)
+                    end
                     local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
                     repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until not DungeonHelper or bool1
                     Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
