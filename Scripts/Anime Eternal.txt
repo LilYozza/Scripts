@@ -90,6 +90,15 @@ local function getCurrentDungeon()
     return t
 end
 
+local function teleportToDungeon()
+    local args = {
+        [1] = {
+            ["Action"] = "Dungeon_Teleport_Back"
+        }
+    }
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
 local DungeonHelper = false
 local sDungeon = ""
 local sDungeons = {}
@@ -124,7 +133,7 @@ Auto:Toggle("Join Dungeons",function(bool)
                 if DungeonHelper then
                     local bool1 = false
                     spawn(function() bool1 = Timer(25) end)
-                    repeat Player.Character:WaitForChild("HumanoidRootPart").Anchored = true task.wait() until not DungeonHelper or bool1
+                    repeat teleportToDungeon() Player.Character:WaitForChild("HumanoidRootPart").Anchored = true task.wait(0.5) until not DungeonHelper or bool1
                     Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
                 end
                 task.wait(10)
