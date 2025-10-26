@@ -270,20 +270,17 @@ getgenv().SortTableByDistance = function(_tbl, _part)
 end
 
 getgenv().RemoveFromTable = function(_tbl, _item)
-	if _tbl and typeof(_tbl) == "table" then
-		for _,v in pairs(_tbl)do
-			if typeof(v) == "Instance" then
-				if v.Name == _item or v == _item then
-					table.remove(_tbl, _)
-				end
-			elseif typeof(v) == "string" then
-				if v == _item then
-					table.remove(_tbl, _)
-				end
-			end
+	if typeof(_tbl) ~= "table" then
+		return warn("RemoveFromTable: Bad Values")
+	end
+
+	for i = #_tbl, 1, -1 do  -- iterate backwards safely
+		local v = _tbl[i]
+		if (typeof(v) == "Instance" and (v == _item or v.Name == _item))
+		or (typeof(v) == "string" and v == _item) then
+			table.remove(_tbl, i)
+			return i  -- return position removed
 		end
-	else
-		warn("RemoveFromTable: Bad Values")
 	end
 end
 
