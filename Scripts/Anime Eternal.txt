@@ -121,6 +121,7 @@ Auto:Button("Add/Remove",function()
     end)
 end)
 
+
 Auto:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
     spawn(function()
@@ -138,7 +139,10 @@ Auto:Toggle("Join Dungeons",function(bool)
                     end
                     local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
                     repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until not DungeonHelper or bool1
-                    Player.Character:WaitForChild("HumanoidRootPart").Anchored = false
+                    
+                    local h = Player.Character:WaitForChild("Humanoid")
+                    local r = Player.Character:WaitForChild("HumanoidRootPart")
+                    h:MoveTo(r.Position + r.CFrame.LookVector*20)
                 end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
