@@ -58,7 +58,7 @@ local function CollectPlant(_plant)
     for _,v in pairs(_plant:GetChildren())do
         local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
         if prox then
-            mod:FireServer({v.Parent}) task.wait()
+            mod:FireServer({v.Parent}) task.wait(0.1)
         end
     end
 end
