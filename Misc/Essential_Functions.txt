@@ -349,46 +349,41 @@ end
 
 --> Return Functions <--
 getgenv().fromSuffixString = function(_value, _suffixes)
-    if _value then
-        if not _suffixes then
-            _suffixes = {"K","M","B","T","QA","QI","SX","SP","OC","NO","DC","UD","DD","TD","QD","QID","SXD","SPD","OD","ND","VG"}
-        end
+	if not _value then
+		warn("fromSuffixString: Bad Values...")
+		return
+	end
 
-        -- Handle TextLabel
-        if typeof(_value) == Instance and _value:IsA("TextLabel") then
-            _value = _value.Text
-        end
+	_suffixes = _suffixes or {"K","M","B","T","QA","QI","SX","SP","OC","NO","DC","UD","DD","TD","QD","QID","SXD","SPD","OD","ND","VG"}
 
-        -- Handle numeric values
-        if typeof(_value) == "number" or tonumber(_value) then
-            return tonumber(_value)
-        end
+	-- Handle TextLabel
+	if typeof(_value) == "Instance" and _value:IsA("TextLabel") then
+		_value = _value.Text
+	end
 
-        -- Handle edge cases for "0" or empty strings
-        if _value == "0" or _value == "" then
-            return 0
-        end
+	-- Handle numeric
+	if typeof(_value) == "number" or tonumber(_value) then
+		return tonumber(_value)
+	end
 
-        _value = _value:upper()
+	if _value == "0" or _value == "" then
+		return 0
+	end
 
-        -- Check for suffix
-        for _, suffix in ipairs(_suffixes) do
-            if _value:match(suffix) then
-                -- Extract number and suffix
-                local n, foundSuffix = string.match(_value, "([%d%.]+)(%a)")
-                if n and foundSuffix and foundSuffix == suffix then
-                    local i = table.find(_suffixes, foundSuffix) or 0
-                    return tonumber(n) * math.pow(10, i * 3)
-                end
-            end
-        end
+	_value = _value:upper()
 
-        -- If no suffix is found, remove non-numeric characters
-        _value = _value:gsub("[^%d%.]", "")
-        return tonumber(_value)
-    else
-        warn("fromSuffixString: Bad Values...")
-    end
+	-- Match number + optional multi-letter suffix
+	local n, foundSuffix = string.match(_value, "([%d%.]+)([%a]+)")
+	if n and foundSuffix then
+		local i = table.find(_suffixes, foundSuffix)
+		if i then
+			return tonumber(n) * 10^(i * 3)
+		end
+	end
+
+	-- No suffix found — clean and return numeric
+	_value = _value:gsub("[^%d%.]", "")
+	return tonumber(_value)
 end
 
 

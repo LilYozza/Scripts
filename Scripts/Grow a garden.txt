@@ -1,6 +1,5 @@
 local rs = game:GetService("ReplicatedStorage")
-local DataService = require(rs.Modules.DataService)
-local CountDictionary = require(rs.Modules.CountDictionary)
+
 
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
@@ -9,7 +8,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v1")
+print("v2")
 
 -->Base Variables<--
 
@@ -35,35 +34,25 @@ local Interaction = Workspace:WaitForChild("Interaction")
 local UpdateItems = Interaction:WaitForChild("UpdateItems")
 
 -->Non Return Functions<--
-local function IsMaxInventory()
-    -- wait until player attributes are ready
-    repeat task.wait() until Player:GetAttribute("BonusBackpackSize") ~= nil
-
-    -- wait until DataService:GetData() returns something valid
-    local data
-    repeat
-        task.wait(0.1)
-        local success, result = pcall(function()
-            return DataService:GetData()
-        end)
-        if success and result and result.InventoryData then
-            data = result
-        end
-    until data
-
-    local BonusBackpackSize = Player:GetAttribute("BonusBackpackSize") or 0
-
-    -- find all "Holdable" items in inventory
-    local holdableItems = {}
-    for uuid, itemData in data.InventoryData do
-        if itemData.ItemType == "Holdable" then
-            holdableItems[uuid] = itemData
+local function getInventoryCount()
+    local count = 0
+    for _,v in pairs(Player:WaitForChild("Backpack"):GetChildren())do
+        if v:GetAttribute("b") == "j" then
+            count = count + 1
         end
     end
+    return count
+end
 
-    local itemCount = CountDictionary(holdableItems)
-    local maxSize = 200 + BonusBackpackSize
-    return itemCount >= maxSize
+
+local function IsMaxInventory()
+    local count = getInventoryCount()
+    local bonus = Player:GetAttribute("BonusBackpackSize")
+    if 200 + (bonus or 0) > count then
+        return false
+    else
+        return true
+    end
 end
 
 --HALLOWEEN 2025
@@ -192,7 +181,6 @@ local function buyAllStock(_type)
         local mFrame = v:FindFirstChild("Main_Frame")
         if v:IsA("Frame") and mFrame then
             local info = getStockInfo(mFrame)
-            print(fromSuffixString(pCash.Value))
             if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
                 if type == "seeds" then
                     buySeed(info.name, info.stock)
