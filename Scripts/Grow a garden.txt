@@ -67,7 +67,7 @@ if WitchAndDeadTreePlatform then
         spawn(function()
             while shared.Toggle do
                 local progress = getProgress()
-                if progress and progress > 0 and progress < 100 and InventoryService:IsMaxInventory() then
+                if progress and progress > 0 and progress < 100 and InventoryService.IsMaxInventory(Player) then
                     submitFruit()
                 end
                 task.wait()
@@ -80,7 +80,7 @@ if WitchAndDeadTreePlatform then
         spawn(function()
             while shared.Toggle do
                 local progress = getProgress()
-                if progress and progress > 0 and progress < 100 and InventoryService:IsMaxInventory() then
+                if progress and progress > 0 and progress < 100 and InventoryService.IsMaxInventory(Player) then
                     submitFruit()
                 end
                 task.wait()
@@ -145,7 +145,7 @@ local function buyDailySeed(_item, _amt)
     end
 end
 local function buyGear(_item, _amt)
-    --print("Buying: x" .. _amt, _item)
+    print("Buying: x" .. _amt, _item)
     for i = 1, _amt do
         GameEvents:WaitForChild("BuyGearStock"):FireServer(_item) task.wait(0.1)
     end
