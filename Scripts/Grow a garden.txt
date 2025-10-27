@@ -14,7 +14,7 @@ local pCash = Player:WaitForChild("leaderstats"):WaitForChild("Sheckles")
 
 local GameEvents = rs:WaitForChild("GameEvents")
 local mod = GameEvents:WaitForChild("Crops"):WaitForChild("Collect")
-local InventoryService = require(game.ReplicatedStorage.Modules.InventoryService)
+local IS = require(rs:WaitForChild("Modules"):WaitForChild("InventoryService"))
 
 --Seed Types
 local __seeds = {name = "seeds", path = PGui:WaitForChild("Seed_Shop")}
@@ -22,6 +22,58 @@ local __dailySeeds = {name = "daily", path = PGui:WaitForChild("Seed_Shop")}
 local __gears = {name = "gears", path = PGui:WaitForChild("Gear_Shop")}
 local __eggs = {name = "eggs", path = PGui:WaitForChild("PetShop_UI")}
 local __merchant = {name = "merchant", path = PGui:WaitForChild("TravelingMerchantShop_UI")}
+
+-- EVENTS
+local Interaction = Workspace:WaitForChild("Interaction")
+local UpdateItems = Interaction:WaitForChild("UpdateItems")
+
+--HALLOWEEN 2025
+local WitchAndDeadTreePlatform = UpdateItems:WaitForChild("WitchAndDeadTreePlatform", 5)
+if WitchAndDeadTreePlatform then
+    local EventMenu = w:CreateFolder("Halloween")
+
+    local function submitFruit()
+        GameEvents:WaitForChild("WitchesBrew"):WaitForChild("SubmitItemToCauldron"):InvokeServer("All")
+    end
+
+    local function getProgress()
+        local WitchTree = WitchAndDeadTreePlatform:FindFirstChild("Witch&Tree")
+        if WitchTree and WitchTree:GetAttribute("State") == "Entering" then
+            local ui = WitchTree:WaitForChild("WitchesBrewCauldron"):WaitForChild("CauldronProgressUI")
+            if ui then
+                local timer = ui:WaitForChild("ClientProgressBillboard")
+                local progess = ui:WaitForChild("ProgressBillboard")
+                if progess.Enabled == true then
+                    local amount = fromSuffixString(progess.Progress.Text)
+                    return amount
+                end
+            end
+        end
+        return false
+    end
+
+    EventMenu:Toggle("Auto",function(bool)
+        shared.Toggle=bool
+        spawn(function()
+            while shared.Toggle do
+                local progress = getProgress()
+                if progress and progress > 0 and progress < 100 and IS:IsMaxInventory() then
+                    submitFruit()
+                end
+                task.wait()
+            end
+        end)
+    end)
+    EventMenu:Button("Submit All",function()
+        spawn(function()
+            submitFruit()
+        end)
+    end)
+
+
+end
+
+
 
 local function getStockInfo(_item)
     local t = {
@@ -58,7 +110,7 @@ end
 local function CollectPlant(_plant)
     for _,v in pairs(_plant:GetChildren())do
         local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
-        if prox and InventoryService:IsMaxInventory() == true then
+        if prox and IS:IsMaxInventory() == false then
             mod:FireServer({v.Parent}) task.wait(0.1)
         end
     end
