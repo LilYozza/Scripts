@@ -1,5 +1,212 @@
 w = library:CreateWindow("Main")
-local Auto = w:CreateFolder("Auto")
+local Auto = w:CreateFolder("Main")
+local StockMenu = w:CreateFolder("Stock")
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+local rs = game:GetService("ReplicatedStorage")
+
+-->Base Variables<--
+
+local Farms = Workspace:WaitForChild("Farm")
+local PGui = Player.PlayerGui
+local pCash = Player:WaitForChild("leaderstats"):WaitForChild("Sheckles")
+
+local GameEvents = rs:WaitForChild("GameEvents")
+local mod = GameEvents:WaitForChild("Crops"):WaitForChild("Collect")
+
+--Seed Types
+local __seeds = {name = "seeds", path = PGui:WaitForChild("Seed_Shop")}
+local __dailySeeds = {name = "daily", path = PGui:WaitForChild("Seed_Shop")}
+local __gears = {name = "gears", path = PGui:WaitForChild("Gear_Shop")}
+local __eggs = {name = "eggs", path = PGui:WaitForChild("PetShop_UI")}
+local __merchant = {name = "merchant", path = PGui:WaitForChild("TravelingMerchantShop_UI")}
+
+local function getStockInfo(_item)
+    local t = {
+        name = _item.Parent.Name,
+        price = fromSuffixString(_item.Cost_Text.Text),
+        stock = fromSuffixString(_item.Stock_Text.Text)
+    }
+    return t
+end
+
+local function getSeedInfo(_item) -- FOR DAILY SEEDS
+    local price = _item:WaitForChild("PurchaseButton"):WaitForChild("Main"):WaitForChild("Price")
+    local t = {
+        name = _item.Name,
+        price = fromSuffixString(price.Text),
+        stock = fromSuffixString(_item.StockNum.Text)
+    }
+    return t
+end
+
+-->Non Return Functions<--
+local function getFarm()
+    for _,v in pairs(Farms:GetChildren())do
+        local Important = v:FindFirstChild("Important")
+        if Important then
+            local Owner = Important:WaitForChild("Data"):WaitForChild("Owner")
+            if Owner and Owner.Value == Player.Name then
+                return v
+            end
+        end
+    end
+end
+
+local function CollectPlant(_plant)
+    for _,v in pairs(_plant:GetChildren())do
+        local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
+        if prox then
+            mod:FireServer({v.Parent}) task.wait()
+        end
+    end
+end
+
+local function buySeed(_item, _amt)
+    --print("Buying: x" .. _amt, _item)
+    for i = 1, _amt do
+        GameEvents:WaitForChild("BuySeedStock"):FireServer("Shop", _item) task.wait(0.1)
+    end
+end
+local function buyDailySeed(_item, _amt)
+    --print("Buying: x" .. _amt, _item)
+    for i = 1, _amt do
+        GameEvents:WaitForChild("BuyDailySeedShopStock"):FireServer(_item) task.wait(0.1)
+    end
+end
+local function buyGear(_item, _amt)
+    --print("Buying: x" .. _amt, _item)
+    for i = 1, _amt do
+        GameEvents:WaitForChild("BuyGearStock"):FireServer(_item) task.wait(0.1)
+    end
+end
+local function buyEgg(_item, _amt)
+    --print("Buying: x" .. _amt, _item)
+    for i = 1, _amt do
+        GameEvents:WaitForChild("BuyPetEgg"):FireServer(_item) task.wait(0.1)
+    end
+end
+
+local function buyMerchant(_item, _amt)
+    --print("Buying: x" .. _amt, _item)
+    for i = 1, _amt do
+        GameEvents:WaitForChild("BuyTravelingMerchantShopStock"):FireServer(_item) task.wait(0.1)
+    end
+end
+local function buyAllStock(_type)
+    local type = _type.name
+    local _frame = _type.path:WaitForChild("Frame")
+    local list = _frame:WaitForChild("ScrollingFrame")
+    for _,v in pairs(list:GetChildren())do
+        local mFrame = v:FindFirstChild("Main_Frame")
+        if v:IsA("Frame") and mFrame then
+            local info = getStockInfo(mFrame)
+            if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
+                if type == "seeds" then
+                    buySeed(info.name, info.stock)
+                elseif type == "gears" then
+                    buyGear(info.name, info.stock)
+                elseif type == "eggs" then
+                    buyEgg(info.name, info.stock)
+                elseif type == "merchant" then
+                    buyMerchant(info.name, info.stock)
+                end
+            end
+        end
+    end
+end
+
+local function buyDaily()
+    local shop = PGui:WaitForChild("Seed_Shop")
+    local mFrame = shop:WaitForChild("Daily"):WaitForChild("ScrollingFrame")
+    local seeds = {}
+    for _,v in pairs(mFrame:GetChildren())do
+        local bestDeal = v:FindFirstChild("SeedName")
+        if bestDeal then
+            local info = getSeedInfo(v)
+            if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
+                buyDailySeed(info.name, info.stock)
+            end
+        end
+        if v.Name == "Seeds" then
+            for __,_v in pairs(v:GetChildren())do
+                local deal = _v:FindFirstChild("SeedName")
+                if _v:IsA("Frame") and deal then
+                    local info = getSeedInfo(_v)
+                    if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
+                        buyDailySeed(info.name, info.stock)
+                    end
+                end
+            end
+        end
+    end
+end
+
+--Post Variables
+local Farm = getFarm()
+local Important = Farm:WaitForChild("Important")
+local Plants_Physical = Important:WaitForChild("Plants_Physical")
+
+Auto:Toggle("Auto Harvest",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            for _,v in pairs(Plants_Physical:GetChildren())do
+                local Fruits = v:FindFirstChild("Fruits")
+                if Fruits then
+                    for __,_v in pairs(Fruits:GetChildren())do
+                        CollectPlant(_v)
+                    end
+                else
+                    CollectPlant(v)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+
+StockMenu:Toggle("Buy Seeds",function(bool)
+    shared.ToggleBS=bool
+    spawn(function()
+        while shared.ToggleBS do
+            buyAllStock(__seeds)
+            buyDaily()
+            task.wait(1)
+        end
+    end)
+end)
+
+StockMenu:Toggle("Buy Gears",function(bool)
+    shared.ToggleBG=bool
+    spawn(function()
+        while shared.ToggleBG do
+            buyAllStock(__gears)
+            task.wait(1)
+        end
+    end)
+end)
+
+StockMenu:Toggle("Buy Eggs",function(bool)
+    shared.ToggleBE=bool
+    spawn(function()
+        while shared.ToggleBE do
+            buyAllStock(__eggs)
+            task.wait(1)
+        end
+    end)
+end)
+
+StockMenu:Toggle("Buy Merchant",function(bool)
+    shared.ToggleBM=bool
+    spawn(function()
+        while shared.ToggleBM do
+            buyAllStock(__merchant)
+            task.wait(1)
+        end
+    end)
+end)
 
 Auto:Button("Other",function()
     spawn(function()
