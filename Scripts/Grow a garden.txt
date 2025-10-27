@@ -14,7 +14,13 @@ local pCash = Player:WaitForChild("leaderstats"):WaitForChild("Sheckles")
 
 local GameEvents = rs:WaitForChild("GameEvents")
 local mod = GameEvents:WaitForChild("Crops"):WaitForChild("Collect")
-local IS = require(rs:WaitForChild("Modules"):WaitForChild("InventoryService"))
+local InventoryService = require(game.ReplicatedStorage.Modules.InventoryService)
+
+if InventoryService:IsMaxInventory() then
+    print("Inventory is full!")
+else
+    print("You have space for more crops.")
+end
 
 --Seed Types
 local __seeds = {name = "seeds", path = PGui:WaitForChild("Seed_Shop")}
@@ -57,7 +63,7 @@ if WitchAndDeadTreePlatform then
         spawn(function()
             while shared.Toggle do
                 local progress = getProgress()
-                if progress and progress > 0 and progress < 100 and IS:IsMaxInventory() then
+                if progress and progress > 0 and progress < 100 and InventoryService:IsMaxInventory() then
                     submitFruit()
                 end
                 task.wait()
@@ -110,7 +116,7 @@ end
 local function CollectPlant(_plant)
     for _,v in pairs(_plant:GetChildren())do
         local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
-        if prox and IS:IsMaxInventory() == false then
+        if prox and not InventoryService:IsMaxInventory() then
             mod:FireServer({v.Parent}) task.wait(0.1)
         end
     end
