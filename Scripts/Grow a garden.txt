@@ -9,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v8")
+print("v9")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -70,10 +70,10 @@ if WitchAndDeadTreePlatform then
         if WitchTree and WitchTree:GetAttribute("State") == "Entering" then
             local ui = WitchTree:WaitForChild("WitchesBrewCauldron"):WaitForChild("CauldronProgressUI")
             if ui then
-                local timer = ui:WaitForChild("ClientProgressBillboard")
                 local progess = ui:WaitForChild("ProgressBillboard")
-                if progess.Enabled == true and not timer.Enabled then
-                    local amount = fromSuffixString(progess.Progress.Text)
+                local text = progess.Progress.Text
+                if progess.Enabled == true and not text:match("Brew Timer") then
+                    local amount = fromSuffixString(text)
                     return amount
                 else
                     return false
@@ -191,7 +191,7 @@ local function CollectPlant(_plant)
     for _,v in pairs(_plant:GetChildren())do
         local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
         if prox then
-            mod:FireServer({v.Parent}) task.wait(0.1)
+            mod:FireServer({v.Parent}) task.wait()
         end
     end
 end
@@ -293,15 +293,17 @@ Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
     spawn(function()
         while shared.ToggleAH do
-            for _,v in pairs(Plants_Physical:GetChildren())do
-                local Fruits = v:FindFirstChild("Fruits")
-                if Fruits then
-                    for __,_v in pairs(Fruits:GetChildren())do
-                        if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
-                        
+            if not IsMaxInventory() then
+                for _,v in pairs(Plants_Physical:GetChildren())do
+                    local Fruits = v:FindFirstChild("Fruits")
+                    if Fruits then
+                        for __,_v in pairs(Fruits:GetChildren())do
+                            if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                            
+                        end
+                    else
+                        if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                     end
-                else
-                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                 end
             end
             task.wait(0.1)
