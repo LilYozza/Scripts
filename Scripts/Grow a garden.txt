@@ -1,5 +1,5 @@
 local rs = game:GetService("ReplicatedStorage")
-local DataService_upvr = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
+local ALLDATA = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
 
 
 w = library:CreateWindow("Main")
@@ -9,9 +9,10 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v4")
+print("v5")
 
 -->Base Variables<--
+local function Sheckles() return ALLDATA.Sheckles end
 
 local Farms = Workspace:WaitForChild("Farm")
 local NPCS = Workspace:WaitForChild("NPCS")
@@ -37,7 +38,7 @@ local UpdateItems = Interaction:WaitForChild("UpdateItems")
 -->Non Return Functions<--
 local function getInventoryCount()
     local amt = {}
-    local any_GetData_result1 = DataService_upvr:GetData()
+    local any_GetData_result1 = ALLDATA:GetData()
     for i, v in any_GetData_result1.InventoryData do
         if v.ItemType == "Holdable" and v.ItemData then
             table.insert(amt, v)
@@ -60,6 +61,7 @@ end
 local WitchAndDeadTreePlatform = UpdateItems:WaitForChild("WitchAndDeadTreePlatform", 5)
 if WitchAndDeadTreePlatform then
     local EventMenu = w:CreateFolder("Halloween")
+    local EventShop = ALLDATA.EventShopStock
 
     local function submitFruit()
         GameEvents:WaitForChild("WitchesBrew"):WaitForChild("SubmitItemToCauldron"):InvokeServer("All")
@@ -81,6 +83,17 @@ if WitchAndDeadTreePlatform then
         return false
     end
 
+    local function buyEventStock(_type)
+        for _,v in pairs(_type) do
+            if v.Stock > 0 then
+                for i = 1, v.Stock do
+                    GameEvents.BuyEventShopStock:FireServer(_) task.wait(0.1)
+                end
+                print("Buying: x" .. v.Stock, _)
+            end
+        end
+    end
+
     EventMenu:Button("Submit All",function()
         spawn(function()
             submitFruit()
@@ -88,14 +101,54 @@ if WitchAndDeadTreePlatform then
     end)
 
     EventMenu:Toggle("Auto Submit",function(bool)
-        shared.Toggle=bool
+        shared.ToggleHAS=bool
         spawn(function()
-            while shared.Toggle do
+            while shared.ToggleHAS do
                 local progress = getProgress()
                 if progress and progress > 0 and progress < 100 and IsMaxInventory() then
                     submitFruit()
                 end
                 task.wait()
+            end
+        end)
+    end)
+
+    EventMenu:Toggle("Buy Seeds",function(bool)
+        shared.ToggleHBS=bool
+        spawn(function()
+            while shared.ToggleHBS do
+                buyEventStock(EventShop['Spooky Seeds'])
+                task.wait(1)
+            end
+        end)
+    end)
+
+    EventMenu:Toggle("Buy Critters",function(bool)
+        shared.ToggleHBC=bool
+        spawn(function()
+            while shared.ToggleHBC do
+                buyEventStock(EventShop['Creepy Critters'])
+                task.wait(1)
+            end
+        end)
+    end)
+
+    EventMenu:Toggle("Buy Gadgets",function(bool)
+        shared.ToggleHBG=bool
+        spawn(function()
+            while shared.ToggleHBG do
+                buyEventStock(EventShop['Ghosty Gadgets'])
+                task.wait(1)
+            end
+        end)
+    end)
+
+    EventMenu:Toggle("Buy Decor",function(bool)
+        shared.ToggleHBD=bool
+        spawn(function()
+            while shared.ToggleHBD do
+                buyEventStock(EventShop['Devilish Decor'])
+                task.wait(1)
             end
         end)
     end)
@@ -182,7 +235,7 @@ local function buyAllStock(_type)
         local mFrame = v:FindFirstChild("Main_Frame")
         if v:IsA("Frame") and mFrame then
             local info = getStockInfo(mFrame)
-            if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
+            if info.stock > 0 and Sheckles() >= info.price then
                 if type == "seeds" then
                     buySeed(info.name, info.stock)
                 elseif type == "gears" then
@@ -205,7 +258,7 @@ local function buyDaily()
         local bestDeal = v:FindFirstChild("SeedName")
         if bestDeal then
             local info = getSeedInfo(v)
-            if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
+            if info.stock > 0 and Sheckles() >= info.price then
                 buyDailySeed(info.name, info.stock)
             end
         end
@@ -214,7 +267,7 @@ local function buyDaily()
                 local deal = _v:FindFirstChild("SeedName")
                 if _v:IsA("Frame") and deal then
                     local info = getSeedInfo(_v)
-                    if info.stock > 0 and fromSuffixString(pCash.Value) >= info.price then
+                    if info.stock > 0 and Sheckles() >= info.price then
                         buyDailySeed(info.name, info.stock)
                     end
                 end
