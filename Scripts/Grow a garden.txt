@@ -11,8 +11,11 @@ local rs = game:GetService("ReplicatedStorage")
 -->Base Variables<--
 
 local Farms = Workspace:WaitForChild("Farm")
+local NPCS = Workspace:WaitForChild("NPCS")
 local PGui = Player.PlayerGui
 local pCash = Player:WaitForChild("leaderstats"):WaitForChild("Sheckles")
+
+local Steven = NPCS:WaitForChild("Steven")
 
 local GameEvents = rs:WaitForChild("GameEvents")
 local mod = GameEvents:WaitForChild("Crops"):WaitForChild("Collect")
@@ -60,7 +63,13 @@ if WitchAndDeadTreePlatform then
         return false
     end
 
-    EventMenu:Toggle("Auto",function(bool)
+    EventMenu:Button("Submit All",function()
+        spawn(function()
+            submitFruit()
+        end)
+    end)
+
+    EventMenu:Toggle("Auto Submit",function(bool)
         shared.Toggle=bool
         spawn(function()
             while shared.Toggle do
@@ -72,16 +81,22 @@ if WitchAndDeadTreePlatform then
             end
         end)
     end)
-    EventMenu:Button("Submit All",function()
+
+    EventMenu:Toggle("Auto",function(bool)
+        shared.Toggle=bool
         spawn(function()
-            submitFruit()
+            while shared.Toggle do
+                local progress = getProgress()
+                if progress and progress > 0 and progress < 100 and InventoryService:IsMaxInventory() then
+                    submitFruit()
+                end
+                task.wait()
+            end
         end)
-    end)
+    end) 
 
 
 end
-
-
 
 local function getStockInfo(_item)
     local t = {
@@ -204,6 +219,14 @@ local function buyDaily()
     end
 end
 
+local function TeleportTo(_place)
+    GameEvents:WaitForChild("PlayerTeleportTriggered"):FireServer(_place)
+end
+
+local function SellAll()
+    GameEvents:WaitForChild("Sell_Inventory"):FireServer()
+end
+
 --Post Variables
 local Farm = getFarm()
 local Important = Farm:WaitForChild("Important")
@@ -225,6 +248,41 @@ Auto:Toggle("Auto Harvest",function(bool)
             end
             task.wait()
         end
+    end)
+end)
+
+local moveBack = false
+-->Return Functions<--
+Auto:Toggle("Auto Sell",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            if InventoryService:IsMaxInventory() then
+                local samHRP = Steven:FindFirstChild("HumanoidRootPart")
+                local distance = GetDistance(samHRP)
+                local old = GetPos()
+                if distance > 10 then
+                    local hrp = GetHrp()
+                    
+                    local direction = (hrp.Position - samHRP.Position).Unit
+                    local newPosition = samHRP.Position + direction * 5
+                    local facingCFrame = CFrame.lookAt(newPosition, samHRP.Position)
+
+                    MoveTo(facingCFrame) task.wait(1)
+                end
+                SellAll()
+                if moveBack then task.wait(1) MoveTo(old) end
+                task.wait(5)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("TeleportBack",function(bool)
+    shared.ToggleTB=bool
+    spawn(function()
+        moveBack = shared.ToggleTB
     end)
 end)
 
