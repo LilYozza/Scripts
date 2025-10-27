@@ -1,14 +1,6 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local InventoryService = require(ReplicatedStorage.Modules.InventoryService)
-local player = game.Players.LocalPlayer
-repeat task.wait() until player:GetAttribute("BonusBackpackSize") ~= nil
-
-if InventoryService:IsMaxInventory() then
-    print("Inventory is full!")
-else
-    print("You have space for more crops.")
-end
-
+local rs = game:GetService("ReplicatedStorage")
+local DataService = require(rs.Modules.DataService)
+local CountDictionary = require(rs.Modules.CountDictionary)
 
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
@@ -16,7 +8,6 @@ local StockMenu = w:CreateFolder("Stock")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
-local rs = game:GetService("ReplicatedStorage")
 
 -->Base Variables<--
 
@@ -40,6 +31,33 @@ local __merchant = {name = "merchant", path = PGui:WaitForChild("TravelingMercha
 -- EVENTS
 local Interaction = Workspace:WaitForChild("Interaction")
 local UpdateItems = Interaction:WaitForChild("UpdateItems")
+
+-->Non Return Functions<--
+local function IsMaxInventory()
+    -- wait until player attributes are ready
+    repeat task.wait() until Player:GetAttribute("BonusBackpackSize") ~= nil
+
+    local BonusBackpackSize = Player:GetAttribute("BonusBackpackSize") or 0
+    local data = DataService:GetData()
+    if not data or not data.InventoryData then
+        warn("IsMaxInventory: Inventory data not found")
+        return false
+    end
+
+    -- find all "Holdable" items in inventory
+    local holdableItems = {}
+    for uuid, itemData in data.InventoryData do
+        if itemData.ItemType == "Holdable" then
+            holdableItems[uuid] = itemData
+        end
+    end
+
+    -- use CountDictionary to count them
+    local itemCount = CountDictionary(holdableItems)
+    local maxSize = 200 + BonusBackpackSize
+
+    return itemCount >= maxSize
+end
 
 --HALLOWEEN 2025
 local WitchAndDeadTreePlatform = UpdateItems:WaitForChild("WitchAndDeadTreePlatform", 5)
@@ -77,7 +95,7 @@ if WitchAndDeadTreePlatform then
         spawn(function()
             while shared.Toggle do
                 local progress = getProgress()
-                if progress and progress > 0 and progress < 100 and InventoryService:IsMaxInventory() then
+                if progress and progress > 0 and progress < 100 and IsMaxInventory() then
                     submitFruit()
                 end
                 task.wait()
@@ -105,7 +123,8 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
     return t
 end
 
--->Non Return Functions<--
+
+
 local function getFarm()
     for _,v in pairs(Farms:GetChildren())do
         local Important = v:FindFirstChild("Important")
@@ -225,7 +244,7 @@ Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
     spawn(function()
         while shared.ToggleAH do
-            if not InventoryService:IsMaxInventory() then
+            if not IsMaxInventory() then
                 for _,v in pairs(Plants_Physical:GetChildren())do
                     local Fruits = v:FindFirstChild("Fruits")
                     if Fruits then
@@ -248,7 +267,7 @@ Auto:Toggle("Auto Sell",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do
-            if InventoryService:IsMaxInventory() then
+            if IsMaxInventory() then
                 local samHRP = Steven:FindFirstChild("HumanoidRootPart")
                 local distance = GetDistance(samHRP)
                 local old = GetPos()
