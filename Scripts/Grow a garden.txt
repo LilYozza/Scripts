@@ -1,6 +1,6 @@
 local rs = game:GetService("ReplicatedStorage")
-local ALLDATA = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
-
+local DataService = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
+local ALLDATA = DataService:GetData()
 
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
@@ -9,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v5")
+print("v6")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -38,8 +38,7 @@ local UpdateItems = Interaction:WaitForChild("UpdateItems")
 -->Non Return Functions<--
 local function getInventoryCount()
     local amt = {}
-    local any_GetData_result1 = ALLDATA:GetData()
-    for i, v in any_GetData_result1.InventoryData do
+    for i, v in ALLDATA.InventoryData do
         if v.ItemType == "Holdable" and v.ItemData then
             table.insert(amt, v)
         end
