@@ -9,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6")
+print("v7")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -17,7 +17,6 @@ local function Sheckles() return ALLDATA.Sheckles end
 local Farms = Workspace:WaitForChild("Farm")
 local NPCS = Workspace:WaitForChild("NPCS")
 local PGui = Player.PlayerGui
-local pCash = Player:WaitForChild("leaderstats"):WaitForChild("Sheckles")
 
 local Steven = NPCS:WaitForChild("Steven")
 
@@ -300,7 +299,7 @@ Auto:Toggle("Auto Harvest",function(bool)
                         
                     end
                 else
-                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                 end
             end
         end
