@@ -156,7 +156,7 @@ local function buyDailySeed(_item, _amt)
     end
 end
 local function buyGear(_item, _amt)
-    print("Buying: x" .. _amt, _item)
+    --print("Buying: x" .. _amt, _item)
     for i = 1, _amt do
         GameEvents:WaitForChild("BuyGearStock"):FireServer(_item) task.wait(0.1)
     end
@@ -240,21 +240,19 @@ Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
     spawn(function()
         while shared.ToggleAH do
-            if not IsMaxInventory() then
-                for _,v in pairs(Plants_Physical:GetChildren())do
-                    local Fruits = v:FindFirstChild("Fruits")
-                    if Fruits then
-                        for __,_v in pairs(Fruits:GetChildren())do
-                            if shared.ToggleAH then CollectPlant(_v) end
-                            
-                        end
-                    else
-                        if shared.ToggleAH then CollectPlant(_v) end
+            for _,v in pairs(Plants_Physical:GetChildren())do
+                local Fruits = v:FindFirstChild("Fruits")
+                if Fruits then
+                    for __,_v in pairs(Fruits:GetChildren())do
+                        if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                        
                     end
+                else
+                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
                 end
             end
-            task.wait()
         end
+        task.wait()
     end)
 end)
 
