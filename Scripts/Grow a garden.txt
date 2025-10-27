@@ -302,8 +302,8 @@ Auto:Toggle("Auto Harvest",function(bool)
                     if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                 end
             end
+            task.wait(0.1)
         end
-        task.wait()
     end)
 end)
 
