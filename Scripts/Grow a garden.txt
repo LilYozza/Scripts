@@ -1,3 +1,5 @@
+local InventoryService = require(game.ReplicatedStorage.Modules.InventoryService)
+
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
 local StockMenu = w:CreateFolder("Stock")
@@ -14,7 +16,7 @@ local pCash = Player:WaitForChild("leaderstats"):WaitForChild("Sheckles")
 
 local GameEvents = rs:WaitForChild("GameEvents")
 local mod = GameEvents:WaitForChild("Crops"):WaitForChild("Collect")
-local InventoryService = require(game.ReplicatedStorage.Modules.InventoryService)
+
 
 if InventoryService:IsMaxInventory() then
     print("Inventory is full!")
