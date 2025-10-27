@@ -1,4 +1,5 @@
 local rs = game:GetService("ReplicatedStorage")
+local DataService_upvr = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
 
 
 w = library:CreateWindow("Main")
@@ -8,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v2")
+print("v3")
 
 -->Base Variables<--
 
@@ -35,15 +36,15 @@ local UpdateItems = Interaction:WaitForChild("UpdateItems")
 
 -->Non Return Functions<--
 local function getInventoryCount()
-    local count = 0
-    for _,v in pairs(Player:WaitForChild("Backpack"):GetChildren())do
-        if v:GetAttribute("b") == "j" then
-            count = count + 1
+    local amt = {}
+    local any_GetData_result1 = DataService_upvr:GetData()
+    for i, v in any_GetData_result1.InventoryData do
+        if v.ItemType == "Holdable" and v.ItemData then
+            table.insert(module, v)
         end
     end
-    return count
+    return #amt
 end
-
 
 local function IsMaxInventory()
     local count = getInventoryCount()
@@ -244,10 +245,11 @@ Auto:Toggle("Auto Harvest",function(bool)
                     local Fruits = v:FindFirstChild("Fruits")
                     if Fruits then
                         for __,_v in pairs(Fruits:GetChildren())do
-                            CollectPlant(_v)
+                            if shared.ToggleAH then CollectPlant(_v) end
+                            
                         end
                     else
-                        CollectPlant(v)
+                        if shared.ToggleAH then CollectPlant(_v) end
                     end
                 end
             end
