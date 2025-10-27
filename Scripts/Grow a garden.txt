@@ -20,13 +20,6 @@ local Steven = NPCS:WaitForChild("Steven")
 local GameEvents = rs:WaitForChild("GameEvents")
 local mod = GameEvents:WaitForChild("Crops"):WaitForChild("Collect")
 
-
-if InventoryService:IsMaxInventory() then
-    print("Inventory is full!")
-else
-    print("You have space for more crops.")
-end
-
 --Seed Types
 local __seeds = {name = "seeds", path = PGui:WaitForChild("Seed_Shop")}
 local __dailySeeds = {name = "daily", path = PGui:WaitForChild("Seed_Shop")}
@@ -133,7 +126,7 @@ end
 local function CollectPlant(_plant)
     for _,v in pairs(_plant:GetChildren())do
         local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
-        if prox and not InventoryService:IsMaxInventory() then
+        if prox then
             mod:FireServer({v.Parent}) task.wait(0.1)
         end
     end
@@ -236,14 +229,16 @@ Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
     spawn(function()
         while shared.ToggleAH do
-            for _,v in pairs(Plants_Physical:GetChildren())do
-                local Fruits = v:FindFirstChild("Fruits")
-                if Fruits then
-                    for __,_v in pairs(Fruits:GetChildren())do
-                        CollectPlant(_v)
+            if not InventoryService:IsMaxInventory() then
+                for _,v in pairs(Plants_Physical:GetChildren())do
+                    local Fruits = v:FindFirstChild("Fruits")
+                    if Fruits then
+                        for __,_v in pairs(Fruits:GetChildren())do
+                            CollectPlant(_v)
+                        end
+                    else
+                        CollectPlant(v)
                     end
-                else
-                    CollectPlant(v)
                 end
             end
             task.wait()
