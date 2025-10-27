@@ -9,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v3")
+print("v4")
 
 -->Base Variables<--
 
@@ -40,7 +40,7 @@ local function getInventoryCount()
     local any_GetData_result1 = DataService_upvr:GetData()
     for i, v in any_GetData_result1.InventoryData do
         if v.ItemType == "Holdable" and v.ItemData then
-            table.insert(module, v)
+            table.insert(amt, v)
         end
     end
     return #amt
