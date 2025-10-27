@@ -83,13 +83,18 @@ if WitchAndDeadTreePlatform then
         return false
     end
 
-    local function buyEventStock(_type)
-        for _,v in pairs(_type) do
+    local function buyEventStock(_name, _type)
+        for _,v in pairs(_type.Stocks) do
             if v.Stock > 0 then
                 for i = 1, v.Stock do
-                    GameEvents.BuyEventShopStock:FireServer(_) task.wait(0.1)
+                    local args = {
+                        [1] = "Pumpkin Crate",
+                        [2] = "Devilish Decor"
+                    }
+
+                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name)
                 end
-                print("Buying: x" .. v.Stock, _)
+                print("Buying: x" .. v.Stock, _, "Type:", _name)
             end
         end
     end
@@ -117,7 +122,7 @@ if WitchAndDeadTreePlatform then
         shared.ToggleHBS=bool
         spawn(function()
             while shared.ToggleHBS do
-                buyEventStock(EventShop['Spooky Seeds'])
+                buyEventStock("Spooky Seeds", EventShop['Spooky Seeds'])
                 task.wait(1)
             end
         end)
@@ -127,7 +132,7 @@ if WitchAndDeadTreePlatform then
         shared.ToggleHBC=bool
         spawn(function()
             while shared.ToggleHBC do
-                buyEventStock(EventShop['Creepy Critters'])
+                buyEventStock("Creepy Critters", EventShop['Creepy Critters'])
                 task.wait(1)
             end
         end)
@@ -137,7 +142,7 @@ if WitchAndDeadTreePlatform then
         shared.ToggleHBG=bool
         spawn(function()
             while shared.ToggleHBG do
-                buyEventStock(EventShop['Ghosty Gadgets'])
+                buyEventStock("Ghosty Gadgets", EventShop['Ghosty Gadgets'])
                 task.wait(1)
             end
         end)
@@ -147,7 +152,7 @@ if WitchAndDeadTreePlatform then
         shared.ToggleHBD=bool
         spawn(function()
             while shared.ToggleHBD do
-                buyEventStock(EventShop['Devilish Decor'])
+                buyEventStock("Devilish Decor", EventShop['Devilish Decor'])
                 task.wait(1)
             end
         end)

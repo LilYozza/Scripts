@@ -557,6 +557,25 @@ getgenv().Timer = function(_time)
 		warn("Timer: Bad Values...")
 	end
 end
+getgenv().TableToClipboard = function(_tbl, indent)
+    indent = indent or ""
+    if not _tbl or typeof(_tbl) ~= "table" then
+        warn("TableToClipboard: Bad Values")
+        return ""
+    end
+
+    local str = ""
+    for k, v in pairs(_tbl) do
+        if typeof(v) == "table" then
+            str = str .. indent .. tostring(k) .. " = {\n"
+            str = str .. TableToClipboard(v, indent .. "  ")
+            str = str .. indent .. "}\n"
+        else
+            str = str .. indent .. tostring(k) .. " = " .. tostring(v) .. "\n"
+        end
+    end
+    return str
+end
 
 local function CreateTextLabel(text, color, position)
 
