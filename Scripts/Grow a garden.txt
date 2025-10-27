@@ -74,21 +74,6 @@ if WitchAndDeadTreePlatform then
             end
         end)
     end)
-
-    EventMenu:Toggle("Auto",function(bool)
-        shared.Toggle=bool
-        spawn(function()
-            while shared.Toggle do
-                local progress = getProgress()
-                if progress and progress > 0 and progress < 100 and InventoryService.IsMaxInventory(Player) then
-                    submitFruit()
-                end
-                task.wait()
-            end
-        end)
-    end) 
-
-
 end
 
 local function getStockInfo(_item)
@@ -229,7 +214,7 @@ Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
     spawn(function()
         while shared.ToggleAH do
-            if not InventoryService:IsMaxInventory() then
+            if not InventoryService.IsMaxInventory(Player) then
                 for _,v in pairs(Plants_Physical:GetChildren())do
                     local Fruits = v:FindFirstChild("Fruits")
                     if Fruits then
@@ -252,7 +237,7 @@ Auto:Toggle("Auto Sell",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do
-            if InventoryService:IsMaxInventory() then
+            if InventoryService.IsMaxInventory(Player) then
                 local samHRP = Steven:FindFirstChild("HumanoidRootPart")
                 local distance = GetDistance(samHRP)
                 local old = GetPos()
