@@ -9,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7")
+print("v8")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -76,7 +76,7 @@ if WitchAndDeadTreePlatform then
                     local amount = fromSuffixString(progess.Progress.Text)
                     return amount
                 else
-                    return 100
+                    return false
                 end
             end
         end
@@ -105,7 +105,7 @@ if WitchAndDeadTreePlatform then
         spawn(function()
             while shared.ToggleHAS do
                 local progress = getProgress()
-                if progress and progress > 0 and progress < 100 and IsMaxInventory() then
+                if progress and progress >= 0 and progress < 100 and IsMaxInventory() then
                     submitFruit()
                 end
                 task.wait()
