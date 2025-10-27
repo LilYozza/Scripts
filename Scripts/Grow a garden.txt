@@ -9,7 +9,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v9")
+print("v1")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -61,6 +61,8 @@ if WitchAndDeadTreePlatform then
     local EventMenu = w:CreateFolder("Halloween")
     local EventShop = ALLDATA.EventShopStock
 
+    
+
     local function submitFruit()
         GameEvents:WaitForChild("WitchesBrew"):WaitForChild("SubmitItemToCauldron"):InvokeServer("All")
     end
@@ -87,11 +89,6 @@ if WitchAndDeadTreePlatform then
         for _,v in pairs(_type.Stocks) do
             if v.Stock > 0 then
                 for i = 1, v.Stock do
-                    local args = {
-                        [1] = "Pumpkin Crate",
-                        [2] = "Devilish Decor"
-                    }
-
                     GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name)
                 end
                 print("Buying: x" .. v.Stock, _, "Type:", _name)
@@ -99,9 +96,35 @@ if WitchAndDeadTreePlatform then
         end
     end
 
-    EventMenu:Button("Submit All",function()
+    local function submitReaper(_slot)
+        GameEvents:WaitForChild("HarvestReaper"):WaitForChild("SubmitHarvestReaper"):FireServer(_slot)
+    end
+
+    EventMenu:Button("Submit Cauldron",function()
         spawn(function()
             submitFruit()
+        end)
+    end)
+    EventMenu:Button("Submit Reaper",function()
+        spawn(function()
+            local RitualPointsFolder = UpdateItems:WaitForChild("HarvestReaper", 5):WaitForChild("RitualCircle"):WaitForChild("RitualPointsFolder")
+            local sorted = {}
+            for _, child in ipairs(RitualPointsFolder:GetChildren()) do
+                local value = child:GetAttribute("ID") -- replace with your attribute name
+                if value then
+                    sorted[value] = child
+                end
+            end
+            local back = GetPos()
+            for i = 1, 25 do
+                local child = sorted[i]
+                if child and child:GetAttribute("RitualPoint_Completed") == false then 
+                    local point = child:FindFirstChild("Root")
+                    MoveTo(point) task.wait(0.3)
+                    submitReaper(i) task.wait(0.3)
+                end
+            end
+            MoveTo(back)
         end)
     end)
 
