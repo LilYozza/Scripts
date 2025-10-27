@@ -47,7 +47,7 @@ end
 
 local function IsMaxInventory()
     local count = getInventoryCount()
-    local bonus = Player:GetAttribute("BonusBackpackSize")
+    local bonus = 0 -- Player:GetAttribute("BonusBackpackSize")
     if 200 + (bonus or 0) > count then
         return false
     else
@@ -72,9 +72,11 @@ if WitchAndDeadTreePlatform then
             if ui then
                 local timer = ui:WaitForChild("ClientProgressBillboard")
                 local progess = ui:WaitForChild("ProgressBillboard")
-                if progess.Enabled == true then
+                if progess.Enabled == true and not timer.Enabled then
                     local amount = fromSuffixString(progess.Progress.Text)
                     return amount
+                else
+                    return 100
                 end
             end
         end
