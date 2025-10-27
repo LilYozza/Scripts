@@ -9,6 +9,8 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
+print("v1")
+
 -->Base Variables<--
 
 local Farms = Workspace:WaitForChild("Farm")
@@ -37,12 +39,19 @@ local function IsMaxInventory()
     -- wait until player attributes are ready
     repeat task.wait() until Player:GetAttribute("BonusBackpackSize") ~= nil
 
+    -- wait until DataService:GetData() returns something valid
+    local data
+    repeat
+        task.wait(0.1)
+        local success, result = pcall(function()
+            return DataService:GetData()
+        end)
+        if success and result and result.InventoryData then
+            data = result
+        end
+    until data
+
     local BonusBackpackSize = Player:GetAttribute("BonusBackpackSize") or 0
-    local data = DataService:GetData()
-    if not data or not data.InventoryData then
-        warn("IsMaxInventory: Inventory data not found")
-        return false
-    end
 
     -- find all "Holdable" items in inventory
     local holdableItems = {}
@@ -52,10 +61,8 @@ local function IsMaxInventory()
         end
     end
 
-    -- use CountDictionary to count them
     local itemCount = CountDictionary(holdableItems)
     local maxSize = 200 + BonusBackpackSize
-
     return itemCount >= maxSize
 end
 
