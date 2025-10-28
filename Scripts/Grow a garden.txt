@@ -1,4 +1,6 @@
 local rs = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+
 local DataService = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
 local ALLDATA = DataService:GetData()
 
@@ -9,7 +11,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v1")
+print("v2")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -45,21 +47,50 @@ local function getInventoryCount()
     return #amt
 end
 
+local function checkPlantInventory(_plant, ...)
+	local name, muts = string.lower(_plant), {...}
+	for _, v in pairs(ALLDATA.InventoryData) do
+		local data = v.ItemData
+		if v.ItemType == "Holdable" and data and string.lower(data.ItemName) == name then
+			local str = string.lower(data.MutationString or "")
+			for _, m in ipairs(muts) do
+				if not str:find(string.lower(m)) then
+					str = nil break
+				end
+			end
+			if str then return v end
+		end
+	end
+end
 local function IsMaxInventory()
     local count = getInventoryCount()
-    local bonus = 0 -- Player:GetAttribute("BonusBackpackSize")
-    if 200 + (bonus or 0) > count then
+    local bonus = Player:GetAttribute("BonusBackpackSize")
+    if 199 + (bonus or 0) > count then
         return false
     else
         return true
     end
 end
 
+local function CollectPlant(_plant, _type, _mutation)
+    for _,v in pairs(_plant:GetChildren())do
+        local plant = v.Parent
+        if _type and plant.Name:lower() ~= _type:lower() then return end        -- PLANT TYPE CHECKER
+        if _mutation and plant:GetAttribute(_mutation) == false then return end -- MUTATION CHECKER
+        local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
+        if prox then
+            mod:FireServer({plant}) task.wait()
+        end
+    end
+end
+
+
 --HALLOWEEN 2025
 local WitchAndDeadTreePlatform = UpdateItems:WaitForChild("WitchAndDeadTreePlatform", 5)
 if WitchAndDeadTreePlatform then
     local EventMenu = w:CreateFolder("Halloween")
     local EventShop = ALLDATA.EventShopStock
+    local HarvestReaper =  UpdateItems:WaitForChild("HarvestReaper", 5)
 
     
 
@@ -105,30 +136,8 @@ if WitchAndDeadTreePlatform then
             submitFruit()
         end)
     end)
-    EventMenu:Button("Submit Reaper",function()
-        spawn(function()
-            local RitualPointsFolder = UpdateItems:WaitForChild("HarvestReaper", 5):WaitForChild("RitualCircle"):WaitForChild("RitualPointsFolder")
-            local sorted = {}
-            for _, child in ipairs(RitualPointsFolder:GetChildren()) do
-                local value = child:GetAttribute("ID") -- replace with your attribute name
-                if value then
-                    sorted[value] = child
-                end
-            end
-            local back = GetPos()
-            for i = 1, 25 do
-                local child = sorted[i]
-                if child and child:GetAttribute("RitualPoint_Completed") == false then 
-                    local point = child:FindFirstChild("Root")
-                    MoveTo(point) task.wait(0.3)
-                    submitReaper(i) task.wait(0.3)
-                end
-            end
-            MoveTo(back)
-        end)
-    end)
 
-    EventMenu:Toggle("Auto Submit",function(bool)
+    EventMenu:Toggle("Auto Cauldron",function(bool)
         shared.ToggleHAS=bool
         spawn(function()
             while shared.ToggleHAS do
@@ -137,6 +146,64 @@ if WitchAndDeadTreePlatform then
                     submitFruit()
                 end
                 task.wait()
+            end
+        end)
+    end)
+
+    EventMenu:Button("Submit Reaper",function()
+        spawn(function()
+            local RitualCircle = HarvestReaper:FindFirstChild("RitualCircle")
+            if RitualCircle then
+                local RitualPointsFolder = RitualCircle:FindFirstChild("RitualPointsFolder")
+                local sorted = {}
+                for _, child in ipairs(RitualPointsFolder:GetChildren()) do
+                    local value = child:GetAttribute("ID") -- replace with your attribute name
+                    if value then
+                        sorted[value] = child
+                    end
+                end
+                local back = GetPos()
+                for i = 1, 25 do
+                    local child = sorted[i]
+                    if child and child:GetAttribute("RitualPoint_Completed") == false then 
+                        local point = child:FindFirstChild("Root")
+                        MoveTo(point) task.wait(0.3)
+                        submitReaper(i) task.wait(0.3)
+                    end
+                end
+                MoveTo(back)
+            end
+        end)
+    end)
+
+    EventMenu:Toggle("Auto Reaper",function(bool)
+        shared.ToggleHAR=bool
+        spawn(function()
+            while shared.ToggleHAR do
+                local RitualCircle = HarvestReaper:FindFirstChild("RitualCircle")
+                if RitualCircle then
+                    local RitualPointsFolder = RitualCircle:FindFirstChild("RitualPointsFolder")
+                    for _,v in pairs(RitualPointsFolder:GetChildren())do
+                        if v:GetAttribute("RitualPoint_Completed") == false then
+                            local nMutation
+                            local ID = v:GetAttribute("ID")
+                            local nPlant = v:GetAttribute("RitualPoint_PlantName")
+                            local raw = v:GetAttribute("RitualPoint_Mutations")
+                            if raw then nMutation = HttpService:JSONDecode(raw) end
+                            local cPlant = checkPlantInventory(nPlant, unpack(nMutation))
+                            if cPlant then 
+                                print("Collecting:", ID, nPlant, raw)
+                                local back = GetPos()
+                                local point = v:FindFirstChild("Root")
+                                MoveTo(point) task.wait(0.3)
+                                submitReaper(tonumber(ID)) task.wait(0.3)
+                                MoveTo(back)
+                                print()
+                            end
+                        end
+                    end
+                end
+                task.wait(1)
             end
         end)
     end)
@@ -215,14 +282,6 @@ local function getFarm()
     end
 end
 
-local function CollectPlant(_plant)
-    for _,v in pairs(_plant:GetChildren())do
-        local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
-        if prox then
-            mod:FireServer({v.Parent}) task.wait()
-        end
-    end
-end
 
 local function buySeed(_item, _amt)
     --print("Buying: x" .. _amt, _item)
