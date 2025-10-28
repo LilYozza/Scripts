@@ -11,7 +11,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v3")
+print("v4")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -152,7 +152,7 @@ if WitchAndDeadTreePlatform then
                 local digArea = Workspace:FindFirstChild(Player.Name .. "_DiggingGrid")
                 if digArea then
                     local DiggingData = ALLDATA.DiggingData
-                    if DiggingData.RemainingDigs > 0 then
+                    if DiggingData.DigComplete == false and DiggingData.RemainingDigs > 0 then
                         local canDig = GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteFunction"):InvokeServer("CheckCanDig")
                         if canDig then
                             local toDigX, toDigY = getTreasure()
