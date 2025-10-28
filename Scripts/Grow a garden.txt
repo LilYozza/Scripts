@@ -88,6 +88,7 @@ end
 --HALLOWEEN 2025
 local WitchAndDeadTreePlatform = UpdateItems:WaitForChild("WitchAndDeadTreePlatform", 5)
 if WitchAndDeadTreePlatform then
+    local restartDig = false
     local EventMenu = w:CreateFolder("Halloween")
     local EventShop = ALLDATA.EventShopStock
     local HarvestReaper =  UpdateItems:WaitForChild("HarvestReaper", 5)
@@ -152,12 +153,16 @@ if WitchAndDeadTreePlatform then
                 local digArea = Workspace:FindFirstChild(Player.Name .. "_DiggingGrid")
                 if digArea then
                     local DiggingData = ALLDATA.DiggingData
-                    if DiggingData.DigComplete == false and DiggingData.RemainingDigs > 0 then
-                        local canDig = GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteFunction"):InvokeServer("CheckCanDig")
-                        if canDig then
-                            local toDigX, toDigY = getTreasure()
-                            if toDigX ~= nil and toDigY ~= nil then
-                                dig(toDigX, toDigY) task.wait(1)
+                    if DiggingData.RemainingDigs > 0 then
+                        if DiggingData.DigComplete == true and restartDig then
+                            GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("RestartDiggingSheckles"):FireServer()
+                        elseif DiggingData.DigComplete == false then
+                            local canDig = GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteFunction"):InvokeServer("CheckCanDig")
+                            if canDig then
+                                local toDigX, toDigY = getTreasure()
+                                if toDigX ~= nil and toDigY ~= nil then
+                                    dig(toDigX, toDigY) task.wait(1)
+                                end
                             end
                         end
                     end
@@ -166,6 +171,14 @@ if WitchAndDeadTreePlatform then
             end
         end)
     end)
+
+    Auto:Toggle("Auto Restart",function(bool)
+        shared.ToggleHARD=bool
+        spawn(function()
+            restartDig = shared.ToggleHARD
+        end)
+    end)
+
 
     EventMenu:Button("Submit Cauldron",function()
         spawn(function()
