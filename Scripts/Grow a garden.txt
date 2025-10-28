@@ -172,7 +172,7 @@ if WitchAndDeadTreePlatform then
         end)
     end)
 
-    Auto:Toggle("Auto Restart",function(bool)
+    EventMenu:Toggle("Auto Restart",function(bool)
         shared.ToggleHARD=bool
         spawn(function()
             restartDig = shared.ToggleHARD
