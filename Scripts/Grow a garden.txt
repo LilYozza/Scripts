@@ -11,7 +11,7 @@ local StockMenu = w:CreateFolder("Stock")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v2")
+print("v3")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -51,7 +51,7 @@ local function checkPlantInventory(_plant, ...)
 	local name, muts = string.lower(_plant), {...}
 	for _, v in pairs(ALLDATA.InventoryData) do
 		local data = v.ItemData
-		if v.ItemType == "Holdable" and data and string.lower(data.ItemName) == name then
+		if v.ItemType == "Holdable" and data and string.lower(data.ItemName) == name and data.IsFavorite == false  then
 			local str = string.lower(data.MutationString or "")
 			for _, m in ipairs(muts) do
 				if not str:find(string.lower(m)) then
@@ -130,6 +130,42 @@ if WitchAndDeadTreePlatform then
     local function submitReaper(_slot)
         GameEvents:WaitForChild("HarvestReaper"):WaitForChild("SubmitHarvestReaper"):FireServer(_slot)
     end
+
+    local function dig(_x, _y)
+        print("Digging At:", _x, _y)
+        GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteEvent"):FireServer(_x, _y, CFrame.new())
+    end
+
+    local function getTreasure()
+        local ts = ALLDATA.DiggingData.GridData
+        for _,v in pairs(ts)do
+            if v.IsDug == false and v.IsTreasure == true then
+                return v.GridX,v.GridY
+            end
+        end
+    end
+
+    EventMenu:Toggle("Auto Digger",function(bool)
+        shared.ToggleHAD=bool
+        spawn(function()
+            while shared.ToggleHAD do
+                local digArea = Workspace:FindFirstChild(Player.Name .. "_DiggingGrid")
+                if digArea then
+                    local DiggingData = ALLDATA.DiggingData
+                    if DiggingData.RemainingDigs > 0 then
+                        local canDig = GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteFunction"):InvokeServer("CheckCanDig")
+                        if canDig then
+                            local toDigX, toDigY = getTreasure()
+                            if toDigX ~= nil and toDigY ~= nil then
+                                dig(toDigX, toDigY) task.wait(1)
+                            end
+                        end
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end)
 
     EventMenu:Button("Submit Cauldron",function()
         spawn(function()
