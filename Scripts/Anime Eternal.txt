@@ -1,7 +1,7 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
-print("v2")
+print("v3")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -60,18 +60,22 @@ local function teleportToDungeon()
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
-local function dungeonHelper()
+local function dungeonHelper(_distance, _timer)
     local bool1 = false
+    local distance = _distance or 0
+    local timer = _timer or 30
     spawn(function() bool1 = Timer(30) end)
     for i=1,5 do 
-        teleportToDungeon() task.wait(0.5)
-    end
+        teleportToDungeon() task.wait(0.1)
+    end task.wait()
     local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
     repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until bool1
     teleportToDungeon() task.wait(0.5)
-    local h = Player.Character:WaitForChild("Humanoid")
-    local r = Player.Character:WaitForChild("HumanoidRootPart")
-    h:MoveTo(r.Position + r.CFrame.LookVector* 60)
+    if distance > 0 then
+        local h = Player.Character:WaitForChild("Humanoid")
+        local r = Player.Character:WaitForChild("HumanoidRootPart")
+        h:MoveTo(r.Position + r.CFrame.LookVector* distance)
+    end
 end
 
 local DungeonHelper = false
@@ -125,7 +129,7 @@ Auto:Toggle("Join Dungeons",function(bool)
                 print("Joining:", dungeon.name)
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then dungeonHelper() end
+                if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
             end
