@@ -1,7 +1,7 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
-print("v1")
+print("v2")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -108,6 +108,13 @@ Auto:Button("Add/Remove",function()
     end)
 end)
 
+Auto:Button("Reset",function()
+    spawn(function()
+        sDungeons = {}
+        DungeonList:Refresh(Dungeons)
+    end)
+end)
+
 
 Auto:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
@@ -118,7 +125,7 @@ Auto:Toggle("Join Dungeons",function(bool)
                 print("Joining:", dungeon.name)
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then DungeonHelper() end
+                if DungeonHelper then dungeonHelper() end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
             end
@@ -138,9 +145,10 @@ Auto:Toggle("Auto Raid",function(bool)
         while shared.ToggleAR do
             local currentRaid = getCurrentDungeon()
             if sRaid and currentRaid and currentRaid.inDungeon == false then
+                print("Joining:", sRaid)
                 joinDungeon(sRaid)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
-                if DungeonHelper then DungeonHelper() end
+                if DungeonHelper then dungeonHelper() end
             end
             task.wait(1)
         end
