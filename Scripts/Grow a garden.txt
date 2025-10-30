@@ -7,11 +7,12 @@ local ALLDATA = DataService:GetData()
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
 local StockMenu = w:CreateFolder("Stock")
+local SPMenu = w:CreateFolder("Season Pass")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v4")
+print("v5")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -37,6 +38,23 @@ local Interaction = Workspace:WaitForChild("Interaction")
 local UpdateItems = Interaction:WaitForChild("UpdateItems")
 
 -->Non Return Functions<--
+local function getFarm()
+    for _,v in pairs(Farms:GetChildren())do
+        local Important = v:FindFirstChild("Important")
+        if Important then
+            local Owner = Important:WaitForChild("Data"):WaitForChild("Owner")
+            if Owner and Owner.Value == Player.Name then
+                return v
+            end
+        end
+    end
+end
+
+--Post Variables
+local Farm = getFarm()
+local Important = Farm:WaitForChild("Important")
+local Plants_Physical = Important:WaitForChild("Plants_Physical")
+
 local function getInventoryCount()
     local amt = {}
     for i, v in ALLDATA.InventoryData do
@@ -47,21 +65,50 @@ local function getInventoryCount()
     return #amt
 end
 
-local function checkPlantInventory(_plant, ...)
-	local name, muts = string.lower(_plant), {...}
+local function checkPlantInventory(_plant, _mutations)
 	for _, v in pairs(ALLDATA.InventoryData) do
 		local data = v.ItemData
-		if v.ItemType == "Holdable" and data and string.lower(data.ItemName) == name and data.IsFavorite == false  then
+		if v.ItemType == "Holdable" and data and string.lower(data.ItemName) == string.lower(_plant) and data.IsFavorite == false  then
 			local str = string.lower(data.MutationString or "")
-			for _, m in ipairs(muts) do
-				if not str:find(string.lower(m)) then
-					str = nil break
-				end
+			for _, m in ipairs(_mutations) do
+				if not str:find(string.lower(m)) then return end
 			end
-			if str then return v end
+			return v
 		end
 	end
 end
+
+local function checkPlant(_plant, _name, _mutations)
+    for _,v in pairs(_plant:GetChildren())do
+        local plant = v.Parent
+        if _name and plant.Name:lower() ~= _name:lower() then return end        -- PLANT TYPE CHECKER
+        if _mutations[1] then 
+            for _, m in ipairs(_mutations) do
+                if not plant:GetAttribute(m) then return end
+            end
+        end -- MUTATION CHECKER
+        local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
+        if prox then return plant end
+    end
+end
+
+
+local function checkPlantGarden(_name, _mutations)
+    for _,v in pairs(Plants_Physical:GetChildren())do
+        local Fruits = v:FindFirstChild("Fruits")
+        if Fruits then
+            for __,_v in pairs(Fruits:GetChildren())do
+                local find = checkPlant(_v, _name, _mutations)
+                if find then return find end
+            end
+        else
+            local find = checkPlant(v, _name, _mutations)
+            if find then return find end
+        end
+    end
+end
+
+
 local function IsMaxInventory()
     local count = getInventoryCount()
     local bonus = Player:GetAttribute("BonusBackpackSize")
@@ -72,10 +119,10 @@ local function IsMaxInventory()
     end
 end
 
-local function CollectPlant(_plant, _type, _mutation)
+local function CollectPlant(_plant, _name, _mutation)
     for _,v in pairs(_plant:GetChildren())do
         local plant = v.Parent
-        if _type and plant.Name:lower() ~= _type:lower() then return end        -- PLANT TYPE CHECKER
+        if _name and plant.Name:lower() ~= _name:lower() then return end        -- PLANT TYPE CHECKER
         if _mutation and plant:GetAttribute(_mutation) == false then return end -- MUTATION CHECKER
         local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
         if prox then
@@ -120,10 +167,10 @@ if WitchAndDeadTreePlatform then
     local function buyEventStock(_name, _type)
         for _,v in pairs(_type.Stocks) do
             if v.Stock > 0 then
-                for i = 1, v.Stock do
-                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name)
-                end
                 print("Buying: x" .. v.Stock, _, "Type:", _name)
+                for i = 1, v.Stock do
+                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name) task.wait(0.1)
+                end
             end
         end
     end
@@ -224,6 +271,14 @@ if WitchAndDeadTreePlatform then
             end
         end)
     end)
+    local ReaperAutoHarvest = false
+    EventMenu:Toggle("Reaper Harvest",function(bool)
+        shared.ToggleHRH=bool
+        spawn(function()
+            ReaperAutoHarvest = shared.ToggleHRH
+        end)
+    end)
+
 
     EventMenu:Toggle("Auto Reaper",function(bool)
         shared.ToggleHAR=bool
@@ -239,15 +294,21 @@ if WitchAndDeadTreePlatform then
                             local nPlant = v:GetAttribute("RitualPoint_PlantName")
                             local raw = v:GetAttribute("RitualPoint_Mutations")
                             if raw then nMutation = HttpService:JSONDecode(raw) end
-                            local cPlant = checkPlantInventory(nPlant, unpack(nMutation))
+                            local cPlant = checkPlantInventory(nPlant, nMutation)
+                            if not cPlant and ReaperAutoHarvest then
+                                local plant = checkPlantGarden(nPlant, nMutation)
+                                if plant and not IsMaxInventory() then 
+                                    CollectPlant(plant) task.wait(1)
+                                    print("Collecting:", ID, nPlant, raw)
+                                    cPlant = checkPlantInventory(nPlant, nMutation)
+                                end
+                            end
                             if cPlant then 
-                                print("Collecting:", ID, nPlant, raw)
                                 local back = GetPos()
                                 local point = v:FindFirstChild("Root")
                                 MoveTo(point) task.wait(0.3)
                                 submitReaper(tonumber(ID)) task.wait(0.3)
                                 MoveTo(back)
-                                print()
                             end
                         end
                     end
@@ -319,17 +380,7 @@ end
 
 
 
-local function getFarm()
-    for _,v in pairs(Farms:GetChildren())do
-        local Important = v:FindFirstChild("Important")
-        if Important then
-            local Owner = Important:WaitForChild("Data"):WaitForChild("Owner")
-            if Owner and Owner.Value == Player.Name then
-                return v
-            end
-        end
-    end
-end
+
 
 
 local function buySeed(_item, _amt)
@@ -420,10 +471,7 @@ local function SellAll()
     GameEvents:WaitForChild("Sell_Inventory"):FireServer()
 end
 
---Post Variables
-local Farm = getFarm()
-local Important = Farm:WaitForChild("Important")
-local Plants_Physical = Important:WaitForChild("Plants_Physical")
+
 
 Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
@@ -482,6 +530,12 @@ Auto:Toggle("TeleportBack",function(bool)
     end)
 end)
 
+Auto:Button("Other",function()
+    spawn(function()
+        loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
+    end)
+end)
+
 StockMenu:Toggle("Buy Seeds",function(bool)
     shared.ToggleBS=bool
     spawn(function()
@@ -523,8 +577,48 @@ StockMenu:Toggle("Buy Merchant",function(bool)
     end)
 end)
 
-Auto:Button("Other",function()
+local SeasonPassUI = PGui:WaitForChild("SeasonPassUI")
+local function getInfButton()
+    local Rewards = SeasonPassUI:WaitForChild("SeasonPassFrame"):WaitForChild("Main.Rewards"):WaitForChild("ScrollingFrame"):WaitForChild("Rewards")
+    local btn = Rewards:WaitForChild("InfReward"):WaitForChild("Image"):WaitForChild("ClaimInfReward")
+    if btn then return btn end
+    return false
+end
+
+local btnCon
+SPMenu:Toggle("Auto Claim",function(bool)
+    shared.ToggleSPAC=bool
     spawn(function()
-        loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
+        local btn = getInfButton()
+        if shared.ToggleSPAC and btn then
+            if btn.BackgroundColor3 == Color3.fromRGB(55, 237, 41) then
+                GameEvents:WaitForChild("SeasonPass"):WaitForChild("ClaimSeasonPassInfReward"):FireServer(51, false)
+            end
+            btnCon = btn:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+                task.wait(1)
+                if btn.BackgroundColor3 == Color3.fromRGB(55, 237, 41) then
+                    GameEvents:WaitForChild("SeasonPass"):WaitForChild("ClaimSeasonPassInfReward"):FireServer(51, false)
+                end
+            end)
+        end
+        if not shared.ToggleSPAC and btnCon then btnCon:Disconnect() btnCon = nil end
+    end)
+end)
+
+local SeasonPassData = ALLDATA.SeasonPass[#ALLDATA.SeasonPass]
+SPMenu:Toggle("Auto Buy",function(bool)
+    shared.ToggleSPAB=bool
+    spawn(function()
+        while shared.ToggleSPAB do
+            for _,v in pairs(SeasonPassData.Stock) do
+                if v.Stock > 0 then
+                    print("Buying: x" .. v.Stock, _, "Type:", _)
+                    for i = 1, v.stock do
+                        GameEvents:WaitForChild("SeasonPass"):WaitForChild("BuySeasonPassStock"):FireServer(_) task.wait(0.1)
+                    end
+                end
+            end
+            task.wait(1)
+        end
     end)
 end)
