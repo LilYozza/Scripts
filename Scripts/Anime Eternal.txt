@@ -1,25 +1,17 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
+print("v1")
+
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 local rs = game:GetService("ReplicatedStorage")
 
 local PGui = Player.PlayerGui
 -->Base Variables<--
+local RAIDS = {"Halloween_Raid"}
+local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
 -->Non Return Functions<--
-local function buyUpgrade(_upgrade)
-    local args = {
-        [1] = {
-            ["Upgrading_Name"] = _upgrade,
-            ["Action"] = "_Upgrades",
-            ["Upgrade_Name"] = "Upgrades"
-        }
-    }
-
-    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
-    --print("Brought:", _upgrade)
-end
 
 local function joinDungeon(_name)
     local args = {
@@ -32,56 +24,25 @@ local function joinDungeon(_name)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
--->Return Functions<--
-local function getData()
-    local t = {}
-    local Main = PGui:WaitForChild("Main")
-    local Left_Side = Main:WaitForChild("Left_Side")
-    local Stats = Left_Side:WaitForChild("Displays"):WaitForChild("Energy")
-    for _,v in pairs(Stats:GetChildren())do
-        if v:IsA("Frame") then
-            local TextLabel = v:WaitForChild("Main"):FindFirstChild("TextLabel")
-            if TextLabel then
-                t[v.Name] = {
-                    name = v.Name or "Unknown",
-                    label = TextLabel
-                }
-            end
-        end
-    end
-    return t
-end
 
-local function getUpgrades()
-    local t = {}
-    local Upgrades = PGui:WaitForChild("Upgrades")
-    local UpgradeFrame = Upgrades:WaitForChild("Upgrade_Default")
-    local ScrollingFrame = UpgradeFrame:WaitForChild("List_Frame"):WaitForChild("ScrollingFrame")
-    for _,v in pairs(ScrollingFrame:GetChildren())do
-        if v:IsA("Frame") then
-            local buyButton = v:FindFirstChild("BuyButton")
-            if buyButton then
-                local priceLabel = buyButton:WaitForChild("Price_Field"):WaitForChild("TextLabel")
-                local icon = buyButton:WaitForChild("Price_Field"):WaitForChild("Icon")
-                t[v.Name] = {
-                    name = v.Name or "Unknown",
-                    title = v.Title.Text or "Unknown",
-                    price = fromSuffixString(priceLabel.Text),
-                    level = v.Current_Level.Text or "Unknown",
-                    boost = v.Boost.Text or "Unknown",
-                    label = priceLabel,
-                    coins = icon.Image == "rbxassetid://119816620823008" or false
-                }
-            end
-        end
-    end
-    return t
-end
+local Dungeon = PGui:WaitForChild("Dungeon")
+local Dungeon_Header = Dungeon:WaitForChild("Default_Header")
+local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
 
 local function getCurrentDungeon()
     local t = {}
-    local Dungeon = PGui:WaitForChild("Dungeon")
-    local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
+    local Main = Dungeon_Header:WaitForChild("Main"):WaitForChild("Main")
+    t = {
+        inDungeon = Dungeon_Header.Visible,
+        title = Main.Title.Text,
+        wave = Main.Wave.Text,
+        room = Main.Wave.Text
+    }
+    return t
+end
+
+local function getNotifytDungeon()
+    local t = {}
     t = {
         isReady = Dungeon_Notification.Visible,
         name = Dungeon_Notification:GetAttribute("Dungeon_Name"),
@@ -99,13 +60,26 @@ local function teleportToDungeon()
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+local function dungeonHelper()
+    local bool1 = false
+    spawn(function() bool1 = Timer(30) end)
+    for i=1,5 do 
+        teleportToDungeon() task.wait(0.5)
+    end
+    local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
+    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until bool1
+    teleportToDungeon() task.wait(0.5)
+    local h = Player.Character:WaitForChild("Humanoid")
+    local r = Player.Character:WaitForChild("HumanoidRootPart")
+    h:MoveTo(r.Position + r.CFrame.LookVector* 60)
+end
+
 local DungeonHelper = false
 local sDungeon = ""
 local sDungeons = {}
-local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
 
-local t = {}
-local RadiList = Auto:Dropdown("Select Dungeon",Dungeons,true,function(SItem)
+
+local DungeonList = Auto:Dropdown("Select Dungeon",Dungeons,true,function(SItem)
     sDungeon = SItem
 end)
 
@@ -117,7 +91,7 @@ Auto:Button("Add/Remove",function()
 
             -- ADD TO TABLE
             table.insert(Dungeons, sDungeon)
-            RadiList:Refresh(Dungeons)
+            DungeonList:Refresh(Dungeons)
 
         else
             table.insert(sDungeons, sDungeon)
@@ -127,7 +101,7 @@ Auto:Button("Add/Remove",function()
             -- REMOVE FROM TABLE
             local pos = RemoveFromTable(Dungeons, sDungeon)
             sDungeon = Dungeons[pos]
-            RadiList:Refresh(Dungeons)
+            DungeonList:Refresh(Dungeons)
             
 
         end
@@ -139,81 +113,45 @@ Auto:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
     spawn(function()
         while shared.ToggleJD do
-            local dungeon = getCurrentDungeon()
+            local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
                 print("Joining:", dungeon.name)
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then
-                    local bool1 = false
-                    spawn(function() bool1 = Timer(30) end)
-                    for i=1,5 do 
-                        teleportToDungeon() task.wait(0.5)
-                    end
-                    local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
-                    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until not DungeonHelper or bool1
-
-                    local h = Player.Character:WaitForChild("Humanoid")
-                    local r = Player.Character:WaitForChild("HumanoidRootPart")
-                    h:MoveTo(r.Position + r.CFrame.LookVector* 160)
-                end
+                if DungeonHelper then DungeonHelper() end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
             end
-            task.wait(10)
+            task.wait(1)
+        end
+    end)
+end)
+
+local sRaid
+local RaidList = Auto:Dropdown("Select Raid",RAIDS,true,function(SItem)
+    sRaid = SItem
+end)
+
+Auto:Toggle("Auto Raid",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            local currentRaid = getCurrentDungeon()
+            if sRaid and currentRaid and currentRaid.inDungeon == false then
+                joinDungeon(sRaid)
+                repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
+                if DungeonHelper then DungeonHelper() end
+            end
+            task.wait(1)
         end
     end)
 end)
 
 Auto:Toggle("Helper",function(bool)
     shared.ToggleDH=bool
-    spawn(function()
-        DungeonHelper = shared.ToggleDH
-    end)
+    spawn(function()DungeonHelper = shared.ToggleDH end)
 end)
 
-local PlayerData = getData()
-local CoinsLabel = PlayerData.Coins.label
-local DPSLabel = PlayerData.DPS.label
-local EnergyLabel = PlayerData.Energy.label
-
-local UpgradeNames = {}
-
-local sUpgrade = "All"
-local DropList = Auto:Dropdown("All",{"All",unpack(UpgradeNames)},true,function(SItem)
-    sUpgrade = SItem
-end)
-
-Auto:Toggle("Buy Upgrade",function(bool)
-    shared.ToggleBU=bool
-    spawn(function()
-        while shared.ToggleBU do
-            if sUpgrade then
-                local Upgrades = getUpgrades()
-                if sUpgrade == "All" then
-                    for _,v in pairs(Upgrades)do
-                        local coins = fromSuffixString(CoinsLabel.Text) or 0
-                        if v.coins and coins >= v.price and shared.ToggleBU then
-                            -- PURCHASE
-                            --print("Buying:", v.name, coins, v.price)
-                            buyUpgrade(v.name)
-
-                            task.wait(1)
-                        end
-                    end
-                else
-                    local coins = fromSuffixString(CoinsLabel.Text) or 0
-                    local upgrade = Upgrades[sUpgrade]
-                    if coins >= upgrade.price then
-                        -- PURCHASE
-                        buyUpgrade(upgrade.name)
-                    end
-                end
-            end
-            task.wait(1)
-        end
-    end)
-end)
 
 Auto:Button("Other",function()
     spawn(function()
@@ -221,25 +159,5 @@ Auto:Button("Other",function()
     end)
 end)
 
-local upgardeFill = true
-spawn(function()
-    while task.wait(15) and upgardeFill do
-        local Upgrades = getUpgrades()
-        local UpgradeNames = {}
-
-        local count = 0
-        for _,v in pairs(Upgrades)do
-            if v.coins == true then
-                table.insert(UpgradeNames, v.name)
-                count = count + 1
-            end
-        end
-        DropList:Refresh({"All",unpack(UpgradeNames)})
-        if count > 0 then
-            upgardeFill = false
-            print("Completed")
-        end
-    end
-end)
 
 
