@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7")
+print("v8")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -613,7 +613,7 @@ SPMenu:Toggle("Auto Buy",function(bool)
             for _,v in pairs(SeasonPassData.Stocks) do
                 if v.Stock > 0 then
                     print("Buying: x" .. v.Stock, _, "Type:", _)
-                    for i = 1, v.stock do
+                    for i = 1, v.Stock do
                         GameEvents:WaitForChild("SeasonPass"):WaitForChild("BuySeasonPassStock"):FireServer(_) task.wait(0.1)
                     end
                 end
@@ -624,29 +624,3 @@ SPMenu:Toggle("Auto Buy",function(bool)
 end)
 
 
---[[
-
-local btnCon
-SPMenu:Toggle("Auto Claim",function(bool)
-    shared.ToggleSPAC=bool
-    spawn(function()
-        local btn = getInfButton()
-        if shared.ToggleSPAC and btn then
-            if btn.BackgroundColor3 == Color3.fromRGB(55, 237, 41) then
-                GameEvents:WaitForChild("SeasonPass"):WaitForChild("ClaimSeasonPassInfReward"):FireServer(51, false)
-            end
-            btnCon = btn:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
-                task.wait(1)
-                if btn.BackgroundColor3 == Color3.fromRGB(55, 237, 41) then
-                    GameEvents:WaitForChild("SeasonPass"):WaitForChild("ClaimSeasonPassInfReward"):FireServer(51, false)
-                end
-            end)
-        end
-        if not shared.ToggleSPAC and btnCon then btnCon:Disconnect() btnCon = nil end
-    end)
-end)
-
-
-
-
-]]
