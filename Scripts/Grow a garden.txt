@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6")
+print("v7")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -585,6 +585,47 @@ local function getInfButton()
     return false
 end
 
+local infiniteBtn = getInfButton()
+SPMenu:Toggle("Auto Claim",function(bool)
+    shared.ToggleSPAC=bool
+    spawn(function()
+        while shared.ToggleSPAC do
+            if not infiniteBtn then infiniteBtn = getInfButton() end
+            if infiniteBtn and infiniteBtn.BackgroundColor3 == Color3.fromRGB(55, 237, 41) then
+                GameEvents:WaitForChild("SeasonPass"):WaitForChild("ClaimSeasonPassInfReward"):FireServer(51, false)             
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+-- DYNAMIC WAY TO GET NEW SEASON
+local lastKey, lastValue
+for k, v in pairs(ALLDATA.SeasonPass) do
+	lastKey, lastValue = k, v
+end
+
+local SeasonPassData = ALLDATA.SeasonPass[lastKey]
+SPMenu:Toggle("Auto Buy",function(bool)
+    shared.ToggleSPAB=bool
+    spawn(function()
+        while shared.ToggleSPAB do
+            for _,v in pairs(SeasonPassData.Stocks) do
+                if v.Stock > 0 then
+                    print("Buying: x" .. v.Stock, _, "Type:", _)
+                    for i = 1, v.stock do
+                        GameEvents:WaitForChild("SeasonPass"):WaitForChild("BuySeasonPassStock"):FireServer(_) task.wait(0.1)
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+--[[
+
 local btnCon
 SPMenu:Toggle("Auto Claim",function(bool)
     shared.ToggleSPAC=bool
@@ -605,20 +646,7 @@ SPMenu:Toggle("Auto Claim",function(bool)
     end)
 end)
 
-local SeasonPassData = ALLDATA.SeasonPass[#ALLDATA.SeasonPass]
-SPMenu:Toggle("Auto Buy",function(bool)
-    shared.ToggleSPAB=bool
-    spawn(function()
-        while shared.ToggleSPAB do
-            for _,v in pairs(SeasonPassData.Stock) do
-                if v.Stock > 0 then
-                    print("Buying: x" .. v.Stock, _, "Type:", _)
-                    for i = 1, v.stock do
-                        GameEvents:WaitForChild("SeasonPass"):WaitForChild("BuySeasonPassStock"):FireServer(_) task.wait(0.1)
-                    end
-                end
-            end
-            task.wait(1)
-        end
-    end)
-end)
+
+
+
+]]
