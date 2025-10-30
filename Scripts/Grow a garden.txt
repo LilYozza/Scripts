@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v5")
+print("v6")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -579,7 +579,7 @@ end)
 
 local SeasonPassUI = PGui:WaitForChild("SeasonPassUI")
 local function getInfButton()
-    local Rewards = SeasonPassUI:WaitForChild("SeasonPassFrame"):WaitForChild("Main.Rewards"):WaitForChild("ScrollingFrame"):WaitForChild("Rewards")
+    local Rewards = SeasonPassUI:WaitForChild("SeasonPassFrame"):WaitForChild("Main"):WaitForChild("Rewards"):WaitForChild("ScrollingFrame"):WaitForChild("Rewards")
     local btn = Rewards:WaitForChild("InfReward"):WaitForChild("Image"):WaitForChild("ClaimInfReward")
     if btn then return btn end
     return false
