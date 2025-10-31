@@ -1,9 +1,10 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local RaidMenu = w:CreateFolder("Raid/Dungeon")
-local GachaMenu = w:CreateFolder("GachaMenu")
+local GachaMenu = w:CreateFolder("Gachas")
+local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v9")
+print("v1")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -206,12 +207,26 @@ end
 
 local sGacha
 local sGachaAmount = 1
+local Rolling_UI = PGui:WaitForChild("Rolling_UI")
 local DropListG1 = GachaMenu:Dropdown("1",{1,2,3,4,5},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sGacha = SItem
 end)
 
 local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sGacha = SItem
+end)
+
+GachaMenu:Toggle("Show Currency",function(bool)
+    shared.ToggleSC=bool
+    spawn(function()
+        while shared.ToggleSC do
+            local curr = Rolling_UI:FindFirstChild("Currency_Field")
+            if curr and shared.ToggleSC then
+                curr.Visible = true
+            end
+            task.wait(0.5)
+        end
+    end)
 end)
 
 GachaMenu:Toggle("Auto Gacha",function(bool)
