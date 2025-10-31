@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v1")
+print("v2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -16,8 +16,14 @@ local PGui = Player.PlayerGui
 local RAIDS = {"Halloween_Raid", "Graveyard_Defense"}
 local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
 local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
-    "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Power_Energy_Runes"
+    "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Species", "Power_Energy_Runes"
 }
+
+local UPGRADES = { "Haki_Upgrade", "Spiritual_Pressure", "Cursed_Progression", "ReAwakening_Progression", "Monarch_Progression", "Water_Spirit_Progression", "Fire_Spirit_Progression",
+    "Wind_Spirit_Progression", "Chakra_Progression", "Spiritual_Upgrade", "Lucky_Spirit", "Ten_Progression", "Contract_of_Greed", "Energy_Progression", "Fortitude_Level",
+    "Kaiju_Energy", "Demon_Lord_Energy", "Demon_Lord_Damage", "Demon_Lord_Luck", "Demon_Lord_Coins", "Swordsman_Energy", "Swordsman_Damage"
+}
+
 -->Non Return Functions<--
 
 local function joinDungeon(_name)
@@ -235,6 +241,37 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
         while shared.ToggleAG do
             if sGacha then
                 openGacha(sGacha, sGachaAmount)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+--UpgradeMenu
+
+local function openUpgrade(_upgrade)
+    local args = {
+        [1] = {
+            ["Upgrading_Name"] = _upgrade,
+            ["Action"] = "_Upgrades",
+            ["Upgrade_Name"] = _upgrade
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
+local sUpgrade
+local DropListU = UpgradeMenu:Dropdown("Select Upgrade",UPGRADES,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sUpgrade = SItem
+end)
+
+UpgradeMenu:Toggle("Auto Upgrade",function(bool)
+    shared.ToggleAU=bool
+    spawn(function()
+        while shared.ToggleAU do
+            if sUpgrade then
+                openUpgrade(sUpgrade)
             end
             task.wait(1)
         end
