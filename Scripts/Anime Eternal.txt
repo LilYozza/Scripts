@@ -1,7 +1,7 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
-print("v3")
+print("v4")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -24,6 +24,28 @@ local function joinDungeon(_name)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+local CoreGui = game:GetService("CoreGui")
+local ScreenGui = CoreGui:WaitForChild("ScreenGui")
+local function getScriptBtn()
+    for _,v in pairs(ScreenGui:GetDescendants())do
+        if v:IsA("TextLabel") and v.Text == "Auto Farm Dungeon" then
+            local Btn = v.Parent.Parent or nil
+            if Btn and Btn:IsA("TextButton") then return Btn end
+        end
+    end
+end
+
+local scriptBtn = getScriptBtn()
+local function toggleScriptBtn(_bool)
+    for _,v in pairs(scriptBtn:GetChildren())do
+        local UIStroke = v:FindFirstChildWhichIsA("UIStroke")
+        if UIStroke then
+            if (UIStroke.Color == Color3.fromRGB(120, 120, 120) and _bool) or (UIStroke.Color ~= Color3.fromRGB(120, 120, 120) and not _bool) then
+                SendClick(scriptBtn)
+            end
+        end
+    end
+end
 
 local Dungeon = PGui:WaitForChild("Dungeon")
 local Dungeon_Header = Dungeon:WaitForChild("Default_Header")
@@ -58,24 +80,6 @@ local function teleportToDungeon()
         }
     }
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
-end
-
-local function dungeonHelper(_distance, _timer)
-    local bool1 = false
-    local distance = _distance or 0
-    local timer = _timer or 30
-    spawn(function() bool1 = Timer(30) end)
-    for i=1,5 do 
-        teleportToDungeon() task.wait(0.1)
-    end task.wait()
-    local oldPos = Player.Character:WaitForChild("HumanoidRootPart").CFrame
-    repeat Player.Character:WaitForChild("HumanoidRootPart").CFrame = oldPos task.wait() until bool1
-    teleportToDungeon() task.wait(0.5)
-    if distance > 0 then
-        local h = Player.Character:WaitForChild("Humanoid")
-        local r = Player.Character:WaitForChild("HumanoidRootPart")
-        h:MoveTo(r.Position + r.CFrame.LookVector* distance)
-    end
 end
 
 local DungeonHelper = false
@@ -127,9 +131,11 @@ Auto:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
                 print("Joining:", dungeon.name)
+                if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then dungeonHelper(30) end
+                if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
+                --if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
             end
@@ -150,9 +156,10 @@ Auto:Toggle("Auto Raid",function(bool)
             local currentRaid = getCurrentDungeon()
             if sRaid and currentRaid and currentRaid.inDungeon == false then
                 print("Joining:", sRaid)
+                if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(sRaid)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
-                if DungeonHelper then dungeonHelper() end
+                if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
             end
             task.wait(1)
         end
