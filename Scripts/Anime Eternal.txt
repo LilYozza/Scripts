@@ -184,8 +184,19 @@ RaidMenu:Toggle("Auto Raid",function(bool)
     end)
 end)
 
-
-
+local Rolling_UI = PGui:WaitForChild("Rolling_UI")
+local Currency_Field = Rolling_UI:WaitForChild("Currency_Field")
+Auto:Toggle("Show Currency",function(bool)
+    shared.ToggleSC=bool
+    spawn(function()
+        while shared.ToggleSC do
+            if Currency_Field and shared.ToggleSC then
+                Currency_Field.Visible = true
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
 
 Auto:Button("Other",function()
     spawn(function()
@@ -213,7 +224,7 @@ end
 
 local sGacha
 local sGachaAmount = 1
-local Rolling_UI = PGui:WaitForChild("Rolling_UI")
+
 local DropListG1 = GachaMenu:Dropdown("1",{1,2,3,4,5},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sGacha = SItem
 end)
@@ -222,18 +233,6 @@ local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem) 
     sGacha = SItem
 end)
 
-GachaMenu:Toggle("Show Currency",function(bool)
-    shared.ToggleSC=bool
-    spawn(function()
-        while shared.ToggleSC do
-            local curr = Rolling_UI:FindFirstChild("Currency_Field")
-            if curr and shared.ToggleSC then
-                curr.Visible = true
-            end
-            task.wait(0.5)
-        end
-    end)
-end)
 
 GachaMenu:Toggle("Auto Gacha",function(bool)
     shared.ToggleAG=bool
