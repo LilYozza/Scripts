@@ -1,7 +1,9 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
+local RaidMenu = w:CreateFolder("Raid/Dungeon")
+local GachaMenu = w:CreateWindow("GachaMenu")
 
-print("v8")
+print("v9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -12,6 +14,9 @@ local PGui = Player.PlayerGui
 -->Base Variables<--
 local RAIDS = {"Halloween_Raid", "Graveyard_Defense"}
 local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
+local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
+    "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Power_Energy_Runes"
+}
 -->Non Return Functions<--
 
 local function joinDungeon(_name)
@@ -88,11 +93,11 @@ local sDungeon = ""
 local sDungeons = {}
 
 
-local DungeonList = Auto:Dropdown("Select Dungeon",Dungeons,true,function(SItem)
+local DungeonList = RaidMenu:Dropdown("Select Dungeon",Dungeons,true,function(SItem)
     sDungeon = SItem
 end)
 
-Auto:Button("Add/Remove",function()
+RaidMenu:Button("Add/Remove",function()
     spawn(function()
         if table.find(sDungeons, sDungeon) then
             RemoveFromTable(sDungeons, sDungeon)
@@ -117,20 +122,20 @@ Auto:Button("Add/Remove",function()
     end)
 end)
 
-Auto:Button("Reset",function()
+RaidMenu:Button("Reset",function()
     spawn(function()
         sDungeons = {}
         DungeonList:Refresh(Dungeons)
     end)
 end)
 
-Auto:Toggle("Helper",function(bool)
+RaidMenu:Toggle("Helper",function(bool)
     shared.ToggleDH=bool
     spawn(function()DungeonHelper = shared.ToggleDH end)
 end)
 
 
-Auto:Toggle("Join Dungeons",function(bool)
+RaidMenu:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
     spawn(function()
         while shared.ToggleJD do
@@ -151,11 +156,11 @@ Auto:Toggle("Join Dungeons",function(bool)
 end)
 
 local sRaid
-local RaidList = Auto:Dropdown("Select Raid",RAIDS,true,function(SItem)
+local RaidList = RaidMenu:Dropdown("Select Raid",RAIDS,true,function(SItem)
     sRaid = SItem
 end)
 
-Auto:Toggle("Auto Raid",function(bool)
+RaidMenu:Toggle("Auto Raid",function(bool)
     shared.ToggleAR=bool
     spawn(function()
         while shared.ToggleAR do
@@ -185,5 +190,38 @@ Auto:Button("Other",function()
     end)
 end)
 
+local function openGacha(_gacha, _amount)
+    local amount = _amount or 1
+    local args = {
+        [1] = {
+            ["Open_Amount"] = amount,
+            ["Action"] = "_Gacha_Activate",
+            ["Name"] = _gacha
+        }
+    }
+
+   rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
 
 
+local sGacha
+local sGachaAmount = 1
+local DropListG1 = GachaMenu:Dropdown("1",{1,2,3,4,5},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sGacha = SItem
+end)
+
+local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sGacha = SItem
+end)
+
+GachaMenu:Toggle("Auto Gacha",function(bool)
+    shared.ToggleAG=bool
+    spawn(function()
+        while shared.ToggleAG do
+            if sGacha then
+                openGacha(sGacha, sGachaAmount)
+            end
+            task.wait(1)
+        end
+    end)
+end)
