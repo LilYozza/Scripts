@@ -1,8 +1,9 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
-print("v4")
+print("v5")
 
+local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 local rs = game:GetService("ReplicatedStorage")
@@ -24,9 +25,9 @@ local function joinDungeon(_name)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
-local CoreGui = game:GetService("CoreGui")
-local ScreenGui = CoreGui:WaitForChild("ScreenGui")
+local ScreenGui
 local function getScriptBtn()
+    if not ScreenGui then return end
     for _,v in pairs(ScreenGui:GetDescendants())do
         if v:IsA("TextLabel") and v.Text == "Auto Farm Dungeon" then
             local Btn = v.Parent.Parent or nil
@@ -35,8 +36,9 @@ local function getScriptBtn()
     end
 end
 
-local scriptBtn = getScriptBtn()
+local scriptBtn
 local function toggleScriptBtn(_bool)
+    if not scriptBtn then return end
     for _,v in pairs(scriptBtn:GetChildren())do
         local UIStroke = v:FindFirstChildWhichIsA("UIStroke")
         if UIStroke then
@@ -131,10 +133,10 @@ Auto:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
                 print("Joining:", dungeon.name)
-                if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
+                if DungeonHelper and scriptBtn then toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
+                if DungeonHelper and scriptBtn then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
                 --if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
@@ -156,10 +158,10 @@ Auto:Toggle("Auto Raid",function(bool)
             local currentRaid = getCurrentDungeon()
             if sRaid and currentRaid and currentRaid.inDungeon == false then
                 print("Joining:", sRaid)
-                if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
+                if DungeonHelper and scriptBtn then toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(sRaid)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
-                if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
+                if DungeonHelper and scriptBtn then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
             end
             task.wait(1)
         end
@@ -175,6 +177,9 @@ end)
 Auto:Button("Other",function()
     spawn(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/AIHub091/AI-Hub/refs/heads/main/Anime-Eternal/Script.lua"))()
+        
+        ScreenGui = CoreGui:WaitForChild("ScreenGui",30)
+        scriptBtn = getScriptBtn()
     end)
 end)
 
