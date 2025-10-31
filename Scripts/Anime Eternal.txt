@@ -1,7 +1,7 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local RaidMenu = w:CreateFolder("Raid/Dungeon")
-local GachaMenu = w:CreateWindow("GachaMenu")
+local GachaMenu = w:CreateFolder("GachaMenu")
 
 print("v9")
 
