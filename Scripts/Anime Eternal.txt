@@ -1,7 +1,7 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
-print("v6")
+print("v7")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -25,7 +25,7 @@ local function joinDungeon(_name)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
-local ScreenGui
+local ScreenGui = CoreGui:FindFirstChild("ScreenGui")
 local function getScriptBtn()
     if not ScreenGui then return end
     for _,v in pairs(ScreenGui:GetDescendants())do
@@ -35,8 +35,7 @@ local function getScriptBtn()
         end
     end
 end
-
-local scriptBtn
+local scriptBtn = getScriptBtn() or nil
 local function toggleScriptBtn(_bool)
     if not scriptBtn then return end
     for _,v in pairs(scriptBtn:GetChildren())do
