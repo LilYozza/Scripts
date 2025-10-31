@@ -1,7 +1,7 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
-print("v7")
+print("v8")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -10,7 +10,7 @@ local rs = game:GetService("ReplicatedStorage")
 
 local PGui = Player.PlayerGui
 -->Base Variables<--
-local RAIDS = {"Halloween_Raid"}
+local RAIDS = {"Halloween_Raid", "Graveyard_Defense"}
 local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
 -->Non Return Functions<--
 
@@ -124,6 +124,11 @@ Auto:Button("Reset",function()
     end)
 end)
 
+Auto:Toggle("Helper",function(bool)
+    shared.ToggleDH=bool
+    spawn(function()DungeonHelper = shared.ToggleDH end)
+end)
+
 
 Auto:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
@@ -167,10 +172,7 @@ Auto:Toggle("Auto Raid",function(bool)
     end)
 end)
 
-Auto:Toggle("Helper",function(bool)
-    shared.ToggleDH=bool
-    spawn(function()DungeonHelper = shared.ToggleDH end)
-end)
+
 
 
 Auto:Button("Other",function()
