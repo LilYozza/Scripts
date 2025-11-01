@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v2")
+print("v3")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -118,16 +118,9 @@ local function IsMaxInventory()
     end
 end
 
-local function CollectPlant(_plant, _name, _mutation)
-    for _,v in pairs(_plant:GetChildren())do
-        local plant = v.Parent
-        if _name and plant.Name:lower() ~= _name:lower() then return end        -- PLANT TYPE CHECKER
-        if _mutation and plant:GetAttribute(_mutation) == false then return end -- MUTATION CHECKER
-        local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
-        if prox then
-            mod:FireServer({plant}) task.wait()
-        end
-    end
+local function CollectPlant(_plant, _name, _mutations)
+    local plant = checkPlant(_plant, _name, _mutations)
+    if plant then mod:FireServer({plant}) task.wait() end
 end
 
 local function getStockInfo(_item)
