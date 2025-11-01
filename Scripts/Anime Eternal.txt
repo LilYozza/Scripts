@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v4")
+print("v5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -14,7 +14,7 @@ local rs = game:GetService("ReplicatedStorage")
 local PGui = Player.PlayerGui
 -->Base Variables<--
 local RAIDS = {"Halloween_Raid", "Graveyard_Defense"}
-local Dungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
+local defaultDungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
 local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
     "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Species", "Power_Energy_Runes"
 }
@@ -98,6 +98,7 @@ end
 local DungeonHelper = false
 local sDungeon = ""
 local sDungeons = {}
+local Dungeons = table.clone(defaultDungeons)
 
 
 local DungeonList = RaidMenu:Dropdown("Select Dungeon",Dungeons,true,function(SItem)
@@ -132,6 +133,7 @@ end)
 RaidMenu:Button("Reset",function()
     spawn(function()
         sDungeons = {}
+        Dungeons = table.clone(defaultDungeons)
         DungeonList:Refresh(Dungeons)
     end)
 end)
