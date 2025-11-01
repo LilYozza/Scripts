@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v3")
+print("v4")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -82,7 +82,7 @@ local function checkPlant(_plant, _name, _mutations)
     local plantDone = _plant:GetAttribute("DoneGrowTime")
     if plantDone then
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECKER
-        if _mutations[1] then 
+        if _mutations and _mutations[1] then 
             for _, m in ipairs(_mutations) do
                 if not _plant:GetAttribute(m) then return end
             end
@@ -293,13 +293,14 @@ Auto:Toggle("Auto Harvest",function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 for _,v in pairs(Plants_Physical:GetChildren())do
-                    local Fruits = v:FindFirstChild("Fruits")
-                    if Fruits then
-                        for __,_v in pairs(Fruits:GetChildren())do
-                            if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
-                            
+                    if v:GetAttribute("FruitSizeMultiplier") and v:GetAttribute("DoneGrowTime") then
+                        local Fruits = v:FindFirstChild("Fruits")
+                        if Fruits then
+                            for __,_v in pairs(Fruits:GetChildren())do
+                                if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                            end
                         end
-                    else
+                    elseif v:GetAttribute("DoneGrowTime") then
                         if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                     end
                 end
