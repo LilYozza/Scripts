@@ -530,7 +530,7 @@ Auto:Toggle("TeleportBack",function(bool)
     end)
 end)
 
-Auto:Button("Remnove Farms",function()
+Auto:Button("Remove Farms",function()
     spawn(function()
         for _,v in pairs(Farms:GetChildren()) do
             if v ~= Farm then v:Destroy() end
