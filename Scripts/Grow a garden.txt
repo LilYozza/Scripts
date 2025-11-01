@@ -187,7 +187,7 @@ if SafariEvent then
         shared.ToggleEBS=bool
         spawn(function()
             while shared.ToggleEBS do
-                    --buyEventStock("", EventShop['Safari Shop']) -- TO BE ADDED
+                    buyEventStock("Safari Shop", EventShop['Safari Shop'])
                 task.wait(1)
             end
         end)
@@ -293,15 +293,18 @@ Auto:Toggle("Auto Harvest",function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 for _,v in pairs(Plants_Physical:GetChildren())do
-                    if v:GetAttribute("FruitSizeMultiplier") and v:GetAttribute("DoneGrowTime") then
-                        local Fruits = v:FindFirstChild("Fruits")
-                        if Fruits then
-                            for __,_v in pairs(Fruits:GetChildren())do
-                                if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                    if v:GetAttribute("DoneGrowTime") then
+                        local fruitCheck = v:FindFirstChild("Fruit_Spawn")
+                        if fruitCheck then
+                            local Fruits = v:FindFirstChild("Fruits")
+                            if Fruits then
+                                for __,_v in pairs(Fruits:GetChildren())do
+                                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                                end 
                             end
+                        else
+                            if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                         end
-                    elseif v:GetAttribute("DoneGrowTime") then
-                        if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
                     end
                 end
             end
