@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v8")
+print("v9")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -529,6 +529,15 @@ Auto:Toggle("TeleportBack",function(bool)
         moveBack = shared.ToggleTB
     end)
 end)
+
+Auto:Button("Remnove Farms",function()
+    spawn(function()
+        for _,v in pairs(Farms:GetChildren()) do
+            if v ~= Farm then v:Destroy() end
+        end
+    end)
+end)
+
 
 Auto:Button("Other",function()
     spawn(function()
