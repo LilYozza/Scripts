@@ -547,7 +547,7 @@ Auto:Button("Ascend",function()
                 end
             end
             if crop then
-                local hum = game.Players.Character:WaitForChild("Humanoid")
+                local hum = Player.Character:WaitForChild("Humanoid")
                 hum:EquipTool(crop) task.wait(0.3)
                 GameEvents:WaitForChild("BuyRebirth"):FireServer()
                 print("Yes")
