@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v1")
+print("v2")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -79,16 +79,15 @@ local function checkPlantInventory(_plant, _mutations)
 end
 
 local function checkPlant(_plant, _name, _mutations)
-    for _,v in pairs(_plant:GetChildren())do
-        local plant = v.Parent
-        if _name and plant.Name:lower() ~= _name:lower() then return end        -- PLANT TYPE CHECKER
+    local plantDone = _plant:GetAttribute("DoneGrowTime")
+    if plantDone then
+        if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECKER
         if _mutations[1] then 
             for _, m in ipairs(_mutations) do
-                if not plant:GetAttribute(m) then return end
+                if not _plant:GetAttribute(m) then return end
             end
         end -- MUTATION CHECKER
-        local prox = v:FindFirstChildWhichIsA("ProximityPrompt")
-        if prox then return plant end
+        return _plant
     end
 end
 
@@ -131,234 +130,6 @@ local function CollectPlant(_plant, _name, _mutation)
     end
 end
 
-
---HALLOWEEN 2025
-local WitchAndDeadTreePlatform = UpdateItems:WaitForChild("WitchAndDeadTreePlatform", 5)
-if WitchAndDeadTreePlatform then
-    local restartDig = false
-    local EventMenu = w:CreateFolder("Halloween")
-    local EventShop = ALLDATA.EventShopStock
-    local HarvestReaper =  UpdateItems:WaitForChild("HarvestReaper", 5)
-
-    
-
-    local function submitFruit()
-        GameEvents:WaitForChild("WitchesBrew"):WaitForChild("SubmitItemToCauldron"):InvokeServer("All")
-    end
-
-    local function getProgress()
-        local WitchTree = WitchAndDeadTreePlatform:FindFirstChild("Witch&Tree")
-        if WitchTree and WitchTree:GetAttribute("State") == "Entering" then
-            local ui = WitchTree:WaitForChild("WitchesBrewCauldron"):WaitForChild("CauldronProgressUI")
-            if ui then
-                local progess = ui:WaitForChild("ProgressBillboard")
-                local text = progess.Progress.Text
-                if progess.Enabled == true and not text:match("Brew Timer") then
-                    local amount = fromSuffixString(text)
-                    return amount
-                else
-                    return false
-                end
-            end
-        end
-        return false
-    end
-
-    local function buyEventStock(_name, _type)
-        for _,v in pairs(_type.Stocks) do
-            if v.Stock > 0 then
-                print("Buying: x" .. v.Stock, _, "Type:", _name)
-                for i = 1, v.Stock do
-                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name) task.wait(0.1)
-                end
-            end
-        end
-    end
-
-    local function submitReaper(_slot)
-        GameEvents:WaitForChild("HarvestReaper"):WaitForChild("SubmitHarvestReaper"):FireServer(_slot)
-    end
-
-    local function dig(_x, _y)
-        print("Digging At:", _x, _y)
-        GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteEvent"):FireServer(_x, _y, CFrame.new())
-    end
-
-    local function getTreasure()
-        local ts = ALLDATA.DiggingData.GridData
-        for _,v in pairs(ts)do
-            if v.IsDug == false and v.IsTreasure == true then
-                return v.GridX,v.GridY
-            end
-        end
-    end
-
-    EventMenu:Toggle("Auto Digger",function(bool)
-        shared.ToggleHAD=bool
-        spawn(function()
-            while shared.ToggleHAD do
-                local digArea = Workspace:FindFirstChild(Player.Name .. "_DiggingGrid")
-                if digArea then
-                    local DiggingData = ALLDATA.DiggingData
-                    if DiggingData.RemainingDigs > 0 then
-                        if DiggingData.DigComplete == true and restartDig then
-                            GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("RestartDiggingSheckles"):FireServer()
-                        elseif DiggingData.DigComplete == false then
-                            local canDig = GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteFunction"):InvokeServer("CheckCanDig")
-                            if canDig then
-                                local toDigX, toDigY = getTreasure()
-                                if toDigX ~= nil and toDigY ~= nil then
-                                    dig(toDigX, toDigY) task.wait(1)
-                                end
-                            end
-                        end
-                    end
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-    EventMenu:Toggle("Auto Restart",function(bool)
-        shared.ToggleHARD=bool
-        spawn(function()
-            restartDig = shared.ToggleHARD
-        end)
-    end)
-
-
-    EventMenu:Button("Submit Cauldron",function()
-        spawn(function()
-            submitFruit()
-        end)
-    end)
-
-    EventMenu:Toggle("Auto Cauldron",function(bool)
-        shared.ToggleHAS=bool
-        spawn(function()
-            while shared.ToggleHAS do
-                local progress = getProgress()
-                if progress and progress >= 0 and progress < 100 and IsMaxInventory() then
-                    submitFruit()
-                end
-                task.wait()
-            end
-        end)
-    end)
-
-    EventMenu:Button("Submit Reaper",function()
-        spawn(function()
-            local RitualCircle = HarvestReaper:FindFirstChild("RitualCircle")
-            if RitualCircle then
-                local RitualPointsFolder = RitualCircle:FindFirstChild("RitualPointsFolder")
-                local sorted = {}
-                for _, child in ipairs(RitualPointsFolder:GetChildren()) do
-                    local value = child:GetAttribute("ID") -- replace with your attribute name
-                    if value then
-                        sorted[value] = child
-                    end
-                end
-                local back = GetPos()
-                for i = 1, 25 do
-                    local child = sorted[i]
-                    if child and child:GetAttribute("RitualPoint_Completed") == false then 
-                        local point = child:FindFirstChild("Root")
-                        MoveTo(point) task.wait(0.3)
-                        submitReaper(i) task.wait(0.3)
-                    end
-                end
-                MoveTo(back)
-            end
-        end)
-    end)
-    local ReaperAutoHarvest = false
-    EventMenu:Toggle("Reaper Harvest",function(bool)
-        shared.ToggleHRH=bool
-        spawn(function()
-            ReaperAutoHarvest = shared.ToggleHRH
-        end)
-    end)
-
-
-    EventMenu:Toggle("Auto Reaper",function(bool)
-        shared.ToggleHAR=bool
-        spawn(function()
-            while shared.ToggleHAR do
-                local RitualCircle = HarvestReaper:FindFirstChild("RitualCircle")
-                if RitualCircle then
-                    local RitualPointsFolder = RitualCircle:FindFirstChild("RitualPointsFolder")
-                    for _,v in pairs(RitualPointsFolder:GetChildren())do
-                        if v:GetAttribute("RitualPoint_Completed") == false then
-                            local nMutation
-                            local ID = v:GetAttribute("ID")
-                            local nPlant = v:GetAttribute("RitualPoint_PlantName")
-                            local raw = v:GetAttribute("RitualPoint_Mutations")
-                            if raw then nMutation = HttpService:JSONDecode(raw) end
-                            local cPlant = checkPlantInventory(nPlant, nMutation)
-                            if not cPlant and ReaperAutoHarvest then
-                                local plant = checkPlantGarden(nPlant, nMutation)
-                                if plant and not IsMaxInventory() then 
-                                    CollectPlant(plant) task.wait(1)
-                                    print("Collecting:", ID, nPlant, raw)
-                                    cPlant = checkPlantInventory(nPlant, nMutation)
-                                end
-                            end
-                            if cPlant then 
-                                local back = GetPos()
-                                local point = v:FindFirstChild("Root")
-                                MoveTo(point) task.wait(0.3)
-                                submitReaper(tonumber(ID)) task.wait(0.3)
-                                MoveTo(back)
-                            end
-                        end
-                    end
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-    EventMenu:Toggle("Buy Seeds",function(bool)
-        shared.ToggleHBS=bool
-        spawn(function()
-            while shared.ToggleHBS do
-                buyEventStock("Spooky Seeds", EventShop['Spooky Seeds'])
-                task.wait(1)
-            end
-        end)
-    end)
-
-    EventMenu:Toggle("Buy Critters",function(bool)
-        shared.ToggleHBC=bool
-        spawn(function()
-            while shared.ToggleHBC do
-                buyEventStock("Creepy Critters", EventShop['Creepy Critters'])
-                task.wait(1)
-            end
-        end)
-    end)
-
-    EventMenu:Toggle("Buy Gadgets",function(bool)
-        shared.ToggleHBG=bool
-        spawn(function()
-            while shared.ToggleHBG do
-                buyEventStock("Ghosty Gadgets", EventShop['Ghosty Gadgets'])
-                task.wait(1)
-            end
-        end)
-    end)
-
-    EventMenu:Toggle("Buy Decor",function(bool)
-        shared.ToggleHBD=bool
-        spawn(function()
-            while shared.ToggleHBD do
-                buyEventStock("Devilish Decor", EventShop['Devilish Decor'])
-                task.wait(1)
-            end
-        end)
-    end)
-end
-
 local function getStockInfo(_item)
     local t = {
         name = _item.Parent.Name,
@@ -378,10 +149,60 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
     return t
 end
 
+--SAFARI EVENT ------------------------------------------------------------------------------------------------------------------------
+local SafariEvent = UpdateItems:WaitForChild("SafariEvent", 5)
+if SafariEvent then
+   local EventMenu = w:CreateFolder("Safari")
+   local EventShop = ALLDATA.EventShopStock
 
+    local function buyEventStock(_name, _type)
+        for _,v in pairs(_type.Stocks) do
+            if v.Stock > 0 then
+                --if v.UnlockedShopItems and v.UnlockedShopItems[1] and FindInTable(v.UnlockedShopItems, _name) then
+                print("Buying: x" .. v.Stock, _, "Type:", _name)
+                for i = 1, v.Stock do
+                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name) task.wait(0.1)
+                end
+            end
+        end
+    end
 
+    EventMenu:Button("Submit Hand",function()
+        spawn(function()
+            GameEvents:WaitForChild("SafariEvent"):WaitForChild("Safari_SubmitItemRE"):FireServer(Player)
+        end)
+    end)
+    EventMenu:Button("Submit All",function()
+        spawn(function()
+            GameEvents:WaitForChild("SafariEvent"):WaitForChild("Safari_SubmitAllRE"):FireServer(Player)
+        end)
+    end)
 
+    EventMenu:Toggle("Auto Submit",function(bool)
+        shared.ToggleEAS=bool
+        spawn(function()
+            while shared.ToggleEAS do
+                if IsMaxInventory() then
+                     GameEvents:WaitForChild("SafariEvent"):WaitForChild("Safari_SubmitAllRE"):FireServer(Player)
+                end
+                task.wait(1)
+            end
+        end)
+    end)
 
+    EventMenu:Toggle("Buy Shop",function(bool)
+        shared.ToggleEBS=bool
+        spawn(function()
+            while shared.ToggleEBS do
+                    --buyEventStock("", EventShop['Safari Shop']) -- TO BE ADDED
+                task.wait(1)
+            end
+        end)
+    end)
+
+end
+
+--------------------------------------------------------------------------------------------------------------------------------------
 
 local function buySeed(_item, _amt)
     --print("Buying: x" .. _amt, _item)
