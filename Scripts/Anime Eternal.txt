@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v2")
+print("v3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -223,10 +223,10 @@ end
 
 
 local sGacha
-local sGachaAmount = 1
+local sGachaAmount = 2
 
-local DropListG1 = GachaMenu:Dropdown("1",{1,2,3,4,5},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    sGacha = SItem
+local DropListG1 = GachaMenu:Dropdown("2",{1,2,3,4,5},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sGachaAmount = SItem
 end)
 
 local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
