@@ -469,7 +469,7 @@ PetMenu:Toggle("Mutation Machine",function(bool)
                     local pet
                     for _,v in pairs(PetDataTable)do
                         if v.UUID and v.PetData.Level >= 50 then
-                            print("yes1")
+                            print("yes1", v.UUID)
                             pet = getPet(v.UUID)
                             if pet then break end
                         end
