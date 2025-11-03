@@ -469,12 +469,13 @@ PetMenu:Toggle("Mutation Machine",function(bool)
                     local pet
                     for _,v in pairs(PetDataTable)do
                         if v.UUID and v.PetData.Level >= 50 then
-                            pet = getPet(v.UUID) or nil
+                            print("yes1")
+                            pet = getPet(v.UUID)
                             if pet then break end
                         end
                     end
                     if pet then
-                        
+                        print("yes2")
                         --EquipPet
                         local hum = Player.Character:WaitForChild("Humanoid")
                         hum:EquipTool(pet) task.wait(0.3)
