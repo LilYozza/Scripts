@@ -12,7 +12,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v4")
+print("v5")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -73,7 +73,7 @@ local function checkPlantInventory(_plant, _mutations)
 			for _, m in ipairs(_mutations) do
 				if not str:find(string.lower(m)) then return end
 			end
-			return v
+			return v, _
 		end
 	end
 end
@@ -105,6 +105,17 @@ local function checkPlantGarden(_name, _mutations)
             if find then return find end
         end
     end
+end
+
+local function checkBackpack(_item)
+    local tool = Player.Character:FindFirstChildOfClass("Tool")
+    if tool and tool:GetAttribute("c") == _item then return tool end
+    for _,v in pairs(Player.Backpack:GetChildren())do
+        if v:GetAttribute("c") == _item then
+            return v
+        end
+    end
+
 end
 
 
@@ -236,7 +247,7 @@ local function buyAllStock(_type)
         local mFrame = v:FindFirstChild("Main_Frame")
         if v:IsA("Frame") and mFrame then
             local info = getStockInfo(mFrame)
-            if info.stock > 0 and Sheckles() >= info.price then
+            if info and info.stock and info.stock > 0 and Sheckles() >= info.price then
                 if type == "seeds" then
                     buySeed(info.name, info.stock)
                 elseif type == "gears" then
@@ -356,15 +367,16 @@ Auto:Button("Ascend",function()
             local mutations = rebirthData.Mutations
             print(plant, mutations[1])
             -- Find PLant / Inventory / Garden
-            local crop = checkPlantInventory(plant, mutations)
+            local crop, cropName = checkPlantInventory(plant, mutations)
             if not crop then
                 crop = checkPlantGarden(plant, mutations)
                 if crop and not IsMaxInventory() then
                     CollectPlant(crop) task.wait(1)
-                    crop = checkPlantInventory(plant, mutations)
+                    crop, cropName = checkPlantInventory(plant, mutations)
                 end
             end
-            if crop then
+            if crop and cropName then
+                crop = checkBackpack(cropName)
                 local hum = Player.Character:WaitForChild("Humanoid")
                 hum:EquipTool(crop) task.wait(0.3)
                 GameEvents:WaitForChild("BuyRebirth"):FireServer()
