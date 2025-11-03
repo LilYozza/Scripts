@@ -7,6 +7,7 @@ local ALLDATA = DataService:GetData()
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
 local StockMenu = w:CreateFolder("Stock")
+local PetMenu = w:CreateFolder("Pets")
 local SPMenu = w:CreateFolder("Season Pass")
 
 local Players=game:GetService("Players")
@@ -115,7 +116,17 @@ local function checkBackpack(_item)
             return v
         end
     end
+end
 
+local function getPet(_petID)
+    if _petID == nil then return end
+    local pet = Player.Character:FindFirstChildOfClass("Tool")
+    if pet and pet:GetAttribute("PET_UUID") and pet:GetAttribute("PET_UUID") == _petID and pet:GetAttribute("d") == false then return pet end
+    for _,v in pairs(Player.Backpack:GetChildren())do
+        if v:GetAttribute("PET_UUID") and v:GetAttribute("PET_UUID") == _petID and v:GetAttribute("d") == false then
+            return v
+        end
+    end
 end
 
 
@@ -442,6 +453,45 @@ StockMenu:Toggle("Buy Merchant",function(bool)
     end)
 end)
 
+
+local PetMutationMachine = ALLDATA.PetMutationMachine
+local PetDataTable = ALLDATA.PetsData.PetInventory.Data
+PetMenu:Toggle("Mutation Machine",function(bool)
+    shared.TogglePMMM=bool
+    spawn(function()
+        while shared.TogglePMMM do
+            -- CHECK MACHINE
+            if PetMutationMachine and PetMutationMachine.IsRunning == false then
+                if PetMutationMachine.PetReady == true then
+                    GameEvents:WaitForChild("PetMutationMachineService_RE"):FireServer("ClaimMutatedPet")
+                else
+                    -- Get Pet
+                    local pet
+                    for _,v in pairs(PetDataTable)do
+                        if v.UUID and v.PetData.Level >= 50 then
+                            pet = getPet(v.UUID) or nil
+                            if pet then break end
+                        end
+                    end
+                    if pet then
+                        
+                        --EquipPet
+                        local hum = Player.Character:WaitForChild("Humanoid")
+                        hum:EquipTool(pet) task.wait(0.3)
+                        -- Submit Pet
+                        GameEvents:WaitForChild("PetMutationMachineService_RE"):FireServer("SubmitHeldPet") task.wait(0.3)
+                        -- Start Machine
+                        GameEvents:WaitForChild("PetMutationMachineService_RE"):FireServer("StartMachine") task.wait(1)
+                    else
+                        --print("No Pet Was Found...")
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
 local SeasonPassUI = PGui:WaitForChild("SeasonPassUI")
 local function getInfButton()
     local Rewards = SeasonPassUI:WaitForChild("SeasonPassFrame"):WaitForChild("Main"):WaitForChild("Rewards"):WaitForChild("ScrollingFrame"):WaitForChild("Rewards")
@@ -463,6 +513,8 @@ SPMenu:Toggle("Auto Claim",function(bool)
         end
     end)
 end)
+
+
 
 -- DYNAMIC WAY TO GET NEW SEASON
 local lastKey, lastValue
