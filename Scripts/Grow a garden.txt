@@ -119,7 +119,6 @@ local function checkBackpack(_item)
 end
 
 local function getPet(_petID)
-    if _petID == nil then return end
     local pet = Player.Character:FindFirstChildOfClass("Tool")
     if pet and pet:GetAttribute("PET_UUID") and pet:GetAttribute("PET_UUID") == _petID and pet:GetAttribute("d") == false then return pet end
     for _,v in pairs(Player.Backpack:GetChildren())do
@@ -469,13 +468,13 @@ PetMenu:Toggle("Mutation Machine",function(bool)
                     local pet
                     for _,v in pairs(PetDataTable)do
                         if v.UUID and v.PetData.Level >= 50 then
-                            print("yes1", v.UUID)
+                            --print("yes1", v.UUID)
                             pet = getPet(v.UUID)
                             if pet then break end
                         end
                     end
                     if pet then
-                        print("yes2")
+                        --print("yes2")
                         --EquipPet
                         local hum = Player.Character:WaitForChild("Humanoid")
                         hum:EquipTool(pet) task.wait(0.3)
