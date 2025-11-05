@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v8.3")
+print("v8.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -171,7 +171,7 @@ Auto:Toggle("Auto Attack",function(bool)
                 if cMonster then
                     MoveTo(cMonster.PrimaryPart, Vector3.new(0,0,1))
                     --Add TimeOUT ?
-                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or not inDungeonAttack
+                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack
                 end
             end
             task.wait(0.5)
