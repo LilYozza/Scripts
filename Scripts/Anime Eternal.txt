@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v8.2")
+print("v8.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -161,17 +161,37 @@ local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sMonster = SItem
 end)
-
+local inDungeonAttack = false
 Auto:Toggle("Auto Attack",function(bool)
     shared.ToggleAA=bool
     spawn(function()
         while shared.ToggleAA do
-            if sMonster then
+            if sMonster and not inDungeonAttack then
                 local cMonster = getClosestMonster(sMonster)
                 if cMonster then
-                    MoveTo(cMonster.PrimaryPart)
+                    MoveTo(cMonster.PrimaryPart, Vector3.new(0,0,1))
                     --Add TimeOUT ?
-                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA
+                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or not inDungeonAttack
+                end
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Dungeon",function(bool)
+    shared.ToggleAD=bool
+    spawn(function()
+        while shared.ToggleAD do
+            local dungeon = getCurrentDungeon()
+            if dungeon.inDungeon then
+                local cMonster = getClosestMonster(nil, true)
+                if cMonster then
+                    inDungeonAttack = true
+                    MoveTo(cMonster.PrimaryPart, Vector3.new(0,0,1))
+                    --Add TimeOUT ?
+                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAD
+                    inDungeonAttack = false
                 end
             end
             task.wait(0.5)
