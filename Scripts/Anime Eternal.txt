@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v6")
+print("v7")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -13,15 +13,23 @@ local rs = game:GetService("ReplicatedStorage")
 
 local PGui = Player.PlayerGui
 -->Base Variables<--
-local RAIDS = {"Halloween_Raid", "Graveyard_Defense"}
-local defaultDungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
+local RAIDS = { "Halloween_Raid", "Graveyard_Defense", "Tournament_Raid", "Restaurant_Raid", "Cursed_Raid", "Progression_Raid", "Titan_Defense", "Sin_Raid", "Kaiju_Dungeon",
+    "Gleam_Raid", "Ghoul_Raid", "Chainsaw_Defense", "Green_Planet_Raid"
+}
+
+local defaultDungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"
+}
+
 local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
-    "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Species", "Power_Energy_Runes"
+    "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Species", "Power_Energy_Runes",
+    "Onomatopoeia", "Investigators", "Kagune", "Debiru_Hunter", "Akuma_Powers", "Special_Fire_Force", "Grand_Elder_Power", "Frost_Demon_Evolution", "Espada",
+    "Shadow_Garden", "Shadow_Arts", "Energy_Threat_Level", "Punch_Power"
 }
 
 local UPGRADES = { "Haki_Upgrade", "Spiritual_Pressure", "Cursed_Progression", "ReAwakening_Progression", "Monarch_Progression", "Water_Spirit_Progression", "Fire_Spirit_Progression",
     "Wind_Spirit_Progression", "Chakra_Progression", "Spiritual_Upgrade", "Lucky_Spirit", "Ten_Progression", "Contract_of_Greed", "Energy_Progression", "Fortitude_Level",
-    "Kaiju_Energy", "Demon_Lord_Energy", "Demon_Lord_Damage", "Demon_Lord_Luck", "Demon_Lord_Coins", "Swordsman_Energy", "Swordsman_Damage"
+    "Kaiju_Energy", "Demon_Lord_Energy", "Demon_Lord_Damage", "Demon_Lord_Luck", "Demon_Lord_Coins", "Swordsman_Energy", "Swordsman_Damage", "Ripple_Energy", "Damage_Cells",
+    "Akuma_Energy", "Akuma_Damage", "Dragon_Energy", "Dragon_Damage", "Eminence_Energy", "Eminence_Damage", "Eminence_Luck", "Eminence_Coins"
 }
 
 --AS OF Update 22 2/11/205
@@ -154,10 +162,10 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
                 print("Joining:", dungeon.name)
-                if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
+                if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
+                if DungeonHelper then teleportToDungeon() task.wait(30) teleportToDungeon() toggleScriptBtn(true) task.wait(0.5) end
                 --if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
