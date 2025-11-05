@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v8.4")
+print("v8.5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -169,9 +169,10 @@ Auto:Toggle("Auto Attack",function(bool)
             if sMonster and not inDungeonAttack then
                 local cMonster = getClosestMonster(sMonster)
                 if cMonster then
-                    MoveTo(cMonster.PrimaryPart, Vector3.new(0,0,1))
+                    local Hrp = GetHrp()
+                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * Vector3.new(0,0,2)
                     --Add TimeOUT ?
-                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack
+                    repeat task.wait() if cMonster then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack or not Hrp
                 end
             end
             task.wait(0.5)
@@ -188,9 +189,10 @@ Auto:Toggle("Auto Dungeon",function(bool)
                 local cMonster = getClosestMonster(nil, true)
                 if cMonster then
                     inDungeonAttack = true
-                    MoveTo(cMonster.PrimaryPart, Vector3.new(0,0,1))
+                    local Hrp = GetHrp()
+                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * Vector3.new(0,0,2)
                     --Add TimeOUT ?
-                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAD
+                    repeat task.wait() if cMonster then attack(cMonster.Name) else break end until not shared.ToggleAD or not Hrp
                     inDungeonAttack = false
                 end
             end
