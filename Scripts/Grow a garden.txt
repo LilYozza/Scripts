@@ -120,9 +120,10 @@ end
 
 local function getPet(_petID)
     local pet = Player.Character:FindFirstChildOfClass("Tool")
-    if pet and pet:GetAttribute("PET_UUID") and pet:GetAttribute("PET_UUID") == _petID and pet:GetAttribute("d") == false then return pet end
+    if pet and pet:GetAttribute("PET_UUID") == _petID and pet:GetAttribute("d") == false then return pet end
     for _,v in pairs(Player.Backpack:GetChildren())do
-        if v:GetAttribute("PET_UUID") and v:GetAttribute("PET_UUID") == _petID and v:GetAttribute("d") == false then
+        --print(v:GetAttribute("PET_UUID"), v:GetAttribute("d"))
+        if v:GetAttribute("PET_UUID") == _petID and v:GetAttribute("d") == false then
             return v
         end
     end
