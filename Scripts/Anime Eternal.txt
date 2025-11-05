@@ -4,7 +4,7 @@ local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 
-print("v8.5")
+print("v8.6")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -125,6 +125,18 @@ local function getCurrentDungeon()
     return t
 end
 
+local function rankUp()
+    local args = {
+        [1] = {
+            ["Upgrading_Name"] = "Rank",
+            ["Action"] = "_Upgrades",
+            ["Upgrade_Name"] = "Rank_Up"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
 local function attack(_id)
     local args = {
         [1] = {
@@ -156,6 +168,17 @@ local function teleportToDungeon()
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+Auto:Toggle("Auto Rankup",function(bool)
+    shared.ToggleARU=bool
+    spawn(function()
+        while shared.ToggleARU do
+            rankUp()
+            task.wait(1)
+        end
+    end)
+end)
+
+
 local sMonster
 local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
@@ -170,7 +193,7 @@ Auto:Toggle("Auto Attack",function(bool)
                 local cMonster = getClosestMonster(sMonster)
                 if cMonster then
                     local Hrp = GetHrp()
-                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * Vector3.new(0,0,2)
+                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
                     --Add TimeOUT ?
                     repeat task.wait() if cMonster then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack or not Hrp
                 end
@@ -190,7 +213,7 @@ Auto:Toggle("Auto Dungeon",function(bool)
                 if cMonster then
                     inDungeonAttack = true
                     local Hrp = GetHrp()
-                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * Vector3.new(0,0,2)
+                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
                     --Add TimeOUT ?
                     repeat task.wait() if cMonster then attack(cMonster.Name) else break end until not shared.ToggleAD or not Hrp
                     inDungeonAttack = false
