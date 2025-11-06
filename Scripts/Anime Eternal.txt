@@ -1,3 +1,5 @@
+local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
+
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 local RaidMenu = w:CreateFolder("Raid/Dungeon")
@@ -7,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1")
+print("v2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -673,9 +675,9 @@ ChestMenu:Toggle("Daily Chest",function(bool)
     end)
 end)
 ChestMenu:Toggle("Group Chest",function(bool)
-    shared.ToggleCVC=bool
+    shared.ToggleCGC=bool
     spawn(function()
-        while shared.ToggleCVC do
+        while shared.ToggleCGC do
             claimChest("Group") task.wait(60)
         end
     end)
@@ -708,3 +710,14 @@ spawn(function()
         EmenyList:Refresh({"All",unpack(EmenyNameList)})
     end
 end)
+
+local dataToSave = {
+    ["Daily Chest"] = {var = "ToggleCDC"},
+    ["Group Chest"] = {var = "ToggleCGC"},
+    ["VIP Chest"] = {var = "ToggleCVC"},
+    ["Premium Chest"] = {var = "ToggleCPC"},
+
+    ["Auto Rankup"] = {var = "ToggleARU"},
+    ["Auto Prestige"] = {var = "ToggleAAP"},
+    ["Auto Click"] = {var = "ToggleACC"},
+} SaveManager(dataToSave)
