@@ -7,7 +7,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9")
+print("v9.1")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -246,7 +246,7 @@ Auto:Toggle("Auto Attack",function(bool)
                     repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack or not Hrp
                 end
             end
-            task.wait(0.5)
+            task.wait(0.1)
         end
     end)
 end)
@@ -267,7 +267,7 @@ Auto:Toggle("Auto Dungeon",function(bool)
                     inDungeonAttack = false
                 end
             end
-            task.wait(0.5)
+            task.wait(0.1)
         end
     end)
 end)
@@ -363,19 +363,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
     end)
 end)
 
-local Rolling_UI = PGui:WaitForChild("Rolling_UI")
-local Currency_Field = Rolling_UI:WaitForChild("Currency_Field")
-Auto:Toggle("Show Currency",function(bool)
-    shared.ToggleSC=bool
-    spawn(function()
-        while shared.ToggleSC do
-            if Currency_Field and shared.ToggleSC then
-                Currency_Field.Visible = true
-            end
-            task.wait(0.5)
-        end
-    end)
-end)
+
 
 Auto:Button("Redeem Codes",function()
     spawn(function()
@@ -421,14 +409,14 @@ local starTable = {}
 for i = 1, startAmount do
     table.insert(starTable, "Star_"..i)
 end
-local DropList = Auto:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local starList = StarsMenu:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sStar = SItem
 end)
 
 StarsMenu:Toggle("Auto Hatch",function(bool)
     shared.ToggleSAH=bool
     spawn(function()
-        while shared.Toggle do
+        while shared.ToggleSAH do
             if sStar then
                 openStar(sStar)
             end
@@ -453,6 +441,20 @@ local function openGacha(_gacha, _amount)
    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+
+local Rolling_UI = PGui:WaitForChild("Rolling_UI")
+local Currency_Field = Rolling_UI:WaitForChild("Currency_Field")
+GachaMenu:Toggle("Show Currency",function(bool)
+    shared.ToggleSC=bool
+    spawn(function()
+        while shared.ToggleSC do
+            if Currency_Field and shared.ToggleSC then
+                Currency_Field.Visible = true
+            end
+            task.wait(0.5)
+        end
+    end)
+end)
 
 local sGacha
 local sGachaAmount = 2
