@@ -3,8 +3,11 @@ local Auto = w:CreateFolder("Auto")
 local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
+local StarsMenu = w:CreateFolder("Stars")
+local StatsMenu = w:CreateFolder("Stats")
+local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.6")
+print("v9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -13,6 +16,7 @@ local rs = game:GetService("ReplicatedStorage")
 
 local PGui = Player.PlayerGui
 -->Base Variables<--
+local startAmount = 25
 local RAIDS = { "Halloween_Raid", "Graveyard_Defense", "Tournament_Raid", "Restaurant_Raid", "Cursed_Raid", "Progression_Raid", "Titan_Defense", "Sin_Raid", "Kaiju_Dungeon",
     "Gleam_Raid", "Ghoul_Raid", "Chainsaw_Defense", "Green_Planet_Raid"
 }
@@ -137,6 +141,16 @@ local function rankUp()
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+local function prestige()
+    local args = {
+        [1] = {
+            ["Action"] = "Level_Up_Prestige"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
 local function attack(_id)
     local args = {
         [1] = {
@@ -144,9 +158,16 @@ local function attack(_id)
             ["Action"] = "_Mouse_Click"
         }
     }
-
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
 
+local function click()
+    local args = {
+        [1] = {
+            ["Action"] = "_Mouse_Click"
+        }
+    }
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
 local function getNotifytDungeon()
@@ -172,11 +193,38 @@ Auto:Toggle("Auto Rankup",function(bool)
     shared.ToggleARU=bool
     spawn(function()
         while shared.ToggleARU do
-            rankUp()
+            rankUp() task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Prestige",function(bool)
+    shared.ToggleAAP=bool
+    spawn(function()
+        while shared.ToggleAAP do
+            prestige() task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Click",function(bool)
+    shared.ToggleACC=bool
+    spawn(function()
+        while shared.ToggleACC do
+            click() task.wait()
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Quest",function(bool)
+    shared.ToggleARU=bool
+    spawn(function()
+        while shared.ToggleARU do
             task.wait(1)
         end
     end)
 end)
+
 
 
 local sMonster
@@ -195,7 +243,7 @@ Auto:Toggle("Auto Attack",function(bool)
                     local Hrp = GetHrp()
                     Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
                     --Add TimeOUT ?
-                    repeat task.wait() if cMonster then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack or not Hrp
+                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack or not Hrp
                 end
             end
             task.wait(0.5)
@@ -215,7 +263,7 @@ Auto:Toggle("Auto Dungeon",function(bool)
                     local Hrp = GetHrp()
                     Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
                     --Add TimeOUT ?
-                    repeat task.wait() if cMonster then attack(cMonster.Name) else break end until not shared.ToggleAD or not Hrp
+                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAD or not Hrp
                     inDungeonAttack = false
                 end
             end
@@ -353,8 +401,45 @@ Auto:Button("Other",function()
     end)
 end)
 
+---------------------------------- STAR MENU ----------------------------------------------------------------------
+local function openStar(_star, _amount)
+    if not _amount then _amount = 10 end
+    local args = {
+        [1] = {
+            ["Open_Amount"] = _amount,
+            ["Action"] = "_Stars",
+            ["Name"] = _star
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+
+end
+
+local sStar
+local starTable = {}
+for i = 1, startAmount do
+    table.insert(starTable, "Star_"..i)
+end
+local DropList = Auto:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sStar = SItem
+end)
+
+StarsMenu:Toggle("Auto Hatch",function(bool)
+    shared.ToggleSAH=bool
+    spawn(function()
+        while shared.Toggle do
+            if sStar then
+                openStar(sStar)
+            end
+            task.wait(1)
+        end
+    end)
+end)
 
 
+--------------------------------------------------------------------------------------------------------------------
+---------------------------------- GACHA MENU ----------------------------------------------------------------------
 local function openGacha(_gacha, _amount)
     local amount = _amount or 1
     local args = {
@@ -392,8 +477,8 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
         end
     end)
 end)
-
---UpgradeMenu
+----------------------------------------------------------------------------------------------------------------------
+---------------------------------- UPGRADE MENU ----------------------------------------------------------------------
 
 local function openUpgrade(_upgrade)
     local args = {
@@ -423,6 +508,113 @@ UpgradeMenu:Toggle("Auto Upgrade",function(bool)
         end
     end)
 end)
+----------------------------------------------------------------------------------------------------------------------
+------------------------------------- STAT MENU ----------------------------------------------------------------------
+local function upgradeStat(_stat)
+    local args = {
+        [1] = {
+            ["Name"] = _stat, --"Primary_Damage", "Primary_Energy", "Primary_Coins", "Primary_Luck"
+            ["Action"] = "Assign_Level_Stats",
+            ["Amount"] = 1
+        }
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
+StatsMenu:Toggle("Damage",function(bool)
+    shared.ToggleSD=bool
+    spawn(function()
+        while shared.ToggleSD do
+           upgradeStat("Primary_Damage") task.wait(1)
+        end
+    end)
+end)
+
+StatsMenu:Toggle("Energy",function(bool)
+    shared.ToggleSE=bool
+    spawn(function()
+        while shared.ToggleSE do
+           upgradeStat("Primary_Energy") task.wait(1)
+        end
+    end)
+end)
+
+
+StatsMenu:Toggle("Coins",function(bool)
+    shared.ToggleSCC=bool
+    spawn(function()
+        while shared.ToggleSCC do
+           upgradeStat("Primary_Coins") task.wait(1)
+        end
+    end)
+end)
+
+
+StatsMenu:Toggle("Luck",function(bool)
+    shared.ToggleSL=bool
+    spawn(function()
+        while shared.ToggleSL do
+           upgradeStat("Primary_Luck") task.wait(1)
+        end
+    end)
+end)
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------
+---------------------------------- CHESTS ----------------------------------------------------------------------------
+local function claimChest(_chest)
+    local args = {
+        [1] = {
+            ["Action"] = "_Chest_Claim",
+            ["Name"] = _chest -- Daily , Group, Vip, "Premium"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
+
+ChestMenu:Toggle("Daily Chest",function(bool)
+    shared.ToggleCDC=bool
+    spawn(function()
+        while shared.ToggleCDC do
+            claimChest("Daily") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("VIP Chest",function(bool)
+    shared.ToggleCVC=bool
+    spawn(function()
+        while shared.ToggleCVC do
+            claimChest("Vip") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("Group Chest",function(bool)
+    shared.ToggleCVC=bool
+    spawn(function()
+        while shared.ToggleCVC do
+            claimChest("Group") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("Premium Chest",function(bool)
+    shared.ToggleCPC=bool
+    spawn(function()
+        while shared.ToggleCPC do
+            claimChest("Premium") task.wait(60)
+        end
+    end)
+end)
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+
 
 spawn(function()
     while task.wait(1) do
