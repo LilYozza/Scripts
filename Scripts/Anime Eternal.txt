@@ -27,7 +27,7 @@ local RAIDS = { "Halloween_Raid", "Graveyard_Defense", "Tournament_Raid", "Resta
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"
 }
 
-local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
+local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Swords", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
     "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Species", "Power_Energy_Runes",
     "Onomatopoeia", "Investigators", "Kagune", "Debiru_Hunter", "Akuma_Powers", "Special_Fire_Force", "Grand_Elder_Power", "Frost_Demon_Evolution", "Espada",
     "Shadow_Garden", "Shadow_Arts", "Energy_Threat_Level", "Punch_Power"
@@ -313,46 +313,40 @@ local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sMonster = SItem
 end)
-local inDungeonAttack = false
+
+
+task.spawn(function()
+	while task.wait(0.1) do
+		if shared.ToggleAA or shared.ToggleAD then
+			local cMonster, mode
+			local dungeon = getCurrentDungeon()
+			if shared.ToggleAA and dungeon and dungeon.inDungeon == false then
+				cMonster = getClosestMonster(sMonster) mode = "AA"
+			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
+				cMonster = getClosestMonster(nil, true) mode = "AD"
+			end
+			if cMonster then
+				Player.Character:FindFirstChild("HumanoidRootPart").CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
+				repeat
+					task.wait()
+					if cMonster and cMonster.Parent then
+						attack(cMonster.Name)
+					else
+						break
+					end
+				until (mode == "AA" and not shared.ToggleAA)
+					or (mode == "AD" and not shared.ToggleAD)
+			end
+		end
+	end
+end)
+
 Auto:Toggle("Auto Attack",function(bool)
     shared.ToggleAA=bool
-    spawn(function()
-        while shared.ToggleAA do
-            if sMonster and not inDungeonAttack then
-                local cMonster = getClosestMonster(sMonster)
-                if cMonster then
-                    local Hrp = GetHrp()
-                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
-                    --Add TimeOUT ?
-                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAA or inDungeonAttack or not Hrp
-                end
-            end
-            task.wait(0.1)
-        end
-    end)
 end)
 
 Auto:Toggle("Auto Dungeon",function(bool)
     shared.ToggleAD=bool
-    spawn(function()
-        inDungeonAttack = false
-        while shared.ToggleAD do
-            local dungeon = getCurrentDungeon()
-            if dungeon.inDungeon == true then
-                local cMonster = getClosestMonster(nil, true)
-                if cMonster then
-                    inDungeonAttack = true
-                    local Hrp = GetHrp()
-                    Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
-                    --Add TimeOUT ?
-                    repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAD or not Hrp
-                end
-            else
-                inDungeonAttack = false
-            end
-            task.wait(0.1)
-        end
-    end)
 end)
 
 local DungeonHelper = false
