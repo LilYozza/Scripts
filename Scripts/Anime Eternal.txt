@@ -58,7 +58,6 @@ local function getClosestMonster(_name, _dungeon)
     if _dungeon == true or _name == "All" then _name = nil end --DISABLES NAME CHECKING
 	local closestMonster = nil
 	local shortestDistance = math.huge
-	local hrp = GetHrp() -- Your function that returns HumanoidRootPart
 
 	for _, v in pairs(Monsters:GetChildren()) do
 		if v:IsA("Model") and v.PrimaryPart then
@@ -67,7 +66,7 @@ local function getClosestMonster(_name, _dungeon)
 
 			if (not _name or v:GetAttribute("Title") == _name) then
 				if (not _dungeon or (_dungeon and isDungeonMonster)) then
-					local distance = (v.PrimaryPart.Position - hrp.Position).Magnitude
+					local distance = (v.PrimaryPart.Position - Player.Character:WaitForChild("HumanoidRootPart").CFrame.Position).Magnitude
 					if distance < shortestDistance then
 						shortestDistance = distance
 						closestMonster = v
@@ -339,7 +338,7 @@ Auto:Toggle("Auto Dungeon",function(bool)
         inDungeonAttack = false
         while shared.ToggleAD do
             local dungeon = getCurrentDungeon()
-            if dungeon.inDungeon then
+            if dungeon.inDungeon == true then
                 local cMonster = getClosestMonster(nil, true)
                 if cMonster then
                     inDungeonAttack = true
@@ -347,8 +346,9 @@ Auto:Toggle("Auto Dungeon",function(bool)
                     Hrp.CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
                     --Add TimeOUT ?
                     repeat task.wait() if cMonster and cMonster.Parent then attack(cMonster.Name) else break end until not shared.ToggleAD or not Hrp
-                    inDungeonAttack = false
                 end
+            else
+                inDungeonAttack = false
             end
             task.wait(0.1)
         end
