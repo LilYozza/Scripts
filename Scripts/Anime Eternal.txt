@@ -92,29 +92,6 @@ local function joinDungeon(_name)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
-local ScreenGui = CoreGui:FindFirstChild("ScreenGui")
-local function getScriptBtn()
-    if not ScreenGui then return end
-    for _,v in pairs(ScreenGui:GetDescendants())do
-        if v:IsA("TextLabel") and v.Text == "Auto Farm Dungeon" then
-            local Btn = v.Parent.Parent or nil
-            if Btn and Btn:IsA("TextButton") then return Btn end
-        end
-    end
-end
-local scriptBtn = getScriptBtn() or nil
-local function toggleScriptBtn(_bool)
-    if not scriptBtn then return end
-    for _,v in pairs(scriptBtn:GetChildren())do
-        local UIStroke = v:FindFirstChildWhichIsA("UIStroke")
-        if UIStroke then
-            if (UIStroke.Color == Color3.fromRGB(120, 120, 120) and _bool) or (UIStroke.Color ~= Color3.fromRGB(120, 120, 120) and not _bool) then
-                SendClick(scriptBtn)
-            end
-        end
-    end
-end
-
 local Dungeon = PGui:WaitForChild("Dungeon")
 local Dungeon_Header = Dungeon:WaitForChild("Default_Header")
 local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
@@ -222,7 +199,7 @@ local Quests = PGui:WaitForChild("Quests")
 local function acceptQuest(_num)
     local args = {
         [1] = {
-            ["Id"] = _num,
+            ["Id"] = tostring(_num),
             ["Type"] = "Accept",
             ["Action"] = "_Quest"
         }
@@ -234,7 +211,7 @@ end
 local function completeQuest(_num)
     local args = {
         [1] = {
-            ["Id"] = _num,
+            ["Id"] = tostring(_num),
             ["Type"] = "Complete",
             ["Action"] = "_Quest"
         }
@@ -295,7 +272,7 @@ Auto:Toggle("Auto Quest",function(bool)
         while shared.ToggleARU do
             -- Accept All Quests
             for i = 1, questAmount do
-                acceptQuest(i) task.wait(0.1)
+                acceptQuest(i) task.wait()
             end
             local quests = getQuests()
             for _,v in pairs(quests)do
@@ -468,10 +445,6 @@ end)
 Auto:Button("Other",function()
     spawn(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/AIHub091/AI-Hub/refs/heads/main/Anime-Eternal/Script.lua"))()
-        
-        ScreenGui = CoreGui:WaitForChild("ScreenGui",30)
-        scriptBtn = getScriptBtn()
-        print(scriptBtn)
     end)
 end)
 
