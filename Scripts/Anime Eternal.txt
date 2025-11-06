@@ -7,7 +7,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.2")
+print("v1")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -17,6 +17,7 @@ local rs = game:GetService("ReplicatedStorage")
 local PGui = Player.PlayerGui
 -->Base Variables<--
 local startAmount = 25
+local questAmount = startAmount * 6
 local RAIDS = { "Halloween_Raid", "Graveyard_Defense", "Tournament_Raid", "Restaurant_Raid", "Cursed_Raid", "Progression_Raid", "Titan_Defense", "Sin_Raid", "Kaiju_Dungeon",
     "Gleam_Raid", "Ghoul_Raid", "Chainsaw_Defense", "Green_Planet_Raid"
 }
@@ -216,10 +217,91 @@ Auto:Toggle("Auto Click",function(bool)
     end)
 end)
 
+local Quests = PGui:WaitForChild("Quests")
+local function acceptQuest(_num)
+    local args = {
+        [1] = {
+            ["Id"] = _num,
+            ["Type"] = "Accept",
+            ["Action"] = "_Quest"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
+local function completeQuest(_num)
+    local args = {
+        [1] = {
+            ["Id"] = _num,
+            ["Type"] = "Complete",
+            ["Action"] = "_Quest"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))    
+end
+
+local function checkComplete(t)
+	if not t or type(t) ~= "table" or next(t) == nil then return false end
+	for _, v in pairs(t) do
+		if not (v.current and v.max and v.current >= v.max) then
+			return false
+		end
+	end
+	return true
+end
+
+local function getObjectives(_quest)
+    local t = {}
+    for _,v in pairs(_quest:GetChildren())do
+        local num = tonumber(v.Name)
+        if num and num > 0 then
+            local c,m= (v:GetAttribute("__Amount")):match("(%d+)%/(%d+)") c,m=tonumber(c),tonumber(m)
+            t[num] = {
+                name = v:GetAttribute("__Name"),
+                current = c,
+                max = m
+            }
+        end
+    end
+    return t
+end
+
+local function getQuests()
+    local t = {}
+    local questFrame = Quests:WaitForChild("Quests_Player"):WaitForChild("ScrollingFrame")
+    for _,v in pairs(questFrame:GetChildren())do
+        local num = tonumber(v.Name)
+        if num and num > 0 then
+            local main = v:FindFirstChild("Main")
+            local Objectives = getObjectives(main:FindFirstChild("Left"):FindFirstChild("Objectives"))
+            t[num] = {
+                number = num,
+                quests = Objectives,
+                isCompleted = checkComplete(Objectives),
+                emeny = Objectives[1].name
+            }
+        end
+    end
+    return t
+end
+
+local sMonster
 Auto:Toggle("Auto Quest",function(bool)
     shared.ToggleARU=bool
     spawn(function()
         while shared.ToggleARU do
+            -- Accept All Quests
+            for i = 1, questAmount do
+                acceptQuest(i) task.wait(0.1)
+            end
+            local quests = getQuests()
+            for _,v in pairs(quests)do
+                if v and v.number and v.isCompleted == true then
+                    completeQuest(v.number)
+                end
+            end
             task.wait(1)
         end
     end)
@@ -227,7 +309,7 @@ end)
 
 
 
-local sMonster
+
 local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sMonster = SItem
