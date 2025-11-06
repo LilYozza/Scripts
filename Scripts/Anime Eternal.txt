@@ -7,7 +7,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.1")
+print("v9.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -21,7 +21,7 @@ local RAIDS = { "Halloween_Raid", "Graveyard_Defense", "Tournament_Raid", "Resta
     "Gleam_Raid", "Ghoul_Raid", "Chainsaw_Defense", "Green_Planet_Raid"
 }
 
-local defaultDungeons = {"Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"
+local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"
 }
 
 local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
@@ -316,11 +316,12 @@ RaidMenu:Button("Reset",function()
     end)
 end)
 
+--[[
 RaidMenu:Toggle("Helper",function(bool)
     shared.ToggleDH=bool
     spawn(function()DungeonHelper = shared.ToggleDH end)
 end)
-
+]]--
 
 RaidMenu:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
@@ -329,10 +330,10 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
                 print("Joining:", dungeon.name)
-                if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
+                --if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                if DungeonHelper then teleportToDungeon() task.wait(30) teleportToDungeon() toggleScriptBtn(true) task.wait(0.5) end
+                --if DungeonHelper then teleportToDungeon() task.wait(30) teleportToDungeon() toggleScriptBtn(true) task.wait(0.5) end
                 --if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
@@ -589,19 +590,19 @@ ChestMenu:Toggle("Daily Chest",function(bool)
         end
     end)
 end)
-ChestMenu:Toggle("VIP Chest",function(bool)
-    shared.ToggleCVC=bool
-    spawn(function()
-        while shared.ToggleCVC do
-            claimChest("Vip") task.wait(60)
-        end
-    end)
-end)
 ChestMenu:Toggle("Group Chest",function(bool)
     shared.ToggleCVC=bool
     spawn(function()
         while shared.ToggleCVC do
             claimChest("Group") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("VIP Chest",function(bool)
+    shared.ToggleCVC=bool
+    spawn(function()
+        while shared.ToggleCVC do
+            claimChest("Vip") task.wait(60)
         end
     end)
 end)
@@ -621,6 +622,7 @@ end)
 
 spawn(function()
     while task.wait(1) do
+        EmenyNameList = getMonstersNames()
         EmenyList:Refresh({"All",unpack(EmenyNameList)})
     end
 end)
