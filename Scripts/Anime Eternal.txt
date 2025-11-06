@@ -254,6 +254,7 @@ end)
 Auto:Toggle("Auto Dungeon",function(bool)
     shared.ToggleAD=bool
     spawn(function()
+        inDungeonAttack = false
         while shared.ToggleAD do
             local dungeon = getCurrentDungeon()
             if dungeon.inDungeon then
