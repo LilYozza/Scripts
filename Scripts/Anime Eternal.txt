@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v3.1")
+print("v3.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -222,6 +222,19 @@ local function completeQuest(_num)
     game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))    
 end
 
+local function favQuest(_num)
+    local args = {
+        [1] = {
+            ["Id"] = tostring(_num),
+            ["Type"] = "Favorite",
+            ["Action"] = "_Quest"
+        }
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+
+end
+
 local Quests = PGui:WaitForChild("Quests")
 local Quests_Screen = PGui:WaitForChild("Quests_Screen")
 
@@ -307,26 +320,20 @@ local function getCurrentQuest()
 	return t
 end
 
-
-
 Auto:Toggle("Auto Quest",function(bool)
     shared.ToggleARU=bool
     spawn(function()
         while shared.ToggleARU do
-            -- Accept All Quests
-            --[[
-            for i = 1, questAmount do
-                acceptQuest(i) task.wait()
-            end
-            ]]--
             local quest = getCurrentQuest()
             local completed = checkComplete(quest)
             if completed then
                 local questNum = findQuest(quest)
-               completeQuest(questNum.Name) task.wait(1)
-               --Accept Next Quest
-               local next = tonumber(questNum) + 1
-               acceptQuest(next)
+                local num = questNum.Name
+                local next = tonumber(num) + 1
+
+               completeQuest(num) task.wait(5)
+               acceptQuest(next) task.wait(2)
+               favQuest(next)
             end
             task.wait(1)
         end
@@ -345,11 +352,14 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                     local type = v.type:lower()
                     if type == "defeat" then
                         -- SET AUTO ATTACK ON THIS UNTI
-                        qMonster = v.name
+                        local newMonster = v.name:gsub("%s", "_")
+                        qMonster = newMonster
                     elseif type == "collect" then
                         -- SET FOR TOKENS
+                        qMonster = nil
                     elseif type == "dungeon" then
                         -- DO NOTHING FOR NOW ????
+                        qMonster = nil
                     end
                 end
             end
