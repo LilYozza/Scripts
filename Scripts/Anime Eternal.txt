@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v3.2")
+print("v3.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -239,7 +239,8 @@ local Quests = PGui:WaitForChild("Quests")
 local Quests_Screen = PGui:WaitForChild("Quests_Screen")
 
 local Quest_Player = Quests:WaitForChild("Quests_Player")
-local QuestList_Side = Quests_Screen:WaitForChild("Quest_Side_Menu"):WaitForChild("Quests"):WaitForChild("Main"):WaitForChild("List")
+local Quest_Side_Menu = Quests_Screen:WaitForChild("Quest_Side_Menu")
+local QuestList_Side = Quest_Side_Menu:WaitForChild("Quests"):WaitForChild("Main"):WaitForChild("List")
 local QuestList = Quest_Player:WaitForChild("ScrollingFrame")
 
 local function refreshQuest()
@@ -323,9 +324,21 @@ end
 Auto:Toggle("Auto Quest",function(bool)
     shared.ToggleARU=bool
     spawn(function()
+        -- SHOW SIDE
+        if shared.ToggleARU then
+            task.spawn(function()
+                while shared.ToggleARU do
+                    Quest_Side_Menu.Visible = true
+                    task.wait(0.1)
+                end
+            end)
+        end
         while shared.ToggleARU do
             local quest = getCurrentQuest()
             local completed = checkComplete(quest)
+            
+
+
             if completed then
                 local questNum = findQuest(quest)
                 local num = questNum.Name
