@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v3.5")
+print("v3.6")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -354,7 +354,6 @@ Auto:Toggle("Auto Quest",function(bool)
 
             if Quest_Side_Menu.Visible == false and currentNum then
                 favQuest(currentNum)
-                currentNum = nil
             end
             task.wait(1)
         end
