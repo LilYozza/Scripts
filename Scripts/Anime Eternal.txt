@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v3.3")
+print("v3.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -345,7 +345,8 @@ Auto:Toggle("Auto Quest",function(bool)
                 local next = tonumber(num) + 1
 
                completeQuest(num) task.wait(5)
-               acceptQuest(next) task.wait(2)
+               acceptQuest(next) task.wait(5)
+               favQuest(next) task.wait(5)
                favQuest(next)
             end
             task.wait(1)
