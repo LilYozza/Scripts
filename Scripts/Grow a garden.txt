@@ -13,7 +13,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v5")
+print("v6")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -165,7 +165,7 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
 end
 
 --SAFARI EVENT ------------------------------------------------------------------------------------------------------------------------
-local SafariEvent = UpdateItems:WaitForChild("SafariEvent", 5)
+local SafariEvent = UpdateItems:WaitForChild("SafariEvent", 5) or Workspace:WaitForChild("SafariEvent", 5)
 if SafariEvent then
    local EventMenu = w:CreateFolder("Safari")
    local EventShop = ALLDATA.EventShopStock
@@ -258,7 +258,7 @@ local function buyAllStock(_type)
         local mFrame = v:FindFirstChild("Main_Frame")
         if v:IsA("Frame") and mFrame then
             local info = getStockInfo(mFrame)
-            if info and info.stock and info.stock > 0 and Sheckles() >= info.price then
+            if info and info.stock and info.price and info.stock > 0 and Sheckles() >= info.price then
                 if type == "seeds" then
                     buySeed(info.name, info.stock)
                 elseif type == "gears" then
