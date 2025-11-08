@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2")
+print("v3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -196,7 +196,8 @@ Auto:Toggle("Auto Click",function(bool)
     end)
 end)
 
-local Quests = PGui:WaitForChild("Quests")
+-------- QUESTS -------------------------------------------------------------------------------------
+
 local function acceptQuest(_num)
     local args = {
         [1] = {
@@ -218,7 +219,23 @@ local function completeQuest(_num)
         }
     }
 
-    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))    
+    game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))    
+end
+
+local Quests = PGui:WaitForChild("Quests")
+local Quests_Screen = PGui:WaitForChild("Quests_Screen")
+
+local Quest_Player = Quests:WaitForChild("Quests_Player")
+local QuestList_Side = Quests_Screen:WaitForChild("Quest_Side_Menu"):WaitForChild("Quests"):WaitForChild("Main"):WaitForChild("List")
+local QuestList = Quest_Player:WaitForChild("ScrollingFrame")
+
+local function refreshQuest()
+    local originalPos = Quest_Player.Position
+    Quest_Player.Position = UDim2.new(5, 0, 5, 0)
+    Quest_Player.Visible = true
+    task.wait()
+    Quest_Player.Visible = false
+    Quest_Player.Position = originalPos
 end
 
 local function checkComplete(t)
@@ -231,60 +248,114 @@ local function checkComplete(t)
 	return true
 end
 
-local function getObjectives(_quest)
-    local t = {}
-    for _,v in pairs(_quest:GetChildren())do
-        local num = tonumber(v.Name)
-        if num and num > 0 then
-            local c,m= (v:GetAttribute("__Amount")):match("(%d+)%/(%d+)") c,m=tonumber(c),tonumber(m)
-            t[num] = {
-                name = v:GetAttribute("__Name"),
-                current = c,
-                max = m
-            }
+local function findQuest(_quest)
+    refreshQuest()
+    for _,v in pairs(QuestList:GetChildren())do
+		local num = tonumber(v.Name)
+		if num and num > 0 then
+            local Objectives = v:WaitForChild("Main"):WaitForChild("Left"):WaitForChild("Objectives")
+            for __,_v in pairs(Objectives:GetChildren())do
+                local _num = tonumber(_v.Name)
+                if _num and _num > 0 then
+                    local amount = _v:GetAttribute("__Amount")
+                    local description = _v:GetAttribute("__Description")
+                    local name = _v:GetAttribute("__Name")
+                    --print(amount, "vs", _quest[_num].progress)
+                    --print(description, "vs", _quest[_num].description)
+                    if amount and amount == _quest[_num].progress and description and description == _quest[_num].description then
+                        return v
+                    end
+                end
+            end
         end
     end
-    return t
 end
 
-local function getQuests()
-    local t = {}
-    local questFrame = Quests:WaitForChild("Quests_Player"):WaitForChild("ScrollingFrame")
-    for _,v in pairs(questFrame:GetChildren())do
-        local num = tonumber(v.Name)
-        if num and num > 0 then
-            local main = v:FindFirstChild("Main")
-            local Objectives = getObjectives(main:FindFirstChild("Left"):FindFirstChild("Objectives"))
-            t[num] = {
-                number = num,
-                quests = Objectives,
-                isCompleted = checkComplete(Objectives),
-                emeny = Objectives[1].name
-            }
-        end
-    end
-    return t
+local function getCurrentQuest()
+	local t = {}
+	for _, v in pairs(QuestList_Side:GetChildren()) do
+		local num = tonumber(v.Name)
+		if num and num > 0 then
+			local Title = v:FindFirstChild("Title")
+			local Progress = v:FindFirstChild("Progress")
+
+			if Title and Progress and Title:IsA("TextLabel") and Progress:IsA("TextLabel") then
+				local titleText = Title.Text or ""
+				local progressText = Progress.Text or ""
+
+				local name = titleText:match("^%S+%s+(.*)") or titleText
+				local type = titleText:match("^(%S+)") or "Unknown"
+
+				if titleText:lower():match("dungeon") then
+					name = titleText
+					type = "Dungeon"
+				end
+				local c, m = progressText:match("(%d+)%/(%d+)")
+				c, m = tonumber(c) or 0, tonumber(m) or 0
+				t[num] = {
+					name = name,
+					type = type,
+					current = c,
+					max = m,
+                    description = titleText,
+                    progress = progressText,
+				}
+			end
+		end
+	end
+
+	return t
 end
 
-local sMonster
+
+
 Auto:Toggle("Auto Quest",function(bool)
     shared.ToggleARU=bool
     spawn(function()
         while shared.ToggleARU do
             -- Accept All Quests
+            --[[
             for i = 1, questAmount do
                 acceptQuest(i) task.wait()
             end
-            local quests = getQuests()
-            for _,v in pairs(quests)do
-                if v and v.number and v.isCompleted == true then
-                    completeQuest(v.number)
+            ]]--
+            local quest = getCurrentQuest()
+            local completed = checkComplete(quest)
+            if completed then
+                local questNum = findQuest(quest)
+               completeQuest(questNum.Name) task.wait(1)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+local qMonster
+Auto:Toggle("Complete Quest",function(bool) -- WIP
+    shared.ToggleACQ=bool
+    spawn(function()
+        while shared.ToggleACQ do
+            local quest = getCurrentQuest()
+            local completed = checkComplete(quest)
+            if not completed then
+                for _,v in pairs(quest)do
+                    local type = v.type:lower()
+                    if type == "defeat" then
+                        -- SET AUTO ATTACK ON THIS UNTI
+                        qMonster = v.name
+                    elseif type == "collect" then
+                        -- SET FOR TOKENS
+                    elseif type == "dungeon" then
+                        -- DO NOTHING FOR NOW ????
+                    end
                 end
             end
             task.wait(1)
         end
     end)
 end)
+
+--------------------------------------------------------------------------------------------------
 
 local function contains(_string)
     local lowerString = _string:lower()
@@ -308,7 +379,7 @@ end)
 
 
 
-
+local sMonster
 local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sMonster = SItem
@@ -320,7 +391,9 @@ task.spawn(function()
 		if shared.ToggleAA or shared.ToggleAD then
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
-			if shared.ToggleAA and dungeon and dungeon.inDungeon == false then
+            if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
+                cMonster = getClosestMonster(qMonster) mode = "QA"
+			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
 				cMonster = getClosestMonster(nil, true) mode = "AD"
@@ -336,6 +409,7 @@ task.spawn(function()
 					end
 				until (mode == "AA" and not shared.ToggleAA)
 					or (mode == "AD" and not shared.ToggleAD)
+                    or (mode == "QA" and not shared.ToggleACQ)
 			end
 		end
 	end
