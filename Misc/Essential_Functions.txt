@@ -370,18 +370,22 @@ getgenv().fromSuffixString = function(_value, _suffixes)
 		return 0
 	end
 
-	_value = _value:upper()
+	-- Normalize case
+	_value = tostring(_value):upper()
 
-	-- Match number + optional multi-letter suffix
-	local n, foundSuffix = string.match(_value, "([%d%.]+)([%a]+)")
-	if n and foundSuffix then
-		local i = table.find(_suffixes, foundSuffix)
-		if i then
-			return tonumber(n) * 10^(i * 3)
+	-- Extract numeric and letter parts
+	local n, letters = string.match(_value, "([%d%.]+)([%a]*)")
+
+	if n and letters and #letters > 0 then
+		-- Check if the letters *start* with a valid suffix
+		for i, suf in ipairs(_suffixes) do
+			if letters:sub(1, #suf) == suf then
+				return tonumber(n) * 10^(i * 3)
+			end
 		end
 	end
 
-	-- No suffix found — clean and return numeric
+	-- No valid suffix found — clean and return numeric
 	_value = _value:gsub("[^%d%.]", "")
 	return tonumber(_value)
 end

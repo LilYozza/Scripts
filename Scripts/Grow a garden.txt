@@ -1,3 +1,4 @@
+
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
@@ -13,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6")
+print("v6.1")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -518,12 +519,12 @@ end)
 
 
 -- DYNAMIC WAY TO GET NEW SEASON
-local lastKey, lastValue
+local firstkey, lastValue
 for k, v in pairs(ALLDATA.SeasonPass) do
-	lastKey, lastValue = k, v
+	firstkey, lastValue = k, v break
 end
 
-local SeasonPassData = ALLDATA.SeasonPass[lastKey]
+local SeasonPassData = ALLDATA.SeasonPass[firstkey]
 SPMenu:Toggle("Auto Buy",function(bool)
     shared.ToggleSPAB=bool
     spawn(function()
