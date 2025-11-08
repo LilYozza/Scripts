@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v3.4")
+print("v3.5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -321,10 +321,12 @@ local function getCurrentQuest()
 	return t
 end
 
+local currentNum
 Auto:Toggle("Auto Quest",function(bool)
     shared.ToggleARU=bool
     spawn(function()
         -- SHOW SIDE
+        --[[
         if shared.ToggleARU then
             task.spawn(function()
                 while shared.ToggleARU do
@@ -332,13 +334,13 @@ Auto:Toggle("Auto Quest",function(bool)
                     task.wait(0.1)
                 end
             end)
-        end
+        end]]--
         while shared.ToggleARU do
+
+
             local quest = getCurrentQuest()
             local completed = checkComplete(quest)
             
-
-
             if completed then
                 local questNum = findQuest(quest)
                 local num = questNum.Name
@@ -346,8 +348,13 @@ Auto:Toggle("Auto Quest",function(bool)
 
                completeQuest(num) task.wait(5)
                acceptQuest(next) task.wait(5)
-               favQuest(next) task.wait(5)
                favQuest(next)
+               currentNum = next
+            end
+
+            if Quest_Side_Menu.Visible == false and currentNum then
+                favQuest(currentNum)
+                currentNum = nil
             end
             task.wait(1)
         end
@@ -419,7 +426,7 @@ task.spawn(function()
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
             if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
-                cMonster = getClosestMonster(qMonster) mode = "QA"
+                cMonster = getClosestMonster(qMonster) or getClosestMonster(sMonster) mode = "QA"
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
