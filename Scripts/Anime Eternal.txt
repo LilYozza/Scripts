@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v4")
+print("v5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -671,7 +671,10 @@ task.spawn(function()
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
             if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
-                cMonster = getClosestMonster(qMonster) or getClosestMonster("All") mode = "QA"
+                print("here3", cMonster)
+                cMonster = getClosestMonster(qMonster) mode = "QA"
+                qMonster = nil
+                print()
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
@@ -689,7 +692,6 @@ task.spawn(function()
 				until (mode == "AA" and not shared.ToggleAA)
 					or (mode == "AD" and not shared.ToggleAD)
                     or (mode == "QA" and not shared.ToggleACQ)
-            qMonster = nil
 			end
 		end
 	end
