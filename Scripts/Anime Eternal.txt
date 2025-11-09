@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.2")
+print("v5.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -609,29 +609,36 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
             local completed = checkComplete(quest)
             if not completed then
                 for _,v in pairs(quest)do
-                    local type = v.type:lower()
-                    if type == "defeat" then
-                        -- SET AUTO ATTACK ON THIS UNTI
-                        local newMonster = v.name:gsub("%s", "_")
-                        qMonster = newMonster
-                        print(qMonster)
-                        local mapInfo = findMap(qMonster)
-                        if mapInfo then
-                            TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                    if not (v.current and v.max and v.current >= v.max) then
+                        local type = v.type:lower()
+                        if type == "defeat" then
+                            -- SET AUTO ATTACK ON THIS UNTI
+                            local newMonster = v.name:gsub("%s", "_")
+                            qMonster = newMonster
+                            print(qMonster)
+                            local mapInfo = findMap(qMonster)
+                            if mapInfo then
+                                TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                            end
+                        elseif type == "collect" then
+                            local mapInfo = findMap(v.name)
+                            if mapInfo then
+                                TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                            end
+                            qMonster = mapInfo.enemy:gsub("%s", "_")
+                        elseif type == "dungeon" then
+                            --print(v.name)
+                            local firstWord = v.name:match("^(%w+)")  -- "Medium"
+                            for _, dungeon in ipairs(defaultDungeons) do
+                                if dungeon:lower():find(firstWord:lower()) then
+                                    firstWord = dungeon
+                                    break
+                                end
+                            end
+                            print(firstWord)
+                            if firstWord and not table.find(tempDungeon, firstWord) then print("Adding:", firstWord, "to temp Dungeons") table.insert(tempDungeon, firstWord) end
+                            qMonster = "All"
                         end
-
-                    elseif type == "collect" then
-                        local mapInfo = findMap(v.name)
-                        if mapInfo then
-                            TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
-                            print("yes 2")
-                        else
-                            print("no 2")
-                        end
-                        qMonster = mapInfo.enemy:gsub("%s", "_")
-                    elseif type == "dungeon" then
-                        print(v.name)
-                        qMonster = nil
                     end
                 end
             end
@@ -764,8 +771,9 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
     spawn(function()
         while shared.ToggleJD do
             local dungeon = getNotifytDungeon()
-            if dungeon and dungeon.isReady and table.find(sDungeons, dungeon.name) then
+            if dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
                 print("Joining:", dungeon.name)
+                if table.find(tempDungeon, dungeon.name) then RemoveFromTable(tempDungeon, dungeon.name) end
                 --if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
