@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v3.7")
+print("v4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -448,7 +448,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                         -- SET AUTO ATTACK ON THIS UNTI
                         local newMonster = v.name:gsub("%s", "_")
                         qMonster = newMonster
-
+                        print(qMonster)
                         local mapInfo = findMap(qMonster)
                         if mapInfo then
                             print("yes 1")
@@ -532,6 +532,7 @@ task.spawn(function()
 				until (mode == "AA" and not shared.ToggleAA)
 					or (mode == "AD" and not shared.ToggleAD)
                     or (mode == "QA" and not shared.ToggleACQ)
+            qMonster = nil
 			end
 		end
 	end
