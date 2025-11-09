@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.1")
+print("v5.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -443,7 +443,9 @@ local function findMap(_input)
     for _, v in pairs(gameData) do
         for __, _v in pairs(v.enemies) do
             if ((_input:lower()):gsub("%s", "_") == _v.name:lower()) or (table.find(_v.tokens, _input)) then
-                return {world = v.world, enemy = _v.name, tokens = _v.tokens, index = _}
+                local isBoss = false
+                if _v.type and _v.type == "boss" then isBoss = true end
+                return {world = v.world, enemy = _v.name, tokens = _v.tokens, index = _, isBoss = isBoss}
             end
         end
     end
@@ -452,13 +454,15 @@ end
 local Islands = Workspace:WaitForChild("Islands")
 local IslandStuff = Islands:WaitForChild("West City With Pads and Stuff")
 
-local function TeleportMap(_map, _index)
-    print("Atemptting To Teleport to:",_index,_map)
-    local pass = true
-    if _map == "Earth_City" then
-        pass = IslandStuff:FindFirstChild(_index .. ". " .. _map)
-    else
-        pass = Islands:FindFirstChild(_index .. ". " .. _map) or Islands:FindFirstChild(_index .. ". " .. _map:gsub("_", " "))
+local function TeleportMap(_map, _index, _walk)
+    local folder = (_map == "Earth_City") and IslandStuff or Islands
+    local pass = nil
+
+    for _, v in pairs(folder:GetChildren()) do
+        if string.find(v.Name, _index .. ". ") then
+            pass = v
+            break
+        end
     end
     if not pass or not _index then
         local args = {
@@ -469,6 +473,11 @@ local function TeleportMap(_map, _index)
             }
         }
         game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+        if _walk then
+            task.wait(5)
+            local hrp = GetHrp()
+            Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100)
+        end
         print("Teleported to:", _map)
     end
 end
@@ -608,23 +617,20 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                         print(qMonster)
                         local mapInfo = findMap(qMonster)
                         if mapInfo then
-                            print("yes 1")
-                            TeleportMap(mapInfo.world, mapInfo.index)
-                        else
-                            print("no 1")
+                            TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                         end
 
                     elseif type == "collect" then
                         local mapInfo = findMap(v.name)
                         if mapInfo then
-                            TeleportMap(mapInfo.world, mapInfo.index)
+                            TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                             print("yes 2")
                         else
                             print("no 2")
                         end
                         qMonster = mapInfo.enemy:gsub("%s", "_")
                     elseif type == "dungeon" then
-                        -- DO NOTHING FOR NOW ????
+                        print(v.name)
                         qMonster = nil
                     end
                 end
