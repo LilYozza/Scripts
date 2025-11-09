@@ -296,8 +296,7 @@ local Islands = Workspace:WaitForChild("Islands")
 local IslandStuff = Islands:WaitForChild("West City With Pads and Stuff")
 
 local function TeleportMap(_map, _index)
-    -- GET MAP
-    -- CHECK MAP
+    print("Atemptting To Teleport to:",_index,_map)
     local pass = true
     if _map == "Earth_City" then
         pass = IslandStuff:FindFirstChild(_index .. ". " .. _map)
@@ -313,6 +312,7 @@ local function TeleportMap(_map, _index)
             }
         }
         game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+        print("Teleported to:", _map)
     end
 end
 
@@ -434,6 +434,7 @@ Auto:Toggle("Auto Quest",function(bool)
 end)
 
 local qMonster
+local tempDungeon = {}
 Auto:Toggle("Complete Quest",function(bool) -- WIP
     shared.ToggleACQ=bool
     spawn(function()
@@ -450,14 +451,21 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
 
                         local mapInfo = findMap(qMonster)
                         if mapInfo then
+                            print("yes 1")
                             TeleportMap(mapInfo.world, mapInfo.index)
+                        else
+                            print("no 1")
                         end
 
                     elseif type == "collect" then
                         local mapInfo = findMap(v.name)
                         if mapInfo then
                             TeleportMap(mapInfo.world, mapInfo.index)
+                            print("yes 2")
+                        else
+                            print("no 2")
                         end
+                        qMonster = mapInfo.enemy:gsub("%s", "_")
                     elseif type == "dungeon" then
                         -- DO NOTHING FOR NOW ????
                         qMonster = nil
