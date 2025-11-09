@@ -79,6 +79,163 @@ local gameData = {
             { name = 'Eizen', tokens = {"Zanpakuto Token", "Reiatsu Token", "Pressure Token"}, type = "boss"}, 
         }
     },
+    [4] = {
+        world = "Cursed_School",
+        enemies = {
+            { name = 'Itodo', tokens = {"Cursed Token", "Cursed Finger"}}, 
+            { name = 'Nebara', tokens = {"Cursed Token", "Cursed Finger"}}, 
+            { name = 'Magum', tokens = {"Cursed Token", "Cursed Finger"}}, 
+            { name = 'Meki', tokens = {"Cursed Token", "Cursed Finger"}},
+            { name = 'Tage', tokens = {"Cursed Token", "Cursed Finger"}}, 
+            { name = 'Gajo', tokens = {"Cursed Token", "Cursed Finger"}}, 
+            { name = 'Sakuni', tokens = {"Cursed Token", "Cursed Finger"}, type = "boss"}, 
+        }
+    },
+    [5] = {
+        world = "Slayer_Village",
+        enemies = {
+            { name = 'Nazuki', tokens = {"Breathing Token"}},
+            { name = 'Tenjaro', tokens = {"Breathing Token"}},
+            { name = 'Zentsu', tokens = {"Breathing Token"}}, 
+            { name = 'Insake', tokens = {"Breathing Token"}}, 
+            { name = 'Tamoka', tokens = {"Demon Arts Token"}}, 
+            { name = 'Shinabe', tokens = {"Demon Arts Token"}}, 
+            { name = 'Rangaki', tokens = {"Demon Arts Token", "Breathing Token"}, type = "boss"}, 
+        }
+    },
+    [6] = {
+        world = "Solo_Island",
+        enemies = {
+            { name = 'Weak_Sung', tokens = {"Hunter Rank Token"}}, 
+            { name = 'Green_Goblin', tokens = {"Hunter Rank Token"}},
+            { name = 'White_Tiger', tokens = {"Hunter Rank Token"}},
+            { name = 'Cha', tokens = {"Hunter Rank Token", "ReAwakening Token"}}, 
+            { name = 'Choi', tokens = {"Hunter Rank Token", "ReAwakening Token", "Monarch Token"}}, 
+            { name = 'Solo_Sung', tokens = {"Hunter Rank Token", "ReAwakening Token", "Monarch Token"}}, 
+            { name = 'Statue_of_God', tokens = {"Hunter Rank Token", "ReAwakening Token", "Monarch Token"}, type = "boss"}, 
+        }
+    },
+    [7] = {
+        world = "Clover_Village",
+        enemies = {
+            { name = 'Noalle', tokens = {"Water Spirit Token"}}, 
+            { name = 'Megna', tokens = {"Water Spirit Token"}}, 
+            { name = 'Finrel', tokens = {"Wind Spirit Token"}},
+            { name = 'Aste', tokens = {"Wind Spirit Token"}}, 
+            { name = 'Yune', tokens = {"Grimoire Token"}}, 
+            { name = 'Yemi', tokens = {"Grimoire Token", "Fire Spirit Token"}}, 
+            { name = 'Novi_Chroni', tokens = {"Grimoire Token", "Wind Spirit Token", "Fire Spirit Token"}, type = "boss"}, 
+        }
+    },
+    [8] = {
+        world = "Leaf_Village",
+        enemies = {
+            { name = 'Sekuri', tokens = {"Chakra Token"}}, 
+            { name = 'Kid_Norto', tokens = {"Chakra Token"}}, 
+            { name = 'Kid_Seske', tokens = {"Chakra Token"}}, 
+            { name = 'Kakashki', tokens = {"Chakra Token"}}, 
+            { name = 'Jiria', tokens = {"Chakra Token", "Eye Token"}}, 
+            { name = 'Tsuni', tokens = {"Chakra Token", "Eye Token"}}, 
+            { name = 'Itechi', tokens = {"Chakra Token", "Eye Token"}, type = "boss"}, 
+            { name = 'Madera', tokens = {"Chakra Token", "Eye Token"}, type = "boss"}, 
+        }
+    },
+    [9] = {
+        world = "Spirit_Residence",
+        enemies = {
+            { name = 'Ken', tokens = {"Gold Ball Token", "Lucky Spirit Token"}}, 
+            { name = 'Aira', tokens = {"Gold Ball Token", "Lucky Spirit Token"}},
+            { name = 'Jiji', tokens = {"Gold Ball Token", "Lucky Spirit Token"}},
+            { name = 'Momo', tokens = {"Gold Ball Token", "Granny Token"}}, 
+            { name = 'Alien', tokens = {"Gold Ball Token", "Granny Token"}}, 
+            { name = 'Saiko', tokens = {"Gold Ball Token", "Granny Token"}}, 
+            { name = 'Ken_Turbo', tokens = {"Gold Ball Token", "Granny Token"}, type = "boss"}, 
+        }
+    },
+    [10] = {
+        world = "Magic_Hunter_City",
+        enemies = {
+            { name = 'Lero', tokens = {"Energy TCG Token", "Greedy Token"}},
+            { name = 'Gone', tokens = {"Energy TCG Token", "Greedy Token"}},
+            { name = 'Karapik', tokens = {"Ten Token", "Greedy Token"}},
+            { name = 'Killas', tokens = {"Ten Token", "Greedy Token"}}, 
+            { name = 'Hisoker', tokens = {"Damage TCG Token"}}, 
+            { name = 'Illumio', tokens = {"Damage TCG Token"}}, 
+            { name = 'Killas_Godspeed', tokens = {"Energy TCG Token", "Ten Token", "Damage TCG Token"}, type = "boss"}, 
+        }
+    },
+    [11] = {
+        world = "Titan_City",
+        enemies = {
+            { name = 'Armim', tokens = {"Families Token"}}, 
+            { name = 'Annie', tokens = {"Families Token"}}, 
+            { name = 'Mikala', tokens = {"Families Token"}}, 
+            { name = 'Rainar', tokens = {"Titan Token"}},
+            { name = 'Ervin', tokens = {"Titan Token", "Spinal Fluid Token"}}, 
+            { name = 'Lavi', tokens = {"Titan Token", "Spinal Fluid Token"}}, 
+            { name = 'Eran', tokens = {"Families Token", "Titan Token", "Spinal Fluid Token"}, type = "boss"}, 
+        }
+    },
+    [12] = {
+        world = "Village_of_Sins",
+        enemies = {
+            { name = 'Diyana', tokens = {"Sins Token"}}, 
+            { name = 'Kyng', tokens = {"Sins Token"}},
+            { name = 'Gowen', tokens = {"Sins Token"}},
+            { name = 'Merlun', tokens = {"Sins Token"}}, 
+            { name = 'Bane', tokens = {"Commandments Token"}}, 
+            { name = 'Melyon', tokens = {"Commandments Token"}}, 
+            { name = 'Esanor', tokens = {"Commandments Token"}, type = "boss"}, 
+        }
+    },
+    [13] = {
+        world = "Kaiju_Base",
+        enemies = {
+            { name = 'Kefka', tokens = {"Fortitude Level Token"}},
+            { name = 'Rano', tokens = {"Fortitude Level Token"}}, 
+            { name = 'Ihero', tokens = {"Fortitude Level Token"}},
+            { name = 'Kikoi', tokens = {"Fortitude Level Token"}}, 
+            { name = 'Sosiro', tokens = {"Kaiju Token"}}, 
+            { name = 'Meena', tokens = {"Kaiju Token"}}, 
+            { name = 'Number_8', tokens = {"Kaiju Token", "Fortitude Level Token"}, type = "boss"}, 
+        }
+    },
+    [14] = {
+        world = "Tempest_Capital",
+        enemies = {
+            { name = 'Gobito', tokens = {"Species Token"}},
+            { name = 'Gabido', tokens = {"Demon Damage Token"}},
+            { name = 'Sakai', tokens = {"Demon Luck Token"}},
+            { name = 'Hakamaru', tokens = {"Demon Coins Token"}}, 
+            { name = 'Benitaro', tokens = {"Ultimate Skill Token"}}, 
+            { name = 'Rimaru', tokens = {"Demon Energy Token"}}, 
+            { name = 'Valzora', tokens = {"Species Token", "Ultimate Skill Token", "Demon Energy Token"}, type = "boss"},       
+        }
+    },
+    [15] = {
+        world = "Virtual_City",
+        enemies = {
+            { name = 'Lisbeta', tokens = {"Energy Rune Token"}},
+            { name = 'Silica', tokens = {"Energy Rune Token"}},
+            { name = 'Klain', tokens = {"Weapon Rune Token"}},
+            { name = 'Yai', tokens = {"Swordsman Damage Token"}}, 
+            { name = 'Asana', tokens = {"Swordsman Energy Token"}}, 
+            { name = 'Beater', tokens = {"Swordsman Energy Token"}}, 
+            { name = 'The_Paladin', tokens = {}, type = "boss"}, 
+        }
+    },
+    [16] = {
+        world = "Cairo",
+        enemies = {
+            { name = 'Speedy', tokens = {"Onomatopoeia Token"}},
+            { name = 'Cesar', tokens = {"Stand Token"}}, 
+            { name = 'Joseph', tokens = {"Requiem Token"}}, 
+            { name = 'Polyreff', tokens = {"Ripple Token"}}, 
+            { name = 'Avdoli', tokens = {"Ripple Token"}}, 
+            { name = 'Jokaro', tokens = {"Ripple Token"}}, 
+            { name = 'Dino', tokens = {"Stand Token", "Requiem Token", "Ripple Token"}, type = "boss"}, 
+        }
+    }
 }
 
 local assetsDestroy = {"Trees", "Houses", "Random", "Paths", "Road", "Walls", "Towers", "Buildings"}
