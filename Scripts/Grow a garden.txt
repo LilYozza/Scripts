@@ -1,4 +1,4 @@
-
+local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
@@ -543,3 +543,9 @@ SPMenu:Toggle("Auto Buy",function(bool)
 end)
 
 
+local dataToSave = {
+    ["Buy Seeds"] = {var = "ToggleBS"},
+    ["Buy Gears"] = {var = "ToggleBG"},
+    ["Buy Eggs"] = {var = "ToggleBE"},
+    ["Buy Merchant"] = {var = "ToggleBM"},
+} SaveManager(dataToSave)
