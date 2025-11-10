@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.4")
+print("v5.5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -476,7 +476,7 @@ local function TeleportMap(_map, _index, _walk)
         if _walk then
             task.wait(5)
             local hrp = GetHrp()
-            Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100)
+            Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 1000)
         end
         print("Teleported to:", _map)
     end
@@ -615,7 +615,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             -- SET AUTO ATTACK ON THIS UNTI
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
-                            print(qMonster)
+                            --print(qMonster)
                             local mapInfo = findMap(qMonster)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
@@ -639,6 +639,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             if firstWord and not table.find(tempDungeon, firstWord) then print("Adding:", firstWord, "to temp Dungeons") table.insert(tempDungeon, firstWord) end
                             qMonster = "All"
                         end
+                        break
                     end
                 end
             end
@@ -772,7 +773,7 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
                 print("Joining:", dungeon.name)
-                if table.find(tempDungeon, dungeon.name) then RemoveFromTable(tempDungeon, dungeon.name) end
+                if table.find(tempDungeon, dungeon.name) then print("Removed:", dungeon.name) RemoveFromTable(tempDungeon, dungeon.name) end
                 --if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
