@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.3")
+print("v5.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -635,7 +635,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                                     break
                                 end
                             end
-                            print(firstWord)
+                            --print(firstWord)
                             if firstWord and not table.find(tempDungeon, firstWord) then print("Adding:", firstWord, "to temp Dungeons") table.insert(tempDungeon, firstWord) end
                             qMonster = "All"
                         end
@@ -685,7 +685,6 @@ task.spawn(function()
 			local dungeon = getCurrentDungeon()
             if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
                 cMonster = getClosestMonster(qMonster) mode = "QA"
-                print("here3", cMonster)
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
