@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.5")
+print("v5.6")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -503,6 +503,7 @@ end
 
 local function findQuest(_quest)
     refreshQuest()
+    local index = 1
     for _,v in pairs(QuestList:GetChildren())do
 		local num = tonumber(v.Name)
 		if num and num > 0 then
@@ -515,12 +516,13 @@ local function findQuest(_quest)
                     local name = _v:GetAttribute("__Name")
                     --print(amount, "vs", _quest[_num].progress)
                     --print(description, "vs", _quest[_num].description)
-                    if amount and amount == _quest[_num].progress and description and description == _quest[_num].description then
+                    if amount and _quest[index] and amount == _quest[index].progress and description and description == _quest[index].description then
                         return v
                     end
                 end
             end
         end
+        index = index + 1
     end
 end
 
