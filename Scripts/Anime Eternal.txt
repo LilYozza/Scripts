@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.8")
+print("v5.9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -517,8 +517,8 @@ local function findQuest(_quest)
 
                     local quest = _quest[_num] or nil
                     --PrintTable(quest)
-                    print(amount, "vs", _quest[_num].progress)
-                    print(description, "vs", _quest[_num].description)
+                    --print(amount, "vs", _quest[_num].progress)
+                    --print(description, "vs", _quest[_num].description)
                     if quest and amount and amount == quest.progress and description and description == quest.description then
                         return v
                     end
@@ -563,8 +563,6 @@ local function getCurrentQuest()
 
 	return t
 end
-
-PrintTable(t)
 
 local currentNum
 Auto:Toggle("Auto Quest",function(bool)
