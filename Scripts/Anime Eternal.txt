@@ -736,25 +736,15 @@ end)
 
 RaidMenu:Button("Add/Remove",function()
     spawn(function()
-        if table.find(sDungeons, sDungeon) then
-            RemoveFromTable(sDungeons, sDungeon)
-            print("Removed:", sDungeon)
-
-            -- ADD TO TABLE
-            table.insert(Dungeons, sDungeon)
-            DungeonList:Refresh(Dungeons)
-
-        else
+        if not table.find(sDungeons, sDungeon) then
             table.insert(sDungeons, sDungeon)
             print("Added:", sDungeon)
-
 
             -- REMOVE FROM TABLE
             local pos = RemoveFromTable(Dungeons, sDungeon)
             sDungeon = Dungeons[pos]
             DungeonList:Refresh(Dungeons)
             
-
         end
     end)
 end)
