@@ -134,24 +134,34 @@ end
 
 getgenv().SaveManager = function(_tbl)
     local saved = false
-    LoadManager() -- Check if Save Files Exist, if so then load Variables with Toggles
+    LoadManager() -- Apply any saved values first
 
-    --saveFile(_tbl, path)
-    Players.ChildRemoved:connect(function(player)
+    local function triggerSave()
+        if not saved then
+            saveFile(_tbl, path)
+            saved = true
+        end
+    end
+
+    -- Fires when the player leaves
+    Players.PlayerRemoving:Connect(function(player)
         if player == Player then
-            if not saved then
-                saveFile(_tbl, path)
-                saved = true
-            end
+            triggerSave()
         end
     end)
 
+    -- Fires if the player object is removed from hierarchy
     Player.AncestryChanged:Connect(function(_, parent)
-        if not parent then 
-            if not saved then
-                saveFile(_tbl, path)
-                saved = true
-            end
+        if not parent then
+            triggerSave()
         end
-    end)    
+    end)
+
+    -- Periodic autosave every 60 seconds
+    task.spawn(function()
+        while task.wait(60) do
+            saved = false  -- allow re-save
+            triggerSave()
+        end
+    end)
 end
