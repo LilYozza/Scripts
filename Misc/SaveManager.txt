@@ -15,7 +15,6 @@
 
 ]]
 local path = "YozzaScriptHub/" .. game.gameId .. ".json"
-makefolder("YozzaScriptHub")
 
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
