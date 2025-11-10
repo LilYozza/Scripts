@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.7")
+print("v5.8")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -482,11 +482,12 @@ local function TeleportMap(_map, _index, _walk)
     end
 end
 
-local function refreshQuest()
+local function refreshQuest(_time)
+    if not _time then _time = 0 end
     local originalPos = Quest_Player.Position
     Quest_Player.Position = UDim2.new(5, 0, 5, 0)
     Quest_Player.Visible = true
-    task.wait()
+    task.wait(_time)
     Quest_Player.Visible = false
     Quest_Player.Position = originalPos
 end
@@ -514,11 +515,11 @@ local function findQuest(_quest)
                     local description = _v:GetAttribute("__Description")
                     local name = _v:GetAttribute("__Name")
 
-                    local quest = _quest[_num]
+                    local quest = _quest[_num] or nil
                     --PrintTable(quest)
                     print(amount, "vs", _quest[_num].progress)
                     print(description, "vs", _quest[_num].description)
-                    if amount and amount == quest.progress and description and description == quest.description then
+                    if quest and amount and amount == quest.progress and description and description == quest.description then
                         return v
                     end
                 end
@@ -587,13 +588,17 @@ Auto:Toggle("Auto Quest",function(bool)
             
             if completed then
                 local questNum = findQuest(quest)
-                local num = questNum.Name
-                local next = tonumber(num) + 1
+                if questNum then
+                    local num = questNum.Name
+                    local next = tonumber(num) + 1
 
-               completeQuest(num) task.wait(5)
-               acceptQuest(next) task.wait(5)
-               favQuest(next)
-               currentNum = next
+                    completeQuest(num) task.wait(5)
+                    acceptQuest(next) task.wait(5)
+                    favQuest(next)
+                    currentNum = next
+                else
+                    refreshQuest(2)
+                end
             end
 
             if Quest_Side_Menu.Visible == false and currentNum then
