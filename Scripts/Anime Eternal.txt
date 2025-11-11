@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.1")
+print("v7.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1180,7 +1180,7 @@ local function checkUnlockedPower(_power)
     for _,v in pairs(PowersList:GetChildren())do
         if v:IsA("ImageButton") then
             local powerName = getPowerName(v)
-            if powerName:lower() == _power:lower() then
+            if powerName and _power and powerName:lower() == _power:lower() then
                 return true
             end
         end
