@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.4")
+print("v7.5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -87,7 +87,7 @@ local gameData = {
             name = "Soul_Society",
             gachas = {"Reiatsu_Color", "Zanpakuto"},
             gachaTable = {
-                ["Reiatsu_Color"] = { "Gray Relatsu", "Green Relatsu", "Blue Relatsu", "Pink Relatsu", "Yellow Relatsu", "Red Relatsu", "Black Relatsu" },
+                ["Reiatsu_Color"] = { "Gray Reiatsu", "Green Reiatsu", "Blue Reiatsu", "Pink Reiatsu", "Yellow RReiatsu", "Red Reiatsu", "Black Reiatsu" },
                 ["Zanpakuto"] = { "Suzumebachi", "Zabimaru", "Ashisogi Jizo", "Senbonzakura", "Nozarashi", "Hyorimaru", "Zangetsu" }
             }
         },
