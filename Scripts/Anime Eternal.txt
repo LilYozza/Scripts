@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.5")
+print("v7.6")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -715,14 +715,18 @@ local function containsTable(_input, _list)
 end
 
 local function findMap(_input)
-    for i, v in pairs(gameData) do
-        for _, e in pairs(v.enemies) do
-            if _input and e and e.tokens then
+    if not _input then return end
+    _input = _input:lower():gsub("_", " ")
+    for i, v in pairs(gameData or {}) do
+        local enemies, gachas = v.enemies or {}, (v.world and v.world.gachas) or {}
+        for _, e in pairs(enemies) do
+            if e and e.name and e.tokens then
+                local name = e.name:lower():gsub("_", " ")
                 local isBoss = e.type == "boss"
-                local nameMatch = e.name:lower():gsub("_", " ") == _input:lower():gsub("_", " ")
-                local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or table.find(e.tokens, _input)
+                local nameMatch = name == _input
+                local tokenMatch = (table.find(gachas, _input) and containsTable(_input, e.tokens)) or table.find(e.tokens, _input)
                 if nameMatch or tokenMatch then
-                    return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
+                    return {world = v.world and v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
                 end
             end
         end
@@ -1256,8 +1260,8 @@ GachaMenu:Toggle("Auto Farm",function(bool)
                     if not table.find(blackListGacha, v) then
                         local bPower = getBestPower(v)
                         local unlocked = checkUnlockedPower(bPower)
-                        if not unlocked and tempSSelect ~= v then
-                            print("Switching To:", v)
+                        if not unlocked then
+                            if tempSSelect ~= v then print("Switching To:", v) end
                             tempSSelect = v
                             break
                         end
