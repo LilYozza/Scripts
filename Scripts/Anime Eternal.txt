@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v6.1")
+print("v6.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -532,13 +532,21 @@ local function contains(_string, _table)
 end
 
 local function containsTable(_input, _list)
-    local firstWord = _input:match("^(%w+)")
-    firstWord = firstWord:lower()
+    -- normalize input and split into words
+    local inputWords = {}
+    for word in (_input:gsub("_", " "):lower()):gmatch("%w+") do
+        inputWords[word] = true
+    end
+
     for _, str in pairs(_list) do
-        if str:lower():find(firstWord) then
-            return true
+        -- normalize token and split into words
+        for word in (str:lower():gsub("_", " "):gmatch("%w+")) do
+            if inputWords[word] then
+                return true
+            end
         end
     end
+
     return false
 end
 
