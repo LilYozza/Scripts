@@ -30,7 +30,7 @@ local function getGui()
 end
 
 local function getWindow(_gui, _name)
-    _gui = gui or getGui()
+    _gui = _gui or getGui()
     _name = _name or "Main"
     for _,v in pairs(_gui:GetChildren()) do
         local title = v:FindFirstChild("Title")
@@ -40,24 +40,34 @@ local function getWindow(_gui, _name)
     end
 end
 
-local function getItems(_window) -- Returns All Content within Window
+local function getItems(_window)
     local t = {}
     _window = _window or getWindow()
-    local content = _window:FindFirstChild("Sections") 
-        and _window.Sections:FindFirstChild("Folder") 
-        and _window.Sections.Folder:FindFirstChild("Folder") 
-        and _window.Sections.Folder.Folder:FindFirstChild("Content")
-    if content then
-        for _,v in pairs(content:GetChildren()) do
-            if v:IsA("ImageLabel") then
-                local Type = v.Name
-                local Title = (v:FindFirstChild("Title") and v.Title.Text) or (v:FindFirstChild("Click") and v.Click:FindFirstChild("Title") and v.Click.Title.Text)
-                local Button = v:FindFirstChild("Tick") or v:FindFirstChild("Button")
-                local Input = v:FindFirstChild("Input")
-                t[Title] = {Type = Type, Title = Title, Button = Button, Input = Input}
+    local sectionsFolder = _window:FindFirstChild("Sections")
+    if not sectionsFolder then return t end
+
+    -- Loop through all first-level folders in Sections
+    for _, section in pairs(sectionsFolder:GetChildren()) do
+        -- Each section might have nested Folders leading to Content
+        local contentFolder = section:FindFirstChild("Folder")
+        while contentFolder and contentFolder:FindFirstChild("Folder") do
+            contentFolder = contentFolder.Folder
+        end
+
+        if contentFolder and contentFolder:FindFirstChild("Content") then
+            for _, v in pairs(contentFolder.Content:GetChildren()) do
+                if v:IsA("ImageLabel") then
+                    local Type = v.Name
+                    local Title = (v:FindFirstChild("Title") and v.Title.Text)
+                        or (v:FindFirstChild("Click") and v.Click:FindFirstChild("Title") and v.Click.Title.Text)
+                    local Button = v:FindFirstChild("Tick") or v:FindFirstChild("Button")
+                    local Input = v:FindFirstChild("Input")
+                    t[Title] = {Type = Type, Title = Title, Button = Button, Input = Input}
+                end
             end
         end
     end
+
     return t
 end
 
