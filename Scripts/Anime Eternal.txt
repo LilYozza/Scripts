@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v6.5")
+print("v6.6")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -532,21 +532,20 @@ local function contains(_string, _table)
 end
 
 local function containsTable(_input, _list)
-    -- normalize input and split into words
     local inputWords = {}
     for word in (_input:gsub("_", " "):lower()):gmatch("%w+") do
         inputWords[word] = true
     end
 
     for _, str in pairs(_list) do
-        -- normalize token and split into words
-        for word in (str:lower():gsub("_", " "):gmatch("%w+")) do
-            if inputWords[word] then
-                return true
+        for word in (str:gsub("_", " "):lower()):gmatch("%w+") do
+            for iw in pairs(inputWords) do
+                if word:find(iw) or iw:find(word) then
+                    return true
+                end
             end
         end
     end
-
     return false
 end
 
@@ -556,7 +555,7 @@ local function findMap(_input)
         for _, e in pairs(v.enemies) do
             local isBoss = e.type == "boss"
             local nameMatch = e.name:lower():gsub("_", " ") == _input
-            local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or containsTable(_input, e.tokens)
+            local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or table.find(_input, e.tokens)
             if nameMatch or tokenMatch then
                 return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
             end
@@ -568,11 +567,12 @@ local Islands = Workspace:WaitForChild("Islands")
 local IslandStuff = Islands:WaitForChild("West City With Pads and Stuff")
 
 local function TeleportMap(_map, _index, _walk)
-    local folder = (_map == "Earth_City") and IslandStuff or Islands
+    local folder = Islands
+    if _map == "Earth_City" then folder = IslandStuff end
     local pass = nil
 
     for _, v in pairs(folder:GetChildren()) do
-        if string.find(v.Name, _index .. ". ") then
+        if string.find(v.Name, _index .. ".") then
             pass = v
             break
         end
