@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.3")
+print("v7.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1209,11 +1209,11 @@ end)
 local sGacha
 local sGachaAmount = 2
 
-local DropListG1 = GachaMenu:Dropdown("2",{1,2,3,4,5},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropListG1 = GachaMenu:Dropdown("2",{1,2,3,4,5},true,function(SItem)
     sGachaAmount = tonumber(SItem)
 end)
 
-local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem)
     sGacha = SItem
 end)
 
@@ -1234,16 +1234,17 @@ end)
 
 local sGSelect = "Selected"
 local gFarmType = {"Selected", "Best"}
-local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem)
     sGSelect = SItem
 end)
 
-
+local tempSSelect
+local blackListGacha = {"Swords"}
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
     spawn(function()
         while shared.ToggleAFG do
-            local tempSSelect
+            
             if sGacha and sGSelect == "Selected" then
                 tempSSelect = sGacha
             elseif sGSelect == "All" then
@@ -1252,12 +1253,14 @@ GachaMenu:Toggle("Auto Farm",function(bool)
             elseif sGSelect == "Best" then
                 -- find the next best gacha to farm
                 for _,v in pairs(GACHA)do
-                    local bPower = getBestPower(v)
-                    local unlocked = checkUnlockedPower(bPower)
-                    if not unlocked and tempSSelect ~= v then
-                        print("Switching To:", v)
-                        tempSSelect = v
-                        break
+                    if not table.find(blackListGacha, v) then
+                        local bPower = getBestPower(v)
+                        local unlocked = checkUnlockedPower(bPower)
+                        if not unlocked and tempSSelect ~= v then
+                            print("Switching To:", v)
+                            tempSSelect = v
+                            break
+                        end
                     end
                 end
             end
