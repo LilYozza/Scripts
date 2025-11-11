@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.6")
+print("v7.7")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -42,14 +42,42 @@ local UPGRADES = { "Haki_Upgrade", "Spiritual_Pressure", "Cursed_Progression", "
 --AS OF Update 23 - Part 2 09/11/2025
 local CODES = {"Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20", "Update19P3", "315KLikes", "580KFav", "585KFav", "150MVisits", "RandomUpdate19P2Code?", "Update19P2Shutdown2", "Update19P2Shutdown", "Update19P2Delay", "125MVisits", "575KFav", "570KFav", "310KLikes", "Update19P2", "Update19", "300KLikes", "305KLikes", "560KFav", "565KFav", "Update19Delay", "JustACodeFor19Upd", "Update18P3Keys", "Update18P3", "290KLikes", "295KLikes", "550KFav", "555KFav", "Upd18Code", "Code2Upd18", "Update18P2", "285KLikes", "535KFav", "540KFav", "545KFav", "TheSmirkUp18!", "NiceOnUpdate18?", "IThinkYouAreLying", "ImAtomic!", "Update18", "280KLikes", "520KFav", "525KFav", "530KFav", "ImBombastic", "RandomCodeUPD17P3", "Update17P3", "515KFav", "510KFav", "275KLikes", "270KLikes", "100MVisits", "Super88KOnlineCode", "OnlineCodeSuper89K!", "JustOneMoreUpdate17P2Code", "ThisIsSuperCoolCodeFor84k", "OkayWhat?!85K", "NoWayWeWillHit86k", "87kNoWay!!", "Update17P2", "260KLikes", "265KLikes", "500KFav", "505KFav", "Record75K?", "Record76K?", "Record77K?", "InsaneRecord78K?", "NoWayRecord79K?!", "80KPeoplePlaying?!", "PeoplePlayingAt81K", "People82KPlaying", "ThereIs83KPlayersOn?!", "WhyNotGiveSundayCodeUp17", "MoreFeaturesOnSundayUpdate17", "Update17", "250KLikes", "255KLikes", "490KFav", "495KFav", "Update17BalanceWhatisThat?", "SaveMeUpdate16Part3Fix", "Update16P3", "240KLikes", "245KLikes", "475KFav", "480KFav", "Update16P2Fix2", "NewRecord68K?", "NewRecord69K?", "NoWayWeCanHit70K?", "71KImpossibleRecord!", "Insane72kPlayersOnline", "73KPlayers", "74KPlayers", "Update16P2Fix", "Update16P2", "235KLikes", "460KFav", "465KFav", "470KFav", "80MVisits", "Record67K?", "FunnyGreenPlanetShutdown2", "FunnyGreenPlanetShutdown", "FunnyGreenPlanet", "GreenPlanetCode", "455KFav", "450KFav", "230KLikes", "225KLikes", "Update16", "MobileUIFix16Up", "DungeonUp16Fix", "445KFav", "440KFav", "220KLikes", "215KLikes", "Update15P3", "Update15P2", "205KLikes", "210KLikes", "430KFav", "435KFav", "54kPlayers", "55kPlayers", "56K?!", "57KNewRecord!!", "NoWay58KOnline", "59KOnlinePlayers?!", "ThereIsNoWay60k!", "61kThereIsNoWay", "WhatPlayer62kRecord!", "63kRecord!", "CursedFixes", "64kRecord!", "DungeonUp15Fix", "65kRecord!", "66kRecord!", "BugsUpdate15", "2BugsUpdate15", "Update15Delay", "Update15", "195KLikes", "200KLikes", "420KFav", "425KFav", "Update14P3", "185KLikes", "190KLikes", "410KFav", "415KFav", "51kPlayers", "52kPlayers", "53kPlayers", "?43KRecord?", "44KRecord??", "Record45K?!", "?Record46K?!", "NewRecord47k", "SupaRecord48k", "Supa49kRecord", "Ultra50KRecord", "Update14P2", "175KLikes", "180KLikes", "400KFav", "405KFav", "?42K?", "?41KRecord?", "SomeQuickFix1a", "SomeQuickFix2", "40KRecord?", "39KRecordCcu", "DungeonQuickFix", "Update14", "170KLikes", "50MVisits", "390KFav", "395KFav", "Update13P3", "165KLikes", "375KFav", "380KFav", "385KFav", "1GhoulKeyNoMore", "IWantKey", "Online36K", "37KPlayersOn", "38KRecord", "Update13P2", "365KFav", "370KFav", "50K", "160KLikes", "34KOnline", "35KCCU", "Update13", "155KLikes", "350KFav", "360KFav", "40MVisits", "DungeonFall1", "Update12.5", "31KPlayers", "32KPlayers", "33KPlayers", "150KLikes", "Update12.2", "35MVisits", "140KLikes", "340KFav", "29KPlayers", "30kOnline", "Update12.2Late", "PotionFix1", "25KPlayers", "26KPlayers", "27KPlayers", "28KPlayers", "BugFixSome", "Update12", "Stands", "135KFav", "32MVisits", "40K", "330KFAV", "Restaurant", "Update11.5", "320KFav", "130KLikes", "30MVisits", "TheEyes", "23KPlayers", "24KPlayers", "WeaponFix", "WhyNotOneMore2", "Update11Small", "22KPlayers", "125KLikes", "315KFav", "WhyNotOneMore", "BugFixUpdate11", "18KPlayers", "19KPlayers", "20KPlayers", "21KPlayers", "Update11", "115KLIKES", "120KLIKES", "310KFAV", "17KPlayers", "UpdateDelay", "Update10Part2", "25MVisits", "300KFAV", "110KLIKES", "DefenseRaidFix", "Tinycode", "EnergyFix", "DungeonFixed", "Update10", "20MVisits", "280KFAV", "290KFAV", "105KLikes", "RefreshCode", "Update9Part2", "95KLIKES", "270KFAV", "100KLIKES", "WaitRoom", "MaxButtonNextUpdate", "DungFix?", "16KPlayers", "85KLIKES", "Update9Part1", "90KLIKES", "260KFAV", "JewelFix2", "80KLIKES", "Update8P2", "250KFAV", "240KFAV", "12KPlayers", "13KPlayers", "14KPlayers", "Update8P1", "75KLIKES", "JewelFix", "Update8", "70KLikes", "11KPlayers", "230KFAV", "13MVISITS", "BugFixesUp7", "10KPlayers", "ObeliskBug", "Update7Part2", "220KFav", "12MVISITS", "65KLikes", "9KPlayers", "Update7Part1", "60KLikes", "210KFav", "10MVISITS", "55KLikes", "8KPlayers", "50KLikes", "195KAV", "200KFAV", "Update6QoL", "Refresh", "175KFAV", "Update6", "5MVisits", "6MVisits", "190KFAV", "Update5Part2", "45KLIKES", "160KFAV", "140KFAV", "SomeBugFix1", "Update5Part1", "40KLikes", "35KLikes", "7KPlayers", "125KFAV", "30KLIKES", "SorryForShutdown3", "SorryForShutdown2", "SorryForSouls", "4MVisits", "AFKFix?", "Update4", "3MVISITS", "6KPlayers", "25KLIKES", "100KFAV", "2MVisits", "75KFav", "60KFav", "20KLikes", "Update3Part2", "ShopFix", "SorryForDelay1", "12K5Likes", "Update3", "50KFAV", "15KLikes", "1MVisits", "Update2Part2", "40KFAV", "30KFAV", "10KLIKES", "5KPlayers", "4KPlayers", "SorryForBugs3", "SorryForBugs2", "SorryForBugs", "Update2", "5KLikes", "500KVISITS", "20KFAV", "15KFAV", "2K5Likes", "10KFav", "5KFav", "2KPlayers", "ResetFix", "AMAZING", "2500FAV", "1KLikes", "750likes"}
 
+local RAIDS = { "Halloween_Raid", "Graveyard_Defense", "Tournament_Raid", "Restaurant_Raid", "Cursed_Raid", "Progression_Raid", "Titan_Defense", "Sin_Raid", "Kaiju_Dungeon",
+    "Gleam_Raid", "Ghoul_Raid", "Chainsaw_Defense", "Green_Planet_Raid"
+}
+
+local DUNGEONS = { "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare", "Leaf_Raid"}
+
+local GACHA = { "Dragon_Race", "Saiyan_Evolution", "Pirate_Crew", "Swords", "Demon_Fruits", "Reiatsu_Color", "Zanpakuto", "Curses", "Demon_Arts","Solo_Hunter_Rank", "Grimoire",
+    "Power_Eyes", "Psychic_Mayhem", "Energy_Card_Shop", "Damage_Card_Shop", "Families", "Sins", "Commandments", "Kaiju_Powers", "Ultimate_Skills", "Species", "Power_Energy_Runes",
+    "Onomatopoeia", "Investigators", "Kagune", "Debiru_Hunter", "Akuma_Powers", "Special_Fire_Force", "Grand_Elder_Power", "Frost_Demon_Evolution", "Espada",
+    "Shadow_Garden", "Shadow_Arts", "Energy_Threat_Level", "Punch_Power"
+}
+
+local UPGRADES = { "Haki_Upgrade", "Spiritual_Pressure", "Cursed_Progression", "ReAwakening_Progression", "Monarch_Progression", "Water_Spirit_Progression", "Fire_Spirit_Progression",
+    "Wind_Spirit_Progression", "Chakra_Progression", "Spiritual_Upgrade", "Lucky_Spirit", "Ten_Progression", "Contract_of_Greed", "Energy_Progression", "Fortitude_Level",
+    "Kaiju_Energy", "Demon_Lord_Energy", "Demon_Lord_Damage", "Demon_Lord_Luck", "Demon_Lord_Coins", "Swordsman_Energy", "Swordsman_Damage", "Ripple_Energy", "Damage_Cells",
+    "Akuma_Energy", "Akuma_Damage", "Dragon_Energy", "Dragon_Damage", "Eminence_Energy", "Eminence_Damage", "Eminence_Luck", "Eminence_Coins"
+}
+
+--AS OF Update 23 07/11/2025
+local CODES = { "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20", "Update19P3", "315KLikes", "580KFav", "585KFav", "150MVisits", "RandomUpdate19P2Code?", "Update19P2Shutdown2", "Update19P2Shutdown", "Update19P2Delay", "125MVisits", "575KFav", "570KFav", "310KLikes", "Update19P2", "Update19", "300KLikes", "305KLikes", "560KFav", "565KFav", "Update19Delay", "JustACodeFor19Upd", "Update18P3Keys", "Update18P3", "290KLikes", "295KLikes", "550KFav", "555KFav", "Upd18Code", "Code2Upd18", "Update18P2", "285KLikes", "535KFav", "540KFav", "545KFav", "TheSmirkUp18!", "NiceOnUpdate18?", "IThinkYouAreLying", "ImAtomic!", "Update18", "280KLikes", "520KFav", "525KFav", "530KFav", "ImBombastic", "RandomCodeUPD17P3", "Update17P3", "515KFav", "510KFav", "275KLikes", "270KLikes", "100MVisits", "Super88KOnlineCode", "OnlineCodeSuper89K!", "JustOneMoreUpdate17P2Code", "ThisIsSuperCoolCodeFor84k", "OkayWhat?!85K", "NoWayWeWillHit86k", "87kNoWay!!", "Update17P2", "260KLikes", "265KLikes", "500KFav", "505KFav", "Record75K?", "Record76K?", "Record77K?", "InsaneRecord78K?", "NoWayRecord79K?!", "80KPeoplePlaying?!", "PeoplePlayingAt81K", "People82KPlaying", "ThereIs83KPlayersOn?!", "WhyNotGiveSundayCodeUp17", "MoreFeaturesOnSundayUpdate17", "Update17", "250KLikes", "255KLikes", "490KFav", "495KFav", "Update17BalanceWhatisThat?", "SaveMeUpdate16Part3Fix", "Update16P3", "240KLikes", "245KLikes", "475KFav", "480KFav", "Update16P2Fix2", "NewRecord68K?", "NewRecord69K?", "NoWayWeCanHit70K?", "71KImpossibleRecord!", "Insane72kPlayersOnline", "73KPlayers", "74KPlayers", "Update16P2Fix", "Update16P2", "235KLikes", "460KFav", "465KFav", "470KFav", "80MVisits", "Record67K?", "FunnyGreenPlanetShutdown2", "FunnyGreenPlanetShutdown", "FunnyGreenPlanet", "GreenPlanetCode", "455KFav", "450KFav", "230KLikes", "225KLikes", "Update16", "MobileUIFix16Up", "DungeonUp16Fix", "445KFav", "440KFav", "220KLikes", "215KLikes", "Update15P3", "Update15P2", "205KLikes", "210KLikes", "430KFav", "435KFav", "54kPlayers", "55kPlayers", "56K?!", "57KNewRecord!!", "NoWay58KOnline", "59KOnlinePlayers?!", "ThereIsNoWay60k!", "61kThereIsNoWay", "WhatPlayer62kRecord!", "63kRecord!", "CursedFixes", "64kRecord!", "DungeonUp15Fix", "65kRecord!", "66kRecord!", "BugsUpdate15", "2BugsUpdate15", "Update15Delay", "Update15", "195KLikes", "200KLikes", "420KFav", "425KFav", "Update14P3", "185KLikes", "190KLikes", "410KFav", "415KFav", "51kPlayers", "52kPlayers", "53kPlayers", "?43KRecord?", "44KRecord??", "Record45K?!", "?Record46K?!", "NewRecord47k", "SupaRecord48k", "Supa49kRecord", "Ultra50KRecord", "Update14P2", "175KLikes", "180KLikes", "400KFav", "405KFav", "?42K?", "?41KRecord?", "SomeQuickFix1a", "SomeQuickFix2", "40KRecord?", "39KRecordCcu", "DungeonQuickFix", "Update14", "170KLikes", "50MVisits", "390KFav", "395KFav", "Update13P3", "165KLikes", "375KFav", "380KFav", "385KFav", "1GhoulKeyNoMore", "IWantKey", "Online36K", "37KPlayersOn", "38KRecord", "Update13P2", "365KFav", "370KFav", "50K", "160KLikes", "34KOnline", "35KCCU", "Update13", "155KLikes", "350KFav", "360KFav", "40MVisits", "DungeonFall1", "Update12.5", "31KPlayers", "32KPlayers", "33KPlayers", "150KLikes", "Update12.2", "35MVisits", "140KLikes", "340KFav", "29KPlayers", "30kOnline", "Update12.2Late", "PotionFix1", "25KPlayers", "26KPlayers", "27KPlayers", "28KPlayers", "BugFixSome", "Update12", "Stands", "135KFav", "32MVisits", "40K", "330KFAV", "Restaurant", "Update11.5", "320KFav", "130KLikes", "30MVisits", "TheEyes", "23KPlayers", "24KPlayers", "WeaponFix", "WhyNotOneMore2", "Update11Small", "22KPlayers", "125KLikes", "315KFav", "WhyNotOneMore", "BugFixUpdate11", "18KPlayers", "19KPlayers", "20KPlayers", "21KPlayers", "Update11", "115KLIKES", "120KLIKES", "310KFAV", "17KPlayers", "UpdateDelay", "Update10Part2", "25MVisits", "300KFAV", "110KLIKES", "DefenseRaidFix", "Tinycode", "EnergyFix", "DungeonFixed", "Update10", "20MVisits", "280KFAV", "290KFAV", "105KLikes", "RefreshCode", "Update9Part2", "95KLIKES", "270KFAV", "100KLIKES", "WaitRoom", "MaxButtonNextUpdate", "DungFix?", "16KPlayers", "85KLIKES", "Update9Part1", "90KLIKES", "260KFAV", "JewelFix2", "80KLIKES", "Update8P2", "250KFAV", "240KFAV", "12KPlayers", "13KPlayers", "14KPlayers", "Update8P1", "75KLIKES", "JewelFix", "Update8", "70KLikes", "11KPlayers", "230KFAV", "13MVISITS", "BugFixesUp7", "10KPlayers", "ObeliskBug", "Update7Part2", "220KFav", "12MVISITS", "65KLikes", "9KPlayers", "Update7Part1", "60KLikes", "210KFav", "10MVISITS", "55KLikes", "8KPlayers", "50KLikes", "195KAV", "200KFAV", "Update6QoL", "Refresh", "175KFAV", "Update6", "5MVisits", "6MVisits", "190KFAV", "Update5Part2", "45KLIKES", "160KFAV", "140KFAV", "SomeBugFix1", "Update5Part1", "40KLikes", "35KLikes", "7KPlayers", "125KFAV", "30KLIKES", "SorryForShutdown3", "SorryForShutdown2", "SorryForSouls", "4MVisits", "AFKFix?", "Update4", "3MVISITS", "6KPlayers", "25KLIKES", "100KFAV", "2MVisits", "75KFav", "60KFav", "20KLikes", "Update3Part2", "ShopFix", "SorryForDelay1", "12K5Likes", "Update3", "50KFAV", "15KLikes", "1MVisits", "Update2Part2", "40KFAV", "30KFAV", "10KLIKES", "5KPlayers", "4KPlayers", "SorryForBugs3", "SorryForBugs2", "SorryForBugs", "Update2", "5KLikes", "500KVISITS", "20KFAV", "15KFAV", "2K5Likes", "10KFav", "5KFav", "2KPlayers", "ResetFix", "AMAZING", "2500FAV", "1KLikes", "750likes"}
+
+
 local gameData = {
     [1] = {
         world = {
             name = "Earth_City",
             gachas = {"Dragon_Race", "Saiyan_Evolution"},
             gachaTable = {
-                ["Dragon_Race"] = { "Human", "Android", "Namekian", "Frost Demon", "Majin", "Half-Saiyan", "Saiyan" },
-                ["Saiyan_Evolution"] = { "Great Ape", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Full Power Super Saiyan", "Super Saiyan 2", "Super Saiyan 3" }
+                ["Dragon_Race"] = { 
+                    token = "Dragon Race Token", 
+                    list = { "Human", "Android", "Namekian", "Frost Demon", "Majin", "Half-Saiyan", "Saiyan" }
+                },
+                ["Saiyan_Evolution"] = { 
+                    token = "Saiyan Token", 
+                    list = { "Great Ape", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Full Power Super Saiyan", "Super Saiyan 2", "Super Saiyan 3" }
+                }
             }
         },
         enemies = {
@@ -67,9 +95,18 @@ local gameData = {
             name = "Windmill_Island",
             gachas = {"Pirate_Crew", "Swords", "Demon_Fruits"},
             gachaTable = {
-                ["Pirate_Crew"] = { "Whitebeard Pirates", "Cross Guild", "Big Mom Pirates", "Beast Pirates", "Blackbeard Pirates", "Straw Hat Pirates" },
-                --["Swords"] = { "Bloodthorn", "Eclipse Warden", "Obsidian Reaver", "Aquarius Edge", "Doomsoul", "Redmourne", "Venomstrike" }, IN ANOTHER GUI
-                ["Demon_Fruits"] = { "Bomb Fruit", "Rubber Fruit", "Sand Fruit", "Flame Fruit", "Smoke Fruit", "Magma Fruit", "Revive Fruit", "String Fruit", "Human Fruit", "Dark Fruit", "Quake Fruit", "Money Fruit", "Dough Fruit", "Phoenix Fruit" }
+                ["Pirate_Crew"] = { 
+                    token = "Pirate Crew Token",
+                    list = { "Whitebeard Pirates", "Cross Guild", "Big Mom Pirates", "Beast Pirates", "Blackbeard Pirates", "Straw Hat Pirates" }
+                },
+                ["Swords"] = { 
+                    token = "Sword Token",
+                    list = { "Bloodthorn", "Eclipse Warden", "Obsidian Reaver", "Aquarius Edge", "Doomsoul", "Redmourne", "Venomstrike" }
+                },
+                ["Demon_Fruits"] = { 
+                    token = "Demon Fruit Token",
+                    list = { "Bomb Fruit", "Rubber Fruit", "Sand Fruit", "Flame Fruit", "Smoke Fruit", "Magma Fruit", "Revive Fruit", "String Fruit", "Human Fruit", "Dark Fruit", "Quake Fruit", "Money Fruit", "Dough Fruit", "Phoenix Fruit" }
+                }
             }
         },
         enemies = {
@@ -87,8 +124,14 @@ local gameData = {
             name = "Soul_Society",
             gachas = {"Reiatsu_Color", "Zanpakuto"},
             gachaTable = {
-                ["Reiatsu_Color"] = { "Gray Reiatsu", "Green Reiatsu", "Blue Reiatsu", "Pink Reiatsu", "Yellow RReiatsu", "Red Reiatsu", "Black Reiatsu" },
-                ["Zanpakuto"] = { "Suzumebachi", "Zabimaru", "Ashisogi Jizo", "Senbonzakura", "Nozarashi", "Hyorimaru", "Zangetsu" }
+                ["Reiatsu_Color"] = { 
+                    token = "Reiatsu Token",
+                    list = { "Gray Reiatsu", "Green Reiatsu", "Blue Reiatsu", "Pink Reiatsu", "Yellow Reiatsu", "Red Reiatsu", "Black Reiatsu" }
+                },
+                ["Zanpakuto"] = { 
+                    token = "Zanpakuto Token",
+                    list = { "Suzumebachi", "Zabimaru", "Ashisogi Jizo", "Senbonzakura", "Nozarashi", "Hyorimaru", "Zangetsu" }
+                }
             }
         },
         enemies = {
@@ -106,7 +149,10 @@ local gameData = {
             name = "Cursed_School",
             gachas = {"Curses"},
             gachaTable = {
-                ["Curses"] = { "Bazing Catedyan", "Nullborn Phantom", "Informal Crater", "Abyssal Tide", "Verdant Calamity", "Soulbender", "Wandered Mind" }
+                ["Curses"] = { 
+                    token = "Cursed Token",
+                    list = { "Bazing Catedyan", "Nullborn Phantom", "Informal Crater", "Abyssal Tide", "Verdant Calamity", "Soulbender", "Wandered Mind" }
+                }
             }
         },
         enemies = {
@@ -124,7 +170,10 @@ local gameData = {
             name = "Slayer_Village",
             gachas = {"Demon_Arts"},
             gachaTable = {
-                ["Demon_Arts"] = { "Dream Manipulation", "Blood Scythes", "Vase Teleportation", "Emotion Splitting", "Destructive Death", "Cryokinesis", "Blood Control" }
+                ["Demon_Arts"] = { 
+                    token = "Demon Arts Token",
+                    list = { "Dream Manipulation", "Blood Scythes", "Vase Teleportation", "Emotion Splitting", "Destructive Death", "Cryokinesis", "Blood Control" }
+                }
             }
         },
         enemies = {
@@ -142,7 +191,10 @@ local gameData = {
             name = "Solo_Island",
             gachas = {"Solo_Hunter_Rank"},
             gachaTable = {
-                ["Solo_Hunter_Rank"] = { "E Rank", "D Rank", "C Rank", "B Rank", "A Rank", "S Rank", "National Level Hunter" }
+                ["Solo_Hunter_Rank"] = { 
+                    token = "Hunter Rank Token",
+                    list = { "E Rank", "D Rank", "C Rank", "B Rank", "A Rank", "S Rank", "National Level Hunter" }
+                }
             }
         },
         enemies = {
@@ -160,7 +212,10 @@ local gameData = {
             name = "Clover_Village",
             gachas = {"Grimoire"},
             gachaTable = {
-                ["Grimoire"] = { "Water Grimoire", "Fire Grimoire", "Wind Grimoire", "Dark Grimoire", "Light Grimoire", "Anti-Magic Grimoire", "Time Magic Grimoire" }
+                ["Grimoire"] = { 
+                    token = "Grimoire Token",
+                    list = { "Water Grimoire", "Fire Grimoire", "Wind Grimoire", "Dark Grimoire", "Light Grimoire", "Anti-Magic Grimoire", "Time Magic Grimoire" }
+                }
             }
         },
         enemies = {
@@ -178,7 +233,10 @@ local gameData = {
             name = "Leaf_Village",
             gachas = {"Power_Eyes"},
             gachaTable = {
-                ["Power_Eyes"] = { "Single Tomoe Eye", "Double Tomoe Eye", "Triple Tomoe Eye", "Trind Insight Eye", "Cyclone Eye", "Whirlpool's Depth Eye", "Trind Nexus Eye", "Eclipse Eye", "Atomic Insight Eye", "Eternal Eclipse Eye", "Eternal Atomic Eye", "Eye of Six Paths" }
+                ["Power_Eyes"] = { 
+                    token = "Eye Token",
+                    list = { "Single Tomoe Eye", "Double Tomoe Eye", "Triple Tomoe Eye", "Trind Insight Eye", "Cyclone Eye", "Whirlpool's Depth Eye", "Trind Nexus Eye", "Eclipse Eye", "Atomic Insight Eye", "Eternal Eclipse Eye", "Eternal Atomic Eye", "Eye of Six Paths" }
+                }
             }
         },
         enemies = {
@@ -197,7 +255,10 @@ local gameData = {
             name = "Spirit_Residence",
             gachas = {"Psychic_Mayhem"},
             gachaTable = {
-                ["Psychic_Mayhem"] = { "Illusion Casting", "Mind Swap", "Brain Freeze Field", "Kinetic Absorption", "Precognition", "Psychic Barrier", "Energy Aura Blast" }
+                ["Psychic_Mayhem"] = { 
+                    token = "Granny Token",
+                    list = { "Illusion Casting", "Mind Swap", "Brain Freeze Field", "Kinetic Absorption", "Precognition", "Psychic Barrier", "Energy Aura Blast" }
+                }
             }
         },
         enemies = {
@@ -215,8 +276,14 @@ local gameData = {
             name = "Magic_Hunter_City",
             gachas = {"Energy_Card_Shop", "Damage_Card_Shop"},
             gachaTable = {
-                ["Energy_Card_Shop"] = { "Energy Card I", "Energy Card II", "Energy Card III", "Energy Card IV", "Energy Card V", "Energy Card VI", "Energy Card VII" },
-                ["Damage_Card_Shop"] = { "Damage Card I", "Damage Card II", "Damage Card III", "Damage Card IV", "Damage Card V", "Damage Card VI", "Damage Card VII", "Damage Card VIII" }
+                ["Energy_Card_Shop"] = { 
+                    token = "Energy TCG Token",
+                    list = { "Energy Card I", "Energy Card II", "Energy Card III", "Energy Card IV", "Energy Card V", "Energy Card VI", "Energy Card VII" }
+                },
+                ["Damage_Card_Shop"] = { 
+                    token = "Damage TCG Token", 
+                    list = { "Damage Card I", "Damage Card II", "Damage Card III", "Damage Card IV", "Damage Card V", "Damage Card VI", "Damage Card VII", "Damage Card VIII" }
+                }
             }
         },
         enemies = {
@@ -234,7 +301,10 @@ local gameData = {
             name = "Titan_City",
             gachas = {"Families"},
             gachaTable = {
-                ["Families"] = { "Gitce Family", "Leonhart Family", "Braun Family", "Tybur Family", "Ackerman Family", "Yeager Family", "Reiss Family" }
+                ["Families"] = { 
+                    token = "Families Token",
+                    list = { "Gitce Family", "Leonhart Family", "Braun Family", "Tybur Family", "Ackerman Family", "Yeager Family", "Reiss Family" }
+                }
             }
         },
         enemies = {
@@ -252,8 +322,14 @@ local gameData = {
             name = "Village_of_Sins",
             gachas = {"Sins", "Commandments"},
             gachaTable = {
-                ["Sins"] = { "Lust", "Envy", "Sloth", "Greed", "Gluttony", "Wrath", "Pride" },
-                ["Commandments"] = { "Selflessness", "Pacifism", "Patience", "Repose", "Purity", "Reticence", "Truth", "Faith", "Piety", "Love" }
+                ["Sins"] = { 
+                    token = "Sins Token",
+                    list = { "Lust", "Envy", "Sloth", "Greed", "Gluttony", "Wrath", "Pride" }
+                },
+                ["Commandments"] = { 
+                    token = "Commandments Token",
+                    list = { "Selflessness", "Pacifism", "Patience", "Repose", "Purity", "Reticence", "Truth", "Faith", "Piety", "Love" }
+                }
             }
         },
         enemies = {
@@ -271,7 +347,10 @@ local gameData = {
             name = "Kaiju_Base",
             gachas = {"Kaiju_Powers"},
             gachaTable = {
-                ["Kaiju_Powers"] = { "Phaneroplus", "Philinosoma", "Primigenius Honju", "Preondactyl", "Mixogastero", "No. 10", "No. 9", "No. 8" }
+                ["Kaiju_Powers"] = { 
+                    token = "Kaiju Token",
+                    list = { "Phaneroplus", "Philinosoma", "Primigenius Honju", "Preondactyl", "Mixogastero", "No. 10", "No. 9", "No. 8" }
+                }
             }
         },
         enemies = {
@@ -287,9 +366,16 @@ local gameData = {
     [14] = {
         world = {
             name = "Tempest_Capital",
+            gachas = {"Ultimate_Skills", "Species"},
             gachaTable = {
-                ["Ultimate_Skills"] = { "Amaterasu", "True Hero", "Uriel", "Satanael", "Lucifer", "Yog-Sothoth", "Beelzebub", "Raphael" },
-                ["Species"] = { "Goblin", "Lizardman", "Slime", "Dryad", "Kijin", "Dragonoid", "Primordial Daemon", "True Dragon" }
+                ["Ultimate_Skills"] = { 
+                    token = "Ultimate Skill Token",
+                    list = { "Amaterasu", "True Hero", "Uriel", "Satanael", "Lucifer", "Yog-Sothoth", "Beelzebub", "Raphael" }
+                },
+                ["Species"] = { 
+                    token = "Species Token",
+                    list = { "Goblin", "Lizardman", "Slime", "Dryad", "Kijin", "Dragonoid", "Primordial Daemon", "True Dragon" }
+                }
             }
         },
         enemies = {
@@ -307,7 +393,10 @@ local gameData = {
             name = "Virtual_City",
             gachas = {"Power_Energy_Runes"},
             gachaTable = {
-                ["Power_Energy_Runes"] = { "Common Energy Rune", "Uncommon Energy Rune", "Rare Energy Rune", "Epic Energy Rune", "Legendary Energy Rune", "Mythical Energy Rune", "Phantom Energy Rune", "Supreme Energy Rune" }
+                ["Power_Energy_Runes"] = { 
+                    token = "Energy Rune Token",
+                    list = { "Common Energy Rune", "Uncommon Energy Rune", "Rare Energy Rune", "Epic Energy Rune", "Legendary Energy Rune", "Mythical Energy Rune", "Phantom Energy Rune", "Supreme Energy Rune" }
+                }
             }
         },
         enemies = {
@@ -325,7 +414,10 @@ local gameData = {
             name = "Cairo",
             gachas = {"Onomatopoeia"},
             gachaTable = {
-                ["Onomatopoeia"] = { "Common Onomatopoeia", "Uncommon Onomatopoeia", "Rare Onomatopoeia", "Epic Onomatopoeia", "Legendary Onomatopoeia", "Mythical Onomatopoeia", "Phantom Onomatopoeia", "Supreme Onomatopoeia" }
+                ["Onomatopoeia"] = { 
+                    token = "Onomatopoeia Token",
+                    list = { "Common Onomatopoeia", "Uncommon Onomatopoeia", "Rare Onomatopoeia", "Epic Onomatopoeia", "Legendary Onomatopoeia", "Mythical Onomatopoeia", "Phantom Onomatopoeia", "Supreme Onomatopoeia" }
+                }
             }
         },
         enemies = {
@@ -343,8 +435,14 @@ local gameData = {
             name = "Ghoul_City",
             gachas = {"Investigators", "Kagune"},
             gachaTable = {
-                ["Investigators"] = { "Bureau", "Assistants", "Rank 3", "Rank 2", "Rank 1", "First Class", "Associate Special Class", "Special Class" },
-                ["Kagune"] = { "Retto", "Hakuro", "Shinku", "Tetsuba", "Shidare", "Hakuja", "Mukade", "Koumyaku" }
+                ["Investigators"] = { 
+                    token = "CCG Token",
+                    list = { "Bureau", "Assistants", "Rank 3", "Rank 2", "Rank 1", "First Class", "Associate Special Class", "Special Class" }
+                },
+                ["Kagune"] = { 
+                    token = "Kagune Token",
+                    list = { "Retto", "Hakuro", "Shinku", "Tetsuba", "Shidare", "Hakuja", "Mukade", "Koumyaku" }
+                }
             }
         },
         enemies = {
@@ -362,12 +460,24 @@ local gameData = {
             name = "Chainsaw_City",
             gachas = {"Debiru_Hunter", "Akuma_Powers"},
             gachaTable = {
-                ["Debiru_Hunter"] = { "Rookie Hunter", "Field Hunter", "Contract Hunter", "Fiend Hunter", "Hybrid Hunter", "Veteran Hunter", "Special Division Hunter", "Primal Threat Hunter" },
-                ["Akuma_Powers"] = { "Akuma: Ghost", "Akuma: Fox", "Akuma: Future", "Akuma: Curse", "Akuma: Angel", "Akuma: Crossbow", "Akuma: Pokita", "Akuma: Control" }
+                ["Debiru_Hunter"] = { 
+                    token = "Debiru Token",
+                    list = { "Rookie Hunter", "Field Hunter", "Contract Hunter", "Fiend Hunter", "Hybrid Hunter", "Veteran Hunter", "Special Division Hunter", "Primal Threat Hunter" }
+                },
+                ["Akuma_Powers"] = { 
+                    token = "Akuma Token",
+                    list = { "Akuma: Ghost", "Akuma: Fox", "Akuma: Future", "Akuma: Curse", "Akuma: Angel", "Akuma: Crossbow", "Akuma: Pokita", "Akuma: Control" }
+                }
             }
         },
         enemies = {
-
+            { name = 'Kabeni', tokens = {"Debiru Token"}},
+            { name = 'Benji', tokens = {"Debiru Token"}},
+            { name = 'Powa', tokens = {"Akuma Energy Token"}},
+            { name = 'Aoki', tokens = {"Akuma Token"}},
+            { name = 'Raza', tokens = {"Akuma Token"}},
+            { name = 'Makomi', tokens = {"Akuma Damage Token"}},
+            { name = 'Mr_Chainsaw', tokens = {}},
         }
     },
     [19] = {
@@ -375,63 +485,77 @@ local gameData = {
             name = "Tokyo_Empire",
             gachas = {"Special_Fire_Force"},
             gachaTable = {
-                ["Special_Fire_Force"] = { "Company 1", "Company 2", "Company 3", "Company 4", "Company 5", "Company 6", "Company 7", "Company 8" }
+                ["Special_Fire_Force"] = { 
+                    token = "",
+                    list = { "Company 1", "Company 2", "Company 3", "Company 4", "Company 5", "Company 6", "Company 7", "Company 8" }
+                }
             }
         },
-        enemies = {
-
-        }
+        enemies = {}
     },
     [20] = {
         world = {
             name = "Green_Plant",
             gachas = {"Grand_Elder_Power", "Frost_Demon_Evolution"},
             gachaTable = {
-                ["Grand_Elder_Power"] = { "Sleeping Power", "Stirring Spirit", "Hidden Potential", "Power Unleashed", "True Potential", "Limitless Growth", "Potential Unbound" },
-                ["Frost_Demon_Evolution"] = { "Second Form", "Third Form", "Final Form", "50% Power", "100% Full Power", "Mecha Form", "Golden Form", "Black Form" }
+                ["Grand_Elder_Power"] = { 
+                    token = "",
+                    list = { "Sleeping Power", "Stirring Spirit", "Hidden Potential", "Power Unleashed", "True Potential", "Limitless Growth", "Potential Unbound" }
+                },
+                ["Frost_Demon_Evolution"] = { 
+                    token = "",
+                    list = { "Second Form", "Third Form", "Final Form", "50% Power", "100% Full Power", "Mecha Form", "Golden Form", "Black Form" }
+                }
             }
         },
-        enemies = {
-
-        }
+        enemies = {}
     },
     [21] = {
         world = {
             name = "Hollow_World",
             gachas = {"Espada"},
             gachaTable = {
-                ["Espada"] = { "Espada 9", "Espada 8", "Espada 7", "Espada 6", "Espada 5", "Espada 4", "Espada 3", "Espada 2", "Espada 1", "Espada 0" }
+                ["Espada"] = { 
+                    token = "",
+                    list = { "Espada 9", "Espada 8", "Espada 7", "Espada 6", "Espada 5", "Espada 4", "Espada 3", "Espada 2", "Espada 1", "Espada 0" }
+                }
             }
         },
-        enemies = {
-            
-        }
+        enemies = {}
     },
     [22] = {
         world = {
             name = "Shadow_Academy",
             gachas = {"Shadow_Garden", "Shadow_Arts"},
             gachaTable = {
-                ["Shadow_Garden"] = { "Operative", "Agent", "Enforcer", "Commander", "Division Head", "Shadow Council Member", "The First Shadow", "The Eminence" },
-                ["Shadow_Arts"] = { "Silent Step", "Shadow Bind", "Mirage Strike", "Eclipse Slash", "Abyssal Blade", "Void Erasure", "Eternal Shadow Waltz", "i Am Atomic" }
+                ["Shadow_Garden"] = { 
+                    token = "",
+                    list = { "Operative", "Agent", "Enforcer", "Commander", "Division Head", "Shadow Council Member", "The First Shadow", "The Eminence" }
+                },
+                ["Shadow_Arts"] = { 
+                    token = "",
+                    list = { "Silent Step", "Shadow Bind", "Mirage Strike", "Eclipse Slash", "Abyssal Blade", "Void Erasure", "Eternal Shadow Waltz", "i Am Atomic" }
+                }
             }
         },
-        enemies = {
-            
-        }
+        enemies = {}
     },
     [23] = {
         world = {
             name = "Z_City",
             gachas = {"Energy_Threat_Level", "Punch_Power"},
             gachaTable = {
-                ["Energy_Threat_Level"] = { "Predator", "Havoc", "Disaster", "Dominion", "Oblivion", "Plante Breaker", "Cosmic Annihilator", "The Absolute" },
-                ["Punch_Power"] = { "Basic Punch", "Heroic Fist", "Serious Punch", "Celestial Impact", "Gamma Burst Punch", "One Punch" }
+                ["Energy_Threat_Level"] = { 
+                    token = "",
+                    list = { "Predator", "Havoc", "Disaster", "Dominion", "Oblivion", "Plante Breaker", "Cosmic Annihilator", "The Absolute" }
+                },
+                ["Punch_Power"] = { 
+                    token = "",
+                    list = { "Basic Punch", "Heroic Fist", "Serious Punch", "Celestial Impact", "Gamma Burst Punch", "One Punch" }
+                }
             }
         },
-        enemies = {
-            
-        }
+        enemies = {}
     },
     [24] = {
         world = {
@@ -483,6 +607,7 @@ local gameData = {
     },
 
 }
+
 
 
 local assetsDestroy = {"Trees", "Houses", "Random", "Paths", "Road", "Walls", "Towers", "Buildings"}
@@ -696,26 +821,13 @@ local function contains(_string, _table)
     return false
 end
 
-local function containsTable(_input, _list)
-    local function norm(w) return (w:lower():gsub("ing$",""):gsub("ed$",""):gsub("es$",""):gsub("s$","")) end
-    local input = {}; for w in _input:gsub("_"," "):gmatch("%w+") do input[norm(w)] = true end
-    for _, str in pairs(_list) do
-        for w in str:gsub("_"," "):gmatch("%w+") do
-            w = norm(w)
-            for iw in pairs(input) do
-                if w:find(iw) or iw:find(w) then return true end
-            end
-        end
-    end
-end
-
 local function findMap(_input)
     for i, v in pairs(gameData) do
         for _, e in pairs(v.enemies) do
             if _input and e and e.tokens then
                 local isBoss = e.type == "boss"
                 local nameMatch = e.name:lower():gsub("_", " ") == _input:lower():gsub("_", " ")
-                local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or table.find(e.tokens, _input)
+                local tokenMatch = ((v.world.gachaTable[_input] and table.find(e.tokens, v.world.gachaTable[_input].token))) or table.find(e.tokens, _input)
                 if nameMatch or tokenMatch then
                     return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
                 end
