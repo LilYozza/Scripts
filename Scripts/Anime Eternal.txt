@@ -1310,7 +1310,7 @@ local PowersList = Powers:WaitForChild("List_Frame"):WaitForChild("List")
 
 local function getBestPower(_gacha)
     for _,v in pairs(gameData)do
-        local gachaTable = v.world.gachaTable[_gacha]
+        local gachaTable = v.world.gachaTable[_gacha].list
         if gachaTable then
             return gachaTable[#gachaTable]
         end
