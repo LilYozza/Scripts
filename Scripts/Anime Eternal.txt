@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.8")
+print("v7.9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -881,19 +881,21 @@ print("***** End *****")
 local Islands = Workspace:WaitForChild("Islands")
 local IslandStuff = Islands:WaitForChild("West City With Pads and Stuff")
 
-local function TeleportMap(_map, _index, _walk)
-    local pass = nil
+local function TeleportMap(_map, _index, _walk, _dungeonCheck)
+    _dungeonCheck = _dungeonCheck or true
+    local loaded = nil
     local str = ". "
     local folder = Islands
     if _map == "Earth_City" then folder = IslandStuff str = str .. _map end
 
     for _, v in pairs(folder:GetChildren()) do
         if string.find(v.Name, _index .. str) then
-            pass = v
+            loaded = v
             break
         end
     end
-    if not pass or not _index then
+    
+    if (_dungeonCheck and getCurrentDungeon().inDungeon == false) and not loaded or not _index then
         local args = {
             [1] = {
                 ["Location"] = _map,
@@ -1290,17 +1292,34 @@ end)
 
 --------------------------------------------------------------------------------------------------------------------
 ---------------------------------- GACHA MENU ----------------------------------------------------------------------
-local function openGacha(_gacha, _amount)
-    local amount = _amount or 1
-    local args = {
-        [1] = {
-            ["Open_Amount"] = amount,
-            ["Action"] = "_Gacha_Activate",
-            ["Name"] = _gacha
-        }
-    }
+---
+---
 
-   rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+local Rolling_UI = PGui:WaitForChild("Rolling_UI")
+local Currency_Field = Rolling_UI:WaitForChild("Currency_Field")
+
+local function getTokenStats()
+    local nameLabel = Currency_Field:FindFirstChild("TopName")
+    local amountLabel = Currency_Field:FindFirstChild("TextLabel")
+    
+    local name = (Currency_Field:GetAttribute("Id") or (nameLabel and nameLabel.Text) or ""):gsub(" ", "_")
+    local amount = fromSuffixString(amountLabel and amountLabel.Text or "0") or 0
+
+    return { name = name, amount = amount }
+end
+
+local function openGacha(_gacha, _amount)
+    local token = getTokenStats()
+    if token and (token.name ~= _gacha or (token.name == _gacha and token.amount > 10)) then
+        local args = {
+            [1] = {
+                Open_Amount = _amount or 1,
+                Action = "_Gacha_Activate",
+                Name = _gacha
+            }
+        }
+        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    end
 end
 
 local Inventory = PGui:WaitForChild("Inventory_1")
@@ -1341,8 +1360,7 @@ end
 
 
 
-local Rolling_UI = PGui:WaitForChild("Rolling_UI")
-local Currency_Field = Rolling_UI:WaitForChild("Currency_Field")
+
 GachaMenu:Toggle("Show Currency",function(bool)
     shared.ToggleSC=bool
     spawn(function()
