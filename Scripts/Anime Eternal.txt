@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v5.9")
+print("v6")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -44,7 +44,10 @@ local CODES = {"Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", 
 
 local gameData = {
     [1] = {
-        world = "Earth_City",
+        world = {
+            name = "Earth_City",
+            gachas = {"Dragon_Race", "Saiyan_Evolution"},
+        },
         enemies = {
             { name = 'Kriluni', tokens = {"Dragon Race Token"}}, 
             { name = 'Ymicha', tokens = {"Dragon Race Token"}}, 
@@ -56,7 +59,10 @@ local gameData = {
         }
     },
     [2] = {
-        world = "Windmill_Island",
+        world = {
+            name = "Windmill_Island",
+            gachas = {"Pirate_Crew", "Swords", "Demon_Fruits"},
+        },
         enemies = {
             { name = 'Nomi', tokens = {"Pirate Crew Token", "Sword Token", "Haki Token"}}, 
             { name = 'Usup', tokens = {"Pirate Crew Token", "Sword Token", "Haki Token"}}, 
@@ -68,7 +74,10 @@ local gameData = {
         }
     },
     [3] = {
-        world = "Soul_Society",
+        world = {
+            name = "Soul_Society",
+            gachas = {"Reiatsu_Color", "Zanpakuto"}
+        },
         enemies = {
             { name = 'Hime', tokens = {"Reiatsu Token", "Pressure Token"}}, 
             { name = 'Ichige', tokens = {"Reiatsu Token", "Pressure Token"}},
@@ -80,7 +89,10 @@ local gameData = {
         }
     },
     [4] = {
-        world = "Cursed_School",
+        world = {
+            name = "Cursed_School",
+            gachas = {"Curses"}
+        },
         enemies = {
             { name = 'Itodo', tokens = {"Cursed Token", "Cursed Finger"}}, 
             { name = 'Nebara', tokens = {"Cursed Token", "Cursed Finger"}}, 
@@ -92,7 +104,10 @@ local gameData = {
         }
     },
     [5] = {
-        world = "Slayer_Village",
+        world = {
+            name = "Slayer_Village",
+            gachas = {"Demon_Arts"}
+        },
         enemies = {
             { name = 'Nazuki', tokens = {"Breathing Token"}},
             { name = 'Tenjaro', tokens = {"Breathing Token"}},
@@ -104,7 +119,10 @@ local gameData = {
         }
     },
     [6] = {
-        world = "Solo_Island",
+        world = {
+            name = "Solo_Island",
+            gachas = {"Solo_Hunter_Rank"}
+        },
         enemies = {
             { name = 'Weak_Sung', tokens = {"Hunter Rank Token"}}, 
             { name = 'Green_Goblin', tokens = {"Hunter Rank Token"}},
@@ -116,7 +134,10 @@ local gameData = {
         }
     },
     [7] = {
-        world = "Clover_Village",
+        world = {
+            name = "Clover_Village",
+            gachas = {"Grimoire"}
+        },
         enemies = {
             { name = 'Noalle', tokens = {"Water Spirit Token"}}, 
             { name = 'Megna', tokens = {"Water Spirit Token"}}, 
@@ -128,7 +149,10 @@ local gameData = {
         }
     },
     [8] = {
-        world = "Leaf_Village",
+        world = {
+            name = "Leaf_Village",
+            gachas = {"Power_Eyes"}
+        },
         enemies = {
             { name = 'Sekuri', tokens = {"Chakra Token"}}, 
             { name = 'Kid_Norto', tokens = {"Chakra Token"}}, 
@@ -141,7 +165,10 @@ local gameData = {
         }
     },
     [9] = {
-        world = "Spirit_Residence",
+        world = {
+            name = "Spirit_Residence",
+            gachas = {"Psychic_Mayhem"}
+        },
         enemies = {
             { name = 'Ken', tokens = {"Gold Ball Token", "Lucky Spirit Token"}}, 
             { name = 'Aira', tokens = {"Gold Ball Token", "Lucky Spirit Token"}},
@@ -153,7 +180,10 @@ local gameData = {
         }
     },
     [10] = {
-        world = "Magic_Hunter_City",
+        world = {
+            name = "Magic_Hunter_City",
+            gachas = {"Energy_Card_Shop", "Damage_Card_Shop"}
+        },
         enemies = {
             { name = 'Lero', tokens = {"Energy TCG Token", "Greedy Token"}},
             { name = 'Gone', tokens = {"Energy TCG Token", "Greedy Token"}},
@@ -165,7 +195,10 @@ local gameData = {
         }
     },
     [11] = {
-        world = "Titan_City",
+        world = {
+            name = "Titan_City",
+            gachas = {"Families"}
+        },
         enemies = {
             { name = 'Armim', tokens = {"Families Token"}}, 
             { name = 'Annie', tokens = {"Families Token"}}, 
@@ -177,7 +210,10 @@ local gameData = {
         }
     },
     [12] = {
-        world = "Village_of_Sins",
+        world = {
+            name = "Village_of_Sins",
+            gachas = {"Sins", "Commandments"}
+        },
         enemies = {
             { name = 'Diyana', tokens = {"Sins Token"}}, 
             { name = 'Kyng', tokens = {"Sins Token"}},
@@ -189,7 +225,10 @@ local gameData = {
         }
     },
     [13] = {
-        world = "Kaiju_Base",
+        world = {
+            name = "Kaiju_Base",
+            gachas = {"Kaiju_Powers"}
+        },
         enemies = {
             { name = 'Kefka', tokens = {"Fortitude Level Token"}},
             { name = 'Rano', tokens = {"Fortitude Level Token"}}, 
@@ -201,7 +240,10 @@ local gameData = {
         }
     },
     [14] = {
-        world = "Tempest_Capital",
+        world = {
+            name = "Tempest_Capital",
+            gachas = {"Ultimate_Skills", "Species"}
+        },
         enemies = {
             { name = 'Gobito', tokens = {"Species Token"}},
             { name = 'Gabido', tokens = {"Demon Damage Token"}},
@@ -213,7 +255,10 @@ local gameData = {
         }
     },
     [15] = {
-        world = "Virtual_City",
+        world = {
+            name = "Virtual_City",
+            gachas = {"Power_Energy_Runes"}
+        },
         enemies = {
             { name = 'Lisbeta', tokens = {"Energy Rune Token"}},
             { name = 'Silica', tokens = {"Energy Rune Token"}},
@@ -225,7 +270,10 @@ local gameData = {
         }
     },
     [16] = {
-        world = "Cairo",
+        world = {
+            name = "Cairo",
+            gachas = {"Onomatopoeia"}
+        },
         enemies = {
             { name = 'Speedy', tokens = {"Onomatopoeia Token"}},
             { name = 'Cesar', tokens = {"Stand Token"}}, 
@@ -235,8 +283,42 @@ local gameData = {
             { name = 'Jokaro', tokens = {"Ripple Token"}}, 
             { name = 'Dino', tokens = {"Stand Token", "Requiem Token", "Ripple Token"}, type = "boss"}, 
         }
+    },
+    [17] = {
+        world = {
+            name = "Ghoul_City",
+            gachas = {"Investigators", "Kagune"}
+        },
+        enemies = {
+            { name = 'Hideyo', tokens = {"CCG Token"}}, 
+            { name = 'Joozu', tokens = {"CCG Token"}}, 
+            { name = 'Madyo', tokens = {"Kagune Token"}}, 
+            { name = 'Kotaro', tokens = {"Kagune Token"}}, 
+            { name = 'Toaoka', tokens = {"Kakuhou Token"}}, 
+            { name = 'Kanny', tokens = {"Kakuhou Token"}}, 
+            { name = 'Arama', tokens = {"CCG Token", "Kagune Token", "Kakuhou Token"}, type = "boss"}, 
+        }
+    },
+    [18] = {
+        world = {
+            name = "Chainsaw_City",
+            gachas = {"Debiru_Hunter", "Akuma_Powers"}
+        },
+        enemies = {
+
+        }
+    },
+    [19] = {
+        world = {
+            name = "Tokyo_Empire",
+            gachas = {"Special_Fire_Force"}
+        },
+        enemies = {
+
+        }
     }
 }
+
 
 local assetsDestroy = {"Trees", "Houses", "Random", "Paths", "Road", "Walls", "Towers", "Buildings"}
 local Debris = Workspace:WaitForChild("Debris")
@@ -439,13 +521,36 @@ local Quest_Side_Menu = Quests_Screen:WaitForChild("Quest_Side_Menu")
 local QuestList_Side = Quest_Side_Menu:WaitForChild("Quests"):WaitForChild("Main"):WaitForChild("List")
 local QuestList = Quest_Player:WaitForChild("ScrollingFrame")
 
+local function contains(_string, _table)
+    local lowerString = _string:lower()
+    for _, v in pairs(_table) do
+        if lowerString:find(v:lower()) then
+            return true
+        end
+    end
+    return false
+end
+
+local function containsTable(_input, _list)
+    local firstWord = _input:match("^(%w+)")
+    firstWord = firstWord:lower()
+    for _, str in pairs(_list) do
+        if str:lower():find(firstWord) then
+            return true
+        end
+    end
+    return false
+end
+
 local function findMap(_input)
-    for _, v in pairs(gameData) do
-        for __, _v in pairs(v.enemies) do
-            if ((_input:lower()):gsub("%s", "_") == _v.name:lower()) or (table.find(_v.tokens, _input)) then
-                local isBoss = false
-                if _v.type and _v.type == "boss" then isBoss = true end
-                return {world = v.world, enemy = _v.name, tokens = _v.tokens, index = _, isBoss = isBoss}
+    _input = _input:lower():gsub("_", " ")
+    for i, v in pairs(gameData) do
+        for _, e in pairs(v.enemies) do
+            local isBoss = e.type == "boss"
+            local nameMatch = e.name:lower():gsub("_", " ") == _input
+            local tokenMatch = containsTable(_input, e.tokens)
+            if nameMatch or tokenMatch then
+                return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
             end
         end
     end
@@ -658,16 +763,6 @@ end)
 
 --------------------------------------------------------------------------------------------------
 
-local function contains(_string)
-    local lowerString = _string:lower()
-    for _, v in pairs(assetsDestroy) do
-        if lowerString:find(v:lower()) then
-            return true
-        end
-    end
-    return false
-end
-
 Auto:Button("Delete",function()
     spawn(function()
         for _, v in pairs(Workspace:GetDescendants()) do
@@ -680,7 +775,7 @@ end)
 
 
 
-local sMonster
+local sMonster, gMonster
 local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sMonster = SItem
@@ -689,11 +784,13 @@ end)
 
 task.spawn(function()
 	while task.wait(0.1) do
-		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ then
+		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ or shared.ToggleAFG then
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
             if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
                 cMonster = getClosestMonster(qMonster) mode = "QA"
+            elseif shared.ToggleAFG and gMonster and dungeon and dungeon.inDungeon == false then
+                cMonster = getClosestMonster(qMonster) mode = "GA"
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
@@ -711,6 +808,7 @@ task.spawn(function()
 				until (mode == "AA" and not shared.ToggleAA)
 					or (mode == "AD" and not shared.ToggleAD)
                     or (mode == "QA" and not shared.ToggleACQ)
+                    or (mode == "GA" and not shared.ToggleAFG)
 			end
 		end
 	end
@@ -914,6 +1012,25 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
         while shared.ToggleAG do
             if sGacha then
                 openGacha(sGacha, sGachaAmount)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+local oldsGacha
+GachaMenu:Toggle("Auto Farm",function(bool)
+    shared.ToggleAFG=bool
+    spawn(function()
+        while shared.ToggleAFG do
+            if sGacha and oldsGacha ~= sGacha then
+                sGacha = oldsGacha
+                local map = findMap(sGacha)
+                if map then
+                    gMonster = map.enemy
+                    TeleportMap(map.world, map.index, true)
+                end
             end
             task.wait(1)
         end
