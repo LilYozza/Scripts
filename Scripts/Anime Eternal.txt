@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v6.6")
+print("v6.7")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -555,7 +555,7 @@ local function findMap(_input)
         for _, e in pairs(v.enemies) do
             local isBoss = e.type == "boss"
             local nameMatch = e.name:lower():gsub("_", " ") == _input
-            local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or table.find(_input, e.tokens)
+            local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or table.find(e.tokens, _input)
             if nameMatch or tokenMatch then
                 return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
             end
