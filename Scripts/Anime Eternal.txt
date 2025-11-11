@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.9")
+print("v8")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1302,15 +1302,23 @@ local function getTokenStats()
     local nameLabel = Currency_Field:FindFirstChild("TopName")
     local amountLabel = Currency_Field:FindFirstChild("TextLabel")
     
-    local name = (Currency_Field:GetAttribute("Id") or (nameLabel and nameLabel.Text) or ""):gsub(" ", "_")
+    local name = (Currency_Field:GetAttribute("Id") or (nameLabel and nameLabel.Text) or ""):gsub("_", " ")
     local amount = fromSuffixString(amountLabel and amountLabel.Text or "0") or 0
 
     return { name = name, amount = amount }
 end
 
+local function getTokenType(_gacha)
+    for _,v in pairs(gameData)do
+        local t = v.world.gachaTable[_gacha]
+        if t then return t.token end
+    end
+end
+
 local function openGacha(_gacha, _amount)
     local token = getTokenStats()
-    if token and (token.name ~= _gacha or (token.name == _gacha and token.amount > 10)) then
+    local tokenName = getTokenType(_gacha)
+    if token and (token.name ~= tokenName or (token.name == tokenName and token.amount > 10)) then
         local args = {
             [1] = {
                 Open_Amount = _amount or 1,
@@ -1356,11 +1364,6 @@ local function checkUnlockedPower(_power)
         end
     end
 end
-
-
-
-
-
 GachaMenu:Toggle("Show Currency",function(bool)
     shared.ToggleSC=bool
     spawn(function()
