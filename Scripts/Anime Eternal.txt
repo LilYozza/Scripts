@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v6.3")
+print("v6.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -556,8 +556,8 @@ local function findMap(_input)
         for _, e in pairs(v.enemies) do
             local isBoss = e.type == "boss"
             local nameMatch = e.name:lower():gsub("_", " ") == _input
-            local tokenMatch = containsTable(_input, e.tokens)
-            if not tokenMatch and table.find(v.world.gachas, _input) then
+            local tokenMatch = table.find(v.world.gachas, _input)
+            if not tokenMatch then
                 tokenMatch = containsTable(_input, e.tokens)
             end
             if nameMatch or tokenMatch then
@@ -1035,10 +1035,13 @@ GachaMenu:Toggle("Auto Farm",function(bool)
     spawn(function()
         while shared.ToggleAFG do
             if sGacha then
-                local map = findMap(sGacha)
-                if map then
-                    gMonster = map.enemy
-                    TeleportMap(map.world, map.index, true)
+                local mapInfo = findMap(sGacha)
+                if mapInfo then
+                    PrintTable(mapInfo)
+                    gMonster = mapInfo.enemy
+                    TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                else
+                    print("nope")
                 end
             end
             task.wait(1)
