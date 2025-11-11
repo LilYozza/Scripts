@@ -790,7 +790,7 @@ task.spawn(function()
             if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
                 cMonster = getClosestMonster(qMonster) mode = "QA"
             elseif shared.ToggleAFG and gMonster and dungeon and dungeon.inDungeon == false then
-                cMonster = getClosestMonster(qMonster) mode = "GA"
+                cMonster = getClosestMonster(gMonster) mode = "GA"
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
