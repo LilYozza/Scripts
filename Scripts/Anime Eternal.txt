@@ -715,23 +715,49 @@ local function containsTable(_input, _list)
 end
 
 local function findMap(_input)
-    if not _input then return end
-    _input = _input:lower():gsub("_", " ")
-    for i, v in pairs(gameData or {}) do
-        local enemies, gachas = v.enemies or {}, (v.world and v.world.gachas) or {}
-        for _, e in pairs(enemies) do
-            if e and e.name and e.tokens then
-                local name = e.name:lower():gsub("_", " ")
+    for i, v in pairs(gameData) do
+        for _, e in pairs(v.enemies) do
+            if _input and e and e.tokens then
                 local isBoss = e.type == "boss"
-                local nameMatch = name == _input
-                local tokenMatch = (table.find(gachas, _input) and containsTable(_input, e.tokens)) or table.find(e.tokens, _input)
+                local nameMatch = e.name:lower():gsub("_", " ") == _input:lower():gsub("_", " ")
+                local tokenMatch = (table.find(v.world.gachas, _input) and containsTable(_input, e.tokens)) or table.find(e.tokens, _input)
                 if nameMatch or tokenMatch then
-                    return {world = v.world and v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
+                    return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
                 end
             end
         end
     end
 end
+
+local function checkTableContent(t)
+    if t == nil then
+        return "Failed ❌"
+    end
+    
+    if next(t) == nil then
+        return "Failed ❌"
+    end
+    
+    return "Passed ✅"
+end
+
+print("***** Start *****")
+for _,v in pairs(gameData)do
+    print(" ==== TEST:", _, "====") 
+    for i,e in pairs(v.world.gachas)do
+        print(e .. ":", checkTableContent(findMap(e)))
+    end
+    for i,e in pairs(v.enemies) do
+        print(e.name .. ":", checkTableContent(findMap(e.name)))
+        for j,k in pairs(e.tokens)do
+            print(k .. ":", checkTableContent(findMap(k)))
+        end
+    end
+    print("============== \n\n")
+    task.wait(2)
+end
+print("***** End *****")
+
 
 local Islands = Workspace:WaitForChild("Islands")
 local IslandStuff = Islands:WaitForChild("West City With Pads and Stuff")
