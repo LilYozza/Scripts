@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v7.7")
+print("v7.8")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1309,10 +1309,10 @@ local Powers = Hub:WaitForChild("Powers")
 local PowersList = Powers:WaitForChild("List_Frame"):WaitForChild("List")
 
 local function getBestPower(_gacha)
-    for _,v in pairs(gameData)do
-        local gachaTable = v.world.gachaTable[_gacha].list
-        if gachaTable then
-            return gachaTable[#gachaTable]
+    for _, v in pairs(gameData or {}) do
+        local g = v.world and v.world.gachaTable and v.world.gachaTable[_gacha]
+        if g and g.list and #g.list > 0 then
+            return g.list[#g.list]  -- last item in the list
         end
     end
 end
