@@ -836,6 +836,7 @@ local function findMap(_input)
     end
 end
 
+--[[
 local function checkTableContent(t)
     if t == nil then
         return "Failed ❌"
@@ -874,6 +875,7 @@ for _,v in pairs(gameData)do
     task.wait(2)
 end
 print("***** End *****")
+]]--
 
 
 local Islands = Workspace:WaitForChild("Islands")
