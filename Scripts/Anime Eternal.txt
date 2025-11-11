@@ -47,6 +47,10 @@ local gameData = {
         world = {
             name = "Earth_City",
             gachas = {"Dragon_Race", "Saiyan_Evolution"},
+            gachaTable = {
+                ["Dragon_Race"] = { "Human", "Android", "Namekian", "Frost Demon", "Majin", "Half-Saiyan", "Saiyan" },
+                ["Saiyan_Evolution"] = { "Great Ape", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Full Power Super Saiyan", "Super Saiyan 2", "Super Saiyan 3" }
+            }
         },
         enemies = {
             { name = 'Kriluni', tokens = {"Dragon Race Token"}}, 
@@ -62,6 +66,11 @@ local gameData = {
         world = {
             name = "Windmill_Island",
             gachas = {"Pirate_Crew", "Swords", "Demon_Fruits"},
+            gachaTable = {
+                ["Pirate_Crew"] = { "Whitebeard Pirates", "Cross Guild", "Big Mom Pirates", "Beast Pirates", "Blackbeard Pirates", "Straw Hat Pirates" },
+                --["Swords"] = { "Bloodthorn", "Eclipse Warden", "Obsidian Reaver", "Aquarius Edge", "Doomsoul", "Redmourne", "Venomstrike" }, IN ANOTHER GUI
+                ["Demon_Fruits"] = { "Bomb Fruit", "Rubber Fruit", "Sand Fruit", "Flame Fruit", "Smoke Fruit", "Magma Fruit", "Revive Fruit", "String Fruit", "Human Fruit", "Dark Fruit", "Quake Fruit", "Money Fruit", "Dough Fruit", "Phoenix Fruit" }
+            }
         },
         enemies = {
             { name = 'Nomi', tokens = {"Pirate Crew Token", "Sword Token", "Haki Token"}}, 
@@ -76,7 +85,11 @@ local gameData = {
     [3] = {
         world = {
             name = "Soul_Society",
-            gachas = {"Reiatsu_Color", "Zanpakuto"}
+            gachas = {"Reiatsu_Color", "Zanpakuto"},
+            gachaTable = {
+                ["Reiatsu_Color"] = { "Gray Relatsu", "Green Relatsu", "Blue Relatsu", "Pink Relatsu", "Yellow Relatsu", "Red Relatsu", "Black Relatsu" },
+                ["Zanpakuto"] = { "Suzumebachi", "Zabimaru", "Ashisogi Jizo", "Senbonzakura", "Nozarashi", "Hyorimaru", "Zangetsu" }
+            }
         },
         enemies = {
             { name = 'Hime', tokens = {"Reiatsu Token", "Pressure Token"}}, 
@@ -91,7 +104,10 @@ local gameData = {
     [4] = {
         world = {
             name = "Cursed_School",
-            gachas = {"Curses"}
+            gachas = {"Curses"},
+            gachaTable = {
+                ["Curses"] = { "Bazing Catedyan", "Nullborn Phantom", "Informal Crater", "Abyssal Tide", "Verdant Calamity", "Soulbender", "Wandered Mind" }
+            }
         },
         enemies = {
             { name = 'Itodo', tokens = {"Cursed Token", "Cursed Finger"}}, 
@@ -106,7 +122,10 @@ local gameData = {
     [5] = {
         world = {
             name = "Slayer_Village",
-            gachas = {"Demon_Arts"}
+            gachas = {"Demon_Arts"},
+            gachaTable = {
+                ["Demon_Arts"] = { "Dream Manipulation", "Blood Scythes", "Vase Teleportation", "Emotion Splitting", "Destructive Death", "Cryokinesis", "Blood Control" }
+            }
         },
         enemies = {
             { name = 'Nazuki', tokens = {"Breathing Token"}},
@@ -121,7 +140,10 @@ local gameData = {
     [6] = {
         world = {
             name = "Solo_Island",
-            gachas = {"Solo_Hunter_Rank"}
+            gachas = {"Solo_Hunter_Rank"},
+            gachaTable = {
+                ["Solo_Hunter_Rank"] = { "E Rank", "D Rank", "C Rank", "B Rank", "A Rank", "S Rank", "National Level Hunter" }
+            }
         },
         enemies = {
             { name = 'Weak_Sung', tokens = {"Hunter Rank Token"}}, 
@@ -136,7 +158,10 @@ local gameData = {
     [7] = {
         world = {
             name = "Clover_Village",
-            gachas = {"Grimoire"}
+            gachas = {"Grimoire"},
+            gachaTable = {
+                ["Grimoire"] = { "Water Grimoire", "Fire Grimoire", "Wind Grimoire", "Dark Grimoire", "Light Grimoire", "Anti-Magic Grimoire", "Time Magic Grimoire" }
+            }
         },
         enemies = {
             { name = 'Noalle', tokens = {"Water Spirit Token"}}, 
@@ -151,7 +176,10 @@ local gameData = {
     [8] = {
         world = {
             name = "Leaf_Village",
-            gachas = {"Power_Eyes"}
+            gachas = {"Power_Eyes"},
+            gachaTable = {
+                ["Power_Eyes"] = { "Single Tomoe Eye", "Double Tomoe Eye", "Triple Tomoe Eye", "Trind Insight Eye", "Cyclone Eye", "Whirlpool's Depth Eye", "Trind Nexus Eye", "Eclipse Eye", "Atomic Insight Eye", "Eternal Eclipse Eye", "Eternal Atomic Eye", "Eye of Six Paths" }
+            }
         },
         enemies = {
             { name = 'Sekuri', tokens = {"Chakra Token"}}, 
@@ -167,7 +195,10 @@ local gameData = {
     [9] = {
         world = {
             name = "Spirit_Residence",
-            gachas = {"Psychic_Mayhem"}
+            gachas = {"Psychic_Mayhem"},
+            gachaTable = {
+                ["Psychic_Mayhem"] = { "Illusion Casting", "Mind Swap", "Brain Freeze Field", "Kinetic Absorption", "Precognition", "Psychic Barrier", "Energy Aura Blast" }
+            }
         },
         enemies = {
             { name = 'Ken', tokens = {"Gold Ball Token", "Lucky Spirit Token"}}, 
@@ -182,7 +213,11 @@ local gameData = {
     [10] = {
         world = {
             name = "Magic_Hunter_City",
-            gachas = {"Energy_Card_Shop", "Damage_Card_Shop"}
+            gachas = {"Energy_Card_Shop", "Damage_Card_Shop"},
+            gachaTable = {
+                ["Energy_Card_Shop"] = { "Energy Card I", "Energy Card II", "Energy Card III", "Energy Card IV", "Energy Card V", "Energy Card VI", "Energy Card VII" },
+                ["Damage_Card_Shop"] = { "Damage Card I", "Damage Card II", "Damage Card III", "Damage Card IV", "Damage Card V", "Damage Card VI", "Damage Card VII", "Damage Card VIII" }
+            }
         },
         enemies = {
             { name = 'Lero', tokens = {"Energy TCG Token", "Greedy Token"}},
@@ -197,7 +232,10 @@ local gameData = {
     [11] = {
         world = {
             name = "Titan_City",
-            gachas = {"Families"}
+            gachas = {"Families"},
+            gachaTable = {
+                ["Families"] = { "Gitce Family", "Leonhart Family", "Braun Family", "Tybur Family", "Ackerman Family", "Yeager Family", "Reiss Family" }
+            }
         },
         enemies = {
             { name = 'Armim', tokens = {"Families Token"}}, 
@@ -212,7 +250,11 @@ local gameData = {
     [12] = {
         world = {
             name = "Village_of_Sins",
-            gachas = {"Sins", "Commandments"}
+            gachas = {"Sins", "Commandments"},
+            gachaTable = {
+                ["Sins"] = { "Lust", "Envy", "Sloth", "Greed", "Gluttony", "Wrath", "Pride" },
+                ["Commandments"] = { "Selflessness", "Pacifism", "Patience", "Repose", "Purity", "Reticence", "Truth", "Faith", "Piety", "Love" }
+            }
         },
         enemies = {
             { name = 'Diyana', tokens = {"Sins Token"}}, 
@@ -227,7 +269,10 @@ local gameData = {
     [13] = {
         world = {
             name = "Kaiju_Base",
-            gachas = {"Kaiju_Powers"}
+            gachas = {"Kaiju_Powers"},
+            gachaTable = {
+                ["Kaiju_Powers"] = { "Phaneroplus", "Philinosoma", "Primigenius Honju", "Preondactyl", "Mixogastero", "No. 10", "No. 9", "No. 8" }
+            }
         },
         enemies = {
             { name = 'Kefka', tokens = {"Fortitude Level Token"}},
@@ -242,7 +287,10 @@ local gameData = {
     [14] = {
         world = {
             name = "Tempest_Capital",
-            gachas = {"Ultimate_Skills", "Species"}
+            gachaTable = {
+                ["Ultimate_Skills"] = { "Amaterasu", "True Hero", "Uriel", "Satanael", "Lucifer", "Yog-Sothoth", "Beelzebub", "Raphael" },
+                ["Species"] = { "Goblin", "Lizardman", "Slime", "Dryad", "Kijin", "Dragonoid", "Primordial Daemon", "True Dragon" }
+            }
         },
         enemies = {
             { name = 'Gobito', tokens = {"Species Token"}},
@@ -257,7 +305,10 @@ local gameData = {
     [15] = {
         world = {
             name = "Virtual_City",
-            gachas = {"Power_Energy_Runes"}
+            gachas = {"Power_Energy_Runes"},
+            gachaTable = {
+                ["Power_Energy_Runes"] = { "Common Energy Rune", "Uncommon Energy Rune", "Rare Energy Rune", "Epic Energy Rune", "Legendary Energy Rune", "Mythical Energy Rune", "Phantom Energy Rune", "Supreme Energy Rune" }
+            }
         },
         enemies = {
             { name = 'Lisbeta', tokens = {"Energy Rune Token"}},
@@ -272,7 +323,10 @@ local gameData = {
     [16] = {
         world = {
             name = "Cairo",
-            gachas = {"Onomatopoeia"}
+            gachas = {"Onomatopoeia"},
+            gachaTable = {
+                ["Onomatopoeia"] = { "Common Onomatopoeia", "Uncommon Onomatopoeia", "Rare Onomatopoeia", "Epic Onomatopoeia", "Legendary Onomatopoeia", "Mythical Onomatopoeia", "Phantom Onomatopoeia", "Supreme Onomatopoeia" }
+            }
         },
         enemies = {
             { name = 'Speedy', tokens = {"Onomatopoeia Token"}},
@@ -287,7 +341,11 @@ local gameData = {
     [17] = {
         world = {
             name = "Ghoul_City",
-            gachas = {"Investigators", "Kagune"}
+            gachas = {"Investigators", "Kagune"},
+            gachaTable = {
+                ["Investigators"] = { "Bureau", "Assistants", "Rank 3", "Rank 2", "Rank 1", "First Class", "Associate Special Class", "Special Class" },
+                ["Kagune"] = { "Retto", "Hakuro", "Shinku", "Tetsuba", "Shidare", "Hakuja", "Mukade", "Koumyaku" }
+            }
         },
         enemies = {
             { name = 'Hideyo', tokens = {"CCG Token"}}, 
@@ -302,7 +360,11 @@ local gameData = {
     [18] = {
         world = {
             name = "Chainsaw_City",
-            gachas = {"Debiru_Hunter", "Akuma_Powers"}
+            gachas = {"Debiru_Hunter", "Akuma_Powers"},
+            gachaTable = {
+                ["Debiru_Hunter"] = { "Rookie Hunter", "Field Hunter", "Contract Hunter", "Fiend Hunter", "Hybrid Hunter", "Veteran Hunter", "Special Division Hunter", "Primal Threat Hunter" },
+                ["Akuma_Powers"] = { "Akuma: Ghost", "Akuma: Fox", "Akuma: Future", "Akuma: Curse", "Akuma: Angel", "Akuma: Crossbow", "Akuma: Pokita", "Akuma: Control" }
+            }
         },
         enemies = {
 
@@ -311,12 +373,115 @@ local gameData = {
     [19] = {
         world = {
             name = "Tokyo_Empire",
-            gachas = {"Special_Fire_Force"}
+            gachas = {"Special_Fire_Force"},
+            gachaTable = {
+                ["Special_Fire_Force"] = { "Company 1", "Company 2", "Company 3", "Company 4", "Company 5", "Company 6", "Company 7", "Company 8" }
+            }
         },
         enemies = {
 
         }
-    }
+    },
+    [20] = {
+        world = {
+            name = "Green_Plant",
+            gachas = {"Grand_Elder_Power", "Frost_Demon_Evolution"},
+            gachaTable = {
+                ["Grand_Elder_Power"] = { "Sleeping Power", "Stirring Spirit", "Hidden Potential", "Power Unleashed", "True Potential", "Limitless Growth", "Potential Unbound" },
+                ["Frost_Demon_Evolution"] = { "Second Form", "Third Form", "Final Form", "50% Power", "100% Full Power", "Mecha Form", "Golden Form", "Black Form" }
+            }
+        },
+        enemies = {
+
+        }
+    },
+    [21] = {
+        world = {
+            name = "Hollow_World",
+            gachas = {"Espada"},
+            gachaTable = {
+                ["Espada"] = { "Espada 9", "Espada 8", "Espada 7", "Espada 6", "Espada 5", "Espada 4", "Espada 3", "Espada 2", "Espada 1", "Espada 0" }
+            }
+        },
+        enemies = {
+            
+        }
+    },
+    [22] = {
+        world = {
+            name = "Shadow_Academy",
+            gachas = {"Shadow_Garden", "Shadow_Arts"},
+            gachaTable = {
+                ["Shadow_Garden"] = { "Operative", "Agent", "Enforcer", "Commander", "Division Head", "Shadow Council Member", "The First Shadow", "The Eminence" },
+                ["Shadow_Arts"] = { "Silent Step", "Shadow Bind", "Mirage Strike", "Eclipse Slash", "Abyssal Blade", "Void Erasure", "Eternal Shadow Waltz", "i Am Atomic" }
+            }
+        },
+        enemies = {
+            
+        }
+    },
+    [23] = {
+        world = {
+            name = "Z_City",
+            gachas = {"Energy_Threat_Level", "Punch_Power"},
+            gachaTable = {
+                ["Energy_Threat_Level"] = { "Predator", "Havoc", "Disaster", "Dominion", "Oblivion", "Plante Breaker", "Cosmic Annihilator", "The Absolute" },
+                ["Punch_Power"] = { "Basic Punch", "Heroic Fist", "Serious Punch", "Celestial Impact", "Gamma Burst Punch", "One Punch" }
+            }
+        },
+        enemies = {
+            
+        }
+    },
+    [24] = {
+        world = {
+            name = "Great Tomb",
+            gachas = {},
+            gachaTable = {
+
+            }
+        },
+        enemies = {
+            
+        }
+    },
+    [25] = {
+        world = {
+            name = "Thriller Park",
+            gachas = {},
+            gachaTable = {
+
+            }
+        },
+        enemies = {
+            
+        }
+    },
+    [26] = {
+        world = {
+            name = "Amusement_Park",
+            gachas = {},
+            gachaTable = {
+
+            }
+        },
+        enemies = {
+            
+        }
+    },
+    [27] = {
+        world = {
+            name = "Re:Manor",
+            gachas = {},
+            gachaTable = {
+
+            }
+        },
+        enemies = {
+            
+        }
+    },
+
 }
 
 
@@ -987,6 +1152,43 @@ local function openGacha(_gacha, _amount)
    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+local Inventory = pGui:WaitForChild("Inventory_1")
+local Hub = Inventory:WaitForChild("Hub")
+local Powers = Hub:WaitForChild("Powers")
+local PowersList = Powers:WaitForChild("List_Frame"):WaitForChild("List")
+
+local function getBestPower(_gacha)
+    for _,v in pairs(gameData)do
+        local gachaTable = v.world.gachaTable[_gacha]
+        if gachaTable then
+            return gachaTable[#gachaTable]
+        end
+    end
+end
+
+local function getPowerName(_power)
+    local Inside = _power:FindFirstChild("Inside")
+    if Inside then
+        local Title = Inside:FindFirstChild("Title")
+        if Title then return Title.Text end
+    end
+end
+
+local function checkUnlockedPower(_power)
+    Hub.Visible = true
+    Powers.Visible = true
+    for _,v in pairs(PowersList:GetChildren())do
+        if v:IsA("ImageButton") then
+            local powerName = getPowerName(v)
+            if powerName:lower() == _power:lower() then
+                return true
+            end
+        end
+    end
+end
+
+
+
 
 local Rolling_UI = PGui:WaitForChild("Rolling_UI")
 local Currency_Field = Rolling_UI:WaitForChild("Currency_Field")
@@ -1027,14 +1229,40 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
 end)
 
 
+
+local sGSelect = "Selected"
+local gFarmType = {"Selected", "All", "Best"}
+local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sGSelect = SItem
+end)
+
+
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
     spawn(function()
         while shared.ToggleAFG do
-            if sGacha then
-                local mapInfo = findMap(sGacha)
+            local tempSSelect
+            if sGacha and sGSelect == "Selected" then
+                tempSSelect = sGacha
+            elseif sGSelect == "All" then
+                -- find the next gacha to farm
+                
+            elseif sGSelect == "Best" then
+                -- find the next best gacha to farm
+                for _,v in pairs(GACHA)do
+                    local bPower = getBestPower(v)
+                    local unlocked = checkUnlockedPower(bPower)
+                    if not unlocked and tempSSelect ~= v then
+                        print("Switching To:", v)
+                        tempSSelect = v
+                    end
+                end
+            end
+
+            if tempSSelect then
+                local mapInfo = findMap(tempSSelect)
                 if mapInfo then
-                    PrintTable(mapInfo)
+                    openGacha(tempSSelect, sGachaAmount)
                     gMonster = mapInfo.enemy
                     TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                 else
@@ -1045,6 +1273,9 @@ GachaMenu:Toggle("Auto Farm",function(bool)
         end
     end)
 end)
+
+
+
 ----------------------------------------------------------------------------------------------------------------------
 ---------------------------------- UPGRADE MENU ----------------------------------------------------------------------
 
