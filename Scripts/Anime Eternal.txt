@@ -697,21 +697,16 @@ local function contains(_string, _table)
 end
 
 local function containsTable(_input, _list)
-    local inputWords = {}
-    for word in (_input:gsub("_", " "):lower()):gmatch("%w+") do
-        inputWords[word] = true
-    end
-
+    local function norm(w) return (w:lower():gsub("ing$",""):gsub("ed$",""):gsub("es$",""):gsub("s$","")) end
+    local input = {}; for w in _input:gsub("_"," "):gmatch("%w+") do input[norm(w)] = true end
     for _, str in pairs(_list) do
-        for word in (str:gsub("_", " "):lower()):gmatch("%w+") do
-            for iw in pairs(inputWords) do
-                if word:find(iw) or iw:find(word) then
-                    return true
-                end
+        for w in str:gsub("_"," "):gmatch("%w+") do
+            w = norm(w)
+            for iw in pairs(input) do
+                if w:find(iw) or iw:find(w) then return true end
             end
         end
     end
-    return false
 end
 
 local function findMap(_input)
@@ -741,16 +736,26 @@ local function checkTableContent(t)
     return "Passed ✅"
 end
 
+local dTable = {}
 print("***** Start *****")
 for _,v in pairs(gameData)do
     print(" ==== TEST:", _, "====") 
     for i,e in pairs(v.world.gachas)do
-        print(e .. ":", checkTableContent(findMap(e)))
+        if not table.find(dTable, e) then
+            print(e .. ":", checkTableContent(findMap(e)))
+            table.insert(dTable, e)
+        end
     end
     for i,e in pairs(v.enemies) do
-        print(e.name .. ":", checkTableContent(findMap(e.name)))
+        if not table.find(dTable, e.name) then
+            print(e.name .. ":", checkTableContent(findMap(e.name)))
+            table.insert(dTable, e.name)
+        end
         for j,k in pairs(e.tokens)do
-            print(k .. ":", checkTableContent(findMap(k)))
+            if not table.find(dTable, k) then
+                print(k .. ":", checkTableContent(findMap(k)))
+                table.insert(dTable, k)
+            end
         end
     end
     print("============== \n\n")
