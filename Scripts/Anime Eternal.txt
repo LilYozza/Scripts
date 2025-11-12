@@ -487,7 +487,7 @@ local gameData = {
             gachas = {"Special_Fire_Force"},
             gachaTable = {
                 ["Special_Fire_Force"] = { 
-                    token = "",
+                    token = "Fire Company Token",
                     list = { "Company 1", "Company 2", "Company 3", "Company 4", "Company 5", "Company 6", "Company 7", "Company 8" }
                 }
             }
