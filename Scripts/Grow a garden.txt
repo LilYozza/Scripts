@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.1")
+print("v6.2")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -308,7 +308,24 @@ local function SellAll()
     GameEvents:WaitForChild("Sell_Inventory"):FireServer()
 end
 
+local sblacklistCrop
+local cropsToHarvest = {"Blueberry", "Strawberry", "Tomato"}
+local blacklistHarvest = {}
+local DropList = Auto:Dropdown("SELECT MESSAGE",cropsToHarvest,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sblacklistCrop = SItem
+end)
 
+Auto:Button("Blacklist",function()
+    spawn(function()
+        if not table.find(blacklistHarvest, sblacklistCrop) then table.insert(blacklistHarvest, sblacklistCrop) end
+    end)
+end)
+
+Auto:Button("Reset",function()
+    spawn(function()
+        blacklistHarvest = {}
+    end)
+end)
 
 Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
@@ -316,7 +333,7 @@ Auto:Toggle("Auto Harvest",function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 for _,v in pairs(Plants_Physical:GetChildren())do
-                    if v:GetAttribute("DoneGrowTime") then
+                    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
                         local fruitCheck = v:FindFirstChild("Fruit_Spawn")
                         if fruitCheck then
                             local Fruits = v:FindFirstChild("Fruits")
