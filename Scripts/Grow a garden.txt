@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.3 - testing mass collect")
+print("v6.4 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -65,6 +65,13 @@ local function getInventoryCount()
         end
     end
     return #amt
+end
+
+local function getSpaceLeft()
+    local InvCount = getInventoryCount()
+    local bonus = Player:GetAttribute("BonusBackpackSize")
+    local value = InvCount - (200 + (bonus or 0))
+    return value
 end
 
 local function checkPlantInventory(_plant, _mutations)
@@ -134,7 +141,7 @@ end
 local function IsMaxInventory()
     local count = getInventoryCount()
     local bonus = Player:GetAttribute("BonusBackpackSize")
-    if 199 + (bonus or 0) > count then
+    if 200 + (bonus or 0) > count then
         return false
     else
         return true
@@ -343,14 +350,19 @@ Auto:Toggle("Auto Harvest",function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 local t = {}
+                local index, spaceLeft = 1, getSpaceLeft()
                 for _,v in pairs(Plants_Physical:GetChildren())do
+                    if index >= spaceLeft then break end
                     if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
                         local fruitCheck = v:FindFirstChild("Fruit_Spawn")
                         if fruitCheck then
                             local Fruits = v:FindFirstChild("Fruits")
                             if Fruits then
                                 for __,_v in pairs(Fruits:GetChildren())do
-                                    if shared.ToggleAH and not IsMaxInventory() then table.insert(t, _v) end
+                                    if shared.ToggleAH and not IsMaxInventory() then 
+                                        table.insert(t, _v)
+                                        index = index + 1
+                                    end
                                 end 
                             end
                         else
