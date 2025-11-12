@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.4 - testing mass collect")
+print("v6.5 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -69,8 +69,9 @@ end
 
 local function getSpaceLeft()
     local InvCount = getInventoryCount()
-    local bonus = Player:GetAttribute("BonusBackpackSize")
-    local value = InvCount - (200 + (bonus or 0))
+    local bonus = Player:GetAttribute("BonusBackpackSize") or 0
+    local max = 200 + bonus
+    local value = max - InvCount
     return value
 end
 
