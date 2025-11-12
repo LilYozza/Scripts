@@ -477,7 +477,8 @@ local gameData = {
             { name = 'Aoki', tokens = {"Akuma Token"}},
             { name = 'Raza', tokens = {"Akuma Token"}},
             { name = 'Makomi', tokens = {"Akuma Damage Token"}},
-            { name = 'Mr_Chainsaw', tokens = {}},
+            { name = 'Mr_Chainsaw', tokens = {"Debiru Token", "Akuma Token", "Akuma Damage Token"}},
+            { name = "Hero_of_Hell", tokens = {"Debiru Token", "Akuma Token", "Akuma Damage Token"} }
         }
     },
     [19] = {
@@ -491,7 +492,16 @@ local gameData = {
                 }
             }
         },
-        enemies = {}
+        enemies = {
+            { name = 'Akiki', tokens = {"Mushi Token"}},
+            { name = 'Arter', tokens = {"Infernal Token"}},
+            { name = 'Shinro', tokens = {"Flare Token", "Fire Company Token"}},
+            { name = 'Tameki', tokens = {"Ignition Token", "Fire Company Token"}},
+            { name = 'Iriso', tokens = {"Hellfire Token"}}, 
+            { name = 'Witch_Queen', tokens = {"Adolla Token", "Adolla Blessing Token"}}, 
+            { name = 'Leonardo', tokens = {"Ignition Token", "Hellfire Token", "Adolla Token"}},
+            { name = 'Bansho', tokens = {"Ignition Token", "Hellfire Token", "Adolla Token"}}, 
+        }
     },
     [20] = {
         world = {
@@ -607,7 +617,6 @@ local gameData = {
     },
 
 }
-
 
 
 local assetsDestroy = {"Trees", "Houses", "Random", "Paths", "Road", "Walls", "Towers", "Buildings"}
