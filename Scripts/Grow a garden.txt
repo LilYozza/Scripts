@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.8 - testing mass collect")
+print("v6.7 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -367,7 +367,9 @@ Auto:Toggle("Auto Harvest", function(state)
 						end
 					end
 				end
-				if #t > 0 then CollectPlantTable(t) end
+				if #t > 0 then --CollectPlantTable(t) 
+                     mod:FireServer(t)
+                end
 			end
 			task.wait(0.1)
 		end
