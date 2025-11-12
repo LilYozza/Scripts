@@ -351,24 +351,27 @@ local function getSpaceLeft()
     local InvCount = getInventoryCount()
     local bonus = Player:GetAttribute("BonusBackpackSize") or 0
     local max = 200 + bonus
-    local value = max - InvCount
+    local value = math.max(0, max - InvCount)
     return value
 end
 
-Auto:Toggle("Auto Harvest",function(bool)
-    shared.ToggleAH=bool
+Auto:Toggle("Auto Harvest", function(bool)
+    shared.ToggleAH = bool
     task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 local t = {}
-                for _,v in pairs(Plants_Physical:GetChildren())do
+                local spaceLeft = getSpaceLeft()
+                for _, v in pairs(Plants_Physical:GetChildren()) do
+                    if #t >= spaceLeft then break end
                     if _ % 200 == 0 then task.wait() end
-                    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
+                    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") and not v:GetAttribute("Favorited") then
                         if v:GetAttribute("OfflineGrowthTarget") then
                             local Fruits = v:FindFirstChild("Fruits")
                             if Fruits then
-                                for i, fruit in pairs(Fruits:GetChildren())do
-                                    if fruit:GetAttribute("DoneGrowTime") then
+                                for _, fruit in pairs(Fruits:GetChildren()) do
+                                    if #t >= spaceLeft then break end
+                                    if fruit:GetAttribute("DoneGrowTime") and not fruit:GetAttribute("Favorited") then
                                         table.insert(t, fruit)
                                     end
                                 end
@@ -378,11 +381,15 @@ Auto:Toggle("Auto Harvest",function(bool)
                         end
                     end
                 end
-                local spaceLeft = math.max(0, getSpaceLeft())
-                for i = #t, spaceLeft + 1, -1 do
-                    t[i] = nil
+
+                for i = 1, #t, 20 do
+                    local batch = {}
+                    for j = i, math.min(i + 19, #t) do
+                        table.insert(batch, t[j])
+                    end
+                    mod:FireServer(batch)
+                    task.wait() -- small yield between batches
                 end
-                mod:FireServer(t)
             end
             task.wait(0.1)
         end
