@@ -388,7 +388,7 @@ Auto:Toggle("Auto Harvest", function(bool)
                         table.insert(batch, t[j])
                     end
                     mod:FireServer(batch)
-                    task.wait() -- small yield between batches
+                    task.wait(1)
                 end
             end
             task.wait(0.1)
