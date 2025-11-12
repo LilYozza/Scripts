@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.1")
+print("v8.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1378,9 +1378,9 @@ GachaMenu:Toggle("Show Currency",function(bool)
 end)
 
 local sGacha
-local sGachaAmount = 2
+local sGachaAmount = 5
 
-local DropListG1 = GachaMenu:Dropdown("2",{1,2,3,4,5},true,function(SItem)
+local DropListG1 = GachaMenu:Dropdown("5",{1,2,3,4,5},true,function(SItem)
     sGachaAmount = tonumber(SItem)
 end)
 
@@ -1394,7 +1394,11 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
     spawn(function()
         while shared.ToggleAG do
             if sGacha then
-                openGacha(sGacha, sGachaAmount)
+                local bPower = getBestPower(sGacha)
+                local unlocked = checkUnlockedPower(bPower)
+                if not unlocked then
+                    openGacha(sGacha, sGachaAmount)
+                end
             end
             task.wait(1)
         end
