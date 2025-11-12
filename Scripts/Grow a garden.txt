@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.2")
+print("v6.3")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -327,28 +327,64 @@ Auto:Button("Reset",function()
     end)
 end)
 
+--[[
+
+for _,v in pairs(Plants_Physical:GetChildren())do
+    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
+        local fruitCheck = v:FindFirstChild("Fruit_Spawn")
+        if fruitCheck then
+            local Fruits = v:FindFirstChild("Fruits")
+            if Fruits then
+                for __,_v in pairs(Fruits:GetChildren())do
+                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                end 
+            end
+        else
+            if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
+        end
+    end
+end
+
+]]
+
+local function getSpaceLeft()
+    local InvCount = getInventoryCount()
+    local bonus = Player:GetAttribute("BonusBackpackSize") or 0
+    local max = 200 + bonus
+    local value = max - InvCount
+    return value
+end
+
 Auto:Toggle("Auto Harvest",function(bool)
     shared.ToggleAH=bool
-    spawn(function()
+    task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
+                local t = {}
                 for _,v in pairs(Plants_Physical:GetChildren())do
+                    if _ % 200 == 0 then task.wait() end
                     if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
-                        local fruitCheck = v:FindFirstChild("Fruit_Spawn")
-                        if fruitCheck then
+                        if v:GetAttribute("OfflineGrowthTarget") then
                             local Fruits = v:FindFirstChild("Fruits")
                             if Fruits then
-                                for __,_v in pairs(Fruits:GetChildren())do
-                                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
-                                end 
+                                for i, fruit in pairs(Fruits:GetChildren())do
+                                    if fruit:GetAttribute("DoneGrowTime") then
+                                        table.insert(t, fruit)
+                                    end
+                                end
                             end
                         else
-                            if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
+                            table.insert(t, v)
                         end
                     end
                 end
+                local spaceLeft = math.max(0, getSpaceLeft())
+                for i = #t, spaceLeft + 1, -1 do
+                    t[i] = nil
+                end
+                mod:FireServer(t)
             end
-            task.wait()
+            task.wait(0.1)
         end
     end)
 end)
