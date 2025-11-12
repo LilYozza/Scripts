@@ -352,10 +352,9 @@ Auto:Toggle("Auto Harvest",function(bool)
             if not IsMaxInventory() then
                 local t = {}
                 local index, spaceLeft = 1, getSpaceLeft()
-                print(index, spaceLeft)
                 for _,v in pairs(Plants_Physical:GetChildren())do
                     if index > spaceLeft then break end
-                    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
+                    if not table.find(blacklistHarvest, v.Name) then --and v:GetAttribute("DoneGrowTime")
                         local fruitCheck = v:FindFirstChild("Fruit_Spawn")
                         if fruitCheck then
                             local Fruits = v:FindFirstChild("Fruits")
