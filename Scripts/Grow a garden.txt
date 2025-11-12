@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.2")
+print("v6.3 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -139,6 +139,16 @@ local function IsMaxInventory()
     else
         return true
     end
+end
+
+local function CollectPlantTable(_table, _name, _mutations)
+    local t = {}
+    for _,v in pairs(_table)do
+        local plant = checkPlant(v, _name, _mutations)
+        table.insert(t, plant)
+    end
+    
+    if t then mod:FireServer(t) task.wait() end
 end
 
 local function CollectPlant(_plant, _name, _mutations)
@@ -332,6 +342,7 @@ Auto:Toggle("Auto Harvest",function(bool)
     spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
+                local t = {}
                 for _,v in pairs(Plants_Physical:GetChildren())do
                     if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
                         local fruitCheck = v:FindFirstChild("Fruit_Spawn")
@@ -339,7 +350,7 @@ Auto:Toggle("Auto Harvest",function(bool)
                             local Fruits = v:FindFirstChild("Fruits")
                             if Fruits then
                                 for __,_v in pairs(Fruits:GetChildren())do
-                                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
+                                    if shared.ToggleAH and not IsMaxInventory() then table.insert(t, _v) end
                                 end 
                             end
                         else
@@ -347,8 +358,9 @@ Auto:Toggle("Auto Harvest",function(bool)
                         end
                     end
                 end
+                CollectPlantTable(t)
             end
-            task.wait(0.1)
+            task.wait()
         end
     end)
 end)
