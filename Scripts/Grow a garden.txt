@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.5 - testing mass collect")
+print("v6.6 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -345,37 +345,33 @@ Auto:Button("Reset",function()
     end)
 end)
 
-Auto:Toggle("Auto Harvest",function(bool)
-    shared.ToggleAH=bool
-    spawn(function()
-        while shared.ToggleAH do
-            if not IsMaxInventory() then
-                local t = {}
-                local index, spaceLeft = 1, getSpaceLeft()
-                for _,v in pairs(Plants_Physical:GetChildren())do
-                    if index > spaceLeft then break end
-                    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then --and v:GetAttribute("DoneGrowTime")
-                        local fruitCheck = v:FindFirstChild("Fruit_Spawn")
-                        if fruitCheck then
-                            local Fruits = v:FindFirstChild("Fruits")
-                            if Fruits then
-                                for __,_v in pairs(Fruits:GetChildren())do
-                                    if shared.ToggleAH then 
-                                        table.insert(t, _v)
-                                        index = index + 1
-                                    end
-                                end 
-                            end
-                        else
-                            if shared.ToggleAH then table.insert(t, v) end
-                        end
-                    end
-                end
-                CollectPlantTable(t)
-            end
-            task.wait()
-        end
-    end)
+Auto:Toggle("Auto Harvest", function(state)
+	shared.ToggleAH = state
+	task.spawn(function()
+		while shared.ToggleAH do
+			if not IsMaxInventory() then
+				local t, spaceLeft, index = {}, getSpaceLeft(), 1
+				for _, plant in pairs(Plants_Physical:GetChildren()) do
+					if not shared.ToggleAH or index > spaceLeft then break end
+					if not table.find(blacklistHarvest, plant.Name) and plant:GetAttribute("DoneGrowTime") then
+						local fruits = plant:FindFirstChild("Fruits")
+						if fruits then
+							for _, fruit in pairs(fruits:GetChildren()) do
+								if not shared.ToggleAH or index > spaceLeft then break end
+								table.insert(t, fruit)
+								index = index + 1
+							end
+						else
+							table.insert(t, plant)
+							index = index + 1
+						end
+					end
+				end
+				if #t > 0 then CollectPlantTable(t) end
+			end
+			task.wait(0.1)
+		end
+	end)
 end)
 
 local moveBack = false
