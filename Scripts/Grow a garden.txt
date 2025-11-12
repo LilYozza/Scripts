@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7 - testing mass collect")
+print("v7.1 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -362,7 +362,7 @@ Auto:Toggle("Auto Harvest", function(state)
 								--index = index + 1
 							end
 						else
-                            if not fruits:GetAttribute("FruitVariantLuck") then
+                            if not plant:GetAttribute("FruitVariantLuck") then
                                 table.insert(t, plant)
                                 --index = index + 1
                             end
