@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.7 - testing mass collect")
+print("v6.8 - testing mass collect")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -354,7 +354,6 @@ Auto:Toggle("Auto Harvest", function(state)
 				for _, plant in pairs(Plants_Physical:GetChildren()) do
 					if not shared.ToggleAH or index > spaceLeft then break end
 					if not table.find(blacklistHarvest, plant.Name) and plant:GetAttribute("DoneGrowTime") then
-                        --[[
 						local fruits = plant:FindFirstChild("Fruits")
 						if fruits then
 							for _, fruit in pairs(fruits:GetChildren()) do
@@ -366,9 +365,6 @@ Auto:Toggle("Auto Harvest", function(state)
 							table.insert(t, plant)
 							index = index + 1
 						end
-                        --]]
-                        table.insert(t, plant)
-						index = index + 1
 					end
 				end
 				if #t > 0 then CollectPlantTable(t) end
