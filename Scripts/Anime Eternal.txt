@@ -603,7 +603,7 @@ local gameData = {
     },
     [20] = {
         world = {
-            name = "Green_Plant",
+            name = "Green_Planet",
             raids = {},
             gachaTable = {
                 ["Grand_Elder_Power"] = { 
@@ -753,6 +753,7 @@ local gameData = {
         }
     },
 }
+
 
 local GACHA = {}
 local RAIDS = {}
@@ -1146,7 +1147,7 @@ Auto:Toggle("Auto Quest",function(bool)
                     local num = questNum.Name
                     local next = tonumber(num) + 1
 
-                    completeQuest(num) task.wait(1)
+                    completeQuest(num) task.wait(3)
                     acceptQuest(next) task.wait(0.5)
                     favQuest(next)
                     currentNum = next
