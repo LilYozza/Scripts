@@ -1030,7 +1030,7 @@ local function TeleportMap(_map, _index, _walk, _dungeonCheck)
         }
         game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
         if _walk then
-            task.wait(5)
+            task.wait(1)
             local hrp = GetHrp()
             Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 1000)
         end
