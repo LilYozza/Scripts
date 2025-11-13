@@ -361,16 +361,14 @@ Auto:Toggle("Auto Harvest", function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 local t = {}
-                local spaceLeft = getSpaceLeft()
+                
                 for _, v in pairs(Plants_Physical:GetChildren()) do
-                    if #t >= spaceLeft then break end
                     if _ % 200 == 0 then task.wait() end
                     if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") and not v:GetAttribute("Favorited") then
                         if v:GetAttribute("OfflineGrowthTarget") then
                             local Fruits = v:FindFirstChild("Fruits")
                             if Fruits then
                                 for _, fruit in pairs(Fruits:GetChildren()) do
-                                    if #t >= spaceLeft then break end
                                     if fruit:GetAttribute("DoneGrowTime") and not fruit:GetAttribute("Favorited") then
                                         table.insert(t, fruit)
                                     end
@@ -382,13 +380,18 @@ Auto:Toggle("Auto Harvest", function(bool)
                     end
                 end
 
+                local spaceLeft = math.max(0, getSpaceLeft())
+                for i = #t, spaceLeft + 1, -1 do
+                    t[i] = nil
+                end
+
                 for i = 1, #t, 20 do
                     local batch = {}
                     for j = i, math.min(i + 19, #t) do
                         table.insert(batch, t[j])
                     end
                     mod:FireServer(batch)
-                    task.wait()
+                    task.wait(0.1)
                 end
             end
             task.wait(0.1)
