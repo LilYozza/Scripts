@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.3")
+print("v8.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -791,6 +791,20 @@ local Debris = Workspace:WaitForChild("Debris")
 local Monsters = Debris:WaitForChild("Monsters")
 
 -->Functions<--
+local function openStar(_star, _amount)
+    if not _amount then _amount = 10 end
+    local args = {
+        [1] = {
+            ["Open_Amount"] = _amount,
+            ["Action"] = "_Stars",
+            ["Name"] = _star
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+
+end
+
 local function getMonstersNames()
     local t = {}
     for _,v in pairs(Monsters:GetChildren())do
@@ -1114,6 +1128,11 @@ local function getCurrentQuest()
 					name = titleText
 					type = "Dungeon"
 				end
+
+                if titleText:lower():match("stars") then
+                    name = (titleText:match("Stars%s+(.*)") or ""):gsub("%s+", "_")
+                    type = "Star"
+                end
 				local c, m = progressText:match("(%d+)%/(%d+)")
 				c, m = tonumber(c) or 0, tonumber(m) or 0
 				t[num] = {
@@ -1183,10 +1202,12 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
             local quest = getCurrentQuest()
             local completed = checkComplete(quest)
             if not completed then
+                local running = false
                 for _,v in pairs(quest)do
                     if not (v.current and v.max and v.current >= v.max) then
                         local type = v.type:lower()
-                        if type == "defeat" then
+                        if type == "defeat" and not running then
+                            running = true
                             -- SET AUTO ATTACK ON THIS UNTI
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
@@ -1195,12 +1216,16 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                             end
-                        elseif type == "collect" then
+                        elseif type == "collect" and not running then
+                            running = true
                             local mapInfo = findMap(v.name)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                                qMonster = mapInfo.enemy:gsub("%s", "_")
                             end
-                            qMonster = mapInfo.enemy:gsub("%s", "_")
+                        elseif type == "star" then
+                            -- OPEN START
+                            openStar(v.name)
                         elseif type == "dungeon" then
                             --print(v.name)
                             local firstWord = v.name:match("^(%w+)")  -- "Medium"
@@ -1214,7 +1239,6 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             if firstWord and not table.find(tempDungeon, firstWord) then print("Adding:", firstWord, "to temp Dungeons") table.insert(tempDungeon, firstWord) end
                             qMonster = "All"
                         end
-                        break
                     end
                 end
             else
@@ -1251,9 +1275,9 @@ task.spawn(function()
 		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ or shared.ToggleAFG then
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
-            if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then
+            if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then -- QUESTS
                 cMonster = getClosestMonster(qMonster) mode = "QA"
-            elseif shared.ToggleAFG and gMonster and dungeon and dungeon.inDungeon == false then
+            elseif shared.ToggleAFG and gMonster and dungeon and dungeon.inDungeon == false then -- GACHAS
                 cMonster = getClosestMonster(gMonster) mode = "GA"
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
@@ -1264,7 +1288,10 @@ task.spawn(function()
 				Player.Character:FindFirstChild("HumanoidRootPart").CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
 				repeat
 					task.wait()
-					if cMonster and cMonster.Parent then
+                    local dungeon = getCurrentDungeon()
+					if (cMonster and cMonster.Parent) 
+                    or (shared.ToggleACQ and dungeon.inDungeon == true)
+                    or (shared.ToggleAFG and dungeon.inDungeon == true) then
 						attack(cMonster.Name)
 					else
 						break
@@ -1273,6 +1300,7 @@ task.spawn(function()
 					or (mode == "AD" and not shared.ToggleAD)
                     or (mode == "QA" and not shared.ToggleACQ)
                     or (mode == "GA" and not shared.ToggleAFG)
+                
                 qMonster = nil
                 gMonster = nil
 			end
@@ -1328,6 +1356,7 @@ RaidMenu:Toggle("Helper",function(bool)
 end)
 ]]--
 
+local blacklistWalk = {"Leaf_Raid"}
 RaidMenu:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
     spawn(function()
@@ -1337,11 +1366,14 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
                 print("Joining:", dungeon.name)
                 if table.find(tempDungeon, dungeon.name) then print("Removed:", dungeon.name) RemoveFromTable(tempDungeon, dungeon.name) end
                 --if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
+                
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
-                task.wait(1)
-                local hrp = GetHrp()
-                Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100000)
+                if not table.find(blacklistWalk, dungeon.name) then
+                    task.wait(1)
+                    local hrp = GetHrp()
+                    Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100000)
+                end
                 --if DungeonHelper then teleportToDungeon() task.wait(30) teleportToDungeon() toggleScriptBtn(true) task.wait(0.5) end
                 --if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
@@ -1397,20 +1429,6 @@ Auto:Button("Other",function()
 end)
 
 ---------------------------------- STAR MENU ----------------------------------------------------------------------
-local function openStar(_star, _amount)
-    if not _amount then _amount = 10 end
-    local args = {
-        [1] = {
-            ["Open_Amount"] = _amount,
-            ["Action"] = "_Stars",
-            ["Name"] = _star
-        }
-    }
-
-    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
-
-end
-
 local sStar
 local starTable = {}
 for i = 1, startAmount do
