@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.2")
+print("v8.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -581,8 +581,15 @@ local gameData = {
     [19] = {
         world = {
             name = "Tokyo_Empire",
-            raids = {},
+            raids = {
+                ["Netherworld_Defense"] = {
+                    drops = { "Obelisk Coin" }
+                }
+            },
             gachaTable = {
+                ["Mushi_Bite"] = {
+                    list = { "1st Generation" } -- Coins
+                },
                 ["Special_Fire_Force"] = { 
                     token = "Fire Company Token",
                     list = { "Company 1", "Company 2", "Company 3", "Company 4", "Company 5", "Company 6", "Company 7", "Company 8" }
@@ -607,17 +614,17 @@ local gameData = {
             raids = {},
             gachaTable = {
                 ["Grand_Elder_Power"] = { 
-                    token = "",
+                    token = "Grand Elder Token",
                     list = { "Sleeping Power", "Stirring Spirit", "Hidden Potential", "Power Unleashed", "True Potential", "Limitless Growth", "Potential Unbound" }
                 },
                 ["Frost_Demon_Evolution"] = { 
-                    token = "",
+                    token = "Frost Demon Token",
                     list = { "Second Form", "Third Form", "Final Form", "50% Power", "100% Full Power", "Mecha Form", "Golden Form", "Black Form" }
                 }
             },
             upgradeTable = {
-                ["Dragon_Damage"] = { token = "" },
-                ["Dragon_Energy"] = { token = "" }
+                ["Dragon_Damage"] = { token = "Dragon Blessing Token" },
+                ["Dragon_Energy"] = { token = "Dragon Blessing Token" }
             }
         },
         enemies = {
@@ -737,7 +744,10 @@ local gameData = {
         world = {
             name = "OTHER",
             raids = {
-                ["Green_Planet_Raid"] = {},
+                ["Green_Planet_Raid"] = {
+                    list = { "Eternal Dragon" },
+                    drops = { "Eternal Dragon Token", " Saiyan Lvl Token", "Grand Elder Token", "Frost Demon Token", "Dragon Race Lvl Token", "Obelisk Coin" }
+                },
                 ["Mundo_Raid"] = {},
                 ["Hollow_Raid"] = {},
                 ["Dungeon_Suffering"] = {},
@@ -1207,6 +1217,8 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                         break
                     end
                 end
+            else
+                task.wait(5)
             end
             task.wait(1)
         end
@@ -1509,9 +1521,9 @@ GachaMenu:Toggle("Show Currency",function(bool)
 end)
 
 local sGacha
-local sGachaAmount = 5
+local sGachaAmount = 4
 
-local DropListG1 = GachaMenu:Dropdown("5",{1,2,3,4,5},true,function(SItem)
+local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4},true,function(SItem)
     sGachaAmount = tonumber(SItem)
 end)
 
