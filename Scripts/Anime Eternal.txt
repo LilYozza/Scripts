@@ -30,7 +30,7 @@ local CODES = {"Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code
 local gameData = {
     [0] = {
         world = {
-            name = "OTHER",
+            name = "Dungeon_Lobby",
             raids = {
                 ["Halloween_Raid"] = {},
                 ["Graveyard_Defense"] = {},
@@ -42,6 +42,28 @@ local gameData = {
             upgradeTable = {
                 ["Running_Track_Progression"] = { token = "Running Track Coin" }
             },
+        },
+        enemies = {
+
+        }
+    },
+    [100] = {
+        world = {
+            name = "Dungeon_Lobby_2",
+            raids = {
+                ["Green_Planet_Raid"] = {
+                    list = { "Eternal Dragon" },
+                    drops = { "Eternal Dragon Token", " Saiyan Lvl Token", "Grand Elder Token", "Frost Demon Token", "Dragon Race Lvl Token", "Obelisk Coin" }
+                },
+                ["Mundo_Raid"] = {},
+                ["Hollow_Raid"] = {},
+                ["Dungeon_Suffering"] = {},
+                ["Dungeon_Adventure"] = {},
+                ["Dungeon_Torment"] = {},
+                
+            },
+            gachaTable = {},
+            upgradeTable = {},
         },
         enemies = {
 
@@ -644,13 +666,22 @@ local gameData = {
             raids = {},
             gachaTable = {
                 ["Espada"] = { 
-                    token = "",
+                    token = "Espada Token",
                     list = { "Espada 9", "Espada 8", "Espada 7", "Espada 6", "Espada 5", "Espada 4", "Espada 3", "Espada 2", "Espada 1", "Espada 0" }
                 }
             },
             upgradeTable = {}
         },
-        enemies = {}
+        enemies = {
+            { name = 'Ohime', tokens = {"Scythe Token", "Espada Token"}},
+            { name = 'Ichiga', tokens = {"Scythe Token", "Reiatsu Lvl Token"}},
+            { name = 'Chaddo', tokens = {"Scythe Token", "Zanpakuto Lvl Token"}}, 
+            { name = 'Zayrel', tokens = {"Scythe Token", "Zanpakuto Lvl Token"}},
+            { name = 'Uloqi', tokens = {"Scythe Token", "Bankai Token"}},
+            { name = 'Grimmi', tokens = {"Scythe Token", "Bankai Token"}},
+            { name = 'Cifer', tokens = {"Scythe Token", "Bankai Token", "Zanpakuto Lvl Token"}}, 
+            { name = 'Vasto_Ichige', tokens = {"Scythe Token", "Bankai Token", "Reiatsu Lvl Token"}}, 
+        }
     },
     [22] = {
         world = {
@@ -740,28 +771,6 @@ local gameData = {
             
         }
     },
-    [100] = {
-        world = {
-            name = "OTHER",
-            raids = {
-                ["Green_Planet_Raid"] = {
-                    list = { "Eternal Dragon" },
-                    drops = { "Eternal Dragon Token", " Saiyan Lvl Token", "Grand Elder Token", "Frost Demon Token", "Dragon Race Lvl Token", "Obelisk Coin" }
-                },
-                ["Mundo_Raid"] = {},
-                ["Hollow_Raid"] = {},
-                ["Dungeon_Suffering"] = {},
-                ["Dungeon_Adventure"] = {},
-                ["Dungeon_Torment"] = {},
-                
-            },
-            gachaTable = {},
-            upgradeTable = {},
-        },
-        enemies = {
-
-        }
-    },
 }
 
 
@@ -792,7 +801,7 @@ local Monsters = Debris:WaitForChild("Monsters")
 
 -->Functions<--
 local function openStar(_star, _amount)
-    if not _amount then _amount = 10 end
+    if not _amount then _amount = 20 end
     local args = {
         [1] = {
             ["Open_Amount"] = _amount,
@@ -1152,10 +1161,10 @@ end
 
 
 Auto:Toggle("Auto Quest",function(bool)
-    shared.ToggleARU=bool
+    shared.ToggleAQ=bool
     spawn(function()
         local currentNum
-        while shared.ToggleARU do
+        while shared.ToggleAQ do
 
             local quest = getCurrentQuest()
             local completed = checkComplete(quest)
