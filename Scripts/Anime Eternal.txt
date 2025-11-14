@@ -1375,7 +1375,7 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
             if dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
                 if table.find(tempDungeon, dungeon.name) then print("Removed:", dungeon.name) RemoveFromTable(tempDungeon, dungeon.name) end
                 --if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
-                
+                task.wait(1)
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
                 if not table.find(blacklistWalk, dungeon.name) then
@@ -1410,6 +1410,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
             local currentRaid = getCurrentDungeon()
             if sRaid and currentRaid and currentRaid.inDungeon == false then
                 if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
+                task.wait(1)
                 joinDungeon(sRaid, rMultipler)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
                 if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
