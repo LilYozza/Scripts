@@ -419,7 +419,7 @@ Auto:Toggle("Auto Sell",function(bool)
                     --local newPosition = samHRP.Position + direction * 5
                     -- facingCFrame = CFrame.lookAt(newPosition, samHRP.Position)
 
-                    facingCFrame = samHRP.CFrame * 5
+                    local facingCFrame = samHRP.CFrame * CFrame.new(0, 0, -5)
 
                     MoveTo(facingCFrame) task.wait(1)
                 end
