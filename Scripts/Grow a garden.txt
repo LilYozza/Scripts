@@ -379,7 +379,9 @@ Auto:Toggle("Auto Harvest", function(bool)
                         end
                     end
                 end
+                mod:FireServer(t)
 
+                --[[
                 local spaceLeft = math.max(0, getSpaceLeft())
                 for i = #t, spaceLeft + 1, -1 do
                     t[i] = nil
@@ -393,6 +395,7 @@ Auto:Toggle("Auto Harvest", function(bool)
                     mod:FireServer(batch)
                     task.wait(0.1)
                 end
+                ]]--
             end
             task.wait(0.1)
         end
@@ -412,9 +415,11 @@ Auto:Toggle("Auto Sell",function(bool)
                 if distance > 10 then
                     local hrp = GetHrp()
                     
-                    local direction = (hrp.Position - samHRP.Position).Unit
-                    local newPosition = samHRP.Position + direction * 5
-                    local facingCFrame = CFrame.lookAt(newPosition, samHRP.Position)
+                    --local direction = (hrp.Position - samHRP.Position).Unit
+                    --local newPosition = samHRP.Position + direction * 5
+                    -- facingCFrame = CFrame.lookAt(newPosition, samHRP.Position)
+
+                    facingCFrame = samHRP.CFrame * 5
 
                     MoveTo(facingCFrame) task.wait(1)
                 end
