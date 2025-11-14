@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.3")
+print("v6.4")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -81,7 +81,10 @@ local function checkPlantInventory(_plant, _mutations)
 end
 
 local function checkPlant(_plant, _name, _mutations)
-    local plantDone = _plant:GetAttribute("DoneGrowTime")
+    local plantDone
+    for _,v in pairs(_plant:GetChildren())do
+        plantDone = v:FindFirstChildWhichIsA("ProximityPrompt")
+    end
     if plantDone then
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECKER
         if _mutations and _mutations[1] then 
@@ -364,22 +367,24 @@ Auto:Toggle("Auto Harvest", function(bool)
                 
                 for _, v in pairs(Plants_Physical:GetChildren()) do
                     if _ % 200 == 0 then task.wait() end
-                    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") and not v:GetAttribute("Favorited") then
+                    if not table.find(blacklistHarvest, v.Name) and not v:GetAttribute("Favorited") then
                         if v:GetAttribute("OfflineGrowthTarget") then
                             local Fruits = v:FindFirstChild("Fruits")
                             if Fruits then
                                 for _, fruit in pairs(Fruits:GetChildren()) do
-                                    if fruit:GetAttribute("DoneGrowTime") and not fruit:GetAttribute("Favorited") then
-                                        table.insert(t, fruit)
+                                    if not fruit:GetAttribute("Favorited") then
+                                        --table.insert(t, fruit)
+                                        CollectPlant(fruit)
                                     end
                                 end
                             end
                         else
-                            table.insert(t, v)
+                            --table.insert(t, v)
+                            CollectPlant(v)
                         end
                     end
                 end
-                mod:FireServer(t)
+                --mod:FireServer(t)
 
                 --[[
                 local spaceLeft = math.max(0, getSpaceLeft())
@@ -419,7 +424,8 @@ Auto:Toggle("Auto Sell",function(bool)
                     --local newPosition = samHRP.Position + direction * 5
                     -- facingCFrame = CFrame.lookAt(newPosition, samHRP.Position)
 
-                    local facingCFrame = samHRP.CFrame * CFrame.new(0, 0, -5)
+                    local targetPos = samHRP.CFrame * CFrame.new(0, 0, -5)
+                    local facingCFrame = CFrame.lookAt(targetPos.Position, samHRP.Position)
 
                     MoveTo(facingCFrame) task.wait(1)
                 end
