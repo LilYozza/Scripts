@@ -385,13 +385,13 @@ Auto:Toggle("Auto Harvest", function(bool)
                                 for _, fruit in pairs(Fruits:GetChildren()) do
                                     if not fruit:GetAttribute("Favorited") and not IsMaxInventory() then
                                         --table.insert(t, fruit)
-                                        mod:FireServer(fruit)
+                                        mod:FireServer({fruit}) task.wait()
                                     end
                                 end
                             end
                         else
                             --table.insert(t, v)
-                            mod:FireServer(v)
+                            mod:FireServer({v}) task.wait()
                         end
                     end
                 end
