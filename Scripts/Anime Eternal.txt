@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.4")
+print("v8.5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -668,6 +668,10 @@ local gameData = {
                 ["Espada"] = { 
                     token = "Espada Token",
                     list = { "Espada 9", "Espada 8", "Espada 7", "Espada 6", "Espada 5", "Espada 4", "Espada 3", "Espada 2", "Espada 1", "Espada 0" }
+                },
+                ["Scythes"] = {
+                    token = "Scythe Token",
+                    list = { "Venomleaf", "Cryoscythe", "Toxinfang", "Crimson Thorn", "Bonehowl", "Ashfang", "Phantom Requiem", "Stormreaver" }
                 }
             },
             upgradeTable = {}
@@ -774,6 +778,7 @@ local gameData = {
 }
 
 
+
 local GACHA = {}
 local RAIDS = {}
 local UPGRADES = {}
@@ -849,7 +854,11 @@ local function getClosestMonster(_name, _dungeon)
 	return closestMonster
 end
 
-local function joinDungeon(_name)
+local function joinDungeon(_name, _multipler)
+    if _multipler and not _multipler == 1 then
+        --Progression_Raid_x2
+        _name = _name .. "_x" .. _multipler
+    end
     local args = {
         [1] = {
             ["Action"] = "_Enter_Dungeon",
@@ -1384,6 +1393,11 @@ local RaidList = RaidMenu:Dropdown("Select Raid",RAIDS,true,function(SItem)
     sRaid = SItem
 end)
 
+local rMultipler = 1
+local gMDropList = RaidMenu:Dropdown(rMultipler,{1,2,3},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    rMultipler = SItem
+end)
+
 RaidMenu:Toggle("Auto Raid",function(bool)
     shared.ToggleAR=bool
     spawn(function()
@@ -1392,7 +1406,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
             if sRaid and currentRaid and currentRaid.inDungeon == false then
                 print("Joining:", sRaid)
                 if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
-                joinDungeon(sRaid)
+                joinDungeon(sRaid, rMultipler)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
                 if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
             end
