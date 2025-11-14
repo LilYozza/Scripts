@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.4")
+print("v6.3")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -387,7 +387,7 @@ Auto:Toggle("Auto Harvest", function(bool)
 
                 local counter = 0
                 for _, plant in ipairs(children) do
-                    counter = count + 1
+                    counter = counter + 1
                     if counter % 200 == 0 then task.wait() end
 
                     local name = plant.Name
