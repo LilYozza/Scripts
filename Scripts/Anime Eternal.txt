@@ -855,7 +855,7 @@ local function getClosestMonster(_name, _dungeon)
 end
 
 local function joinDungeon(_name, _multipler)
-    if _multipler and not _multipler == 1 then
+    if _multipler and tonumber(_multipler) ~= 1 then
         --Progression_Raid_x2
         _name = _name .. "_x" .. _multipler
     end
