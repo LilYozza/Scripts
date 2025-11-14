@@ -1150,22 +1150,12 @@ local function getCurrentQuest()
 	return t
 end
 
-local currentNum
+
 Auto:Toggle("Auto Quest",function(bool)
     shared.ToggleARU=bool
     spawn(function()
-        -- SHOW SIDE
-        --[[
-        if shared.ToggleARU then
-            task.spawn(function()
-                while shared.ToggleARU do
-                    Quest_Side_Menu.Visible = true
-                    task.wait(0.1)
-                end
-            end)
-        end]]--
+        local currentNum
         while shared.ToggleARU do
-
 
             local quest = getCurrentQuest()
             local completed = checkComplete(quest)
@@ -1206,28 +1196,24 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                 for _,v in pairs(quest)do
                     if not (v.current and v.max and v.current >= v.max) then
                         local type = v.type:lower()
-                        if type == "defeat" and not running then
+                        if type == "defeat" and not running then  -- ATTACK ENEMY
                             running = true
-                            -- SET AUTO ATTACK ON THIS UNTI
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
-                            --print(qMonster)
                             local mapInfo = findMap(qMonster)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                             end
-                        elseif type == "collect" and not running then
+                        elseif type == "collect" and not running then   -- COLLECT TOKENS
                             running = true
                             local mapInfo = findMap(v.name)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                                 qMonster = mapInfo.enemy:gsub("%s", "_")
                             end
-                        elseif type == "star" then
-                            -- OPEN START
+                        elseif type == "star" then  -- OPEN STARS
                             openStar(v.name)
-                        elseif type == "dungeon" then
-                            --print(v.name)
+                        elseif type == "dungeon" then   -- COMPLETE DUNGEON
                             local firstWord = v.name:match("^(%w+)")  -- "Medium"
                             for _, dungeon in ipairs(defaultDungeons) do
                                 if dungeon:lower():find(firstWord:lower()) then
@@ -1242,7 +1228,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                     end
                 end
             else
-                task.wait(5)
+                task.wait(6)
             end
             task.wait(1)
         end
@@ -1287,22 +1273,22 @@ task.spawn(function()
 			if cMonster then
 				Player.Character:FindFirstChild("HumanoidRootPart").CFrame = cMonster.PrimaryPart.CFrame * CFrame.new(0, 0, 2)
 				repeat
-					task.wait()
                     local dungeon = getCurrentDungeon()
-					if (cMonster and cMonster.Parent) 
-                    or (shared.ToggleACQ and dungeon.inDungeon == true)
-                    or (shared.ToggleAFG and dungeon.inDungeon == true) then
+					if (cMonster and cMonster.Parent) then
 						attack(cMonster.Name)
 					else
 						break
 					end
+                    if (shared.ToggleACQ or shared.ToggleAFG) and dungeon.inDungeon == true then
+                        qMonster = nil
+                        gMonster = nil
+                        break
+                    end
+                    task.wait()
 				until (mode == "AA" and not shared.ToggleAA)
 					or (mode == "AD" and not shared.ToggleAD)
                     or (mode == "QA" and not shared.ToggleACQ)
                     or (mode == "GA" and not shared.ToggleAFG)
-                
-                qMonster = nil
-                gMonster = nil
 			end
 		end
 	end
