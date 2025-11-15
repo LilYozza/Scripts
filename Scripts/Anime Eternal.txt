@@ -332,7 +332,7 @@ local gameData = {
             upgradeTable = {
                 ["Energy_Obelisk"] = { token = "Obelisk Coin" },
                 ["Contract_of_Greed"] = { token = "Greedy Token" },
-                ["Ten_Progression"] = { token = "Ten Token" }
+                ["Ten_Progression"] = { token = "Ten Token", Upgrading_Name = "Ten" }
             }
         },
         enemies = {
@@ -780,7 +780,6 @@ local gameData = {
         }
     },
 }
-
 
 
 local GACHA = {}
@@ -1639,10 +1638,20 @@ end)
 ----------------------------------------------------------------------------------------------------------------------
 ---------------------------------- UPGRADE MENU ----------------------------------------------------------------------
 
+local function getCustomName(_upgrade)
+    for _,v in pairs(gameData)do
+        local t = v.world.upgradeTable[_upgrade]
+        if t then
+            return t.Upgrading_Name
+        end
+    end
+end
+
 local function openUpgrade(_upgrade)
+    local _name = getCustomName() or _upgrade
     local args = {
         [1] = {
-            ["Upgrading_Name"] = _upgrade,
+            ["Upgrading_Name"] = _name,
             ["Action"] = "_Upgrades",
             ["Upgrade_Name"] = _upgrade
         }
