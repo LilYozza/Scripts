@@ -18,7 +18,7 @@ local rs = game:GetService("ReplicatedStorage")
 
 local PGui = Player.PlayerGui
 -->Base Variables<--
-local startAmount = 25
+local startAmount = 30
 local questAmount = startAmount * 6
 
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"
@@ -517,11 +517,15 @@ local gameData = {
                 ["Onomatopoeia"] = { 
                     token = "Onomatopoeia Token",
                     list = { "Common Onomatopoeia", "Uncommon Onomatopoeia", "Rare Onomatopoeia", "Epic Onomatopoeia", "Legendary Onomatopoeia", "Mythical Onomatopoeia", "Phantom Onomatopoeia", "Supreme Onomatopoeia" }
+                },
+                ["Stands"] = { 
+                    token = "Stand Token",
+                    list = { "Door", "Hand", "Zipper Man", "Deadly Queen", "Pale Snake", "Shining Diamond", "Platnium", "World" }
                 }
             },
             upgradeTable = {
                 ["Ripple_Energy"] = { token = "Ripple Token" },
-                ["Stands"] = { token = "Stand Token" }
+                
             }
         },
         enemies = {
