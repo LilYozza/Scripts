@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.7")
+print("v8.8")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -558,7 +558,7 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Damage_Cells"] = { token = "Kakuhou Token" }
+                ["Damage_Cells"] = { token = "Kakuhou Token", Upgrading_Name = "Damage", bench = true }
             }
         },
         enemies = {
@@ -590,8 +590,8 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Akuma_Energy"] = { token = "Akuma Energy Token" },
-                ["Akuma_Damage"] = { token = "Akuma Damage Token" }
+                ["Akuma_Energy"] = { token = "Akuma Energy Token", Upgrading_Name = "Damage", bench = true },
+                ["Akuma_Damage"] = { token = "Akuma Damage Token", Upgrading_Name = "Energy", bench = true }
             }
         },
         enemies = {
@@ -650,8 +650,8 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Dragon_Damage"] = { token = "Dragon Blessing Token" },
-                ["Dragon_Energy"] = { token = "Dragon Blessing Token" }
+                ["Dragon_Damage"] = { token = "Dragon Blessing Token", Upgrading_Name = "Damage", bench = true },
+                ["Dragon_Energy"] = { token = "Dragon Blessing Token", Upgrading_Name = "Energy", bench = true }
             }
         },
         enemies = {
