@@ -590,8 +590,8 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Akuma_Energy"] = { token = "Akuma Energy Token", Upgrading_Name = "Damage", bench = true },
-                ["Akuma_Damage"] = { token = "Akuma Damage Token", Upgrading_Name = "Energy", bench = true }
+                ["Akuma_Energy"] = { token = "Akuma Energy Token", Upgrading_Name = "Energy", bench = true },
+                ["Akuma_Damage"] = { token = "Akuma Damage Token", Upgrading_Name = "Damage", bench = true }
             }
         },
         enemies = {
