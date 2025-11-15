@@ -1648,8 +1648,7 @@ local function getCustomName(_upgrade)
 end
 
 local function openUpgrade(_upgrade)
-    local _name = getCustomName() or _upgrade
-    print(_name)
+    local _name = getCustomName(_upgrade) or _upgrade
     local args = {
         [1] = {
             ["Upgrading_Name"] = _name,
