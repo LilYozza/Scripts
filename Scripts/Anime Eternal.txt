@@ -9,7 +9,7 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.6")
+print("v8.7")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1649,6 +1649,7 @@ end
 
 local function openUpgrade(_upgrade)
     local _name = getCustomName() or _upgrade
+    print(_name)
     local args = {
         [1] = {
             ["Upgrading_Name"] = _name,
