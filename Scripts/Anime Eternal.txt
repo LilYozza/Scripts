@@ -7,6 +7,7 @@ local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
+local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
 print("v8.7")
@@ -459,10 +460,10 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Demon_Lord_Damage"] = { token = "Demon Damage Token" },
-                ["Demon_Lord_Energy"] = { token = "Demon Energy Token" },
-                ["Demon_Lord_Luck"] = { token = "Demon Luck Token" },
-                ["Demon_Lord_Coins"] = { token = "Demon Coins Token" }
+                ["Demon_Lord_Damage"] = { token = "Demon Damage Token", Upgrading_Name = "Damage", bench = true },
+                ["Demon_Lord_Energy"] = { token = "Demon Energy Token", Upgrading_Name = "Energy", bench = true },
+                ["Demon_Lord_Luck"] = { token = "Demon Luck Token", Upgrading_Name = "Luck", bench = true },
+                ["Demon_Lord_Coins"] = { token = "Demon Coins Token", Upgrading_Name = "Coins", bench = true }
             }
         },
         enemies = {
@@ -1642,22 +1643,34 @@ local function getCustomName(_upgrade)
     for _,v in pairs(gameData)do
         local t = v.world.upgradeTable[_upgrade]
         if t then
-            return t.Upgrading_Name
+            return t.Upgrading_Name, t.bench
         end
     end
 end
 
 local function openUpgrade(_upgrade)
-    local _name = getCustomName(_upgrade) or _upgrade
-    local args = {
-        [1] = {
-            ["Upgrading_Name"] = _name,
-            ["Action"] = "_Upgrades",
-            ["Upgrade_Name"] = _upgrade
+    local _name, _bench = getCustomName(_upgrade)
+    if not _name then _name = _upgrade end
+    if not _bench then
+        local args = {
+            [1] = {
+                ["Upgrading_Name"] = _name,
+                ["Action"] = "_Upgrades",
+                ["Upgrade_Name"] = _upgrade
+            }
         }
-    }
 
-    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    else
+        local args = {
+            [1] = {
+                ["Bench_Name"] = _upgrade,
+                ["Action"] = "_Progression",
+                ["Upgrade_Name"] = _name
+            }
+        }
+        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    end
 end
 
 local sUpgrade
@@ -1728,10 +1741,29 @@ StatsMenu:Toggle("Luck",function(bool)
     end)
 end)
 
+----------------------------------------------------------------------------------------------------------------------
+---------------------------------- Exhange ----------------------------------------------------------------------------
+--[[
+ExchangeMenu:Button("Toggle Exchange 1",function()
+    spawn(function()
+    end)
+end)
 
+ExchangeMenu:Button("Toggle Shop 1",function()
+    spawn(function()
+    end)
+end)
 
+ExchangeMenu:Button("Toggle Exchange 2",function()
+    spawn(function()
+    end)
+end)
 
-
+ExchangeMenu:Button("Toggle Shop 2",function()
+    spawn(function()
+    end)
+end)
+--]]
 ----------------------------------------------------------------------------------------------------------------------
 ---------------------------------- CHESTS ----------------------------------------------------------------------------
 local function claimChest(_chest)
