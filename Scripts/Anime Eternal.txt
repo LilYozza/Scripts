@@ -492,8 +492,8 @@ local gameData = {
             },
             upgradeTable = {
                 ["Damage_Obelisk"] = { token = "Obelisk Coin" },
-                ["Swordsman_Energy"] = { token = "Swordsman Energy Token" },
-                ["Swordsman_Damage"] = { token = "Swordsman Damage Token" }
+                ["Swordsman_Energy"] = { token = "Swordsman Energy Token", Upgrading_Name = "Energy", bench = true },
+                ["Swordsman_Damage"] = { token = "Swordsman Damage Token", Upgrading_Name = "Damage", bench = true }
             }
         },
         enemies = {
