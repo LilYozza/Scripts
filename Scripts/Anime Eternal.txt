@@ -1306,7 +1306,7 @@ task.spawn(function()
                         break
                     end
 
-                    if ((shared.ToggleACQ or shared.ToggleAFG) and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
+                    if (((shared.ToggleACQ and mode == "QA") or (shared.ToggleAFG and mode == "GA")) and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
                         qMonster = nil
                         gMonster = nil
                         break
