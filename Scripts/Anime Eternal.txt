@@ -381,7 +381,7 @@ local gameData = {
             name = "Village_of_Sins",
             raids = {
                 ["Sin_Raid"] = {
-                    drops = { "Obelisk Coin" }
+                    drops = { "Obelisk Coin", "Sin Upgrade Token" }
                 }
             },
             gachaTable = {
@@ -395,11 +395,11 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Energy_Progression"] = { token = "Energy" } -- Might need to customize this
-                -- ENERGY
-                -- COINS
-                -- START LUCK
-                -- DAMAGE
+                ["Energy_Progression"] = { token = "Energy" }, -- Might need to customize this
+                ["Sin_Upgrades_Energy"] = { token = "Sin Upgrade Token", Upgrading_Name = "Energy" },
+                ["Sin_Upgrades_Coins"] = { token = "Sin Upgrade Token", Upgrading_Name = "Coins" },
+                ["Sin_Upgrades_Star_Luck"] = { token = "Sin Upgrade Token", Upgrading_Name = "Star_Luck" },
+                ["Sin_Upgrades_Damage"] = { token = "Sin Upgrade Token", Upgrading_Name = "Damage" },
             }
         },
         enemies = {
@@ -781,6 +781,7 @@ local gameData = {
         }
     },
 }
+
 
 
 local GACHA = {}
@@ -1649,6 +1650,8 @@ local function getCustomName(_upgrade)
 end
 
 local function openUpgrade(_upgrade)
+    --FOR SIN UPGRADES
+    if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" end
     local _name, _bench = getCustomName(_upgrade)
     if not _name then _name = _upgrade end
     if not _bench then
