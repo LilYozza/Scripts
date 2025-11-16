@@ -7,10 +7,10 @@ local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
 local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
-local ExchangeMenu = w:CreateFolder("Exhange")
+--local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.8")
+print("v8.9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -25,8 +25,8 @@ local questAmount = startAmount * 6
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"
 }
 
---AS OF Update 24 - 14/11/2025
-local CODES = {"Update24", "710KFav", "715KFav", "CodeGeass", "385kLikes","Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code", "Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20", "Update19P3", "315KLikes", "580KFav", "585KFav", "150MVisits", "RandomUpdate19P2Code?", "Update19P2Shutdown2", "Update19P2Shutdown", "Update19P2Delay", "125MVisits", "575KFav", "570KFav", "310KLikes", "Update19P2", "Update19", "300KLikes", "305KLikes", "560KFav", "565KFav", "Update19Delay", "JustACodeFor19Upd", "Update18P3Keys", "Update18P3", "290KLikes", "295KLikes", "550KFav", "555KFav", "Upd18Code", "Code2Upd18", "Update18P2", "285KLikes", "535KFav", "540KFav", "545KFav", "TheSmirkUp18!", "NiceOnUpdate18?", "IThinkYouAreLying", "ImAtomic!", "Update18", "280KLikes", "520KFav", "525KFav", "530KFav", "ImBombastic", "RandomCodeUPD17P3", "Update17P3", "515KFav", "510KFav", "275KLikes", "270KLikes", "100MVisits", "Super88KOnlineCode", "OnlineCodeSuper89K!", "JustOneMoreUpdate17P2Code", "ThisIsSuperCoolCodeFor84k", "OkayWhat?!85K", "NoWayWeWillHit86k", "87kNoWay!!", "Update17P2", "260KLikes", "265KLikes", "500KFav", "505KFav", "Record75K?", "Record76K?", "Record77K?", "InsaneRecord78K?", "NoWayRecord79K?!", "80KPeoplePlaying?!", "PeoplePlayingAt81K", "People82KPlaying", "ThereIs83KPlayersOn?!", "WhyNotGiveSundayCodeUp17", "MoreFeaturesOnSundayUpdate17", "Update17", "250KLikes", "255KLikes", "490KFav", "495KFav", "Update17BalanceWhatisThat?", "SaveMeUpdate16Part3Fix", "Update16P3", "240KLikes", "245KLikes", "475KFav", "480KFav", "Update16P2Fix2", "NewRecord68K?", "NewRecord69K?", "NoWayWeCanHit70K?", "71KImpossibleRecord!", "Insane72kPlayersOnline", "73KPlayers", "74KPlayers", "Update16P2Fix", "Update16P2", "235KLikes", "460KFav", "465KFav", "470KFav", "80MVisits", "Record67K?", "FunnyGreenPlanetShutdown2", "FunnyGreenPlanetShutdown", "FunnyGreenPlanet", "GreenPlanetCode", "455KFav", "450KFav", "230KLikes", "225KLikes", "Update16", "MobileUIFix16Up", "DungeonUp16Fix", "445KFav", "440KFav", "220KLikes", "215KLikes", "Update15P3", "Update15P2", "205KLikes", "210KLikes", "430KFav", "435KFav", "54kPlayers", "55kPlayers", "56K?!", "57KNewRecord!!", "NoWay58KOnline", "59KOnlinePlayers?!", "ThereIsNoWay60k!", "61kThereIsNoWay", "WhatPlayer62kRecord!", "63kRecord!", "CursedFixes", "64kRecord!", "DungeonUp15Fix", "65kRecord!", "66kRecord!", "BugsUpdate15", "2BugsUpdate15", "Update15Delay", "Update15", "195KLikes", "200KLikes", "420KFav", "425KFav", "Update14P3", "185KLikes", "190KLikes", "410KFav", "415KFav", "51kPlayers", "52kPlayers", "53kPlayers", "?43KRecord?", "44KRecord??", "Record45K?!", "?Record46K?!", "NewRecord47k", "SupaRecord48k", "Supa49kRecord", "Ultra50KRecord", "Update14P2", "175KLikes", "180KLikes", "400KFav", "405KFav", "?42K?", "?41KRecord?", "SomeQuickFix1a", "SomeQuickFix2", "40KRecord?", "39KRecordCcu", "DungeonQuickFix", "Update14", "170KLikes", "50MVisits", "390KFav", "395KFav", "Update13P3", "165KLikes", "375KFav", "380KFav", "385KFav", "1GhoulKeyNoMore", "IWantKey", "Online36K", "37KPlayersOn", "38KRecord", "Update13P2", "365KFav", "370KFav", "50K", "160KLikes", "34KOnline", "35KCCU", "Update13", "155KLikes", "350KFav", "360KFav", "40MVisits", "DungeonFall1", "Update12.5", "31KPlayers", "32KPlayers", "33KPlayers", "150KLikes", "Update12.2", "35MVisits", "140KLikes", "340KFav", "29KPlayers", "30kOnline", "Update12.2Late", "PotionFix1", "25KPlayers", "26KPlayers", "27KPlayers", "28KPlayers", "BugFixSome", "Update12", "Stands", "135KFav", "32MVisits", "40K", "330KFAV", "Restaurant", "Update11.5", "320KFav", "130KLikes", "30MVisits", "TheEyes", "23KPlayers", "24KPlayers", "WeaponFix", "WhyNotOneMore2", "Update11Small", "22KPlayers", "125KLikes", "315KFav", "WhyNotOneMore", "BugFixUpdate11", "18KPlayers", "19KPlayers", "20KPlayers", "21KPlayers", "Update11", "115KLIKES", "120KLIKES", "310KFAV", "17KPlayers", "UpdateDelay", "Update10Part2", "25MVisits", "300KFAV", "110KLIKES", "DefenseRaidFix", "Tinycode", "EnergyFix", "DungeonFixed", "Update10", "20MVisits", "280KFAV", "290KFAV", "105KLikes", "RefreshCode", "Update9Part2", "95KLIKES", "270KFAV", "100KLIKES", "WaitRoom", "MaxButtonNextUpdate", "DungFix?", "16KPlayers", "85KLIKES", "Update9Part1", "90KLIKES", "260KFAV", "JewelFix2", "80KLIKES", "Update8P2", "250KFAV", "240KFAV", "12KPlayers", "13KPlayers", "14KPlayers", "Update8P1", "75KLIKES", "JewelFix", "Update8", "70KLikes", "11KPlayers", "230KFAV", "13MVISITS", "BugFixesUp7", "10KPlayers", "ObeliskBug", "Update7Part2", "220KFav", "12MVISITS", "65KLikes", "9KPlayers", "Update7Part1", "60KLikes", "210KFav", "10MVISITS", "55KLikes", "8KPlayers", "50KLikes", "195KAV", "200KFAV", "Update6QoL", "Refresh", "175KFAV", "Update6", "5MVisits", "6MVisits", "190KFAV", "Update5Part2", "45KLIKES", "160KFAV", "140KFAV", "SomeBugFix1", "Update5Part1", "40KLikes", "35KLikes", "7KPlayers", "125KFAV", "30KLIKES", "SorryForShutdown3", "SorryForShutdown2", "SorryForSouls", "4MVisits", "AFKFix?", "Update4", "3MVISITS", "6KPlayers", "25KLIKES", "100KFAV", "2MVisits", "75KFav", "60KFav", "20KLikes", "Update3Part2", "ShopFix", "SorryForDelay1", "12K5Likes", "Update3", "50KFAV", "15KLikes", "1MVisits", "Update2Part2", "40KFAV", "30KFAV", "10KLIKES", "5KPlayers", "4KPlayers", "SorryForBugs3", "SorryForBugs2", "SorryForBugs", "Update2", "5KLikes", "500KVISITS", "20KFAV", "15KFAV", "2K5Likes", "10KFav", "5KFav", "2KPlayers", "ResetFix", "AMAZING", "2500FAV", "1KLikes", "750likes"}
+--AS OF Update 24 - Part 2 16/11/2025
+local CODES = {"Update24P2", "720KFav", "725KFav", "230MVisits", "Update24Part2Code", "Update24", "710KFav", "715KFav", "CodeGeass", "385kLikes","Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code", "Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20", "Update19P3", "315KLikes", "580KFav", "585KFav", "150MVisits", "RandomUpdate19P2Code?", "Update19P2Shutdown2", "Update19P2Shutdown", "Update19P2Delay", "125MVisits", "575KFav", "570KFav", "310KLikes", "Update19P2", "Update19", "300KLikes", "305KLikes", "560KFav", "565KFav", "Update19Delay", "JustACodeFor19Upd", "Update18P3Keys", "Update18P3", "290KLikes", "295KLikes", "550KFav", "555KFav", "Upd18Code", "Code2Upd18", "Update18P2", "285KLikes", "535KFav", "540KFav", "545KFav", "TheSmirkUp18!", "NiceOnUpdate18?", "IThinkYouAreLying", "ImAtomic!", "Update18", "280KLikes", "520KFav", "525KFav", "530KFav", "ImBombastic", "RandomCodeUPD17P3", "Update17P3", "515KFav", "510KFav", "275KLikes", "270KLikes", "100MVisits", "Super88KOnlineCode", "OnlineCodeSuper89K!", "JustOneMoreUpdate17P2Code", "ThisIsSuperCoolCodeFor84k", "OkayWhat?!85K", "NoWayWeWillHit86k", "87kNoWay!!", "Update17P2", "260KLikes", "265KLikes", "500KFav", "505KFav", "Record75K?", "Record76K?", "Record77K?", "InsaneRecord78K?", "NoWayRecord79K?!", "80KPeoplePlaying?!", "PeoplePlayingAt81K", "People82KPlaying", "ThereIs83KPlayersOn?!", "WhyNotGiveSundayCodeUp17", "MoreFeaturesOnSundayUpdate17", "Update17", "250KLikes", "255KLikes", "490KFav", "495KFav", "Update17BalanceWhatisThat?", "SaveMeUpdate16Part3Fix", "Update16P3", "240KLikes", "245KLikes", "475KFav", "480KFav", "Update16P2Fix2", "NewRecord68K?", "NewRecord69K?", "NoWayWeCanHit70K?", "71KImpossibleRecord!", "Insane72kPlayersOnline", "73KPlayers", "74KPlayers", "Update16P2Fix", "Update16P2", "235KLikes", "460KFav", "465KFav", "470KFav", "80MVisits", "Record67K?", "FunnyGreenPlanetShutdown2", "FunnyGreenPlanetShutdown", "FunnyGreenPlanet", "GreenPlanetCode", "455KFav", "450KFav", "230KLikes", "225KLikes", "Update16", "MobileUIFix16Up", "DungeonUp16Fix", "445KFav", "440KFav", "220KLikes", "215KLikes", "Update15P3", "Update15P2", "205KLikes", "210KLikes", "430KFav", "435KFav", "54kPlayers", "55kPlayers", "56K?!", "57KNewRecord!!", "NoWay58KOnline", "59KOnlinePlayers?!", "ThereIsNoWay60k!", "61kThereIsNoWay", "WhatPlayer62kRecord!", "63kRecord!", "CursedFixes", "64kRecord!", "DungeonUp15Fix", "65kRecord!", "66kRecord!", "BugsUpdate15", "2BugsUpdate15", "Update15Delay", "Update15", "195KLikes", "200KLikes", "420KFav", "425KFav", "Update14P3", "185KLikes", "190KLikes", "410KFav", "415KFav", "51kPlayers", "52kPlayers", "53kPlayers", "?43KRecord?", "44KRecord??", "Record45K?!", "?Record46K?!", "NewRecord47k", "SupaRecord48k", "Supa49kRecord", "Ultra50KRecord", "Update14P2", "175KLikes", "180KLikes", "400KFav", "405KFav", "?42K?", "?41KRecord?", "SomeQuickFix1a", "SomeQuickFix2", "40KRecord?", "39KRecordCcu", "DungeonQuickFix", "Update14", "170KLikes", "50MVisits", "390KFav", "395KFav", "Update13P3", "165KLikes", "375KFav", "380KFav", "385KFav", "1GhoulKeyNoMore", "IWantKey", "Online36K", "37KPlayersOn", "38KRecord", "Update13P2", "365KFav", "370KFav", "50K", "160KLikes", "34KOnline", "35KCCU", "Update13", "155KLikes", "350KFav", "360KFav", "40MVisits", "DungeonFall1", "Update12.5", "31KPlayers", "32KPlayers", "33KPlayers", "150KLikes", "Update12.2", "35MVisits", "140KLikes", "340KFav", "29KPlayers", "30kOnline", "Update12.2Late", "PotionFix1", "25KPlayers", "26KPlayers", "27KPlayers", "28KPlayers", "BugFixSome", "Update12", "Stands", "135KFav", "32MVisits", "40K", "330KFAV", "Restaurant", "Update11.5", "320KFav", "130KLikes", "30MVisits", "TheEyes", "23KPlayers", "24KPlayers", "WeaponFix", "WhyNotOneMore2", "Update11Small", "22KPlayers", "125KLikes", "315KFav", "WhyNotOneMore", "BugFixUpdate11", "18KPlayers", "19KPlayers", "20KPlayers", "21KPlayers", "Update11", "115KLIKES", "120KLIKES", "310KFAV", "17KPlayers", "UpdateDelay", "Update10Part2", "25MVisits", "300KFAV", "110KLIKES", "DefenseRaidFix", "Tinycode", "EnergyFix", "DungeonFixed", "Update10", "20MVisits", "280KFAV", "290KFAV", "105KLikes", "RefreshCode", "Update9Part2", "95KLIKES", "270KFAV", "100KLIKES", "WaitRoom", "MaxButtonNextUpdate", "DungFix?", "16KPlayers", "85KLIKES", "Update9Part1", "90KLIKES", "260KFAV", "JewelFix2", "80KLIKES", "Update8P2", "250KFAV", "240KFAV", "12KPlayers", "13KPlayers", "14KPlayers", "Update8P1", "75KLIKES", "JewelFix", "Update8", "70KLikes", "11KPlayers", "230KFAV", "13MVISITS", "BugFixesUp7", "10KPlayers", "ObeliskBug", "Update7Part2", "220KFav", "12MVISITS", "65KLikes", "9KPlayers", "Update7Part1", "60KLikes", "210KFav", "10MVISITS", "55KLikes", "8KPlayers", "50KLikes", "195KAV", "200KFAV", "Update6QoL", "Refresh", "175KFAV", "Update6", "5MVisits", "6MVisits", "190KFAV", "Update5Part2", "45KLIKES", "160KFAV", "140KFAV", "SomeBugFix1", "Update5Part1", "40KLikes", "35KLikes", "7KPlayers", "125KFAV", "30KLIKES", "SorryForShutdown3", "SorryForShutdown2", "SorryForSouls", "4MVisits", "AFKFix?", "Update4", "3MVISITS", "6KPlayers", "25KLIKES", "100KFAV", "2MVisits", "75KFav", "60KFav", "20KLikes", "Update3Part2", "ShopFix", "SorryForDelay1", "12K5Likes", "Update3", "50KFAV", "15KLikes", "1MVisits", "Update2Part2", "40KFAV", "30KFAV", "10KLIKES", "5KPlayers", "4KPlayers", "SorryForBugs3", "SorryForBugs2", "SorryForBugs", "Update2", "5KLikes", "500KVISITS", "20KFAV", "15KFAV", "2K5Likes", "10KFav", "5KFav", "2KPlayers", "ResetFix", "AMAZING", "2500FAV", "1KLikes", "750likes"}
 
 local gameData = {
     [0] = {
@@ -111,10 +111,6 @@ local gameData = {
                     token = "Pirate Crew Token",
                     list = { "Whitebeard Pirates", "Cross Guild", "Big Mom Pirates", "Beast Pirates", "Blackbeard Pirates", "Straw Hat Pirates" }
                 },
-                ["Swords"] = { 
-                    token = "Sword Token",
-                    list = { "Bloodthorn", "Eclipse Warden", "Obsidian Reaver", "Aquarius Edge", "Doomsoul", "Redmourne", "Venomstrike" }
-                },
                 ["Demon_Fruits"] = { 
                     token = "Demon Fruit Token",
                     list = { "Bomb Fruit", "Rubber Fruit", "Sand Fruit", "Flame Fruit", "Smoke Fruit", "Magma Fruit", "Revive Fruit", "String Fruit", "Human Fruit", "Dark Fruit", "Quake Fruit", "Money Fruit", "Dough Fruit", "Phoenix Fruit" }
@@ -122,6 +118,12 @@ local gameData = {
             },
             upgradeTable = {
                 ["Haki_Upgrade"] = { token = "Haki Token" }
+            },
+            weaponTable = {
+                ["Swords"] = { 
+                    token = "Sword Token",
+                    list = { "Bloodthorn", "Eclipse Warden", "Obsidian Reaver", "Aquarius Edge", "Doomsoul", "Redmourne", "Venomstrike" }
+                },
             }
         },
         enemies = {
@@ -359,12 +361,14 @@ local gameData = {
                     token = "Families Token",
                     list = { "Gitce Family", "Leonhart Family", "Braun Family", "Tybur Family", "Ackerman Family", "Yeager Family", "Reiss Family" }
                 },
+            },
+            upgradeTable = {},
+            fighterTable = {
                 ["Titans"] = {
                     token = "Titan Token",
                     list = { "Jaw Titan", "Female Titan", "Beast Titan", "Armored Titan", "Warhammer Titan", "Attack Titan", "Colossal Titan" }
-                }
+                }                
             },
-            upgradeTable = {}
         },
         enemies = {
             { name = 'Armim', tokens = {"Families Token"}}, 
@@ -519,14 +523,16 @@ local gameData = {
                     token = "Onomatopoeia Token",
                     list = { "Common Onomatopoeia", "Uncommon Onomatopoeia", "Rare Onomatopoeia", "Epic Onomatopoeia", "Legendary Onomatopoeia", "Mythical Onomatopoeia", "Phantom Onomatopoeia", "Supreme Onomatopoeia" }
                 },
-                ["Stands"] = { 
-                    token = "Stand Token",
-                    list = { "Door", "Hand", "Zipper Man", "Deadly Queen", "Pale Snake", "Shining Diamond", "Platnium", "World" }
-                }
             },
             upgradeTable = {
                 ["Ripple_Energy"] = { token = "Ripple Token" },
                 
+            },
+            fighterTable = {
+                ["Stands"] = { 
+                    token = "Stand Token",
+                    list = { "Door", "Hand", "Zipper Man", "Deadly Queen", "Pale Snake", "Shining Diamond", "Platnium", "World" }
+                }
             }
         },
         enemies = {
@@ -674,12 +680,14 @@ local gameData = {
                     token = "Espada Token",
                     list = { "Espada 9", "Espada 8", "Espada 7", "Espada 6", "Espada 5", "Espada 4", "Espada 3", "Espada 2", "Espada 1", "Espada 0" }
                 },
+            },
+            upgradeTable = {},
+            weaponTable = {
                 ["Scythes"] = {
                     token = "Scythe Token",
                     list = { "Venomleaf", "Cryoscythe", "Toxinfang", "Crimson Thorn", "Bonehowl", "Ashfang", "Phantom Requiem", "Stormreaver" }
                 }
-            },
-            upgradeTable = {}
+            }
         },
         enemies = {
             { name = 'Ohime', tokens = {"Scythe Token", "Espada Token"}},
@@ -801,6 +809,8 @@ local gameData = {
 local GACHA = {}
 local RAIDS = {}
 local UPGRADES = {}
+local WEAPONS = {}
+local FIGHTERS = {}
 
 local function IntData()
     for i,v in pairs(gameData)do
@@ -812,6 +822,16 @@ local function IntData()
         end
         for name, k in pairs(v.world.upgradeTable) do
             table.insert(UPGRADES, name)
+        end
+        if v.world.weaponTable then
+            for name, k in pairs(v.world.weaponTable) do
+                table.insert(WEAPONS, name)
+            end
+        end
+        if v.world.fighterTable then
+            for name, k in pairs(v.world.fighterTable) do
+                table.insert(FIGHTERS, name)
+            end
         end
     end
 end
@@ -1700,6 +1720,23 @@ UpgradeMenu:Toggle("Auto Upgrade",function(bool)
         while shared.ToggleAU do
             if sUpgrade then
                 openUpgrade(sUpgrade)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+local supgrade2
+local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",{unpack(WEAPONS), unpack(FIGHTERS)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    supgrade2 = SItem
+end)
+
+UpgradeMenu:Toggle("Auto Buy",function(bool)
+    shared.ToggleABU=bool
+    spawn(function()
+        while shared.ToggleABU do
+            if supgrade2 then
+                openUpgrade(supgrade2)
             end
             task.wait(1)
         end
