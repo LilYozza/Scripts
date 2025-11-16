@@ -1650,9 +1650,8 @@ local function getCustomName(_upgrade)
 end
 
 local function openUpgrade(_upgrade)
-    --FOR SIN UPGRADES
-    if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" end
     local _name, _bench = getCustomName(_upgrade)
+    if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" end --FOR SIN UPGRADES
     if not _name then _name = _upgrade end
     if not _bench then
         local args = {
