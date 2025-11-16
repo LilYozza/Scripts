@@ -698,17 +698,31 @@ local gameData = {
             raids = {},
             gachaTable = {
                 ["Shadow_Garden"] = { 
-                    token = "",
+                    token = "Shadow Garden Token",
                     list = { "Operative", "Agent", "Enforcer", "Commander", "Division Head", "Shadow Council Member", "The First Shadow", "The Eminence" }
                 },
                 ["Shadow_Arts"] = { 
-                    token = "",
+                    token = "Shadow Arts Token",
                     list = { "Silent Step", "Shadow Bind", "Mirage Strike", "Eclipse Slash", "Abyssal Blade", "Void Erasure", "Eternal Shadow Waltz", "i Am Atomic" }
                 }
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["Eminence_Energy"] = { token = "Eminence Coin", Upgrading_Name = "Energy", bench = true },
+                ["Eminence_Damage"] = { token = "Eminence Coin", Upgrading_Name = "Damage", bench = true },
+                ["Eminence_Coins"] = { token = "Eminence Coin", Upgrading_Name = "Coins", bench = true },
+                ["Eminence_Luck"] = { token = "Eminence Coin", Upgrading_Name = "Luck", bench = true }
+            }
         },
-        enemies = {}
+        enemies = {
+            { name = 'Cyd', tokens = {"Shadow Garden Token", "Eminence Coin"}}, 
+            { name = 'Zeta', tokens = {"Shadow Arts Token", "Eminence Coin"}}, 
+            { name = 'Delta', tokens = {"Garden Lvl Token", "Eminence Coin"}}, 
+            { name = 'Beta', tokens = {"Arts Lvl Token", "Eminence Coin"}}, 
+            { name = 'Gamma', tokens = {"Eminence Coin"}}, 
+            { name = 'Alpha', tokens = {"Eminence Coin"}}, 
+            { name = 'Blood_Queen', tokens = {"Garden Lvl Token", "Arts Lvl Token", "Eminence Coin"}},
+            { name = 'Shadow', tokens = {"Garden Lvl Token", "Arts Lvl Token", "Eminence Coin"}, type = "boss"}, 
+        }
     },
     [23] = {
         world = {
