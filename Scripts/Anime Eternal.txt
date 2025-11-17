@@ -1736,7 +1736,7 @@ UpgradeMenu:Toggle("Auto Buy",function(bool)
     spawn(function()
         while shared.ToggleABU do
             if supgrade2 then
-                openUpgrade(supgrade2)
+                openGacha(supgrade2, sGachaAmount)
             end
             task.wait(1)
         end
