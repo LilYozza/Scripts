@@ -1321,7 +1321,7 @@ end)
 
 
 
-local sMonster, gMonster
+local sMonster, gMonster, uMonster
 local EmenyNameList = getMonstersNames()
 local EmenyList = Auto:Dropdown("Select Emeny",{"All",unpack(EmenyNameList)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sMonster = SItem
@@ -1330,13 +1330,15 @@ end)
 
 task.spawn(function()
 	while task.wait(0.1) do
-		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ or shared.ToggleAFG then
+		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ or shared.ToggleAFG or shared.ToggleAFU then
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
             if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then -- QUESTS
                 cMonster = getClosestMonster(qMonster) mode = "QA"
             elseif shared.ToggleAFG and gMonster and dungeon and dungeon.inDungeon == false then -- GACHAS
                 cMonster = getClosestMonster(gMonster) mode = "GA"
+            elseif shared.ToggleAFU and uMonster and dungeon and dungeon.inDungeon == false then -- UPGRADES
+                cMonster = getClosestMonster(uMonster) mode = "UA"
 			elseif shared.ToggleAA and dungeon and dungeon.inDungeon == false then
 				cMonster = getClosestMonster(sMonster) mode = "AA"
 			elseif shared.ToggleAD and dungeon and dungeon.inDungeon == true then
@@ -1355,9 +1357,10 @@ task.spawn(function()
                         break
                     end
 
-                    if (((shared.ToggleACQ and mode == "QA") or (shared.ToggleAFG and mode == "GA")) and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
+                    if ((mode == "QA" or mode == "GA" or mode == "UA") and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
                         qMonster = nil
                         gMonster = nil
+                        uMonster = nil
                         break
                     end
 
@@ -1366,6 +1369,7 @@ task.spawn(function()
                     or (mode == "AD" and not shared.ToggleAD)
                     or (mode == "QA" and not shared.ToggleACQ)
                     or (mode == "GA" and not shared.ToggleAFG)
+                    or (mode == "UA" and not shared.ToggleAFU)
 			end
 		end
 	end
@@ -1675,7 +1679,7 @@ GachaMenu:Toggle("Auto Farm",function(bool)
                     gMonster = mapInfo.enemy
                     TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                 else
-                    print("nope")
+                    print("Gacha: Map Data Coulde not be Found For:", sUpgrade)
                 end
             end
             task.wait(1)
@@ -1724,7 +1728,7 @@ local function openUpgrade(_upgrade)
 end
 
 local sUpgrade
-local DropListU = UpgradeMenu:Dropdown("Select Upgrade",UPGRADES,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropListU = UpgradeMenu:Dropdown("Select Upgrade",UPGRADES,true,function(SItem)
     sUpgrade = SItem
 end)
 
@@ -1740,8 +1744,27 @@ UpgradeMenu:Toggle("Auto Upgrade",function(bool)
     end)
 end)
 
+local tempSSelect2
+UpgradeMenu:Toggle("Auto Farm",function(bool)
+    shared.ToggleAFU=bool
+    spawn(function()
+        while shared.ToggleAFU do
+            if sUpgrade then
+                local mapInfo = findMap(sUpgrade)
+                if mapInfo then
+                    gMonster = mapInfo.enemy
+                    TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                else
+                    print("Upgrade: Map Data Coulde not be Found For:", sUpgrade)
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
 local supgrade2
-local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",{unpack(WEAPONS), unpack(FIGHTERS)},true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",{unpack(WEAPONS), unpack(FIGHTERS)},true,function(SItem)
     supgrade2 = SItem
 end)
 
