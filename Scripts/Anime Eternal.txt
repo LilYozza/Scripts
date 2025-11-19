@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v8.9")
+print("v9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1089,7 +1089,7 @@ local function findMap(_input)
             if _input and e and e.tokens then
                 local isBoss = e.type == "boss"
                 local nameMatch = e.name:lower():gsub("_", " ") == _input:lower():gsub("_", " ")
-                local tokenMatch = ((v.world.gachaTable[_input] and table.find(e.tokens, v.world.gachaTable[_input].token))) or table.find(e.tokens, _input)
+                local tokenMatch = ((v.world.gachaTable[_input] and table.find(e.tokens, v.world.gachaTable[_input].token)) or table.find(e.tokens, _input) or (v.world.upgradeTable[_input] and table.find(e.tokens, v.world.upgradeTable[_input].token)))
                 if nameMatch or tokenMatch then
                     return {world = v.world.name, enemy = e.name, tokens = e.tokens, index = i, isBoss = isBoss}
                 end
@@ -1679,7 +1679,7 @@ GachaMenu:Toggle("Auto Farm",function(bool)
                     gMonster = mapInfo.enemy
                     TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                 else
-                    print("Gacha: Map Data Coulde not be Found For:", sUpgrade)
+                    print("Gacha: Map Data Coulde not be Found For:", sGachaAmount)
                 end
             end
             task.wait(1)
@@ -1744,8 +1744,8 @@ UpgradeMenu:Toggle("Auto Upgrade",function(bool)
     end)
 end)
 
-local tempSSelect2
-UpgradeMenu:Toggle("Auto Farm",function(bool)
+
+UpgradeMenu:Toggle("Farm Token",function(bool)
     shared.ToggleAFU=bool
     spawn(function()
         while shared.ToggleAFU do
