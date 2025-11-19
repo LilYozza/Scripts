@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9")
+print("v9.1")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1752,7 +1752,7 @@ UpgradeMenu:Toggle("Farm Token",function(bool)
             if sUpgrade then
                 local mapInfo = findMap(sUpgrade)
                 if mapInfo then
-                    gMonster = mapInfo.enemy
+                    uMonster = mapInfo.enemy
                     TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                 else
                     print("Upgrade: Map Data Coulde not be Found For:", sUpgrade)
