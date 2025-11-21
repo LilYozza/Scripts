@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.6")
+print("v6.8")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -249,14 +249,14 @@ if SmithingEvent then
                             task.wait(1)
                         end
                     else
-                        print("PLANT - not found, harvesting 10 plants")
-                        local t = getFruit(10)
+                        --print("PLANT - not found, harvesting 50 plants")
+                        local t = getFruit(50)
                         mod:FireServer(t)
                         -- Harvest Plant Then Equip Plant 
                     end
                 end
                 if smithData.SubmittedGear == false then
-                    local item = checkBackpack("Watering Can", 100)
+                    local item = checkBackpack("Watering Can", 50)
                     if item then
                         --print("GEAR - found:", item)
                         local hum = Player.Character:WaitForChild("Humanoid")
@@ -268,7 +268,7 @@ if SmithingEvent then
                     end
                 end
                 if smithData.SubmittedPet == false then
-                    local item = checkBackpack("Common Egg", 100)
+                    local item = checkBackpack("Common Egg")
                     if item then
                         --print("EGG - found:", item)
                         local hum = Player.Character:WaitForChild("Humanoid")
@@ -283,25 +283,6 @@ if SmithingEvent then
             end
         end)
     end)
-
-    --[[
-    
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("PetMutationMachineService_RE"):FireServer(unpack(args))
-
-        -- Submit Gear Smithing Event
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitGearRE"):FireServer()
-
-        -- Submit Egg Smithing Event
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitPetRE"):FireServer()
-
-        -- Submit Fruit Smithing Event
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitFruitRE"):FireServer()    
-    
-
-    ]]
-
-
-
 end
  
 
@@ -585,7 +566,11 @@ StockMenu:Toggle("Buy Eggs",function(bool)
     shared.ToggleBE=bool
     spawn(function()
         while shared.ToggleBE do
-            buyAllStock(__eggs)
+            for _,v in pairs(ALLDATA.PetEggStock.Stocks)do
+                if v.Stock > 0 then
+                    GameEvents:WaitForChild("BuyPetEgg"):FireServer(v.EggName) task.wait(0.1)
+                end
+            end
             task.wait(1)
         end
     end)
