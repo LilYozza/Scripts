@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.1")
+print("v7.2")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -194,16 +194,17 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
 end
 
 local blacklistHarvest = {}
-local function getFruit(_amount)
+local function getFruit(_amount, _blacklist)
+    _blacklist = _blacklist or {}
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
         counter = counter + 1
         if counter % 50 == 0 then task.wait() end
 
-        if not table.find(blacklistHarvest, plant.Name) then
+        if not table.find(_blacklist, plant.Name) then
             local fruitsFolder = plant:FindFirstChild("Fruits")
-            if fruitsFolder then
+            if not plant:HasTag("Harvestable") and fruitsFolder then
                 for _, fruit in ipairs(fruitsFolder:GetChildren()) do
                     local cFruit = checkPlant(fruit)
                     if cFruit then t[#t+1] = fruit end
@@ -222,7 +223,6 @@ end
 local SmithingEvent = UpdateItems:WaitForChild("SmithingEvent", 5)
 if SmithingEvent then
    local EventMenu = w:CreateFolder("Smithing")
-   local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
    --local EventShop = ALLDATA.EventShopStock
 
     --SmithingEventData
@@ -289,6 +289,7 @@ if SmithingEvent then
         shared.ToggleSCE=bool
         spawn(function()
             while shared.ToggleSCE do
+                local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
                 if craftingTable then
                     -- check if already crafting
                     if not next(craftingTable.CraftingItem) then
@@ -523,7 +524,7 @@ Auto:Toggle("Auto Harvest", function(bool)
     task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
-                local t = getFruit()
+                local t = getFruit(nil,blacklistHarvest)
                 shuffle(t)
                 mod:FireServer(t)
 
