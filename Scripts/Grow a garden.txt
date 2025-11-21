@@ -123,14 +123,16 @@ local function checkPlantGarden(_name, _mutations)
     end
 end
 
-local function checkBackpack(_item, _hardMatch)
+local function checkBackpack(_item, _amount)
     if not _item then return end
 
     local tool = Player.Character:FindFirstChildOfClass("Tool")
     if tool then
         local cAttr = tool:GetAttribute("c")
         local hAttr = tool:GetAttribute("h")
-        if cAttr == _item or hAttr == _item or (tool.Name and tool.Name:lower():match(_item:lower())) then
+        local eAttr = tool:GetAttribute("e")
+        if (cAttr == _item or hAttr == _item or (tool.Name and tool.Name:lower():match(_item:lower())))
+           and (not _amount or (eAttr and eAttr >= _amount)) then
             return tool, cAttr
         end
     end
@@ -139,7 +141,9 @@ local function checkBackpack(_item, _hardMatch)
         if v:IsA("Tool") then
             local cAttr = v:GetAttribute("c")
             local hAttr = v:GetAttribute("h")
-            if cAttr == _item or hAttr == _item or (v.Name and v.Name:lower():match(_item:lower())) then
+            local eAttr = v:GetAttribute("e")
+            if (cAttr == _item or hAttr == _item or (v.Name and v.Name:lower():match(_item:lower())))
+               and (not _amount or (eAttr and eAttr >= _amount)) then
                 return v, cAttr
             end
         end
