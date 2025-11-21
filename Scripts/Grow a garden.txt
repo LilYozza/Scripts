@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.5")
+print("v6.6")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -125,11 +125,11 @@ local function checkPlantGarden(_name, _mutations)
     end
 end
 
-local function checkBackpack(_item)
+local function checkBackpack(_item, _amount)
     local tool = Player.Character:FindFirstChildOfClass("Tool")
-    if tool and (tool:GetAttribute("c") == _item or tool.Name:lower():match(_item:lower())) then return tool end
+    if tool and (tool:GetAttribute("c") == _item or tool.Name:lower():match(_item:lower())) and (not _amount or (tool:GetAttribute("e") >= _amount)) then return tool end
     for _,v in pairs(Player.Backpack:GetChildren())do
-        if v:GetAttribute("c") == _item or v.Name:lower():match(_item:lower()) then
+        if v:GetAttribute("c") == _item or v.Name:lower():match(_item:lower()) and (not _amount or (v:GetAttribute("e") >= _amount)) then
             return v
         end
     end
@@ -207,7 +207,7 @@ local function getFruit(_amount)
                 t[#t+1] = plant
             end
         end
-        if _amount and _amount >= counter then break end
+        if _amount and #t >= _amount then break end
     end
     return t
 end
@@ -256,7 +256,7 @@ if SmithingEvent then
                     end
                 end
                 if smithData.SubmittedGear == false then
-                    local item = checkBackpack("Watering Can")
+                    local item = checkBackpack("Watering Can", 100)
                     if item then
                         --print("GEAR - found:", item)
                         local hum = Player.Character:WaitForChild("Humanoid")
@@ -268,7 +268,7 @@ if SmithingEvent then
                     end
                 end
                 if smithData.SubmittedPet == false then
-                    local item = checkBackpack("Common Egg")
+                    local item = checkBackpack("Common Egg", 100)
                     if item then
                         --print("EGG - found:", item)
                         local hum = Player.Character:WaitForChild("Humanoid")
