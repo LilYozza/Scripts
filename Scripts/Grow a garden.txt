@@ -314,7 +314,7 @@ if SmithingEvent then
                     else
                         local craftInfo = craftingTable.CraftingItems and craftingTable.CraftingItems[1]
                         --.CraftingData[1].RecipeId
-                        if craftInfo and craftInfo.RecipeId == itemToCraft and craftInfo.isDone == true then
+                        if craftInfo and craftInfo.RecipeId and craftInfo.RecipeId == itemToCraft and craftInfo.IsDone and craftInfo.IsDone == true then
                             claimCraft() task.wait(1)
                         end
 
