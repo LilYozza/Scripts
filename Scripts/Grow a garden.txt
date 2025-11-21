@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.4")
+print("v7.5")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -126,32 +126,29 @@ end
 local function checkBackpack(_item, _amount)
     if not _item then return end
 
-    -- Check character tool
-    local tool = Player.Character:FindFirstChildOfClass("Tool")
-    if tool then
-        local cAttr = tool:GetAttribute("c")
-        local hAttr = tool:GetAttribute("h")
-        local eAttr = tool:GetAttribute("e")
-        local nameMatch = tool.Name and tool.Name:lower():match(_item:lower())
+    local function matchTool(t)
+        if not t or not t:IsA("Tool") then return end
 
-        if (cAttr == _item or hAttr == _item or nameMatch)
-           and (not _amount or (eAttr and eAttr >= _amount)) then
-            return tool, cAttr
+        local cAttr = t:GetAttribute("c")
+        local hAttr = t:GetAttribute("h")
+        local eAttr = t:GetAttribute("e")
+        local name = t.Name
+
+        if _amount and (not eAttr or eAttr < _amount) then return end
+
+        if hAttr then
+            if hAttr == _item then return t, cAttr end
+        elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
+            return t, cAttr
         end
     end
 
-    for _, v in pairs(Player.Backpack:GetChildren()) do
-        if v:IsA("Tool") then
-            local cAttr = v:GetAttribute("c")
-            local hAttr = v:GetAttribute("h")
-            local eAttr = v:GetAttribute("e")
-            local nameMatch = v.Name and v.Name:lower():match(_item:lower())
+    local tool, c = matchTool(Player.Character:FindFirstChildOfClass("Tool"))
+    if tool then return tool, c end
 
-            if (cAttr == _item or hAttr == _item or nameMatch)
-               and (not _amount or (eAttr and eAttr >= _amount)) then
-                return v, cAttr
-            end
-        end
+    for _, v in pairs(Player.Backpack:GetChildren()) do
+        local tool, c = matchTool(v)
+        if tool then return tool, c end
     end
 end
 
@@ -244,7 +241,12 @@ if SmithingEvent then
 
     --############# THIS FUNCTION IS HARDCODED FOR GEM EGG ##################
     local itemToCraft = "Gem Egg"
-    local eggRecipe = {"Common Egg", "Common Coal", "Common Coal", "Rare Coal"}
+    local eggRecipe = {
+        [1] = { name = "Common Egg", type = "PetEgg" },
+        [2] = { name = "Common Coal", type = "Common Coal" },
+        [3] = { name = "Common Coal", type = "Common Coal" }, 
+        [4] = { name = "Rare Coal", type = "Rare Coal" }
+    }
     local function beginCraft(_item)
             local args = {
             [1] = "SetRecipe",
@@ -256,14 +258,14 @@ if SmithingEvent then
        GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
     end
 
-    local function addCraft(_index, _id)
+    local function addCraft(_index, _type, _id)
         local args = {
             [1] = "InputItem",
             [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
             [3] = "SmithingEventPetWorkbench",
             [4] = _index,
             [5] = {
-                ["ItemType"] = "PetEgg",
+                ["ItemType"] = _type,
                 ["ItemData"] = {
                     ["UUID"] = _id --string
                 }
@@ -305,9 +307,9 @@ if SmithingEvent then
                         if craftingTable.RecipeId and craftingTable.RecipeId == itemToCraft then
                             -- needs to add items
                             for _,v in pairs(eggRecipe)do
-                                local item, id = checkBackpack(v)
+                                local item, id = checkBackpack(v.Name)
                                 if item and id then
-                                    addCraft(_, id) task.wait()
+                                    addCraft(_, v.type, id) task.wait()
                                 end
                             end
                             task.wait(1)
