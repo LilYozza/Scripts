@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.3")
+print("v6.4")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -81,11 +81,13 @@ end
 local function checkPlantInventory(_plant, _mutations)
 	for _, v in pairs(ALLDATA.InventoryData) do
 		local data = v.ItemData
-		if v.ItemType == "Holdable" and data and string.lower(data.ItemName) == string.lower(_plant) and data.IsFavorite == false  then
+		if v.ItemType == "Holdable" and data and (not _plant or string.lower(data.ItemName) == string.lower(_plant)) and data.IsFavorite == false  then
 			local str = string.lower(data.MutationString or "")
-			for _, m in ipairs(_mutations) do
-				if not str:find(string.lower(m)) then return end
-			end
+            if _mutations then
+                for _, m in ipairs(_mutations) do
+                    if not str:find(string.lower(m)) then return end
+                end
+            end
 			return v, _
 		end
 	end
@@ -125,9 +127,9 @@ end
 
 local function checkBackpack(_item)
     local tool = Player.Character:FindFirstChildOfClass("Tool")
-    if tool and tool:GetAttribute("c") == _item then return tool end
+    if tool and (tool:GetAttribute("c") == _item or tool.Name:lower():match(_item:lower())) then return tool end
     for _,v in pairs(Player.Backpack:GetChildren())do
-        if v:GetAttribute("c") == _item then
+        if v:GetAttribute("c") == _item or v.Name:lower():match(_item:lower()) then
             return v
         end
     end
@@ -179,58 +181,124 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
     return t
 end
 
---SAFARI EVENT ------------------------------------------------------------------------------------------------------------------------
-local SafariEvent = UpdateItems:WaitForChild("SafariEvent", 5) or Workspace:WaitForChild("SafariEvent", 5)
-if SafariEvent then
-   local EventMenu = w:CreateFolder("Safari")
-   local EventShop = ALLDATA.EventShopStock
+local blacklistHarvest = {}
+local function getFruit(_amount)
+    local t = {}
+    local counter = 0
+    for _, plant in ipairs(Plants_Physical:GetChildren()) do
+        counter = counter + 1
+        if counter % 200 == 0 then task.wait() end
 
-    local function buyEventStock(_name, _type)
-        for _,v in pairs(_type.Stocks) do
-            if v.Stock > 0 then
-                --if v.UnlockedShopItems and v.UnlockedShopItems[1] and FindInTable(v.UnlockedShopItems, _name) then
-                print("Buying: x" .. v.Stock, _, "Type:", _name)
-                for i = 1, v.Stock do
-                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name) task.wait(0.1)
+        local name = plant.Name
+        local favorited = plant:GetAttribute("Favorited")
+        local offlineTarget = plant:GetAttribute("OfflineGrowthTarget")
+
+        if not favorited and not table.find(blacklistHarvest, name) then
+            if offlineTarget then
+                local fruitsFolder = plant:FindFirstChild("Fruits")
+                if fruitsFolder then
+                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                        if not fruit:GetAttribute("Favorited") then
+                            t[#t+1] = fruit
+                        end
+                    end
                 end
+            else
+                t[#t+1] = plant
             end
         end
+        if _amount and _amount >= counter then break end
     end
+    return t
+end
 
-    EventMenu:Button("Submit Hand",function()
-        spawn(function()
-            GameEvents:WaitForChild("SafariEvent"):WaitForChild("Safari_SubmitItemRE"):FireServer(Player)
-        end)
-    end)
+--SMITHING EVENT ------------------------------------------------------------------------------------------------------------------------
+local SmithingEvent = UpdateItems:WaitForChild("SmithingEvent", 5)
+if SmithingEvent then
+   local EventMenu = w:CreateFolder("Smithing")
+   --local EventShop = ALLDATA.EventShopStock
+
+    --SmithingEventData
+        -- SubmittedGear false (bool)
+        -- StoredValue 0 (int)
+        -- SubmittedFruit false (bool)
+        -- SubmittedPet fasle (bool)
+        -- MigratedBrokenState false (bool)
+
+
     EventMenu:Button("Submit All",function()
-        spawn(function()
-            GameEvents:WaitForChild("SafariEvent"):WaitForChild("Safari_SubmitAllRE"):FireServer(Player)
+    spawn(function()
+
         end)
     end)
 
     EventMenu:Toggle("Auto Submit",function(bool)
-        shared.ToggleEAS=bool
+        shared.ToggleEMAS=bool
         spawn(function()
-            while shared.ToggleEAS do
-                if IsMaxInventory() then
-                     GameEvents:WaitForChild("SafariEvent"):WaitForChild("Safari_SubmitAllRE"):FireServer(Player)
+            while shared.ToggleEMAS do
+                local smithData = ALLDATA.SmithingEventData
+                if smithData.SubmittedFruit == false then
+                    local plant, pName = checkPlantInventory()
+                    if plant then
+                        print("PLANT - found:", pName)
+                        local item = checkBackpack(pName)
+                        if item then
+                            local hum = Player.Character:WaitForChild("Humanoid")
+                            hum:EquipTool(item) task.wait(1)
+                            GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitFruitRE"):FireServer()
+                        end
+                    else
+                        print("PLANT - not found")
+                        -- Harvest Plant Then Equip Plant 
+                    end
+                end
+                if smithData.SubmittedGear == false then
+                    local item = checkBackpack("Watering Can")
+                    if item then
+                        print("GEAR - found:", item)
+                        local hum = Player.Character:WaitForChild("Humanoid")
+                        hum:EquipTool(item) task.wait(1)
+                        GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitGearRE"):FireServer()
+                    else
+                        print("GEAR - not found")
+                    end
+                end
+                if smithData.SubmittedPet == false then
+                    local item = checkBackpack("Common Egg")
+                    if item then
+                        print("EGG - found:", item)
+                        local hum = Player.Character:WaitForChild("Humanoid")
+                        hum:EquipTool(item) task.wait(1)
+                        GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitPetRE"):FireServer()
+                    else
+                        print("EGG - not found")
+                    end
                 end
                 task.wait(1)
             end
         end)
     end)
 
-    EventMenu:Toggle("Buy Shop",function(bool)
-        shared.ToggleEBS=bool
-        spawn(function()
-            while shared.ToggleEBS do
-                    buyEventStock("Safari Shop", EventShop['Safari Shop'])
-                task.wait(1)
-            end
-        end)
-    end)
+    --[[
+    
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("PetMutationMachineService_RE"):FireServer(unpack(args))
+
+        -- Submit Gear Smithing Event
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitGearRE"):FireServer()
+
+        -- Submit Egg Smithing Event
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitPetRE"):FireServer()
+
+        -- Submit Fruit Smithing Event
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitFruitRE"):FireServer()    
+    
+
+    ]]
+
+
 
 end
+ 
 
 --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -324,7 +392,7 @@ end
 
 local sblacklistCrop
 local cropsToHarvest = {"Blueberry", "Strawberry", "Tomato"}
-local blacklistHarvest = {}
+
 local DropList = Auto:Dropdown("SELECT MESSAGE",cropsToHarvest,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sblacklistCrop = SItem
 end)
@@ -381,35 +449,7 @@ Auto:Toggle("Auto Harvest", function(bool)
     task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
-                local t = {}
-                
-                local children = Plants_Physical:GetChildren()
-
-                local counter = 0
-                for _, plant in ipairs(children) do
-                    counter = counter + 1
-                    if counter % 200 == 0 then task.wait() end
-
-                    local name = plant.Name
-                    local favorited = plant:GetAttribute("Favorited")
-                    local offlineTarget = plant:GetAttribute("OfflineGrowthTarget")
-
-                    if not favorited and not table.find(blacklistHarvest, name) then
-                        if offlineTarget then
-                            local fruitsFolder = plant:FindFirstChild("Fruits")
-                            if fruitsFolder then
-                                for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                                    if not fruit:GetAttribute("Favorited") then
-                                        t[#t+1] = fruit
-                                    end
-                                end
-                            end
-                        else
-                            t[#t+1] = plant
-                        end
-                    end
-                end
-
+                local t = getFruit()
                 shuffle(t)
                 mod:FireServer(t)
 
