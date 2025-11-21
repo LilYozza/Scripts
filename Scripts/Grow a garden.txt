@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7")
+print("v7.1")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -123,15 +123,29 @@ local function checkPlantGarden(_name, _mutations)
     end
 end
 
-local function checkBackpack(_item, _amount)
+local function checkBackpack(_item, _hardMatch)
+    if not _item then return end
+
     local tool = Player.Character:FindFirstChildOfClass("Tool")
-    if tool and (tool:GetAttribute("c") == _item or tool.Name:lower():match(_item:lower())) and (not _amount or (tool:GetAttribute("e") >= _amount)) then return tool end
-    for _,v in pairs(Player.Backpack:GetChildren())do
-        if v:GetAttribute("c") == _item or v.Name:lower():match(_item:lower()) and (not _amount or (v:GetAttribute("e") >= _amount)) then
-            return v
+    if tool then
+        local cAttr = tool:GetAttribute("c")
+        local hAttr = tool:GetAttribute("h")
+        if cAttr == _item or hAttr == _item or (tool.Name and tool.Name:lower():match(_item:lower())) then
+            return tool, cAttr
+        end
+    end
+
+    for _, v in pairs(Player.Backpack:GetChildren()) do
+        if v:IsA("Tool") then
+            local cAttr = v:GetAttribute("c")
+            local hAttr = v:GetAttribute("h")
+            if cAttr == _item or hAttr == _item or (v.Name and v.Name:lower():match(_item:lower())) then
+                return v, cAttr
+            end
         end
     end
 end
+
 
 local function getPet(_petID)
     local pet = Player.Character:FindFirstChildOfClass("Tool")
@@ -220,6 +234,57 @@ if SmithingEvent then
 
     --############# THIS FUNCTION IS HARDCODED FOR GEM EGG ##################
     local itemToCraft = "Gem Egg"
+    local eggRecipe = {"Rare Coal", "Common Coal", "Common Coal", "Common Egg"}
+    local function startCraft(_item)
+            local args = {
+            [1] = "SetRecipe",
+            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [3] = "SmithingEventPetWorkbench",
+            [4] = _item
+        }
+
+       GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+    end
+
+    local function addCraft(_index, _id)
+        local args = {
+            [1] = "InputItem",
+            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [3] = "SmithingEventPetWorkbench",
+            [4] = _index,
+            [5] = {
+                ["ItemType"] = "PetEgg",
+                ["ItemData"] = {
+                    ["UUID"] = _id --string
+                }
+            }
+        }
+       GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+    end
+
+    local function startCraft()
+        local args = {
+            [1] = "Craft",
+            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [3] = "SmithingEventPetWorkbench"
+        }
+
+        GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+
+    end
+
+    local function claimCraft()
+        local args = {
+            [1] = "Claim",
+            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [3] = "SmithingEventPetWorkbench",
+            [4] = 1
+        }
+
+       GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+    end
+
+    
     EventMenu:Toggle("Craft Egg",function(bool)
         shared.ToggleSCE=bool
         spawn(function()
@@ -229,16 +294,25 @@ if SmithingEvent then
                     if not next(craftingTable.CraftingItem) then
                         if craftingTable.RecipeId and craftingTable.RecipeId == itemToCraft then
                             -- needs to add items
-                        else
-                            local args = {
-                                [1] = "SetRecipe",
-                                [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
-                                [3] = "SmithingEventPetWorkbench",
-                                [4] = itemToCraft
-                            }
+                            for _,v in pairs(eggRecipe)do
+                                local item, id = checkBackpack(v)
+                                if item and id then
+                                    addCraft(_, id) task.wait()
+                                end
+                            end
+                            task.wait(1)
+                            startCraft()
 
-                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+                        else
+                            startCraft(itemToCraft)
                         end
+                    else
+                        local craftInfo = craftingTable.CraftingData and craftingTable.CraftingData[1]
+                        --.CraftingData[1].RecipeId
+                        if craftInfo and craftInfo.RecipeId == itemToCraft and craftInfo.isDone == true then
+                            claimCraft() task.wait(1)
+                        end
+
                     end
                 end
                 task.wait(1)
