@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.5")
+print("v7.6")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -309,10 +309,8 @@ if SmithingEvent then
                             -- needs to add items
                             print("Adding Items")
                             for _,v in pairs(eggRecipe)do
-                                local item, id = checkBackpack(v.Name)
-                                if item and id then
-                                    addCraft(_, v.type, id) task.wait()
-                                end
+                                local info, id = checkBackpack(v.name)
+                                addCraft(_, v.type, id) task.wait()
                             end
                             task.wait(1)
                             startCraft()
