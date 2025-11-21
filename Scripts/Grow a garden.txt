@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.8")
+print("v6.9")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -379,7 +379,7 @@ end
 local sblacklistCrop
 local cropsToHarvest = {"Blueberry", "Strawberry", "Tomato"}
 
-local DropList = Auto:Dropdown("SELECT MESSAGE",cropsToHarvest,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropList = Auto:Dropdown("blacklist",cropsToHarvest,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
     sblacklistCrop = SItem
 end)
 
@@ -498,6 +498,55 @@ Auto:Toggle("TeleportBack",function(bool)
         moveBack = shared.ToggleTB
     end)
 end)
+
+----------------------- DIGGING EVENT --------------------------------------------------------------------
+
+local restartDig = false
+Auto:Toggle("TeleportBack",function(bool)
+    shared.ToggleTB=bool
+    spawn(function()
+        restartDig = shared.ToggleTB
+    end)
+end)
+
+local function dig(_x, _y)
+    print("Digging At:", _x, _y)
+    GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteEvent"):FireServer(_x, _y, CFrame.new())
+end
+
+local function getTreasure()
+    local ts = ALLDATA.DiggingData.GridData
+    for _,v in pairs(ts)do
+        if v.IsDug == false and v.IsTreasure == true then
+            return v.GridX,v.GridY
+        end
+    end
+end
+
+Auto:Toggle("Auto Digger",function(bool)
+    shared.ToggleADS=bool
+    spawn(function()
+        while shared.ToggleADS do
+            local DiggingData = ALLDATA.DiggingData
+            if DiggingData.RemainingDigs > 0 then
+                if DiggingData.DigComplete == true and restartDig then
+                    GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("RestartDiggingSheckles"):FireServer()
+                elseif DiggingData.DigComplete == false then
+                    local canDig = GameEvents:WaitForChild("DiggingMiniGame"):WaitForChild("DigRemoteFunction"):InvokeServer("CheckCanDig")
+                    if canDig then
+                        local toDigX, toDigY = getTreasure()
+                        if toDigX ~= nil and toDigY ~= nil then
+                            dig(toDigX, toDigY) task.wait(1)
+                        end
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+-------------------------------------------------------------------------------------------------
 
 Auto:Button("Ascend",function()
     spawn(function()
