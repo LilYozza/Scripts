@@ -2,6 +2,7 @@ local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.c
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
+local CollectionService = game:GetService("CollectionService")
 local DataService = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
 local ALLDATA = DataService:GetData()
 
@@ -14,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.9")
+print("v7")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -94,13 +95,10 @@ local function checkPlantInventory(_plant, _mutations)
 end
 
 local function checkPlant(_plant, _name, _mutations)
-    local plantDone
-    for _,v in pairs(_plant:GetChildren())do
-        plantDone = v:FindFirstChildWhichIsA("ProximityPrompt")
-    end
-    if plantDone then
-        if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECKER
-        if _mutations and _mutations[1] then 
+    if _plant:HasTag("Harvestable") then
+        if _plant:GetAttribute("Favorited") then return end -- IS FAVOURITE CHECK 
+        if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
+        if _mutations and _mutations[1] then  -- MUTATIONS CHECK
             for _, m in ipairs(_mutations) do
                 if not _plant:GetAttribute(m) then return end
             end
@@ -187,25 +185,19 @@ local function getFruit(_amount)
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
         counter = counter + 1
-        if counter % 200 == 0 then task.wait() end
+        if counter % 50 == 0 then task.wait() end
 
-        local name = plant.Name
-        local favorited = plant:GetAttribute("Favorited")
-        local offlineTarget = plant:GetAttribute("OfflineGrowthTarget")
-
-        if not favorited and not table.find(blacklistHarvest, name) then
-            if offlineTarget then
-                local fruitsFolder = plant:FindFirstChild("Fruits")
-                if fruitsFolder then
-                    for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                        if not fruit:GetAttribute("Favorited") then
-                            t[#t+1] = fruit
-                        end
-                    end
+        if not table.find(blacklistHarvest, plant.Name) then
+            local fruitsFolder = plant:FindFirstChild("Fruits")
+            if fruitsFolder then
+                for _, fruit in ipairs(fruitsFolder:GetChildren()) do
+                    local cFruit = checkPlant(fruit)
+                    if cFruit then t[#t+1] = fruit end
                 end
             else
-                t[#t+1] = plant
-            end
+                local cFruit = checkPlant(plant)
+                if cFruit then t[#t+1] = plant end
+            end 
         end
         if _amount and #t >= _amount then break end
     end
@@ -216,6 +208,7 @@ end
 local SmithingEvent = UpdateItems:WaitForChild("SmithingEvent", 5)
 if SmithingEvent then
    local EventMenu = w:CreateFolder("Smithing")
+   local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
    --local EventShop = ALLDATA.EventShopStock
 
     --SmithingEventData
@@ -225,10 +218,31 @@ if SmithingEvent then
         -- SubmittedPet fasle (bool)
         -- MigratedBrokenState false (bool)
 
+    --############# THIS FUNCTION IS HARDCODED FOR GEM EGG ##################
+    local itemToCraft = "Gem Egg"
+    EventMenu:Toggle("Craft Egg",function(bool)
+        shared.ToggleSCE=bool
+        spawn(function()
+            while shared.ToggleSCE do
+                if craftingTable then
+                    -- check if already crafting
+                    if not next(craftingTable.CraftingItem) then
+                        if craftingTable.RecipeId and craftingTable.RecipeId == itemToCraft then
+                            -- needs to add items
+                        else
+                            local args = {
+                                [1] = "SetRecipe",
+                                [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+                                [3] = "SmithingEventPetWorkbench",
+                                [4] = itemToCraft
+                            }
 
-    EventMenu:Button("Submit All",function()
-    spawn(function()
-
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+                        end
+                    end
+                end
+                task.wait(1)
+            end
         end)
     end)
 
@@ -502,7 +516,7 @@ end)
 ----------------------- DIGGING EVENT --------------------------------------------------------------------
 
 local restartDig = false
-Auto:Toggle("TeleportBack",function(bool)
+Auto:Toggle("Auto Restart",function(bool)
     shared.ToggleTB=bool
     spawn(function()
         restartDig = shared.ToggleTB
@@ -552,8 +566,7 @@ Auto:Button("Ascend",function()
     spawn(function()
         local rebirthData = ALLDATA.RebirthData.RequiredPlants[1] or nil
         if rebirthData then
-            local plant = rebirthData.FruitName
-            local mutations = rebirthData.Mutations
+            local plant, mutations = rebirthData.FruitName, rebirthData.Mutations
             print(plant, mutations[1])
             -- Find PLant / Inventory / Garden
             local crop, cropName = checkPlantInventory(plant, mutations)
@@ -568,10 +581,10 @@ Auto:Button("Ascend",function()
                 crop = checkBackpack(cropName)
                 local hum = Player.Character:WaitForChild("Humanoid")
                 hum:EquipTool(crop) task.wait(0.3)
-                GameEvents:WaitForChild("BuyRebirth"):FireServer()
                 print("Yes")
             end
         end
+        GameEvents:WaitForChild("BuyRebirth"):FireServer()
     end)
 end)
 
