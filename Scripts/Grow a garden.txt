@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.2")
+print("v7.3")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -223,6 +223,7 @@ end
 local SmithingEvent = UpdateItems:WaitForChild("SmithingEvent", 5)
 if SmithingEvent then
    local EventMenu = w:CreateFolder("Smithing")
+   local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
    --local EventShop = ALLDATA.EventShopStock
 
     --SmithingEventData
@@ -289,10 +290,9 @@ if SmithingEvent then
         shared.ToggleSCE=bool
         spawn(function()
             while shared.ToggleSCE do
-                local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
                 if craftingTable then
                     -- check if already crafting
-                    if not next(craftingTable.CraftingItem) then
+                    if craftingTable.CraftingItems and not next(craftingTable.CraftingItems) then
                         if craftingTable.RecipeId and craftingTable.RecipeId == itemToCraft then
                             -- needs to add items
                             for _,v in pairs(eggRecipe)do
