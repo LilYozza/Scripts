@@ -240,7 +240,7 @@ if SmithingEvent then
     --############# THIS FUNCTION IS HARDCODED FOR GEM EGG ##################
     local itemToCraft = "Gem Egg"
     local eggRecipe = {"Rare Coal", "Common Coal", "Common Coal", "Common Egg"}
-    local function startCraft(_item)
+    local function beginCraft(_item)
             local args = {
             [1] = "SetRecipe",
             [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
@@ -309,7 +309,7 @@ if SmithingEvent then
                             startCraft()
 
                         else
-                            startCraft(itemToCraft)
+                            beginCraft(itemToCraft)
                         end
                     else
                         local craftInfo = craftingTable.CraftingItems and craftingTable.CraftingItems[1]
