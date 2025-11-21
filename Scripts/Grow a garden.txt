@@ -267,11 +267,12 @@ if SmithingEvent then
             [5] = {
                 ["ItemType"] = _type,
                 ["ItemData"] = {
-                    ["UUID"] = _id --string
+                    ["UUID"] = _id
                 }
             }
         }
-       GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
     end
 
     local function startCraft()
@@ -306,6 +307,7 @@ if SmithingEvent then
                     if craftingTable.CraftingItems and not next(craftingTable.CraftingItems) then
                         if craftingTable.RecipeId and craftingTable.RecipeId == itemToCraft then
                             -- needs to add items
+                            print("Adding Items")
                             for _,v in pairs(eggRecipe)do
                                 local item, id = checkBackpack(v.Name)
                                 if item and id then
@@ -316,12 +318,14 @@ if SmithingEvent then
                             startCraft()
 
                         else
+                            print("Starting Craft")
                             beginCraft(itemToCraft)
                         end
                     else
                         local craftInfo = craftingTable.CraftingItems and craftingTable.CraftingItems[1]
                         --.CraftingData[1].RecipeId
                         if craftInfo and craftInfo.RecipeId and craftInfo.RecipeId == itemToCraft and craftInfo.IsDone and craftInfo.IsDone == true then
+                            print("Claiming Craft")
                             claimCraft() task.wait(1)
                         end
 
