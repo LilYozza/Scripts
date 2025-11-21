@@ -14,7 +14,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v6.4")
+print("v6.5")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -240,38 +240,43 @@ if SmithingEvent then
                 if smithData.SubmittedFruit == false then
                     local plant, pName = checkPlantInventory()
                     if plant then
-                        print("PLANT - found:", pName)
+                        --print("PLANT - found:", pName)
                         local item = checkBackpack(pName)
                         if item then
                             local hum = Player.Character:WaitForChild("Humanoid")
                             hum:EquipTool(item) task.wait(1)
                             GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitFruitRE"):FireServer()
+                            task.wait(1)
                         end
                     else
-                        print("PLANT - not found")
+                        print("PLANT - not found, harvesting 10 plants")
+                        local t = getFruit(10)
+                        mod:FireServer(t)
                         -- Harvest Plant Then Equip Plant 
                     end
                 end
                 if smithData.SubmittedGear == false then
                     local item = checkBackpack("Watering Can")
                     if item then
-                        print("GEAR - found:", item)
+                        --print("GEAR - found:", item)
                         local hum = Player.Character:WaitForChild("Humanoid")
                         hum:EquipTool(item) task.wait(1)
                         GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitGearRE"):FireServer()
+                        task.wait(1)
                     else
-                        print("GEAR - not found")
+                        --print("GEAR - not found")
                     end
                 end
                 if smithData.SubmittedPet == false then
                     local item = checkBackpack("Common Egg")
                     if item then
-                        print("EGG - found:", item)
+                        --print("EGG - found:", item)
                         local hum = Player.Character:WaitForChild("Humanoid")
                         hum:EquipTool(item) task.wait(1)
                         GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitPetRE"):FireServer()
+                        task.wait(1)
                     else
-                        print("EGG - not found")
+                        --print("EGG - not found")
                     end
                 end
                 task.wait(1)
