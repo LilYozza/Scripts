@@ -226,169 +226,39 @@ local function getFruit(_amount, _blacklist)
 end
 
 --SMITHING EVENT ------------------------------------------------------------------------------------------------------------------------
-local SmithingEvent = Workspace:WaitForChild("SmithingEvent", 5) or UpdateItems:WaitForChild("SmithingEvent", 5)
-if SmithingEvent then
-   local EventMenu = w:CreateFolder("Smithing")
-   local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
-   --local EventShop = ALLDATA.EventShopStock
+local PortalEvent = UpdateItems:WaitForChild("PortalPlatform", 5) or Workspace:WaitForChild("PortalPlatform", 5)
+if PortalEvent then
+    local EventMenu = w:CreateFolder("Portal Event")
+    local requireLabel = PortalEvent.Model["2"].Frame.Part.TraderEventUI.InfoFrame.RequireFrame.ItemName
+    --TODO
+        -- SMART HAND IN (Find Crops in garden / hand then hands it in)
 
-    --SmithingEventData
-        -- SubmittedGear false (bool)
-        -- StoredValue 0 (int)
-        -- SubmittedFruit false (bool)
-        -- SubmittedPet fasle (bool)
-        -- MigratedBrokenState false (bool)
-
-    --############# THIS FUNCTION IS HARDCODED FOR GEM EGG ##################
-    local itemToCraft = "Gem Egg"
-    local eggRecipe = {
-        [1] = { name = "Common Egg", type = "PetEgg" },
-        [2] = { name = "Common Coal", type = "Common Coal" },
-        [3] = { name = "Common Coal", type = "Common Coal" }, 
-        [4] = { name = "Rare Coal", type = "Rare Coal" }
-    }
-    local function beginCraft(_item)
-            local args = {
-            [1] = "SetRecipe",
-            [2] = workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
-            [3] = "SmithingEventPetWorkbench",
-            [4] = _item
-        }
-
-       GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+    --SUBMIT ALL
+   --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TraderEvent"):WaitForChild("Trader_SubmitFruitRE"):FireServer()
+    local function submit()
+        GameEvents:WaitForChild("TraderEvent"):WaitForChild("Trader_SubmitFruitRE"):FireServer()
     end
-
-    local function addCraft(_index, _type, _id)
-        local args = {
-            [1] = "InputItem",
-            [2] = workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
-            [3] = "SmithingEventPetWorkbench",
-            [4] = _index,
-            [5] = {
-                ["ItemType"] = _type,
-                ["ItemData"] = {
-                    ["UUID"] = _id
-                }
-            }
-        }
-
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-    end
-
-    local function startCraft()
-        local args = {
-            [1] = "Craft",
-            [2] = workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
-            [3] = "SmithingEventPetWorkbench"
-        }
-
-        GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-
-    end
-
-    local function claimCraft()
-        local args = {
-            [1] = "Claim",
-            [2] =  workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
-            [3] = "SmithingEventPetWorkbench",
-            [4] = 1
-        }
-
-       GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-
-    end
-
     
-    EventMenu:Toggle("Craft Egg",function(bool)
-        shared.ToggleSCE=bool
+   EventMenu:Button("Submit All",function()
         spawn(function()
-            while shared.ToggleSCE do
-                if craftingTable then
-                    -- check if already crafting
-                    if craftingTable.CraftingItems and not next(craftingTable.CraftingItems) then
-                        if craftingTable.RecipeId and craftingTable.RecipeId == itemToCraft then
-                            -- needs to add items
-                            print("Adding Items")
-                            for _,v in pairs(eggRecipe)do
-                                local info, id = checkBackpack(v.name)
-                                addCraft(_, v.type, id) task.wait()
-                            end
-                            task.wait(1)
-                            startCraft()
-
-                        else
-                            print("Starting Craft")
-                            beginCraft(itemToCraft)
-                        end
-                    else
-                        local craftInfo = craftingTable.CraftingItems and craftingTable.CraftingItems[1]
-                        --.CraftingData[1].RecipeId
-                        if craftInfo and craftInfo.RecipeId and craftInfo.RecipeId == itemToCraft and craftInfo.IsDone and craftInfo.IsDone == true then
-                            print("Claiming Craft")
-                            claimCraft() task.wait(1)
-                        end
-
-                    end
+            submit()
+        end)
+    end) 
+   
+   EventMenu:Toggle("Auto Submit",function(bool)
+        shared.TogglePEAS=bool
+        spawn(function()
+            while shared.TogglePEAS do
+                if IsMaxInventory() then
+                    submit()
                 end
                 task.wait(1)
             end
         end)
     end)
 
-    EventMenu:Toggle("Auto Submit",function(bool)
-        shared.ToggleEMAS=bool
-        spawn(function()
-            while shared.ToggleEMAS do
-                local smithData = ALLDATA.SmithingEventData
-                if smithData.SubmittedFruit == false then
-                    local plant, pName = checkPlantInventory()
-                    if plant then
-                        --print("PLANT - found:", pName)
-                        local item = checkBackpack(pName)
-                        if item then
-                            local hum = Player.Character:WaitForChild("Humanoid")
-                            hum:EquipTool(item) task.wait(1)
-                            GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitFruitRE"):FireServer()
-                            task.wait(1)
-                        end
-                    else
-                        --print("PLANT - not found, harvesting 50 plants")
-                        local t = getFruit(50)
-                        mod:FireServer(t)
-                        -- Harvest Plant Then Equip Plant 
-                    end
-                end
-                if smithData.SubmittedGear == false then
-                    local item = checkBackpack("Watering Can", 50)
-                    if item then
-                        --print("GEAR - found:", item)
-                        local hum = Player.Character:WaitForChild("Humanoid")
-                        hum:EquipTool(item) task.wait(1)
-                        GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitGearRE"):FireServer()
-                        task.wait(1)
-                    else
-                        --print("GEAR - not found")
-                    end
-                end
-                if smithData.SubmittedPet == false then
-                    local item = checkBackpack("Common Egg")
-                    if item then
-                        --print("EGG - found:", item)
-                        local hum = Player.Character:WaitForChild("Humanoid")
-                        hum:EquipTool(item) task.wait(1)
-                        GameEvents:WaitForChild("SmithingEvent"):WaitForChild("Smithing_SubmitPetRE"):FireServer()
-                        task.wait(1)
-                    else
-                        --print("EGG - not found")
-                    end
-                end
-                task.wait(1)
-            end
-        end)
-    end)
+
 end
- 
-
 --------------------------------------------------------------------------------------------------------------------------------------
 
 local function buySeed(_item, _amt)
