@@ -226,7 +226,7 @@ local function getFruit(_amount, _blacklist)
 end
 
 --SMITHING EVENT ------------------------------------------------------------------------------------------------------------------------
-local SmithingEvent = UpdateItems:WaitForChild("SmithingEvent", 5)
+local SmithingEvent = Workspace:WaitForChild("SmithingEvent", 5) or UpdateItems:WaitForChild("SmithingEvent", 5)
 if SmithingEvent then
    local EventMenu = w:CreateFolder("Smithing")
    local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData.SmithingEventPetWorkbench.MachineData.SmithingEventPetWorkbench
