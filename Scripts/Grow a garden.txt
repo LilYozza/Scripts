@@ -229,7 +229,6 @@ end
 local PortalEvent = UpdateItems:WaitForChild("PortalPlatform", 5) or Workspace:WaitForChild("PortalPlatform", 5)
 if PortalEvent then
     local EventMenu = w:CreateFolder("Portal Event")
-    local requireLabel = PortalEvent.Model["2"].Frame.Part.TraderEventUI.InfoFrame.RequireFrame.ItemName
     --TODO
         -- SMART HAND IN (Find Crops in garden / hand then hands it in)
 
@@ -237,6 +236,21 @@ if PortalEvent then
    --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TraderEvent"):WaitForChild("Trader_SubmitFruitRE"):FireServer()
     local function submit()
         GameEvents:WaitForChild("TraderEvent"):WaitForChild("Trader_SubmitFruitRE"):FireServer()
+    end
+
+    local function getRequiredInfo()
+        local RequireFrame = PortalEvent.Model["2"].Frame.Part.TraderEventUI.InfoFrame.RequireFrame or nil
+        if RequireFrame then
+            local requireLabel = RequireFrame.ItemName
+            local amountLabel = RequireFrame:WaitForChild("ImageLabel"):WaitForChild("Amount")
+            local t = {
+                item = requireLabel.Text,
+                amount = fromSuffixString(amountLabel),
+                requireLabel = requireLabel,
+                amountLabel = amountLabel
+            }
+            return t
+        end
     end
     
    EventMenu:Button("Submit All",function()
@@ -249,8 +263,20 @@ if PortalEvent then
         shared.TogglePEAS=bool
         spawn(function()
             while shared.TogglePEAS do
-                if IsMaxInventory() then
-                    submit()
+                local requiredInfo = getRequiredInfo()
+                if requiredInfo and requiredInfo.item then
+                    local cPlant = checkPlantInventory(requiredInfo.item)
+                    if not cPlant then
+                        local plant = checkPlantGarden(requiredInfo.item)
+                        if plant and not IsMaxInventory() then 
+                            CollectPlant(plant) task.wait(1)
+                            print("Collecting:", requiredInfo.item)
+                            cPlant = checkPlantInventory(requiredInfo.item)
+                        end
+                    end
+                    if cPlant then
+                        submit()
+                    end
                 end
                 task.wait(1)
             end
