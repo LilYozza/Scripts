@@ -229,6 +229,20 @@ end
 local PortalEvent = UpdateItems:WaitForChild("PortalPlatform", 5) or Workspace:WaitForChild("PortalPlatform", 5)
 if PortalEvent then
     local EventMenu = w:CreateFolder("Portal Event")
+
+    local frame = PortalEvent.Model["2"].Frame
+    local correctPart = nil
+
+    for _, child in ipairs(frame:GetChildren()) do
+        if child:IsA("BasePart") then
+            local ui = child:FindFirstChild("TraderEventUI")
+            if ui and ui:FindFirstChild("TraderGui") then
+                correctPart = child
+                break
+            end
+        end
+    end
+    local RequireFrame = correctPart.TraderEventUI.InfoFrame.RequireFrame
     --TODO
         -- SMART HAND IN (Find Crops in garden / hand then hands it in)
 
@@ -239,7 +253,6 @@ if PortalEvent then
     end
 
     local function getRequiredInfo()
-        local RequireFrame = PortalEvent.Model["2"].Frame.Part.TraderEventUI.InfoFrame.RequireFrame or nil
         if RequireFrame then
             local requireLabel = RequireFrame.ItemName
             local amountLabel = RequireFrame:WaitForChild("ImageLabel"):WaitForChild("Amount")
