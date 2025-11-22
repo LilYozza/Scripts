@@ -250,7 +250,7 @@ if SmithingEvent then
     local function beginCraft(_item)
             local args = {
             [1] = "SetRecipe",
-            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [2] = workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
             [3] = "SmithingEventPetWorkbench",
             [4] = _item
         }
@@ -261,7 +261,7 @@ if SmithingEvent then
     local function addCraft(_index, _type, _id)
         local args = {
             [1] = "InputItem",
-            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [2] = workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
             [3] = "SmithingEventPetWorkbench",
             [4] = _index,
             [5] = {
@@ -278,7 +278,7 @@ if SmithingEvent then
     local function startCraft()
         local args = {
             [1] = "Craft",
-            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [2] = workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
             [3] = "SmithingEventPetWorkbench"
         }
 
@@ -289,12 +289,13 @@ if SmithingEvent then
     local function claimCraft()
         local args = {
             [1] = "Claim",
-            [2] = workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
+            [2] =  workspace:WaitForChild("SmithingEvent"):WaitForChild("SmithingPlatform"):WaitForChild("Model30"):WaitForChild("SmithingPetWorkBench"),
             [3] = "SmithingEventPetWorkbench",
             [4] = 1
         }
 
        GameEvents:WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+
     end
 
     
