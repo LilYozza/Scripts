@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.2")
+print("v9.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1249,15 +1249,23 @@ local function getCurrentQuest()
 				local name = titleText:match("^%S+%s+(.*)") or titleText
 				local type = titleText:match("^(%S+)") or "Unknown"
 
-				if titleText:lower():match("dungeon") then
+				if titleText:lower():match("dungeon") then -- DUNGEONS
 					name = titleText
 					type = "Dungeon"
 				end
 
-                if titleText:lower():match("stars") then
+                if titleText:lower():match("stars") then    -- STARS
                     name = (titleText:match("Stars%s+(.*)") or ""):gsub("%s+", "_")
                     type = "Star"
                 end
+
+				if titleText:lower():match("punching") then -- DUNGEONS
+					name = titleText
+					type = "Punching_Machine"
+				end
+
+
+
 				local c, m = progressText:match("(%d+)%/(%d+)")
 				c, m = tonumber(c) or 0, tonumber(m) or 0
 				t[num] = {
@@ -1338,6 +1346,16 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif type == "star" then  -- OPEN STARS
                             openStar(v.name)
+                        elseif type == "punching_machine" then -- PUNCHING MACHINE
+                            local machine = Workspace:FindFirstChild("Punching_Machine")
+                            if machine then
+                                running = true
+                                local item = machine:GetChildren()[1]
+                                local oldPos = GetPos()
+                                MoveTo(item) task.wait(1)
+                                fireproximityprompt(item.ProximityPrompt)
+                                MoveTo(oldPos)
+                            end
                         elseif type == "dungeon" then   -- COMPLETE DUNGEON
                             local firstWord = v.name:match("^(%w+)")  -- "Medium"
                             for _, dungeon in ipairs(defaultDungeons) do
@@ -1839,7 +1857,7 @@ local function upgradeStat(_stat)
         [1] = {
             ["Name"] = _stat, --"Primary_Damage", "Primary_Energy", "Primary_Coins", "Primary_Luck"
             ["Action"] = "Assign_Level_Stats",
-            ["Amount"] = 9999
+            ["Amount"] = 1
         }
     }
 
