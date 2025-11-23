@@ -777,20 +777,38 @@ local gameData = {
     },
     [24] = {
         world = {
-            name = "Great Tomb",
+            name = "Great_Tomb",
             raids = {},
             gachaTable = {
-
+                ["Adventurer_Rank"] = {
+                    token = "Adventurer Token",
+                    list = {"Copper", "Iron", "Silver", "Gold", "Platinum", "Mithril", "Orichalcum", "Adamantite"}
+                },
+                ["Magic_Tier"] = {
+                    token = "Magic Tier Token",
+                    list = {"Low-Tier Magic", "Mid-Tier Magic", "High-Tier Magic", "Top-Tier Magic", "Peak-Tier Magic", "Super-Tier Magic", "Wild Magic", "World Item Magic"}
+                }
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["Mana_Growth"] = { token = "Mana Growth Token", Upgrading_Name = "Energy", bench = true },
+                ["Ultimate_Cast"] = { token = "Ultimate Cast Token", Upgrading_Name = "Damage", bench = true }
+            }
         },
         enemies = {
+            { name = 'Pandoros_Actor', tokens = {"Adventurer Token"}},
+            { name = 'Auro', tokens = {"Magic Tier Token"}},
+            { name = 'Maro', tokens = {"Mana Growth Token"}},
+            { name = 'Sebes', tokens = {"Ultimate Cast Token"}},
+            { name = 'Shaltir', tokens = {"Adventurer Lvl Token"}}, 
+            { name = 'Demurge', tokens = {"Magic Tier Lvl Token"}},
+            { name = 'Albedia', tokens = {"Adventurer Token", "Magic Tier Token", "Mana Growth Token"}},
+            { name = 'Anz_Ool_Gawn', tokens = {"Adventurer Token", "Magic Tier Token", "Ultimate Cast Token"}, type = "boss"}, 
             
         }
     },
     [25] = {
         world = {
-            name = "Thriller Park",
+            name = "Thriller_Park",
             raids = {},
             gachaTable = {
 
@@ -827,8 +845,41 @@ local gameData = {
             
         }
     },
+    [28] = {
+        world = {
+            name = "Asfordo_Academy",
+            raids = {},
+            gachaTable = {
+
+            },
+            upgradeTable = {}
+        },
+        enemies = {
+            
+        }
+    },
+    [29] = {
+        world = {
+            name = "Science_Village",
+            raids = {},
+            gachaTable = {
+
+            },
+            upgradeTable = {}
+        },
+        enemies = {
+            
+        }
+    },
 }
 
+local function populateTable(_tbl1, _tbl2)
+    if _tbl1 then
+        for name,v in pairs(_tbl1)do
+            table.insert(_tbl2, name)
+        end
+    end
+end
 
 local GACHA = {}
 local RAIDS = {}
@@ -838,25 +889,11 @@ local FIGHTERS = {}
 
 local function IntData()
     for i,v in pairs(gameData)do
-        for name, k in pairs(v.world.gachaTable) do
-            table.insert(GACHA, name)
-        end
-        for name, k in pairs(v.world.raids) do
-            table.insert(RAIDS, name)
-        end
-        for name, k in pairs(v.world.upgradeTable) do
-            table.insert(UPGRADES, name)
-        end
-        if v.world.weaponTable then
-            for name, k in pairs(v.world.weaponTable) do
-                table.insert(WEAPONS, name)
-            end
-        end
-        if v.world.fighterTable then
-            for name, k in pairs(v.world.fighterTable) do
-                table.insert(FIGHTERS, name)
-            end
-        end
+        populateTable(v.world.gachaTable, GACHA)
+        populateTable(v.world.raids, RAIDS)
+        populateTable(v.world.upgradeTable, UPGRADES)
+        populateTable(v.world.weaponTable, WEAPONS)
+        populateTable(v.world.fighterTable, FIGHTERS)
     end
 end
 IntData()
@@ -1796,7 +1833,7 @@ local function upgradeStat(_stat)
         [1] = {
             ["Name"] = _stat, --"Primary_Damage", "Primary_Energy", "Primary_Coins", "Primary_Luck"
             ["Action"] = "Assign_Level_Stats",
-            ["Amount"] = 1
+            ["Amount"] = 9999
         }
     }
 
