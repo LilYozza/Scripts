@@ -886,6 +886,7 @@ local RAIDS = {}
 local UPGRADES = {}
 local WEAPONS = {}
 local FIGHTERS = {}
+local WFTABLE = {}
 
 local function IntData()
     for i,v in pairs(gameData)do
@@ -895,12 +896,15 @@ local function IntData()
         populateTable(v.world.weaponTable, WEAPONS)
         populateTable(v.world.fighterTable, FIGHTERS)
     end
+    for _, v in ipairs(WEAPONS) do
+        table.insert(WFTABLE, v)
+    end
+
+    for _, v in ipairs(FIGHTERS) do
+        table.insert(WFTABLE, v)
+    end
 end
 IntData()
-
-PrintTable(WEAPONS)
-local test1 = {unpack(WEAPONS), unpack(FIGHTERS)}
-PrintTable(test1)
 
 local assetsDestroy = {"Trees", "Houses", "Random", "Paths", "Road", "Walls", "Towers", "Buildings"}
 local Debris = Workspace:WaitForChild("Debris")
@@ -1813,8 +1817,7 @@ UpgradeMenu:Toggle("Farm Token",function(bool)
 end)
 
 local supgrade2
-local fwTable = {unpack(WEAPONS), unpack(FIGHTERS)}
-local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",fwTable,true,function(SItem)
+local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",WFTABLE,true,function(SItem)
     supgrade2 = SItem
 end)
 
