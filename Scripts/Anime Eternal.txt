@@ -34,6 +34,7 @@ local gameData = {
         world = {
             name = "Dungeon_Lobby",
             raids = {
+                ["Dungeon_Labyrinth"] = {},
                 ["Halloween_Raid"] = {},
                 ["Graveyard_Defense"] = {},
                 ["Running_Track_Raid"] = {
@@ -1390,7 +1391,36 @@ Auto:Button("Delete",function()
     end)
 end)
 
-
+local __dungeons = Workspace:WaitForChild("Dungeons")
+local function getLabDoor()
+    local s
+    local t = {}
+    for _,v in pairs(__dungeons:GetChildren())do
+        if v.Name:lower():match("labyrinth") then
+            s = v break
+        end
+    end
+    for _,v in pairs(s:GetChildren()) do
+        local doors = v:FindFirstChild("Doors")
+        if doors then
+            for __,_v in pairs(doors:GetChildren())do
+                local _door = _v:FindFirstChild("Door")
+                if _door then
+                    local prox = _door:FindFirstChild("Prompt")
+                    if prox and prox.Enabled then
+                        t = {
+                            dungeon = v,
+                            model = _v,
+                            door = _door,
+                            prompt = prox
+                        }
+                        return t
+                    end
+                end
+            end
+        end
+    end
+end
 
 local sMonster, gMonster, uMonster
 local EmenyNameList = getMonstersNames()
@@ -1421,6 +1451,15 @@ task.spawn(function()
 
                 repeat
                     local dungeon = getCurrentDungeon()
+
+                    --LABYRINTH DUNGEON DOOR CHECK
+                    if mode == "AD" and dungeon.title:lower():match("labyrinth") then
+                        local currentDoor = getLabDoor()
+                        if currentDoor then
+                            MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
+                            fireproximityprompt(currentDoor.prompt) task.wait()
+                        end
+                    end
 
                     if cMonster and cMonster.Parent then
                         attack(cMonster.Name)
