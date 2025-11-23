@@ -898,7 +898,9 @@ local function IntData()
 end
 IntData()
 
-
+PrintTable(WEAPONS)
+local test1 = {unpack(WEAPONS), unpack(FIGHTERS)}
+PrintTable(test1)
 
 local assetsDestroy = {"Trees", "Houses", "Random", "Paths", "Road", "Walls", "Towers", "Buildings"}
 local Debris = Workspace:WaitForChild("Debris")
@@ -1811,7 +1813,8 @@ UpgradeMenu:Toggle("Farm Token",function(bool)
 end)
 
 local supgrade2
-local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",{unpack(WEAPONS), unpack(FIGHTERS)},true,function(SItem)
+local fwTable = {unpack(WEAPONS), unpack(FIGHTERS)}
+local DropListU2 = UpgradeMenu:Dropdown("Select Weapon/Fighter",fwTable,true,function(SItem)
     supgrade2 = SItem
 end)
 
