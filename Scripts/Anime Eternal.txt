@@ -819,12 +819,32 @@ local gameData = {
             name = "Thriller_Park",
             raids = {},
             gachaTable = {
-
+                ["Thriller_Zombie"] = {
+                    token = "Thriller Zombie Token",
+                    list = {"Surprise Zombie", "Zombie Soldier", "Wild Zombie", "Mid-Tier Zombie General", "Elite Zombie General", "High-Class Zombie", "Special Zombie", "Zombie Controller"}
+                },
+                ["Nightmare Evolution"] = {
+                    token = "Nightmare Evo Token",
+                    list = {"Common Nightmare Evo", "Uncommon Nightmare Evo", "Rare Nightmare Evo", "Epic Nightmare Evo", "Legendary Nightmare Evo", "Mythical Nightmare Evo", "Phantom Nightmare Evo", "Supreme Nightmare Evo"}
+                }
             },
-            upgradeTable = {}
+            upgradeTable = {},
+            fighterTable = {
+                ["Special_Zombie"] = {
+                    token = "Special Zombie Token",
+                    list = {"Uncommon Zombie", "Rare Zombie", "Epic Zombie", "Legendary Zombie", "Mythical Zombie", "Phantom Zombie"}
+                }
+            }
         },
         enemies = {
-            
+            { name = 'Robini', tokens = {"Thriller Zombie Token", "Zombie Glue", "Zombie Saw"}},
+            { name = 'Perina', tokens = {"Nightmare Evo Token", "Zombie Glue", "Zombie Saw"}}, 
+            { name = 'Franq', tokens = {"Special Zombie Token", "Zombie Glue", "Zombie Saw"}}, 
+            { name = 'Brukk', tokens = {"Special Zombie Token", "Zombie Glue", "Zombie Saw"}}, 
+            { name = 'Nightmare_Loffy', tokens = {"Zombie Booster Token", "Zombie Glue", "Zombie Saw"}},
+            { name = 'Orrs', tokens = {"Zombie Booster Token", "Zombie Glue", "Zombie Saw"}}, 
+            { name = 'Riuma', tokens = {"Thriller Zombie Token", "Nightmare Evo Token", "Zombie Glue", "Zombie Saw"}}, 
+            { name = 'Gekar_Morra', tokens = {"Special Zombie Token", "Zombie Booster Token", "Zombie Glue", "Zombie Saw"}}, 
         }
     },
     [26] = {
@@ -1284,12 +1304,15 @@ local function getCurrentQuest()
                     type = "Star"
                 end
 
-				if titleText:lower():match("punching") then -- DUNGEONS
+				if titleText:lower():match("punching") then -- PUNCHING QUEST
 					name = titleText
 					type = "Punching_Machine"
 				end
 
-
+				if titleText:lower():match("demon fruit") then -- DEMON FRUIT QUEST
+					name = titleText
+					type = "Demon_Fruit"
+				end
 
 				local c, m = progressText:match("(%d+)%/(%d+)")
 				c, m = tonumber(c) or 0, tonumber(m) or 0
@@ -1343,6 +1366,7 @@ end)
 
 local qMonster
 local tempDungeon = {}
+local subQuest = {"punching_machine", "demon_fruit"}
 Auto:Toggle("Complete Quest",function(bool) -- WIP
     shared.ToggleACQ=bool
     spawn(function()
@@ -1371,11 +1395,11 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif type == "star" then  -- OPEN STARS
                             openStar(v.name)
-                        elseif type == "punching_machine" then -- PUNCHING MACHINE
-                            local machine = Workspace:FindFirstChild("Punching_Machine")
-                            if machine then
+                        elseif table.find(subQuest, type) then -- PUNCHING MACHINE / DEMON FRUIT
+                            local location = Workspace:FindFirstChild(v.type)
+                            if location then
                                 running = true
-                                local item = machine:GetChildren()[1]
+                                local item = location:GetChildren()[1]
                                 local oldPos = GetPos()
                                 MoveTo(item) task.wait(1)
                                 fireproximityprompt(item.ProximityPrompt)
