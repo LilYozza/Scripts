@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.5")
+print("v9.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -34,7 +34,9 @@ local gameData = {
         world = {
             name = "Dungeon_Lobby",
             raids = {
-                ["Dungeon_Labyrinth"] = {},
+                ["Dungeon_Labyrinth"] = {
+                    list = {"Common Labyrinth Power", "Uncommon Labyrinth Power", "Rare Labyrinth Power", "Epic Labyrinth Power", "Legendary Labyrinth Power", "Mythical Labyrinth Power", "Phantom Labyrinth Power", "Supreme Labyrinth Power"}
+                },
                 ["Halloween_Raid"] = {},
                 ["Graveyard_Defense"] = {},
                 ["Running_Track_Raid"] = {
@@ -70,7 +72,9 @@ local gameData = {
                 },
                 ["Dungeon_Adventure"] = {}, -- RUNE BOX 1
                 ["Dungeon_Torment"] = {}, -- RUN BOX 2
-                ["Maze_Level_1"] = {}, -- RUN BOX 3
+                ["Maze_Level_1"] = {
+                    list = { "Common Maze Power" }
+                }, -- RUN BOX 3
                 ["Maze_Level_2"] = {},
                 ["Maze_Level_3"] = {}
                 
@@ -749,7 +753,8 @@ local gameData = {
             name = "Z_City",
             raids = {
                 ["One_Hero_Raid"] = {
-                    drops = { "Obelisk Coin" }
+                    drops = { "Obelisk Coin" },
+                    rewards = {"Common One Hero", "Uncommon One Hero", "Rare One Hero", "Epic One Hero", "Legendary One Hero", "Mythical One Hero", "Phantom One Hero", "Supreme One Hero"}
                 }
             },
             gachaTable = {
@@ -762,7 +767,9 @@ local gameData = {
                     list = { "Basic Punch", "Heroic Fist", "Serious Punch", "Celestial Impact", "Gamma Burst Punch", "One Punch" }
                 }
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["Hide_n_Punch_Progression"] = { token = "Punching Machine Coin", Upgrading_Name = "Damage", bench = true },
+            }
         },
         enemies = {
             { name = 'Crabby', tokens = {"Threat Level Token"}},
