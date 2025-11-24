@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.3")
+print("v9.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1494,7 +1494,7 @@ task.spawn(function()
                 local currentDoor = getLabDoor()
                 if currentDoor then
                     MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
-                    fireproximityprompt(currentDoor.prompt) task.wait()
+                    fireproximityprompt(currentDoor.prompt) task.wait(2)
                 end
 			end
             
