@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.4")
+print("v9.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -936,6 +936,23 @@ local function getMonstersNames()
     return t
 end
 
+local function getMonsterCount(_inDungeon)
+    local count = 0
+    for _,v in pairs(Monsters:GetChildren())do
+        if v:IsA("Model") and v.PrimaryPart then
+            local isDungeonMonster = v:GetAttribute("Is_Dungeon") == true
+            if _inDungeon == true and isDungeonMonster then
+                count = count + 1
+            elseif _inDungeon == false and not isDungeonMonster then
+                count = count + 1
+            elseif _inDungeon == nil then
+                count = count + 1
+            end
+        end
+    end
+    return count
+end
+
 local function getClosestMonster(_name, _dungeon)
     if _dungeon == true or _name == "All" then _name = nil end --DISABLES NAME CHECKING
 	local closestMonster = nil
@@ -1457,14 +1474,15 @@ task.spawn(function()
                     if cMonster and cMonster.Parent then
                         attack(cMonster.Name)
                     else
-                        if mode == "AD" and dungeon.inDungeon == true and dungeon.title:lower():match("labyrinth") then --LABYRINTH DUNGEON DOOR CHECK
-                            local currentDoor = getLabDoor()
-                            if currentDoor then
-                                MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
-                                fireproximityprompt(currentDoor.prompt) task.wait()
-                            end
-                        end
                         break
+                    end
+
+                    if mode == "AD" and dungeon.inDungeon == true and dungeon.title:lower():match("labyrinth") and getMonsterCount(true) <= 0 then --LABYRINTH DUNGEON DOOR CHECK
+                        local currentDoor = getLabDoor()
+                        if currentDoor then
+                            MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
+                            fireproximityprompt(currentDoor.prompt) task.wait()
+                        end
                     end
                     
                     if ((mode == "QA" or mode == "GA" or mode == "UA") and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
