@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.4")
+print("v9.5")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -807,7 +807,7 @@ local gameData = {
             { name = 'Auro', tokens = {"Magic Tier Token"}},
             { name = 'Maro', tokens = {"Mana Growth Token"}},
             { name = 'Sebes', tokens = {"Ultimate Cast Token"}},
-            { name = 'Shaltir', tokens = {"Adventurer Lvl Token"}}, 
+            { name = 'Shaltir', tokens = {"Adventurer Lvl Token"}},
             { name = 'Demurge', tokens = {"Magic Tier Lvl Token"}},
             { name = 'Albedia', tokens = {"Adventurer Token", "Magic Tier Token", "Mana Growth Token"}},
             { name = 'Anz_Ool_Gawn', tokens = {"Adventurer Token", "Magic Tier Token", "Ultimate Cast Token"}, type = "boss"}, 
@@ -823,7 +823,7 @@ local gameData = {
                     token = "Thriller Zombie Token",
                     list = {"Surprise Zombie", "Zombie Soldier", "Wild Zombie", "Mid-Tier Zombie General", "Elite Zombie General", "High-Class Zombie", "Special Zombie", "Zombie Controller"}
                 },
-                ["Nightmare Evolution"] = {
+                ["Nightmare_Evolution"] = {
                     token = "Nightmare Evo Token",
                     list = {"Common Nightmare Evo", "Uncommon Nightmare Evo", "Rare Nightmare Evo", "Epic Nightmare Evo", "Legendary Nightmare Evo", "Mythical Nightmare Evo", "Phantom Nightmare Evo", "Supreme Nightmare Evo"}
                 }
@@ -1395,7 +1395,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif type == "star" then  -- OPEN STARS
                             openStar(v.name)
-                        elseif table.find(subQuest, type) then -- PUNCHING MACHINE / DEMON FRUIT
+                        elseif table.find(subQuest, type) then -- FINDING QUEST
                             local location = Workspace:FindFirstChild(v.type)
                             if location then
                                 running = true
