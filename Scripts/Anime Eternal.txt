@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.3")
+print("v9.4")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1454,21 +1454,19 @@ task.spawn(function()
                 repeat
                     local dungeon = getCurrentDungeon()
 
-                    --LABYRINTH DUNGEON DOOR CHECK
-                    if mode == "AD" and dungeon.title:lower():match("labyrinth") then
-                        local currentDoor = getLabDoor()
-                        if currentDoor then
-                            MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
-                            fireproximityprompt(currentDoor.prompt) task.wait()
-                        end
-                    end
-
                     if cMonster and cMonster.Parent then
                         attack(cMonster.Name)
                     else
+                        if mode == "AD" and dungeon.inDungeon == true and dungeon.title:lower():match("labyrinth") then --LABYRINTH DUNGEON DOOR CHECK
+                            local currentDoor = getLabDoor()
+                            if currentDoor then
+                                MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
+                                fireproximityprompt(currentDoor.prompt) task.wait()
+                            end
+                        end
                         break
                     end
-
+                    
                     if ((mode == "QA" or mode == "GA" or mode == "UA") and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
                         qMonster = nil
                         gMonster = nil
