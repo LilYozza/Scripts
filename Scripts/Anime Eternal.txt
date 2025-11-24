@@ -10,7 +10,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.5")
+print("v9.3")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1473,12 +1473,6 @@ task.spawn(function()
 
                     if cMonster and cMonster.Parent then
                         attack(cMonster.Name)
-                    elseif mode == "AD" and dungeon.inDungeon == true and dungeon.title:lower():match("labyrinth") and getMonsterCount(true) < 1 then --LABYRINTH DUNGEON DOOR CHECK
-                        local currentDoor = getLabDoor()
-                        if currentDoor then
-                            MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
-                            fireproximityprompt(currentDoor.prompt) task.wait()
-                        end
                     else    
                         break
                     end
@@ -1496,7 +1490,14 @@ task.spawn(function()
                     or (mode == "QA" and not shared.ToggleACQ)
                     or (mode == "GA" and not shared.ToggleAFG)
                     or (mode == "UA" and not shared.ToggleAFU)
+            elseif mode == "AD" and dungeon.inDungeon == true and dungeon.title:lower():match("labyrinth") then --LABYRINTH DUNGEON DOOR CHECK
+                local currentDoor = getLabDoor()
+                if currentDoor then
+                    MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
+                    fireproximityprompt(currentDoor.prompt) task.wait()
+                end
 			end
+            
 		end
 	end
 end)
