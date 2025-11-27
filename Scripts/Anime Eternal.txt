@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.1")
+print("v1.2")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -1040,6 +1040,23 @@ local function getMonsterCount(_inDungeon)
     return count
 end
 
+local function buyKey(_key, _amount)
+    _amount = _amount or 1
+    local keyInfo = KEYINFO[_key]
+    if keyInfo then
+        local args = {
+            [1] = {
+                ["Bench_Name"] = keyInfo.storeType,
+                ["Product_Id"] = keyInfo.id,
+                ["Action"] = "Merchant_Purchase",
+                ["Amount"] = tonumber(_amount)
+            }
+        }
+        print("Brought:", _key, _amount)
+        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    end
+end
+
 local function getClosestMonster(_name, _dungeon)
     if _dungeon == true or _name == "All" then _name = nil end --DISABLES NAME CHECKING
 	local closestMonster = nil
@@ -1642,13 +1659,6 @@ RaidMenu:Button("Reset",function()
     end)
 end)
 
---[[
-RaidMenu:Toggle("Helper",function(bool)
-    shared.ToggleDH=bool
-    spawn(function()DungeonHelper = shared.ToggleDH end)
-end)
-]]--
-
 local blacklistWalk = {"Leaf_Raid"}
 RaidMenu:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
@@ -1657,7 +1667,6 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
             if dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
                 if table.find(tempDungeon, dungeon.name) then print("Removed:", dungeon.name) RemoveFromTable(tempDungeon, dungeon.name) end
-                --if DungeonHelper then teleportToDungeon() toggleScriptBtn(false) task.wait(0.5) end
                 task.wait(1)
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
@@ -1666,8 +1675,6 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
                     local hrp = GetHrp()
                     Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100000)
                 end
-                --if DungeonHelper then teleportToDungeon() task.wait(30) teleportToDungeon() toggleScriptBtn(true) task.wait(0.5) end
-                --if DungeonHelper then dungeonHelper(30) end
             elseif dungeon and dungeon.isReady then
                 dungeon.reference.Visible = false
             end
@@ -1677,6 +1684,7 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
 end)
 
 local sRaid
+local buyKeyRM = false
 local RaidList = RaidMenu:Dropdown("Select Raid",RAIDS,true,function(SItem)
     sRaid = SItem
 end)
@@ -1692,18 +1700,22 @@ RaidMenu:Toggle("Auto Raid",function(bool)
         while shared.ToggleAR do
             local currentRaid = getCurrentDungeon()
             if sRaid and currentRaid and currentRaid.inDungeon == false then
-                if DungeonHelper then toggleScriptBtn(false) task.wait(0.5) end
+                if buyKeyRM then buyKey(sRaid) end
                 task.wait(1)
                 joinDungeon(sRaid, rMultipler)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
-                if DungeonHelper then task.wait(30) toggleScriptBtn(true) task.wait(0.5) end
             end
             task.wait(1)
         end
     end)
 end)
 
-
+RaidMenu:Toggle("Buy Key",function(bool)
+    shared.ToggleRMBK=bool
+    spawn(function()
+        buyKeyRM =  shared.ToggleRMBK
+    end)
+end)
 
 Auto:Button("Redeem Codes",function()
     spawn(function()
@@ -1984,25 +1996,6 @@ end)
 ----------------------------------------------------------------------------------------------------------------------
 ---------------------------------- SHOP MENU ----------------------------------------------------------------------
 
-local function buyKey(_key, _amount)
-    _amount = _amount or 1
-    local keyInfo = KEYINFO[_key]
-    if keyInfo then
-        local args = {
-            [1] = {
-                ["Bench_Name"] = keyInfo.storeType,
-                ["Product_Id"] = keyInfo.id,
-                ["Action"] = "Merchant_Purchase",
-                ["Amount"] = tonumber(_amount)
-            }
-        }
-        print("Brought:", _key, _amount)
-        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
-    end
-end
-
-
-
 local sKey
 local sKeyAmount = 1
 local DropListShopAmount = ShopMenu:Dropdown(sKeyAmount,{1,2,3,4,5},true,function(SItem)
@@ -2257,4 +2250,6 @@ local dataToSave = {
     ["Auto Rankup"] = {var = "ToggleARU"},
     ["Auto Prestige"] = {var = "ToggleAAP"},
     ["Auto Click"] = {var = "ToggleACC"},
+
+    ["Buy Key"] = {var = "ToggleRMBK"}
 } SaveManager(dataToSave)
