@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.9")
+print("v1")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -2051,8 +2051,8 @@ DailyMenu:Button("Running Track",function()
     spawn(function()
         buyKey("Running_Track_Raid", 1)
         joinDungeon("Running_Track_Raid")
-        local dungInfo = getCurrentDungeon()
         task.wait(2)
+        local dungInfo = getCurrentDungeon()
         if dungInfo.inDungeon == true then
             local changedBool = false
             if not shared.ToggleAD then
@@ -2070,6 +2070,7 @@ DailyMenu:Button("Punch Machine",function()
     spawn(function()
         acceptQuest(2301)
         if itemFindQuest("Punching_Machine") then
+            task.wait(2)
             completeQuest(2301) task.wait(5)
             openUpgrade("Hide_n_Punch_Progression")
         end
@@ -2080,6 +2081,7 @@ DailyMenu:Button("Demon Fruit",function()
     spawn(function()
         acceptQuest(2302)
         if itemFindQuest("Demon_Fruit") then
+            task.wait(2)
             completeQuest(2302)
         end
     end)
