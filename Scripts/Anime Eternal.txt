@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.7")
+print("v9.8")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -962,19 +962,23 @@ local function IntData()
 
         --KEYS
         for name, raid in pairs(v.world.raids) do
-            local keyName = name .. "_key"
-            local type
-            if raid.key.type == 1 then
-                type = "Exchange_Shop_Keys"
-            elseif raid.key.type == 2 then
-                type = "Exchange_Shop_Keys_2"
+            if raid.key and raid.key.type then 
+                local type = "Event"
+                local keyName = name .. "_key"
+                if raid.key.type == 1 then
+                    type = "Exchange_Shop_Keys"
+                elseif raid.key.type == 2 then
+                    type = "Exchange_Shop_Keys_2"
+                end
+
+                KEYINFO[keyName] = {
+                    id = raid.key.id,
+                    raid = raid,
+                    storeType = type,
+                    limit = raid.key.limit
+                }
+                table.insert(KEYS, keyName)
             end
-            KEYINFO[keyName] = {
-                id = raid.key.id,
-                raid = raid,
-                storeType = type
-            }
-            table.insert(KEYS, keyName)
         end
 
     end
