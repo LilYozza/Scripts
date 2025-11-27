@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.8")
+print("v9.9")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -818,7 +818,7 @@ local gameData = {
         world = {
             name = "Great_Tomb",
             raids = {
-                [""] = {
+                ["Tomb_Arena_Raid"] = {
                     key = {type = 2, id = 5},
                 }
             },
@@ -935,6 +935,7 @@ local gameData = {
         }
     },
 }
+
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 then
         for name,v in pairs(_tbl1)do
@@ -964,20 +965,20 @@ local function IntData()
         for name, raid in pairs(v.world.raids) do
             if raid.key and raid.key.type then 
                 local type = "Event"
-                local keyName = name .. "_key"
                 if raid.key.type == 1 then
                     type = "Exchange_Shop_Keys"
                 elseif raid.key.type == 2 then
                     type = "Exchange_Shop_Keys_2"
                 end
 
-                KEYINFO[keyName] = {
+                KEYINFO[name] = {
                     id = raid.key.id,
                     raid = raid,
                     storeType = type,
+                    type = raid.key.type,
                     limit = raid.key.limit
                 }
-                table.insert(KEYS, keyName)
+                table.insert(KEYS, name)
             end
         end
 
@@ -1422,6 +1423,21 @@ Auto:Toggle("Auto Quest",function(bool)
     end)
 end)
 
+local function itemFindQuest(_name, timeout)
+    timeout = timeout or 5
+    local location = Workspace:WaitForChild(_name, timeout) or nil
+    if location then
+        local item = location:GetChildren()[1]
+        local oldPos = GetPos()
+        MoveTo(item) task.wait(1)
+        fireproximityprompt(item.ProximityPrompt)
+        MoveTo(oldPos)
+        return true
+    else
+        return false
+    end
+end
+
 local qMonster
 local tempDungeon = {}
 local subQuest = {"punching_machine", "demon_fruit"}
@@ -1454,15 +1470,8 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                         elseif type == "star" then  -- OPEN STARS
                             openStar(v.name)
                         elseif table.find(subQuest, type) then -- FINDING QUEST
-                            local location = Workspace:FindFirstChild(v.type)
-                            if location then
-                                running = true
-                                local item = location:GetChildren()[1]
-                                local oldPos = GetPos()
-                                MoveTo(item) task.wait(1)
-                                fireproximityprompt(item.ProximityPrompt)
-                                MoveTo(oldPos)
-                            end
+                            running = true
+                            itemFindQuest(v.type)
                         elseif type == "dungeon" then   -- COMPLETE DUNGEON
                             local firstWord = v.name:match("^(%w+)")  -- "Medium"
                             for _, dungeon in ipairs(defaultDungeons) do
@@ -1715,101 +1724,6 @@ Auto:Button("Other",function()
     end)
 end)
 
----------------------------------- SHOP MENU ----------------------------------------------------------------------
-
-local function buyKey(_key, _amount)
-    _amount = _amount or 1
-    local keyInfo = KEYINFO[_key]
-    print(_key, keyInfo.id, keyInfo.storeType)
-    if keyInfo then
-        local args = {
-            [1] = {
-                ["Bench_Name"] = keyInfo.storeType,
-                ["Product_Id"] = keyInfo.id,
-                ["Action"] = "Merchant_Purchase",
-                ["Amount"] = _amount
-            }
-        }
-
-        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
-    end
-end
-
-
-
-local sKey
-local sKeyAmount = 1
-local DropListShopAmount = ShopMenu:Dropdown(sKeyAmount,{1,2,3,4,5},true,function(SItem)
-    sKeyAmount = SItem
-end)
-
-local DropListShop = ShopMenu:Dropdown("Select Key",KEYS,true,function(SItem)
-    sKey = SItem
-end)
-
-ShopMenu:Button("Buy Key",function()
-    spawn(function()
-        if sKey then
-            buyKey(sKey, sKeyAmount)
-        end
-    end)
-end)
-
-
-
---------------------------------------------------------------------------------------------------------------------
----------------------------------- DAILY MENU ----------------------------------------------------------------------
-
-DailyMenu:Button("Buy Keys #1",function()
-    spawn(function()
-    end)
-end)
-
-DailyMenu:Button("Buy Keys #2",function()
-    spawn(function()
-    end)
-end)
-
-DailyMenu:Button("Running Track",function()
-    spawn(function()
-    end)
-end)
-
-DailyMenu:Button("Punch Machine",function()
-    spawn(function()
-    end)
-end)
-
-DailyMenu:Button("Demon Fruit",function()
-    spawn(function()
-    end)
-end)
-
---------------------------------------------------------------------------------------------------------------------
----------------------------------- STAR MENU ----------------------------------------------------------------------
-local sStar
-local starTable = {}
-for i = 1, startAmount do
-    table.insert(starTable, "Star_"..i)
-end
-local starList = StarsMenu:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
-    sStar = SItem
-end)
-
-StarsMenu:Toggle("Auto Hatch",function(bool)
-    shared.ToggleSAH=bool
-    spawn(function()
-        while shared.ToggleSAH do
-            if sStar then
-                openStar(sStar)
-            end
-            task.wait(1)
-        end
-    end)
-end)
-
-
---------------------------------------------------------------------------------------------------------------------
 ---------------------------------- GACHA MENU ----------------------------------------------------------------------
 ---
 ---
@@ -2067,6 +1981,136 @@ UpgradeMenu:Toggle("Auto Buy",function(bool)
     end)
 end)
 ----------------------------------------------------------------------------------------------------------------------
+---------------------------------- SHOP MENU ----------------------------------------------------------------------
+
+local function buyKey(_key, _amount)
+    _amount = _amount or 1
+    local keyInfo = KEYINFO[_key]
+    print(_key, keyInfo.id, keyInfo.storeType)
+    if keyInfo then
+        local args = {
+            [1] = {
+                ["Bench_Name"] = keyInfo.storeType,
+                ["Product_Id"] = keyInfo.id,
+                ["Action"] = "Merchant_Purchase",
+                ["Amount"] = tonumber(_amount)
+            }
+        }
+
+        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    end
+end
+
+
+
+local sKey
+local sKeyAmount = 1
+local DropListShopAmount = ShopMenu:Dropdown(sKeyAmount,{1,2,3,4,5},true,function(SItem)
+    sKeyAmount = SItem
+end)
+
+local DropListShop = ShopMenu:Dropdown("Select Key",KEYS,true,function(SItem)
+    sKey = SItem
+end)
+
+ShopMenu:Button("Buy Key",function()
+    spawn(function()
+        if sKey then
+            buyKey(sKey, sKeyAmount)
+        end
+    end)
+end)
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+---------------------------------- DAILY MENU ----------------------------------------------------------------------
+
+local function buyLimitedKeys(_type)
+    if _type then
+        for key,v in pairs(KEYINFO)do
+            if v.limit and v.type == _type then
+                buyKey(key, v.limit)
+            end
+        end
+    end
+end
+
+DailyMenu:Button("Buy Keys #1",function()
+    spawn(function()
+        buyLimitedKeys(1)
+    end)
+end)
+
+DailyMenu:Button("Buy Keys #2",function()
+    spawn(function()
+        buyLimitedKeys(2)
+    end)
+end)
+
+DailyMenu:Button("Running Track",function()
+    spawn(function()
+        buyKey("Running_Track_Raid", 1)
+        joinDungeon("Running_Track_Raid")
+        local dungInfo = getCurrentDungeon()
+        task.wait(2)
+        if dungInfo.inDungeon == true then
+            local changedBool = false
+            if not shared.ToggleAD then
+                shared.ToggleAD = true
+                changedBool = true
+            end
+            repeat task.wait() dungInfo = getCurrentDungeon() until dungInfo.inDungeon == false or not shared.ToggleAD
+            if changedBool then shared.ToggleAD = false end task.wait(5)
+            openUpgrade("Running_Track_Progression") 
+        end
+    end)
+end)
+
+DailyMenu:Button("Punch Machine",function()
+    spawn(function()
+        acceptQuest(2301)
+        if itemFindQuest("Punching_Machine") then
+            completeQuest(2301) task.wait(5)
+            openUpgrade("Hide_n_Punch_Progression")
+        end
+    end)
+end)
+
+DailyMenu:Button("Demon Fruit",function()
+    spawn(function()
+        acceptQuest(2302)
+        if itemFindQuest("Demon_Fruit") then
+            completeQuest(2302)
+        end
+    end)
+end)
+
+--------------------------------------------------------------------------------------------------------------------
+---------------------------------- STAR MENU ----------------------------------------------------------------------
+local sStar
+local starTable = {}
+for i = 1, startAmount do
+    table.insert(starTable, "Star_"..i)
+end
+local starList = StarsMenu:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+    sStar = SItem
+end)
+
+StarsMenu:Toggle("Auto Hatch",function(bool)
+    shared.ToggleSAH=bool
+    spawn(function()
+        while shared.ToggleSAH do
+            if sStar then
+                openStar(sStar)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+--------------------------------------------------------------------------------------------------------------------
 ------------------------------------- STAT MENU ----------------------------------------------------------------------
 local function upgradeStat(_stat)
     local args = {
