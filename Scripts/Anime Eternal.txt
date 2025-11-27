@@ -5,12 +5,14 @@ local Auto = w:CreateFolder("Auto")
 local RaidMenu = w:CreateFolder("Raid/Dungeon")
 local GachaMenu = w:CreateFolder("Gachas")
 local UpgradeMenu = w:CreateFolder("Upgrades")
+local ShopMenu = w:CreateFolder("Shop")
+local DailyMenu = w:CreateFolder("Dailies")
 local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v9.5")
+print("v9.7")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -26,8 +28,8 @@ local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeo
 }
 
 
---AS OF Update 25, Part 1 23/11/2025
-local CODES = {"Update25P2", "750KFav", "395KLikes", "245MVisits", "Labyrinth", "ImGreenOnUpdate25", "Update25P2Restart1", "Update25", "740KFav", "745KFav", "240MVisits", "StoneCode", "Update24P3", "730KFav", "735KFav", "390KLikes", "235MVisits", "Update24P2", "720KFav", "725KFav", "230MVisits", "Update24Part2Code", "Update24", "710KFav", "715KFav", "CodeGeass", "385kLikes","Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code", "Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20", "Update19P3", "315KLikes", "580KFav", "585KFav", "150MVisits", "RandomUpdate19P2Code?", "Update19P2Shutdown2", "Update19P2Shutdown", "Update19P2Delay", "125MVisits", "575KFav", "570KFav", "310KLikes", "Update19P2", "Update19", "300KLikes", "305KLikes", "560KFav", "565KFav", "Update19Delay", "JustACodeFor19Upd", "Update18P3Keys", "Update18P3", "290KLikes", "295KLikes", "550KFav", "555KFav", "Upd18Code", "Code2Upd18", "Update18P2", "285KLikes", "535KFav", "540KFav", "545KFav", "TheSmirkUp18!", "NiceOnUpdate18?", "IThinkYouAreLying", "ImAtomic!", "Update18", "280KLikes", "520KFav", "525KFav", "530KFav", "ImBombastic", "RandomCodeUPD17P3", "Update17P3", "515KFav", "510KFav", "275KLikes", "270KLikes", "100MVisits", "Super88KOnlineCode", "OnlineCodeSuper89K!", "JustOneMoreUpdate17P2Code", "ThisIsSuperCoolCodeFor84k", "OkayWhat?!85K", "NoWayWeWillHit86k", "87kNoWay!!", "Update17P2", "260KLikes", "265KLikes", "500KFav", "505KFav", "Record75K?", "Record76K?", "Record77K?", "InsaneRecord78K?", "NoWayRecord79K?!", "80KPeoplePlaying?!", "PeoplePlayingAt81K", "People82KPlaying", "ThereIs83KPlayersOn?!", "WhyNotGiveSundayCodeUp17", "MoreFeaturesOnSundayUpdate17", "Update17", "250KLikes", "255KLikes", "490KFav", "495KFav", "Update17BalanceWhatisThat?", "SaveMeUpdate16Part3Fix", "Update16P3", "240KLikes", "245KLikes", "475KFav", "480KFav", "Update16P2Fix2", "NewRecord68K?", "NewRecord69K?", "NoWayWeCanHit70K?", "71KImpossibleRecord!", "Insane72kPlayersOnline", "73KPlayers", "74KPlayers", "Update16P2Fix", "Update16P2", "235KLikes", "460KFav", "465KFav", "470KFav", "80MVisits", "Record67K?", "FunnyGreenPlanetShutdown2", "FunnyGreenPlanetShutdown", "FunnyGreenPlanet", "GreenPlanetCode", "455KFav", "450KFav", "230KLikes", "225KLikes", "Update16", "MobileUIFix16Up", "DungeonUp16Fix", "445KFav", "440KFav", "220KLikes", "215KLikes", "Update15P3", "Update15P2", "205KLikes", "210KLikes", "430KFav", "435KFav", "54kPlayers", "55kPlayers", "56K?!", "57KNewRecord!!", "NoWay58KOnline", "59KOnlinePlayers?!", "ThereIsNoWay60k!", "61kThereIsNoWay", "WhatPlayer62kRecord!", "63kRecord!", "CursedFixes", "64kRecord!", "DungeonUp15Fix", "65kRecord!", "66kRecord!", "BugsUpdate15", "2BugsUpdate15", "Update15Delay", "Update15", "195KLikes", "200KLikes", "420KFav", "425KFav", "Update14P3", "185KLikes", "190KLikes", "410KFav", "415KFav", "51kPlayers", "52kPlayers", "53kPlayers", "?43KRecord?", "44KRecord??", "Record45K?!", "?Record46K?!", "NewRecord47k", "SupaRecord48k", "Supa49kRecord", "Ultra50KRecord", "Update14P2", "175KLikes", "180KLikes", "400KFav", "405KFav", "?42K?", "?41KRecord?", "SomeQuickFix1a", "SomeQuickFix2", "40KRecord?", "39KRecordCcu", "DungeonQuickFix", "Update14", "170KLikes", "50MVisits", "390KFav", "395KFav", "Update13P3", "165KLikes", "375KFav", "380KFav", "385KFav", "1GhoulKeyNoMore", "IWantKey", "Online36K", "37KPlayersOn", "38KRecord", "Update13P2", "365KFav", "370KFav", "50K", "160KLikes", "34KOnline", "35KCCU", "Update13", "155KLikes", "350KFav", "360KFav", "40MVisits", "DungeonFall1", "Update12.5", "31KPlayers", "32KPlayers", "33KPlayers", "150KLikes", "Update12.2", "35MVisits", "140KLikes", "340KFav", "29KPlayers", "30kOnline", "Update12.2Late", "PotionFix1", "25KPlayers", "26KPlayers", "27KPlayers", "28KPlayers", "BugFixSome", "Update12", "Stands", "135KFav", "32MVisits", "40K", "330KFAV", "Restaurant", "Update11.5", "320KFav", "130KLikes", "30MVisits", "TheEyes", "23KPlayers", "24KPlayers", "WeaponFix", "WhyNotOneMore2", "Update11Small", "22KPlayers", "125KLikes", "315KFav", "WhyNotOneMore", "BugFixUpdate11", "18KPlayers", "19KPlayers", "20KPlayers", "21KPlayers", "Update11", "115KLIKES", "120KLIKES", "310KFAV", "17KPlayers", "UpdateDelay", "Update10Part2", "25MVisits", "300KFAV", "110KLIKES", "DefenseRaidFix", "Tinycode", "EnergyFix", "DungeonFixed", "Update10", "20MVisits", "280KFAV", "290KFAV", "105KLikes", "RefreshCode", "Update9Part2", "95KLIKES", "270KFAV", "100KLIKES", "WaitRoom", "MaxButtonNextUpdate", "DungFix?", "16KPlayers", "85KLIKES", "Update9Part1", "90KLIKES", "260KFAV", "JewelFix2", "80KLIKES", "Update8P2", "250KFAV", "240KFAV", "12KPlayers", "13KPlayers", "14KPlayers", "Update8P1", "75KLIKES", "JewelFix", "Update8", "70KLikes", "11KPlayers", "230KFAV", "13MVISITS", "BugFixesUp7", "10KPlayers", "ObeliskBug", "Update7Part2", "220KFav", "12MVISITS", "65KLikes", "9KPlayers", "Update7Part1", "60KLikes", "210KFav", "10MVISITS", "55KLikes", "8KPlayers", "50KLikes", "195KAV", "200KFAV", "Update6QoL", "Refresh", "175KFAV", "Update6", "5MVisits", "6MVisits", "190KFAV", "Update5Part2", "45KLIKES", "160KFAV", "140KFAV", "SomeBugFix1", "Update5Part1", "40KLikes", "35KLikes", "7KPlayers", "125KFAV", "30KLIKES", "SorryForShutdown3", "SorryForShutdown2", "SorryForSouls", "4MVisits", "AFKFix?", "Update4", "3MVISITS", "6KPlayers", "25KLIKES", "100KFAV", "2MVisits", "75KFav", "60KFav", "20KLikes", "Update3Part2", "ShopFix", "SorryForDelay1", "12K5Likes", "Update3", "50KFAV", "15KLikes", "1MVisits", "Update2Part2", "40KFAV", "30KFAV", "10KLIKES", "5KPlayers", "4KPlayers", "SorryForBugs3", "SorryForBugs2", "SorryForBugs", "Update2", "5KLikes", "500KVISITS", "20KFAV", "15KFAV", "2K5Likes", "10KFav", "5KFav", "2KPlayers", "ResetFix", "AMAZING", "2500FAV", "1KLikes", "750likes"}
+--AS OF Update 26, 26/11/2025
+local CODES = { "SlashX", "Derp", "Heyyyo", "Update26", "755KFav", "Update26Code", "ThanksgivingOnPart2?", "Update26Code2", "Update26Restart1", "Update25P2", "750KFav", "395KLikes", "245MVisits", "Labyrinth", "ImGreenOnUpdate25", "Update25P2Restart1", "Update25", "740KFav", "745KFav", "240MVisits", "StoneCode", "Update24P3", "730KFav", "735KFav", "390KLikes", "235MVisits", "Update24P2", "720KFav", "725KFav", "230MVisits", "Update24Part2Code", "Update24", "710KFav", "715KFav", "CodeGeass", "385kLikes","Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code", "Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20"}
 
 local gameData = {
     [0] = {
@@ -35,11 +37,13 @@ local gameData = {
             name = "Dungeon_Lobby",
             raids = {
                 ["Dungeon_Labyrinth"] = {
+                    key = {type = 1, id = 15},
                     list = {"Common Labyrinth Power", "Uncommon Labyrinth Power", "Rare Labyrinth Power", "Epic Labyrinth Power", "Legendary Labyrinth Power", "Mythical Labyrinth Power", "Phantom Labyrinth Power", "Supreme Labyrinth Power"}
                 },
                 ["Halloween_Raid"] = {},
                 ["Graveyard_Defense"] = {},
                 ["Running_Track_Raid"] = {
+                    key = {type = 1, id = 14, limit = 1},
                     drops = { "Running Track Coin" }
                 },
             },
@@ -62,17 +66,28 @@ local gameData = {
             name = "Dungeon_Lobby_2",
             raids = {
                 ["Green_Planet_Raid"] = {
+                    key = {type = 2, id = 1},
                     list = { "Eternal Dragon" },
                     drops = { "Eternal Dragon Token", " Saiyan Lvl Token", "Grand Elder Token", "Frost Demon Token", "Dragon Race Lvl Token", "Obelisk Coin" }
                 },
-                ["Mundo_Raid"] = {},
-                ["Hollow_Raid"] = {},
+                ["Mundo_Raid"] = {
+                    key = {type = 2, id = 2},
+                },
+                ["Hollow_Raid"] = {
+                    key = {type = 2, id = 4, limit = 8},
+                },
                 ["Dungeon_Suffering"] = {
+                    key = {type = 2, id = 3, limit = 8},
                     list = { "Power of Suffering" }
                 },
-                ["Dungeon_Adventure"] = {}, -- RUNE BOX 1
-                ["Dungeon_Torment"] = {}, -- RUN BOX 2
+                ["Dungeon_Adventure"] = {
+                    key = {type = 2, id = 6, limit = 15},
+                }, -- RUNE BOX 1
+                ["Dungeon_Torment"] = {
+                    key = {type = 2, id = 7},
+                }, -- RUN BOX 2
                 ["Maze_Level_1"] = {
+                    key = {type = 2, id = 8, limit = 150},
                     list = { "Common Maze Power" }
                 }, -- RUN BOX 3
                 ["Maze_Level_2"] = {},
@@ -90,7 +105,9 @@ local gameData = {
         world = {
             name = "Earth_City",
             raids = {
-                ["Tournament_Raid"] = {}
+                ["Tournament_Raid"] = {
+                    key = {type = 1, id = 1}
+                }
             },
             gachaTable = {
                 ["Dragon_Race"] = { 
@@ -119,6 +136,7 @@ local gameData = {
             name = "Windmill_Island",
             raids = {
                 ["Restaurant_Raid"] = {
+                    key = {type = 1, id = 2, limit = 3},
                     list = {"Common Chef", "Uncommon Chef", "Rare Chef", "Epic Chef", "Legendary Chef", "Mythical Chef", "Phantom Chef"}
                 }
             },
@@ -185,6 +203,7 @@ local gameData = {
             name = "Cursed_School",
             raids = {
                 ["Cursed_Raid"] = {
+                    key = {type = 1, id = 10, limit = 3},
                     list = {"Common Curse", "Uncommon Curse", "Rare Curse", "Epic Curse", "Legendary Curse", "Mythical Curse", "Phantom Curse"} 
                 }
             },
@@ -311,7 +330,9 @@ local gameData = {
         world = {
             name = "Spirit_Residence",
             raids = {
-                ["Progression_Raid"] = {}
+                ["Progression_Raid"] = {
+                    key = {type = 1, id = 3, limit = 3}
+                }
             },
             gachaTable = {
                 ["Psychic_Mayhem"] = { 
@@ -369,6 +390,7 @@ local gameData = {
             name = "Titan_City",
             raids = {
                 ["Titan_Defense"] = {
+                    key = {type = 1, id = 4},
                     drops = { "Obelisk Coin" }
                 }
             },
@@ -401,6 +423,7 @@ local gameData = {
             name = "Village_of_Sins",
             raids = {
                 ["Sin_Raid"] = {
+                    key = {type = 1, id = 12},
                     drops = { "Obelisk Coin", "Sin Upgrade Token" }
                 }
             },
@@ -437,6 +460,7 @@ local gameData = {
             name = "Kaiju_Base",
             raids = {
                 ["Kaiju_Dungeon"] = {
+                    key = {type = 1, id = 5},
                     drops = {"Kaiju Energy Token", "Fortitude Level Token", "Kaiju Token"}
                 }
             },
@@ -466,6 +490,7 @@ local gameData = {
             name = "Tempest_Capital",
             raids = {
                 ["Dragon_Room_Raid"] = { 
+                    key = {type = 1, id = 13},
                     list = {"Common Storm Dragon", "Uncommon Storm Dragon", "Rare Storm Dragon", "Epic Storm Dragon", "Legendary Storm Dragon", "Mythical Storm Dragon", "Phantom Storm Dragon", "Supreme Storm Dragon"}
                 }
             },
@@ -501,6 +526,7 @@ local gameData = {
             name = "Virtual_City",
             raids = {
                 ["Gleam_Raid"] = {
+                    key = {type = 1, id = 6},
                     list = { "Common Gleam Power", "Uncommon Gleam Power", "Rare Gleam Power", "Epic Gleam Power", "Legendary Gleam Power", "Mythical Gleam Power", "Phantom Gleam Power", "Supreme Gleam Power"}
                 }
             },
@@ -531,6 +557,7 @@ local gameData = {
             name = "Cairo",
             raids = {
                 ["Progression_Raid_2"] = {
+                    key = {type = 1, id = 9, limit = 3},
                     drops = { "Obelisk Coin" }
                 }
             },
@@ -566,6 +593,7 @@ local gameData = {
             name = "Ghoul_City",
             raids = {
                 ["Ghoul_Raid"] = {
+                    key = {type = 1, id = 7},
                     list = {"Common Ghoul Mask", "Uncommon Ghoul Mask", "Rare Ghoul Mask", "Epic Ghoul Mask", "Legendary Ghoul Mask", "Mythical Ghoul Mask", "Phantom Ghoul Mask", "Supreme Ghoul Mask"}
                 }
             },
@@ -598,6 +626,7 @@ local gameData = {
             name = "Chainsaw_City",
             raids = {
                 ["Chainsaw_Defense"] = {
+                    key = {type = 1, id = 8},
                     list = {"Common Pokita", "Uncommon Pokita", "Rare Pokita", "Epic Pokita", "Legendary Pokita", "Mythical Pokita", "Phantom Pokita", "Supreme Pokita"}
                 }
             },
@@ -632,6 +661,7 @@ local gameData = {
             name = "Tokyo_Empire",
             raids = {
                 ["Netherworld_Defense"] = {
+                    key = {type = 1, id = 11},
                     drops = { "Obelisk Coin" }
                 }
             },
@@ -753,6 +783,7 @@ local gameData = {
             name = "Z_City",
             raids = {
                 ["One_Hero_Raid"] = {
+                    key = {type = 2, id = 9, limit = 3},
                     drops = { "Obelisk Coin" },
                     rewards = {"Common One Hero", "Uncommon One Hero", "Rare One Hero", "Epic One Hero", "Legendary One Hero", "Mythical One Hero", "Phantom One Hero", "Supreme One Hero"}
                 }
@@ -786,7 +817,11 @@ local gameData = {
     [24] = {
         world = {
             name = "Great_Tomb",
-            raids = {},
+            raids = {
+                [""] = {
+                    key = {type = 2, id = 5},
+                }
+            },
             gachaTable = {
                 ["Adventurer_Rank"] = {
                     token = "Adventurer Token",
@@ -900,7 +935,6 @@ local gameData = {
         }
     },
 }
-
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 then
         for name,v in pairs(_tbl1)do
@@ -915,6 +949,8 @@ local UPGRADES = {}
 local WEAPONS = {}
 local FIGHTERS = {}
 local WFTABLE = {}
+local KEYS = {}
+local KEYINFO = {}
 
 local function IntData()
     for i,v in pairs(gameData)do
@@ -923,6 +959,24 @@ local function IntData()
         populateTable(v.world.upgradeTable, UPGRADES)
         populateTable(v.world.weaponTable, WEAPONS)
         populateTable(v.world.fighterTable, FIGHTERS)
+
+        --KEYS
+        for name, raid in pairs(v.world.raids) do
+            local keyName = name .. "_key"
+            local type
+            if raid.key.type == 1 then
+                type = "Exchange_Shop_Keys"
+            elseif raid.key.type == 2 then
+                type = "Exchange_Shop_Keys_2"
+            end
+            KEYINFO[keyName] = {
+                id = raid.key.id,
+                raid = raid,
+                storeType = type
+            }
+            table.insert(KEYS, keyName)
+        end
+
     end
     for _, v in ipairs(WEAPONS) do
         table.insert(WFTABLE, v)
@@ -1657,6 +1711,77 @@ Auto:Button("Other",function()
     end)
 end)
 
+---------------------------------- SHOP MENU ----------------------------------------------------------------------
+
+local function buyKey(_key, _amount)
+    _amount = _amount or 1
+    local keyInfo = KEYINFO[_key]
+    print(_key, keyInfo.id, keyInfo.storeType)
+    if keyInfo then
+        local args = {
+            [1] = {
+                ["Bench_Name"] = keyInfo.storeType,
+                ["Product_Id"] = keyInfo.id,
+                ["Action"] = "Merchant_Purchase",
+                ["Amount"] = _amount
+            }
+        }
+
+        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+    end
+end
+
+
+
+local sKey
+local sKeyAmount = 1
+local DropListShopAmount = ShopMenu:Dropdown(sKeyAmount,{1,2,3,4,5},true,function(SItem)
+    sKeyAmount = SItem
+end)
+
+local DropListShop = ShopMenu:Dropdown("Select Key",KEYS,true,function(SItem)
+    sKey = SItem
+end)
+
+ShopMenu:Button("Buy Key",function()
+    spawn(function()
+        if sKey then
+            buyKey(sKey, sKeyAmount)
+        end
+    end)
+end)
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+---------------------------------- DAILY MENU ----------------------------------------------------------------------
+
+DailyMenu:Button("Buy Keys #1",function()
+    spawn(function()
+    end)
+end)
+
+DailyMenu:Button("Buy Keys #2",function()
+    spawn(function()
+    end)
+end)
+
+DailyMenu:Button("Running Track",function()
+    spawn(function()
+    end)
+end)
+
+DailyMenu:Button("Punch Machine",function()
+    spawn(function()
+    end)
+end)
+
+DailyMenu:Button("Demon Fruit",function()
+    spawn(function()
+    end)
+end)
+
+--------------------------------------------------------------------------------------------------------------------
 ---------------------------------- STAR MENU ----------------------------------------------------------------------
 local sStar
 local starTable = {}
