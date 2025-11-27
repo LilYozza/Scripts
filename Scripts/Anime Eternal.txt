@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1")
+print("v1.1")
 
 local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
@@ -976,7 +976,8 @@ local function IntData()
                     raid = raid,
                     storeType = type,
                     type = raid.key.type,
-                    limit = raid.key.limit
+                    limit = raid.key.limit,
+                    name = name
                 }
                 table.insert(KEYS, name)
             end
@@ -2029,7 +2030,9 @@ local function buyLimitedKeys(_type)
     if _type then
         for key,v in pairs(KEYINFO)do
             if v.limit and v.type == _type then
-                buyKey(key, v.limit) task.wait(1)
+                for i = 1, v.limit do 
+                    buyKey(key, 1) task.wait(0.2)
+                end
             end
         end
     end
