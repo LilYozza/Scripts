@@ -2074,6 +2074,15 @@ local function buyLimitedKeys(_type)
     end
 end
 
+DailyMenu:Button("Daily Quests",function()
+    spawn(function()
+        for i = 1, 10 do
+            acceptQuest(i) task.wait(0.1)
+        end
+    end)
+end)
+
+
 DailyMenu:Button("Buy Keys #1",function()
     spawn(function()
         buyLimitedKeys(1)
