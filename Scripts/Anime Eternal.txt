@@ -2076,7 +2076,7 @@ end
 
 DailyMenu:Button("Daily Quests",function()
     spawn(function()
-        for i = 1, 10 do
+        for i = 2000, 10 do
             acceptQuest(i) task.wait(0.1)
         end
     end)
