@@ -887,11 +887,11 @@ local gameData = {
             name = "Amusement_Park",
             raids = {},
             gachaTable = {
-                ["Assassin Grade"] = {
+                ["Assassin_Grade"] = {
                     token = "Assassin Grade Token",
                     list = {"Street Rat", "Fixer", "Contract Killer", "Specialist", "Executioner", "Shadow Elite", "Order Legend", "Phantom of Death"}
                 },
-                ["Assassin Skills"] = {
+                ["Assassin_Skills"] = {
                     token = "Assassin Skill Token",
                     list = {"Reflex Boost", "Focus Sight", "Precision Strike, Adrenal Surge", "Shadow Cloak", "Echo Sense", "Zero Time", "Ascendant Form"}
                 }
