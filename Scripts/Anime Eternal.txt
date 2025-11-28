@@ -887,12 +887,32 @@ local gameData = {
             name = "Amusement_Park",
             raids = {},
             gachaTable = {
-
+                ["Assassin Grade"] = {
+                    token = "Assassin Grade Token",
+                    list = {"Street Rat", "Fixer", "Contract Killer", "Specialist", "Executioner", "Shadow Elite", "Order Legend", "Phantom of Death"}
+                },
+                ["Assassin Skills"] = {
+                    token = "Assassin Skill Token",
+                    list = {"Reflex Boost", "Focus Sight", "Precision Strike, Adrenal Surge", "Shadow Cloak", "Echo Sense", "Zero Time", "Ascendant Form"}
+                }
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["Assassin_Energy"] = { token = "Assassin Energy Token", Upgrading_Name = "Energy", bench = true },
+                ["Assassin_Damage"] = { token = "Assassin Damage Token", Upgrading_Name = "Damage", bench = true },
+                ["Assassin_Critical_Energy"] = { token = "Assassin Flow Coin", Upgrading_Name = "Energy", bench = true },
+                ["Assassin_Critical_Damage"] = { token = "Lethal Coin", Upgrading_Name = "Damage", bench = true }
+            }
         },
         enemies = {
-            
+            { name = 'Masumo', tokens = {"Assassin Grade Token", "Scythe Coin"}},
+            { name = 'Lu_Shaoran', tokens = {"Assassin Skill Token", "Scythe Coin"}},
+            { name = 'Shiru', tokens = {"Assassin Energy Token", "Scythe Coin"}},
+            { name = 'Nakumo', tokens = {"Assassin Damage Token", "Scythe Coin"}}, 
+            { name = 'Sakomura', tokens = {"Assassin Flow Coin", "Scythe Coin"}}, 
+            { name = 'Shibasa', tokens = {"Lethal Coin", "Scythe Coin"}}, 
+            { name = 'Hayo', tokens = {"Assassin Grade Token", "Assassin Energy Token", "Scythe Coin"}}, 
+            { name = 'Takemoto', tokens = {"Assassin Skill Token", "Assassin Damage Token", "Scythe Coin"}, type = "boss"},
+            { name = 'Tagamura', tokens = {"Assassin Skill Token", "Assassin Damage Token", "Scythe Coin"}, type = "boss"}, 
         }
     },
     [27] = {
@@ -924,6 +944,19 @@ local gameData = {
     [29] = {
         world = {
             name = "Science_Village",
+            raids = {},
+            gachaTable = {
+
+            },
+            upgradeTable = {}
+        },
+        enemies = {
+            
+        }
+    },
+    [30] = {
+        world = {
+            name = "Sand_Village",
             raids = {},
             gachaTable = {
 
@@ -1701,7 +1734,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
             local currentRaid = getCurrentDungeon()
             if sRaid and currentRaid and currentRaid.inDungeon == false then
                 if buyKeyRM then buyKey(sRaid) end
-                task.wait(1)
+                task.wait(2)
                 joinDungeon(sRaid, rMultipler)
                 repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
             end
