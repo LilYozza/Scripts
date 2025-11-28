@@ -2079,6 +2079,12 @@ DailyMenu:Button("Daily Quests",function()
         for i = 2000, 2010 do
             acceptQuest(i) task.wait(0.1)
         end
+        for _,v in pairs(RAIDS)do
+            if v ~= "Leaf_Raid" and not table.find(tempDungeon, v) then
+                print("Adding:", v, "to temp Dungeons")
+                table.insert(tempDungeon, v)
+            end
+        end
     end)
 end)
 
