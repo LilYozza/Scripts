@@ -1677,7 +1677,6 @@ Auto:Toggle("Auto Dungeon",function(bool)
     triggeredAD = false
 end)
 
-local DungeonHelper = false
 local sDungeon = ""
 local sDungeons = {}
 local Dungeons = table.clone(defaultDungeons)
@@ -1717,8 +1716,8 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
     spawn(function()
         while shared.ToggleJD do
             local dungeon = getNotifytDungeon()
-
-            if dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
+            local dungeonInfo = getCurrentDungeon()
+            if dungeonInfo and dungeonInfo.inDungeon == false and dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
                 if next(tempDungeon) ~= nil then
                     if table.find(tempDungeon, dungeon.name) then 
                         print("Removed:", dungeon.name) 
@@ -1737,7 +1736,7 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
                     Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100000)
                 end
             elseif dungeon and dungeon.isReady then
-                dungeon.reference.Visible = false
+                --dungeon.reference.Visible = false
             end
             task.wait(1)
         end
