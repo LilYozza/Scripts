@@ -1497,10 +1497,11 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                 for _,v in pairs(quest)do
                     print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
-                        print(_, "running ?", running, v.name, v.type)
                         local type = v.type:lower()
+                        print(_, "running ? " .. running, "type: ".. type, "name: " .. v.name, "type: " .. v.type)
                         if type == "defeat" and not running then  -- ATTACK ENEMY
                             running = true
+                            print("???")
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
                             local mapInfo = findMap(qMonster)
