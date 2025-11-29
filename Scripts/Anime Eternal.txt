@@ -12,21 +12,15 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.2")
+print("v1.4")
 
-local CoreGui = game:GetService("CoreGui")
 local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
+local Player=Players.LocalPlayer
 local rs = game:GetService("ReplicatedStorage")
 
 local PGui = Player.PlayerGui
 -->Base Variables<--
-local startAmount = 30
-local questAmount = startAmount * 6
-
-local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"
-}
-
+local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"}
 
 --AS OF Update 26 - Part 2, 27/11/2025
 local CODES = {"Update26P2", "250MVisits", "Update26P2Code", "SorryNoTurkey", "PowerOfFriendship", "SlashX", "Derp", "Heyyyo", "Update26", "755KFav", "Update26Code", "ThanksgivingOnPart2?", "Update26Code2", "Update26Restart1", "Update25P2", "750KFav", "395KLikes", "245MVisits", "Labyrinth", "ImGreenOnUpdate25", "Update25P2Restart1", "Update25", "740KFav", "745KFav", "240MVisits", "StoneCode", "Update24P3", "730KFav", "735KFav", "390KLikes", "235MVisits", "Update24P2", "720KFav", "725KFav", "230MVisits", "Update24Part2Code", "Update24", "710KFav", "715KFav", "CodeGeass", "385kLikes","Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code", "Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20"}
@@ -1501,7 +1495,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
             if not completed then
                 local running = false
                 for _,v in pairs(quest)do
-                    if not (v.current and v.max and v.current >= v.max) then
+                    if  v.current and v.max and v.current < v.max then
                         local type = v.type:lower()
                         if type == "defeat" and not running then  -- ATTACK ENEMY
                             running = true
@@ -2146,7 +2140,7 @@ end)
 ---------------------------------- STAR MENU ----------------------------------------------------------------------
 local sStar
 local starTable = {}
-for i = 1, startAmount do
+for i = 1, (#gameData - 2) do
     table.insert(starTable, "Star_"..i)
 end
 local starList = StarsMenu:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
