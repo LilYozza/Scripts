@@ -462,6 +462,10 @@ local gameData = {
                 ["Kaiju_Powers"] = { 
                     token = "Kaiju Token",
                     list = { "Phaneroplus", "Philinosoma", "Primigenius Honju", "Preondactyl", "Mixogastero", "No. 10", "No. 9", "No. 8" }
+                },
+                ["Power_of_Exchange"] = {
+                    token = "Exchange Coin",
+                    list = {"Power of Exchange I", "Power of Exchange II", "Power of Exchange III", "Power of Exchange IV", "Power of Exchange V", "Power of Exchange VI", "Power of Exchange VII", "Power of Exchange VIII"}
                 }
             },
             upgradeTable = {
@@ -693,6 +697,10 @@ local gameData = {
                 ["Frost_Demon_Evolution"] = { 
                     token = "Frost Demon Token",
                     list = { "Second Form", "Third Form", "Final Form", "50% Power", "100% Full Power", "Mecha Form", "Golden Form", "Black Form" }
+                },
+                ["Power_of_Friendship"] = {
+                    token = "Exchange Coin 2",
+                    list = {"Power of Friendship I", "Power of Friendship II", "Power of Friendship III", "Power of Friendship IV", "Power of Friendship V", "Power of Friendship VI", "Power of Friendship VII", "Power of Friendship VIII"}
                 }
             },
             upgradeTable = {
@@ -790,6 +798,10 @@ local gameData = {
                 ["Punch_Power"] = { 
                     token = "Punch Token",
                     list = { "Basic Punch", "Heroic Fist", "Serious Punch", "Celestial Impact", "Gamma Burst Punch", "One Punch" }
+                },
+                ["Exchange_of_Power"] = {
+                    token = "Exchange Coin 2",
+                    list = {"Exchange of Power I", "Exchange of Power II", "Exchange of Power III", "Exchange of Power IV", "Exchange of Power V", "Exchange of Power VI", "Exchange of Power VII", "Exchange of Power VIII"}
                 }
             },
             upgradeTable = {
