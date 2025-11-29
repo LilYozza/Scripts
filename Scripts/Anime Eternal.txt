@@ -1396,7 +1396,7 @@ local function findQuest(_quest)
     end
 end
 
-local subQuest = {"Punching_Machine", "Demon_Fruit", "The_Order_Briefcase", "Assassin_Knife"}
+local subQuest = {"Punching_Machine", "Demon_Fruit", "The_Order_Briefcase", "Assassin_Knife", "Assassin_Pistol"}
 local function getCurrentQuest()
 	local t = {}
 	for _, v in pairs(QuestList_Side:GetChildren()) do
@@ -1431,6 +1431,9 @@ local function getCurrentQuest()
                 elseif titleText:lower():match("knife") then
                     name = titleText
                     type = "Assassin_Knife"
+                elseif titleText:lower():match("pistol") then
+                    name = titleText
+                    type = "Assassin_Pistol"
 				end
 
 				local c, m = progressText:match("(%d+)%/(%d+)")
