@@ -1395,7 +1395,7 @@ local function findQuest(_quest)
     end
 end
 
-local subQuest = {"punching_machine", "demon_fruit", "the_order_briefcase", "assassin_knife"}
+local subQuest = {"Punching_Machine", "Demon_Fruit", "The_Order_Briefcase", "Assassin_Knife"}
 local function getCurrentQuest()
 	local t = {}
 	for _, v in pairs(QuestList_Side:GetChildren()) do
@@ -1411,6 +1411,7 @@ local function getCurrentQuest()
 				local name = titleText:match("^%S+%s+(.*)") or titleText
 				local type = titleText:match("^(%S+)") or "Unknown"
 
+
 				if titleText:lower():match("dungeon") then -- DUNGEONS
 					name = titleText
 					type = "Dungeon"
@@ -1423,10 +1424,10 @@ local function getCurrentQuest()
                 elseif titleText:lower():match("demon fruit") and not titleText:lower():match("collect") then -- DEMON FRUIT QUEST
 					name = titleText
 					type = "Demon_Fruit"
-                elseif titleText:lower():match("the order briefcase") then
+                elseif titleText:lower():match("briefcase") then
                     name = titleText
                     type = "The_Order_Briefcase"
-                elseif titleText:lower():match("assassin knife") then
+                elseif titleText:lower():match("knife") then
                     name = titleText
                     type = "Assassin_Knife"
 				end
@@ -1532,7 +1533,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif ntype == "star" then  -- OPEN STARS
                             openStar(v.name)
-                        elseif table.find(subQuest, ntype) then -- FINDING QUEST
+                        elseif table.find(subQuest, v.type) then -- FINDING QUEST
                             running = true
                             itemFindQuest(v.type)
                         elseif ntype == "dungeon" then   -- COMPLETE DUNGEON
