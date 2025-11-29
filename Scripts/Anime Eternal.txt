@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.5")
+print("v1.6")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1395,6 +1395,7 @@ local function findQuest(_quest)
     end
 end
 
+local subQuest = {"punching_machine", "demon_fruit", "the_order_briefcase", "assassin_knife"}
 local function getCurrentQuest()
 	local t = {}
 	for _, v in pairs(QuestList_Side:GetChildren()) do
@@ -1422,6 +1423,12 @@ local function getCurrentQuest()
                 elseif titleText:lower():match("demon fruit") and not titleText:lower():match("collect") then -- DEMON FRUIT QUEST
 					name = titleText
 					type = "Demon_Fruit"
+                elseif titleText:lower():match("the order briefcase") then
+                    name = titleText
+                    type = "The_Order_Briefcase"
+                elseif titleText:lower():match("assassin knife") then
+                    name = titleText
+                    type = "Assassin_Knife"
 				end
 
 				local c, m = progressText:match("(%d+)%/(%d+)")
@@ -1491,7 +1498,6 @@ end
 
 local qMonster
 local tempDungeon = {}
-local subQuest = {"punching_machine", "demon_fruit"}
 Auto:Toggle("Complete Quest",function(bool) -- WIP
     shared.ToggleACQ=bool
     spawn(function()
@@ -1735,6 +1741,19 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
                     local hrp = GetHrp()
                     Player.Character:WaitForChild("Humanoid"):MoveTo(hrp.Position + hrp.CFrame.LookVector * 100000)
                 end
+
+                repeat task.wait() dungeonInfo = getCurrentDungeon() until dungeonInfo.inDungeon == false or not shared.ToggleJD
+                task.wait(1)
+                if triggeredAD then 
+                    shared.ToggleAD = false 
+                    triggeredAD = false 
+                    task.wait(1)
+                    for i = 2000, 2010 do
+                        completeQuest(i) task.wait(0.1)
+                    end
+                    
+                end
+
             elseif dungeon and dungeon.isReady then
                 --dungeon.reference.Visible = false
             end
@@ -1919,13 +1938,13 @@ local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem)
     sGSelect = SItem
 end)
 
-local tempSSelect
+
 local blackListGacha = {"Mushi_Bite"}
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
     spawn(function()
         while shared.ToggleAFG do
-            
+            local tempSSelect
             if sGacha and sGSelect == "Selected" then
                 tempSSelect = sGacha
             elseif sGSelect == "All" then
