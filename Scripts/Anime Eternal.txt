@@ -1492,10 +1492,10 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                     --print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
                         local ntype = v.type:lower()
-                        print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
+                        --print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
                         if ntype == "defeat" and running == false then  -- ATTACK ENEMY
                             running = true
-                            print("???")
+                            --print("???")
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
                             local mapInfo = findMap(qMonster)
@@ -1504,13 +1504,13 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif ntype == "collect" and running == false then   -- COLLECT TOKENS
                             running = true
-                            print("ye")
+                            --print("ye")
                             local mapInfo = findMap(v.name)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                                 qMonster = mapInfo.enemy:gsub("%s", "_")
                             else
-                                print(v.name, "Failed To Find Map")
+                                --print(v.name, "Failed To Find Map")
                             end
                         elseif ntype == "star" then  -- OPEN STARS
                             openStar(v.name)
