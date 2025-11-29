@@ -74,7 +74,7 @@ local gameData = {
                     key = {type = 2, id = 3, limit = 8},
                     list = { "Power of Suffering" }
                 },
-                ["Dungeon_Adventure"] = {
+                ["Dungeon_Adventurer"] = {
                     key = {type = 2, id = 6, limit = 15},
                 }, -- RUNE BOX 1
                 ["Dungeon_Torment"] = {
@@ -974,6 +974,7 @@ local gameData = {
         }
     },
 }
+
 
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 then
