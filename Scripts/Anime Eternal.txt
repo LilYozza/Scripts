@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.4")
+print("v1.3")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1495,7 +1495,8 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
             if not completed then
                 local running = false
                 for _,v in pairs(quest)do
-                    if  v.current and v.max and v.current < v.max then
+                    print(v.current, v.max, v.current >= v.max)
+                    if not (v.current and v.max and v.current >= v.max) then
                         local type = v.type:lower()
                         if type == "defeat" and not running then  -- ATTACK ENEMY
                             running = true
@@ -1511,6 +1512,8 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                                 qMonster = mapInfo.enemy:gsub("%s", "_")
+                            else
+                                print(v.name, "Failed To Find Map")
                             end
                         elseif type == "star" then  -- OPEN STARS
                             openStar(v.name)
