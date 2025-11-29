@@ -1498,8 +1498,8 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                     print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
                         local ntype = v.type:lower()
-                        print(_, "running ? " .. running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
-                        if ntype == "defeat" and not running then  -- ATTACK ENEMY
+                        print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
+                        if ntype == "defeat" and running == false then  -- ATTACK ENEMY
                             running = true
                             print("???")
                             local newMonster = v.name:gsub("%s", "_")
@@ -1508,7 +1508,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                             end
-                        elseif ntype == "collect" and not running then   -- COLLECT TOKENS
+                        elseif ntype == "collect" and running == false then   -- COLLECT TOKENS
                             running = true
                             print("ye")
                             local mapInfo = findMap(v.name)
