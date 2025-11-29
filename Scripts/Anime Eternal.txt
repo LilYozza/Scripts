@@ -1497,6 +1497,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                 for _,v in pairs(quest)do
                     print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
+                        print(_, "running ?", running, v.name, v.type)
                         local type = v.type:lower()
                         if type == "defeat" and not running then  -- ATTACK ENEMY
                             running = true
@@ -1508,6 +1509,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif type == "collect" and not running then   -- COLLECT TOKENS
                             running = true
+                            print("ye")
                             local mapInfo = findMap(v.name)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
