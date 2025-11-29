@@ -1497,9 +1497,9 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                 for _,v in pairs(quest)do
                     print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
-                        local type = v.type:lower()
-                        print(_, "running ? " .. running, "type: ".. type, "name: " .. v.name, "type: " .. v.type)
-                        if type == "defeat" and not running then  -- ATTACK ENEMY
+                        local ntype = v.type:lower()
+                        print(_, "running ? " .. running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
+                        if ntype == "defeat" and not running then  -- ATTACK ENEMY
                             running = true
                             print("???")
                             local newMonster = v.name:gsub("%s", "_")
@@ -1508,7 +1508,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                             end
-                        elseif type == "collect" and not running then   -- COLLECT TOKENS
+                        elseif ntype == "collect" and not running then   -- COLLECT TOKENS
                             running = true
                             print("ye")
                             local mapInfo = findMap(v.name)
@@ -1518,12 +1518,12 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             else
                                 print(v.name, "Failed To Find Map")
                             end
-                        elseif type == "star" then  -- OPEN STARS
+                        elseif ntype == "star" then  -- OPEN STARS
                             openStar(v.name)
-                        elseif table.find(subQuest, type) then -- FINDING QUEST
+                        elseif table.find(subQuest, ntype) then -- FINDING QUEST
                             running = true
                             itemFindQuest(v.type)
-                        elseif type == "dungeon" then   -- COMPLETE DUNGEON
+                        elseif ntype == "dungeon" then   -- COMPLETE DUNGEON
                             local firstWord = v.name:match("^(%w+)")  -- "Medium"
                             for _, dungeon in ipairs(defaultDungeons) do
                                 if dungeon:lower():find(firstWord:lower()) then
