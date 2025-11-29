@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.4")
+print("v1.5")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1671,8 +1671,10 @@ Auto:Toggle("Auto Attack",function(bool)
     shared.ToggleAA=bool
 end)
 
+local triggeredAD
 Auto:Toggle("Auto Dungeon",function(bool)
     shared.ToggleAD=bool
+    triggeredAD = false
 end)
 
 local DungeonHelper = false
@@ -1708,6 +1710,7 @@ RaidMenu:Button("Reset",function()
     end)
 end)
 
+
 local blacklistWalk = {"Leaf_Raid"}
 RaidMenu:Toggle("Join Dungeons",function(bool)
     shared.ToggleJD=bool
@@ -1716,7 +1719,15 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
             local dungeon = getNotifytDungeon()
 
             if dungeon and dungeon.isReady and (table.find(sDungeons, dungeon.name) or table.find(tempDungeon, dungeon.name)) then
-                if table.find(tempDungeon, dungeon.name) then print("Removed:", dungeon.name) RemoveFromTable(tempDungeon, dungeon.name) end
+                if next(tempDungeon) ~= nil then
+                    if table.find(tempDungeon, dungeon.name) then 
+                        print("Removed:", dungeon.name) 
+                        RemoveFromTable(tempDungeon, dungeon.name)
+                        if not shared.ToggleAD then shared.ToggleAD = true triggeredAD = true end
+                    end
+                else
+                    if triggeredAD then shared.ToggleAD = false end
+                end
                 task.wait(1)
                 joinDungeon(dungeon.name)
                 dungeon.reference.Visible = false
