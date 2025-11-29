@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.3")
+print("v1.4")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1938,12 +1938,12 @@ GachaMenu:Toggle("Auto Farm",function(bool)
 
             if tempSSelect then
                 local mapInfo = findMap(tempSSelect)
+                 if sGSelect ~= "Selected" then openGacha(tempSSelect, sGachaAmount) end
                 if mapInfo then
-                    if sGSelect ~= "Selected" then openGacha(tempSSelect, sGachaAmount) end
                     gMonster = mapInfo.enemy
                     TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                 else
-                    print("Gacha: Map Data Coulde not be Found For:", sGachaAmount)
+                    --print("Gacha: Map Data Coulde not be Found For:", tempSSelect)
                 end
             end
             task.wait(1)
