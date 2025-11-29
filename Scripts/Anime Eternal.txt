@@ -1401,19 +1401,13 @@ local function getCurrentQuest()
 				if titleText:lower():match("dungeon") then -- DUNGEONS
 					name = titleText
 					type = "Dungeon"
-				end
-
-                if titleText:lower():match("stars") then    -- STARS
+                elseif titleText:lower():match("stars") then    -- STARS
                     name = (titleText:match("Stars%s+(.*)") or ""):gsub("%s+", "_")
                     type = "Star"
-                end
-
-				if titleText:lower():match("punching") then -- PUNCHING QUEST
+                elseif titleText:lower():match("punching") then -- PUNCHING QUEST
 					name = titleText
 					type = "Punching_Machine"
-				end
-
-				if titleText:lower():match("demon fruit") then -- DEMON FRUIT QUEST
+                elseif titleText:lower():match("demon fruit") and not titleText:lower():match("collect") then -- DEMON FRUIT QUEST
 					name = titleText
 					type = "Demon_Fruit"
 				end
@@ -1495,7 +1489,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
             if not completed then
                 local running = false
                 for _,v in pairs(quest)do
-                    print(v.current, v.max, v.current >= v.max)
+                    --print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
                         local ntype = v.type:lower()
                         print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
