@@ -1557,7 +1557,11 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                                     if dungeon:lower():find(firstWord:lower()) and shared.ToggleJD then
                                         -- Join Raid
                                         print("Adding:", dungeon, "to temp Dungeons")
-                                        joinDungeon(dungeon)
+                                        local dungeonInfo = getCurrentDungeon()
+                                        if dungeonInfo and dungeonInfo.inDungeon == false then
+                                            joinDungeon(dungeon)
+                                            task.wait(1)
+                                        end
                                         break
                                     end
                                 end
