@@ -905,8 +905,8 @@ local gameData = {
             upgradeTable = {
                 ["Assassin_Energy"] = { token = "Assassin Energy Token", Upgrading_Name = "Energy", bench = true },
                 ["Assassin_Damage"] = { token = "Assassin Damage Token", Upgrading_Name = "Damage", bench = true },
-                ["Assassin_Critical_Energy"] = { token = "Assassin Flow Coin", Upgrading_Name = "Energy", bench = true },
-                ["Assassin_Critical_Damage"] = { token = "Lethal Coin", Upgrading_Name = "Damage", bench = true }
+                ["Assassin_Critical_Energy"] = { token = "Assassin Flow Coin", Upgrading_Name = "Critical_Energy", bench = true },
+                ["Assassin_Critical_Damage"] = { token = "Lethal Coin", Upgrading_Name = "Critical_Damage", bench = true }
             }
         },
         enemies = {
@@ -974,6 +974,7 @@ local gameData = {
         }
     },
 }
+
 
 
 local function populateTable(_tbl1, _tbl2)
@@ -2363,6 +2364,7 @@ local dataToSave = {
     ["Premium Chest"] = {var = "ToggleCPC"},
 
     ["Auto Rankup"] = {var = "ToggleARU"},
+    ["Join Dungeon"] = {var = "ToggleJD"},
     ["Auto Prestige"] = {var = "ToggleAAP"},
     ["Auto Click"] = {var = "ToggleACC"},
 
