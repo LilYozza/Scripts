@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.6")
+print("v1.7")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1122,6 +1122,22 @@ local function getClosestMonster(_name, _dungeon)
 	return closestMonster
 end
 
+local Dungeon = PGui:WaitForChild("Dungeon")
+local Dungeon_Header = Dungeon:WaitForChild("Default_Header")
+local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
+
+local function getCurrentDungeon()
+    local t = {}
+    local Main = Dungeon_Header:WaitForChild("Main"):WaitForChild("Main")
+    t = {
+        inDungeon = Dungeon_Header.Visible,
+        title = Main.Title.Text,
+        wave = Main.Wave.Text,
+        room = Main.Wave.Text
+    }
+    return t
+end
+
 local function joinDungeon(_name, _multipler)
     if _multipler and tonumber(_multipler) ~= 1 then
         --Progression_Raid_x2
@@ -1138,21 +1154,7 @@ local function joinDungeon(_name, _multipler)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
-local Dungeon = PGui:WaitForChild("Dungeon")
-local Dungeon_Header = Dungeon:WaitForChild("Default_Header")
-local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
 
-local function getCurrentDungeon()
-    local t = {}
-    local Main = Dungeon_Header:WaitForChild("Main"):WaitForChild("Main")
-    t = {
-        inDungeon = Dungeon_Header.Visible,
-        title = Main.Title.Text,
-        wave = Main.Wave.Text,
-        room = Main.Wave.Text
-    }
-    return t
-end
 
 local function rankUp()
     local args = {
@@ -1541,15 +1543,25 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             running = true
                             itemFindQuest(v.type)
                         elseif ntype == "dungeon" then   -- COMPLETE DUNGEON
+                            local foundD = false
                             local firstWord = v.name:match("^(%w+)")  -- "Medium"
-                            for _, dungeon in ipairs(defaultDungeons) do
-                                if dungeon:lower():find(firstWord:lower()) then
-                                    firstWord = dungeon
+                            for _, dungeon in pairs(defaultDungeons) do
+                                if dungeon:lower():find(firstWord:lower()) and not table.find(tempDungeon, firstWord) then
+                                    foundD = true
+                                    print("Adding:", dungeon, "to temp Dungeons") table.insert(tempDungeon, dungeon)
                                     break
                                 end
                             end
-                            --print(firstWord)
-                            if firstWord and not table.find(tempDungeon, firstWord) then print("Adding:", firstWord, "to temp Dungeons") table.insert(tempDungeon, firstWord) end
+                            if not foundD then
+                                for _,dungeon in pairs(RAIDS) do
+                                    if dungeon:lower():find(firstWord:lower()) and shared.ToggleJD then
+                                        -- Join Raid
+                                        print("Adding:", dungeon, "to temp Dungeons")
+                                        joinDungeon(dungeon)
+                                        break
+                                    end
+                                end
+                            end
                             qMonster = "All"
                         end
                     end
@@ -1577,7 +1589,7 @@ end)
 Auto:Button("Delete",function()
     spawn(function()
         for _, v in pairs(Workspace:GetDescendants()) do
-            if (v:IsA("Folder") or v:IsA("Model") or v:IsA("BasePart")) and contains(v.Name) then
+            if (v:IsA("Folder") or v:IsA("Model") or v:IsA("BasePart")) and contains(v.Name, assetsDestroy) then
                 v:Destroy()
             end
         end
