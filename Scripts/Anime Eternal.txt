@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.9")
+print("v1.8")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -930,7 +930,7 @@ local gameData = {
                     token = "Witch Factor Token",
                     list = {"Tainted Spark", "Blighted Flame", "Crimson Howl", "Abyssal Surge", "Sin Eruption", "Authority Break", "Witch's Wrath", "Eclipse of Fate"}
                 },
-                ["Spirit Pact"] = {
+                ["Spirit_Pact"] = {
                     token = "Spirit Pact Token",
                     list = {"Faint Whisper", "Guiding Ember", "Flowing Grace", "Sacred Bond", "Celestial Pulse", "Spirit's Oath", "Divine Resonance", "Eternal Convergence"}
                 },
@@ -1005,7 +1005,6 @@ local gameData = {
         }
     },
 }
-
 
 
 
