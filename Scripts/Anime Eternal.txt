@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.8")
+print("v1.9")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -926,12 +926,30 @@ local gameData = {
             name = "Re:Manor",
             raids = {},
             gachaTable = {
-
+                ["Witch_Factor"] = {
+                    token = "Witch Factor Token",
+                    list = {"Tainted Spark", "Blighted Flame", "Crimson Howl", "Abyssal Surge", "Sin Eruption", "Authority Break", "Witch's Wrath", "Eclipse of Fate"}
+                },
+                ["Spirit Pact"] = {
+                    token = "Spirit Pact Token",
+                    list = {"Faint Whisper", "Guiding Ember", "Flowing Grace", "Sacred Bond", "Celestial Pulse", "Spirit's Oath", "Divine Resonance", "Eternal Convergence"}
+                },
+                ["Witch_Authority"] = {
+                    token = "Witch Authority Token",
+                    list = {"Re:Envy", "Re:Sloth", "Re:Wrath", "Re:Lust", "Re:Gluttony", "Re:Melancholy", "Re:Greed", "Re:Vainglory"}
+                }
             },
             upgradeTable = {}
         },
         enemies = {
-            
+            { name = 'Sabaru', tokens = {"Spirit Pact Token", "Tome of Wisdom", "Scythe Coin"}},
+            { name = 'Rammy', tokens = {"Witch Factor Token", "Tome of Wisdom", "Scythe Coin"}}, 
+            { name = 'Remmy', tokens = {"Artifical Spirit Token", "Tome of Wisdom", "Scythe Coin"}},
+            { name = 'Fredrika', tokens = {"Gospel Cursed Token", "Gospel", "Tome of Wisdom", "Scythe Coin"}},
+            { name = 'Felis', tokens = {"Artifical Spirit Token", "Tome of Wisdom", "Scythe Coin"}}, 
+            { name = 'Emilli', tokens = {"Gospel Cursed Token", "Tome of Wisdom", "Scythe Coin"}}, 
+            { name = 'Bellatrice', tokens = {"Spirit Pack Token", "Artifical Spirit Token", "Tome of Wisdom", "Scythe Coin"}}, 
+            { name = 'Roswald', tokens = {"Witch Factor Token", "Gospel Cursed Token", "Tome of Wisdom", "Scythe Coin"}, type = "boss"}, 
         }
     },
     [28] = {
@@ -973,7 +991,21 @@ local gameData = {
             
         }
     },
+    [31] = {
+        world = {
+            name = "Night_Raid_Base",
+            raids = {},
+            gachaTable = {
+
+            },
+            upgradeTable = {}
+        },
+        enemies = {
+            
+        }
+    },
 }
+
 
 
 
