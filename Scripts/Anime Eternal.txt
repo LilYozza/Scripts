@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.8")
+print("v1.9")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1881,7 +1881,8 @@ local function getTokenStats()
     local nameLabel = Currency_Field:FindFirstChild("TopName")
     local amountLabel = Currency_Field:FindFirstChild("TextLabel")
     
-    local name = (Currency_Field:GetAttribute("Id") or (nameLabel and nameLabel.Text) or ""):gsub("_", " ")
+    --local name = (Currency_Field:GetAttribute("Id") or (nameLabel and nameLabel.Text) or ""):gsub("_", " ")
+    local name = Currency_Field:GetAttribute("Tips") or (nameLabel and nameLabel.Text) or ""
     local amount = fromSuffixString(amountLabel and amountLabel.Text or "0") or 0
 
     return { name = name, amount = amount }
