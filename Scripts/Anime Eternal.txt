@@ -2027,8 +2027,8 @@ local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem)
 end)
 
 local tempSSelect
---local blackListGacha = {"Mushi_Bite", "Geass_Potential"}
-local blackListGacha = {}
+--local blackListGacha = {"Mushi_Bite", "Geass_Potential", "Witch_Authority"}
+local blackListGacha = {"Witch_Authority"}
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
     spawn(function()
