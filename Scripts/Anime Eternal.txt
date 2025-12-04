@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.9")
+print("v2")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -937,7 +937,15 @@ local gameData = {
                 ["Witch_Authority"] = {
                     token = "Witch Authority Token",
                     list = {"Re:Envy", "Re:Sloth", "Re:Wrath", "Re:Lust", "Re:Gluttony", "Re:Melancholy", "Re:Greed", "Re:Vainglory"}
-                }
+                },
+                ["Re:Spirit_Pact"] = {
+                    token = "Spirit Pact Token",
+                    list = {"Re:Faint Whisper", "Re:Guiding Ember", "Re:Flowing Grace", "Re:Sacred Bond", "Re:Celestial Pulse", "Re:Spirit's Oath", "Re:Divine Resonance", "Re:Eternal Convergence"}
+                },
+                ["Re:Witch_Factor"] = {
+                    token = "Witch Factor Token",
+                    list = {"Re:Tainted Spark", "Re:Blighted Flame", "Re:Crimson Howl", "Re:Abyssal Surge", "Re:Sin Eruption", "Re:Authority Break", "Re:Witch's Wrath", "Re:Eclipse of Fate"}
+                },
             },
             upgradeTable = {}
         },
@@ -1019,6 +1027,7 @@ local gameData = {
         }
     },
 }
+
 
 
 
@@ -2018,7 +2027,7 @@ local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem)
 end)
 
 local tempSSelect
---local blackListGacha = {"Mushi_Bite"}
+--local blackListGacha = {"Mushi_Bite", "Geass_Potential"}
 local blackListGacha = {}
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
