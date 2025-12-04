@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v1.9")
+print("v2")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1637,8 +1637,17 @@ local __dungeons = Workspace:WaitForChild("Dungeons")
 local function getLabDoor()
     local s
     local t = {}
+
+    local dType
+    local dungeonInfo = getCurrentDungeon()
+    if dungeonInfo.title:lower():match("maze") then 
+        dType = "maze"
+    elseif dungeonInfo.title:lower():match("labyrinth") then
+        dType = "labyrinth"
+    end
+
     for _,v in pairs(__dungeons:GetChildren())do
-        if v.Name:lower():match("labyrinth") then
+        if v.Name:lower():match(dType) then
             s = v break
         end
     end
@@ -1714,11 +1723,13 @@ task.spawn(function()
                     or (mode == "QA" and not shared.ToggleACQ)
                     or (mode == "GA" and not shared.ToggleAFG)
                     or (mode == "UA" and not shared.ToggleAFU)
-            elseif mode == "AD" and dungeon.inDungeon == true and dungeon.title:lower():match("labyrinth") then --LABYRINTH DUNGEON DOOR CHECK
-                local currentDoor = getLabDoor()
-                if currentDoor then
-                    MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
-                    fireproximityprompt(currentDoor.prompt) task.wait(2)
+            elseif mode == "AD" and dungeon.inDungeon == true then
+                if dungeon.title:lower():match("labyrinth") or dungeon.title:lower():match("maze") then
+                    local currentDoor = getLabDoor()
+                    if currentDoor then
+                        MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
+                        fireproximityprompt(currentDoor.prompt) task.wait(2)
+                    end
                 end
 			end
             
