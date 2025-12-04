@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2")
+print("v1.9")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -957,12 +957,26 @@ local gameData = {
             name = "Asfordo_Academy",
             raids = {},
             gachaTable = {
-
+                ["Geass_Potential"] = {
+                    token = "Geass Potential Token",
+                    list = {"Geass: Perception"}
+                },
+                ["Knightmare_Frames"] = {
+                    token = "Knightmare Token",
+                    list = {"Glasglow", "Sutherland", "Ganymede", "Gloucester", "Vercingetorix", "Shinkiro", "Lancelot", "Guren"}
+                }
             },
             upgradeTable = {}
         },
         enemies = {
-            
+            { name = 'Euphy', tokens = {"Geass Potential Token", "Geass Perception Token", "Scythe Coin"}},
+            { name = 'Reloush', tokens = {"Geass Soul Token", "Knightmare Token", "Scythe Coin"}},
+            { name = 'Ogi', tokens = {"Geass Creation Token", "Scythe Coin"}},
+            { name = 'Anja', tokens = {"Geass Precognition Token", "Scythe Coin"}}, 
+            { name = 'Kalla', tokens = {"Geass Time Token", "Scythe Coin"}}, 
+            { name = 'Susaku', tokens = {"Geass Telepathic Token", "Scythe Coin"}},
+            { name = 'Zero', tokens = {}},
+            { name = 'Emperor_Reloush', tokens = {}}, 
         }
     },
     [29] = {
@@ -2003,13 +2017,14 @@ local ggDropList = GachaMenu:Dropdown(sGSelect,gFarmType,true,function(SItem)
     sGSelect = SItem
 end)
 
-
-local blackListGacha = {"Mushi_Bite"}
+local tempSSelect
+--local blackListGacha = {"Mushi_Bite"}
+local blackListGacha = {}
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
     spawn(function()
         while shared.ToggleAFG do
-            local tempSSelect
+            
             if sGacha and sGSelect == "Selected" then
                 tempSSelect = sGacha
             elseif sGSelect == "All" then
@@ -2022,7 +2037,7 @@ GachaMenu:Toggle("Auto Farm",function(bool)
                         local bPower = getBestPower(v)
                         local unlocked = checkUnlockedPower(bPower)
                         if not unlocked then
-                            if tempSSelect ~= v then print("Switching To:", v) end
+                            if tempSSelect ~= v then print(tempSSelect, "Switching To:", v) end
                             tempSSelect = v
                             break
                         end
