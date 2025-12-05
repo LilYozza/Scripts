@@ -1750,8 +1750,11 @@ task.spawn(function()
                 if dungeon.title:lower():match("labyrinth") or dungeon.title:lower():match("maze") then
                     local currentDoor = getLabDoor()
                     if currentDoor then
-                        MoveTo(currentDoor.door, Vector3.new(0,-9,0)) task.wait(1)
+                        local vec = Vector3.new(0,-9,0)
+                        if dungeon.title:lower():match("maze") then vec = Vector3.new(0,-3,0) end
+                        MoveTo(currentDoor.door, vec) task.wait(1)
                         fireproximityprompt(currentDoor.prompt) task.wait(2)
+                        -- If no Door found then reenter and walk forward
                     end
                 end
 			end
