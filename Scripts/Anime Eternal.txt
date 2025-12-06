@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2.1")
+print("v2.2")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1960,7 +1960,7 @@ end
 
 local function getTokenType(_gacha)
     for _,v in pairs(gameData)do
-        local t = v.world.gachaTable[_gacha]
+        local t = v.world.gachaTable[_gacha] or (v.world.weaponTable and v.world.weaponTable[_gacha]) or (v.world.fighterTable and v.world.fighterTable[_gacha])
         if t then return t.token end
     end
 end
@@ -2121,7 +2121,10 @@ end
 
 local function openUpgrade(_upgrade)
     local _name, _bench = getCustomName(_upgrade)
-    if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" end --FOR SIN UPGRADES
+
+    if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" --FOR SIN UPGRADES
+    elseif _upgrade:find("Science_Upgrades") then _upgrade = "Science_Upgrades" end -- FOR Science UPGRADES
+
     if not _name then _name = _upgrade end
     if not _bench then
         local args = {
