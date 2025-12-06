@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2")
+print("v2.1")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -992,12 +992,30 @@ local gameData = {
             name = "Science_Village",
             raids = {},
             gachaTable = {
-
+                ["Scientific_Weapons"] = {
+                    token = "Scientific Token",
+                    list = {"Wooden Stick", "Crossbow", "Golden Spear", "Silver Spear", "Katana", "Dynamite", "Tank", "Cell Phone"}
+                },
+                ["IQ"] = {
+                    token = "IQ Token",
+                    list = {"One Millimeter IQ", "Normative IQ", "Superior IQ", "Exceptional IQ", "Prodigious IQ", "Scientist IQ", "Genius IQ", "Ten Billion IQ"}
+                },
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["Science_Materials_Upgrade"] = { token = "Coins", Upgrading_Name = "Science_Materials", bench = true },
+                ["Science_Upgrades_Energy"] = { token = "Wood", Upgrading_Name = "Energy", bench = true },
+                ["Science_Upgrades_Damage"] = { token = "Wood", Upgrading_Name = "Damage", bench = true }
+            }
         },
         enemies = {
-            
+            { name = 'Chromel', tokens = {"IQ Token", "Wood", "Sap", "Plant Fiber", "Scythe Coin"}}, 
+            { name = 'Senko', tokens = {"Scientific Token", "Bones", "Fur", "Tusk", "Scythe Coin"}}, 
+            { name = 'Genru', tokens = {"Stone", "Coal", "Scythe Coin"}}, 
+            { name = 'Ginrai', tokens = {"Iron Ore", "Shells", "Scythe Coin"}},
+            { name = 'Uryon', tokens = {"Salt", "Scythe Coin"}}, 
+            { name = 'Taiko', tokens = {"Pearls", "Scythe Coin"}}, 
+            { name = 'Kohara', tokens = {"IQ Token", "Acid", "Scythe Coin"}}, 
+            { name = 'Tsukaro', tokens = {"Scientific Token", "Scythe Coin"}, type = "boss"}, 
         }
     },
     [30] = {
@@ -1040,6 +1058,7 @@ local gameData = {
         }
     },
 }
+
 
 
 
