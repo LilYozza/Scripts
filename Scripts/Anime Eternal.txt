@@ -1003,8 +1003,8 @@ local gameData = {
             },
             upgradeTable = {
                 ["Science_Materials_Upgrade"] = { token = "Coins", Upgrading_Name = "Science_Materials", bench = true },
-                ["Science_Upgrades_Energy"] = { token = "Wood", Upgrading_Name = "Energy", bench = true },
-                ["Science_Upgrades_Damage"] = { token = "Wood", Upgrading_Name = "Damage", bench = true }
+                ["Science_Upgrades_Energy"] = { token = "Wood", Upgrading_Name = "Energy"},
+                ["Science_Upgrades_Damage"] = { token = "Wood", Upgrading_Name = "Damage"}
             }
         },
         enemies = {
@@ -1058,6 +1058,7 @@ local gameData = {
         }
     },
 }
+
 
 
 
@@ -2123,7 +2124,7 @@ local function openUpgrade(_upgrade)
     local _name, _bench = getCustomName(_upgrade)
 
     if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" --FOR SIN UPGRADES
-    elseif _upgrade:find("Science_Upgrades") then _upgrade = "Science_Upgrades" _name = string.match(_upgrade, "([^_]+)$") end -- FOR Science UPGRADES
+    elseif _upgrade:find("Science_Upgrades") then _upgrade = "Science_Upgrades" end -- FOR Science UPGRADES
 
     if not _name then _name = _upgrade end
     if not _bench then
