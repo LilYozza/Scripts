@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2.2")
+print("v2.3")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -2064,7 +2064,7 @@ end)
 
 local tempSSelect
 --local blackListGacha = {"Mushi_Bite", "Geass_Potential", "Witch_Authority"}
-local blackListGacha = {"Witch_Authority"}
+local blackListGacha = {"Witch_Authority", "Geass_Potential"}
 GachaMenu:Toggle("Auto Farm",function(bool)
     shared.ToggleAFG=bool
     spawn(function()
@@ -2123,7 +2123,7 @@ local function openUpgrade(_upgrade)
     local _name, _bench = getCustomName(_upgrade)
 
     if _upgrade:find("Sin_Upgrades") then _upgrade = "Sin_Upgrades" --FOR SIN UPGRADES
-    elseif _upgrade:find("Science_Upgrades") then _upgrade = "Science_Upgrades" end -- FOR Science UPGRADES
+    elseif _upgrade:find("Science_Upgrades") then _upgrade = "Science_Upgrades" _name = string.match(_upgrade, "([^_]+)$") end -- FOR Science UPGRADES
 
     if not _name then _name = _upgrade end
     if not _bench then
