@@ -1517,11 +1517,11 @@ local function getCurrentQuest()
 					name = titleText
 					type = "Demon_Fruit"
                 else
-                    for item, match in subQuest do
-                        if titleText:lower():match(match:lower())then
-                            if item == "Demon_Fruit" and titleText:lower():match("collect") then break end -- DEMON FRUIT QUEST CHECK
+                    for _, quest in subQuest do
+                        if titleText:lower():match(quest.match:lower())then
+                            if quest.item == "Demon_Fruit" and titleText:lower():match("collect") then break end -- DEMON FRUIT QUEST CHECK
                             name = titleText
-                            type = item
+                            type = quest.item
                             bQuest = true
                             break
                         end
