@@ -1060,11 +1060,6 @@ local gameData = {
 }
 
 
-
-
-
-
-
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 then
         for name,v in pairs(_tbl1)do
@@ -1487,7 +1482,7 @@ local function findQuest(_quest)
     end
 end
 
-local subQuest = {"Punching_Machine", "Demon_Fruit", "The_Order_Briefcase", "Assassin_Knife", "Assassin_Pistol"}
+local subQuest = {"Punching_Machine", "Demon_Fruit", "The_Order_Briefcase", "Assassin_Knife", "Assassin_Pistol", "Evil_Spirits"}
 local function getCurrentQuest()
 	local t = {}
 	for _, v in pairs(QuestList_Side:GetChildren()) do
@@ -1525,6 +1520,9 @@ local function getCurrentQuest()
                 elseif titleText:lower():match("pistol") then
                     name = titleText
                     type = "Assassin_Pistol"
+                elseif titleText:lower():match("evil spirits") then
+                    name = titleText
+                    type = "Evil_Spirits"
 				end
 
 				local c, m = progressText:match("(%d+)%/(%d+)")
