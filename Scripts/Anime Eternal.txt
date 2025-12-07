@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2.4")
+print("v2.5")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -1482,7 +1482,15 @@ local function findQuest(_quest)
     end
 end
 
-local subQuest = {"Punching_Machine", "Demon_Fruit", "The_Order_Briefcase", "Assassin_Knife", "Assassin_Pistol", "Evil_Spirits"}
+local subQuest = {
+    {item = "Punching_Machine", match = "punching"}, 
+    {item = "Demon_Fruit", match = "demon fruit"}, 
+    {item = "The_Order_Briefcase", match = "briefcase"}, 
+    {item = "Assassin_Knife", match = "knife"}, 
+    {item = "Assassin_Pistol", match = "pistol"}, 
+    {item = "Evil_Spirits", match = "evil spirit"},
+}
+
 local function getCurrentQuest()
 	local t = {}
 	for _, v in pairs(QuestList_Side:GetChildren()) do
@@ -1497,7 +1505,7 @@ local function getCurrentQuest()
 
 				local name = titleText:match("^%S+%s+(.*)") or titleText
 				local type = titleText:match("^(%S+)") or "Unknown"
-
+                local bQuest = false
 
 				if titleText:lower():match("dungeon") then -- DUNGEONS
 					name = titleText
@@ -1505,25 +1513,20 @@ local function getCurrentQuest()
                 elseif titleText:lower():match("stars") then    -- STARS
                     name = (titleText:match("Stars%s+(.*)") or ""):gsub("%s+", "_")
                     type = "Star"
-                elseif titleText:lower():match("punching") then -- PUNCHING QUEST
-					name = titleText
-					type = "Punching_Machine"
                 elseif titleText:lower():match("demon fruit") and not titleText:lower():match("collect") then -- DEMON FRUIT QUEST
 					name = titleText
 					type = "Demon_Fruit"
-                elseif titleText:lower():match("briefcase") then
-                    name = titleText
-                    type = "The_Order_Briefcase"
-                elseif titleText:lower():match("knife") then
-                    name = titleText
-                    type = "Assassin_Knife"
-                elseif titleText:lower():match("pistol") then
-                    name = titleText
-                    type = "Assassin_Pistol"
-                elseif titleText:lower():match("evil spirits") then
-                    name = titleText
-                    type = "Evil_Spirits"
-				end
+                else
+                    for item, match in subQuest do
+                        if titleText:lower():match(match:lower())then
+                            if item == "Demon_Fruit" and titleText:lower():match("collect") then break end -- DEMON FRUIT QUEST CHECK
+                            name = titleText
+                            type = item
+                            bQuest = true
+                            break
+                        end
+                    end
+                end
 
 				local c, m = progressText:match("(%d+)%/(%d+)")
 				c, m = tonumber(c) or 0, tonumber(m) or 0
@@ -1534,6 +1537,7 @@ local function getCurrentQuest()
 					max = m,
                     description = titleText,
                     progress = progressText,
+                    isQuest = bQuest
 				}
 			end
 		end
@@ -1626,7 +1630,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif ntype == "star" then  -- OPEN STARS
                             openStar(v.name)
-                        elseif table.find(subQuest, v.type) then -- FINDING QUEST
+                        elseif v.isQuest == true then -- FINDING QUEST
                             running = true
                             itemFindQuest(v.type)
                         elseif ntype == "dungeon" then   -- COMPLETE DUNGEON
