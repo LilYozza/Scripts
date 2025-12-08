@@ -12,7 +12,7 @@ local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
 
-print("v2.5")
+print("v2.6")
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -85,7 +85,8 @@ local gameData = {
                     list = { "Common Maze Power" }
                 }, -- RUN BOX 3
                 ["Maze_Level_2"] = {},
-                ["Maze_Level_3"] = {}
+                ["Maze_Level_3"] = {},
+                ["Maze_Level_4"] = {},
                 
             },
             gachaTable = {},
@@ -1023,12 +1024,30 @@ local gameData = {
             name = "Sand_Village",
             raids = {},
             gachaTable = {
-
+                ["Power_Eyes_2"] = {
+                    token = "Eye Token 2",
+                    list = {"Eye of Six Paths: Aether", "Eye of Six Paths: Inferno", "Eye of Six Paths: Radiance", "Eye of Six Paths: Awakening", "Eye of Six Paths: Ascent", "Eye of Six Paths: Wrath", "Eye of Six Paths: Transcendence", "Eye of Six Paths: Cataclysm", "Eye of Six Paths: Divinity"}
+                },
+                ["Shinobi_Clan"] = {
+                    token = "Shinobi Clan Token",
+                    list = {"Aburame Clan", "Sarutobi Clan", "Hozuki Clan", "Kaguya Clan", "Hyuga Clan", "Uzumaki Clan", "Senju Clan", "Uchiha Clan"}
+                },
+                ["Kekkei_Genkai"] = {
+                    token = "Genkai Token",
+                    list = {"Scorch Release", "Bone Manipulation", "Ice Release", "Magnet Release", "Boil Release", "Lava Release", "Dust Release", "Wood Release"}
+                }
             },
             upgradeTable = {}
         },
         enemies = {
-            
+            { name = 'Shikomeru', tokens = {"Shinobi Clan Token", "Chakra Infusion Token", "Scythe Coin"}},
+            { name = 'Kenkoro', tokens = {"Genkai Token", "Chakra Infusion Token", "Scythe Coin"}}, 
+            { name = 'Kaboto', tokens = {"Eye Token 2", "Chakra Infusion Token", "Scythe Coin"}},
+            { name = 'Temoro', tokens = {"Eye Token 2", "Chakra Infusion Token", "Scythe Coin"}}, 
+            { name = 'Deidi', tokens = {"Eye Token 2", "Chakra Infusion Token", "Scythe Coin"}}, 
+            { name = 'Hiruken', tokens = {"Eye Token 2", "Chakra Infusion Token", "Scythe Coin"}},
+            { name = 'Gaari', tokens = {"Eye Token 2", "Shinobi Clan Token", "Genkai Token", "Scythe Coin"}}, 
+            { name = 'Sasaru', tokens = {"Eye Token 2", "Genkai Token", "Shinobi Clan Token", "Scythe Coin"}, type = "boss"}, 
         }
     },
     [31] = {
@@ -1058,6 +1077,8 @@ local gameData = {
         }
     },
 }
+
+
 
 
 local function populateTable(_tbl1, _tbl2)
