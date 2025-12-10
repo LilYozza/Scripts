@@ -854,6 +854,28 @@ getgenv().EHelp = function(_func)
     end
 end
 
+getgenv().SendWebhook = function(_webhook, _message)
+	local data = {
+		["content"] = tostring(_message) -- Main message content
+	}
+
+	local jsonData = HttpService:JSONEncode(data)
+
+	local success, response = pcall(function()
+		return HttpService:PostAsync(
+			_webhook,
+			jsonData,
+			Enum.HttpContentType.ApplicationJson
+		)
+	end)
+
+	if success then
+		print("✅ Webhook sent successfully!")
+	else
+		warn("❌ Webhook failed:", response)
+	end
+end
+
 
 getgenv().EFLoaded = true
 print(string.format("Loaded Functions in: %.6f seconds", os.clock() - startTime))
