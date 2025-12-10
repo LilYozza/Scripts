@@ -11,8 +11,14 @@ local StarsMenu = w:CreateFolder("Stars")
 local StatsMenu = w:CreateFolder("Stats")
 --local ExchangeMenu = w:CreateFolder("Exhange")
 local ChestMenu = w:CreateFolder("Chests")
+local WebhookMenu = w:CreateFolder("Webhook")
 
 print("v2.6")
+
+local dataToSave = {}
+local WH_webhookLink -- "shared.WH_webhookLink"
+local WH_bestGacha = false
+local WH_questComplete = false
 
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
@@ -23,7 +29,7 @@ local PGui = Player.PlayerGui
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"}
 
 --AS OF Update 28 - Part 2, 07/12/2025
-local CODES = {"Update28P2", "Update28P2Code", "405KLikes", "265MVisits", "265MVisits", "Update28", "Update28Code", "775KFav", "260MVisits", "Update28Code2", "Update27P2", "765KFav", "770KFav", "Update27P2Code", "255MVisits", "NoThanksgivingCode2", "SorryNoTurkey2", "SorryNoTurkey3", "SorryNoTurkey4", "Update27", "400KLikes", "760KFav", "Update27Code", "NoThanksgivingCode", "Update27Delay", "Update27Restart", "Update26P2", "250MVisits", "Update26P2Code", "SorryNoTurkey", "PowerOfFriendship", "SlashX", "Derp", "Heyyyo", "Update26", "755KFav", "Update26Code", "ThanksgivingOnPart2?", "Update26Code2", "Update26Restart1", "Update25P2", "750KFav", "395KLikes", "245MVisits", "Labyrinth", "ImGreenOnUpdate25", "Update25P2Restart1", "Update25", "740KFav", "745KFav", "240MVisits", "StoneCode", "Update24P3", "730KFav", "735KFav", "390KLikes", "235MVisits", "Update24P2", "720KFav", "725KFav", "230MVisits", "Update24Part2Code", "Update24", "710KFav", "715KFav", "CodeGeass", "385kLikes","Update23P3", "700KFav", "705KFav", "225MVisits", "Update23P3Code", "Update23P2", "690KFav", "695KFav", "380KLikes", "Update23Code", "Update23", "680KFav", "685KFav", "375KLikes", "215MVisits", "Update22P3", "670KFav", "675kFav", "200MVisits", "LastHalloweenCode", "Update22P2", "370KLikes", "660KFav", "665KFav", "HalloweenPart3", "HalloweenPart3ThisSunday2", "Update22", "365KLikes", "650KFav", "655KFav", "HalloweenPart3ThisSunday", "Update21P3", "360KLikes", "175MVisits", "645KFav", "640KFav", "Update21P2", "HalloweenPart2", "355KLikes", "630KFav", "635KFav", "Update21Delay", "Update21HalloweenCode", "625KFav", "620KFav", "350KLikes", "345KLikes", "Update21", "Update20P3HalloweenCode", "Update20P3", "335KLikes", "340KLikes", "610KFav", "615KFav", "RobloxWasBroken", "91kOnline", "92kOnline", "93kOnline", "Super94kOnlineCode!", "NoWay95KPlayers", "NoWay96KPlayers", "JustACodeFor97KPlayers", "Ummm98KPlayers?!", "Update20P2", "HalloweenPart1", "330KLikes", "600KFav", "605KFav", "595KFav", "590KFav", "325KLikes", "320KLikes", "Update20"}
+local CODES = {"SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
 
 local gameData = {
     [0] = {
@@ -868,9 +874,11 @@ local gameData = {
                 ["Nightmare_Evolution"] = {
                     token = "Nightmare Evo Token",
                     list = {"Common Nightmare Evo", "Uncommon Nightmare Evo", "Rare Nightmare Evo", "Epic Nightmare Evo", "Legendary Nightmare Evo", "Mythical Nightmare Evo", "Phantom Nightmare Evo", "Supreme Nightmare Evo"}
-                }
+                },
             },
-            upgradeTable = {},
+            upgradeTable = {                
+                ["Coins_Obelisk"] = { token = "Obelisk Coin", Upgrading_Name = "Coins", bench = true }
+            },
             fighterTable = {
                 ["Special_Zombie"] = {
                     token = "Special Zombie Token",
@@ -2116,7 +2124,7 @@ GachaMenu:Toggle("Auto Farm",function(bool)
 
             if tempSSelect then
                 local mapInfo = findMap(tempSSelect)
-                 if sGSelect ~= "Selected" then openGacha(tempSSelect, sGachaAmount) end
+                if sGSelect ~= "Selected" then openGacha(tempSSelect, sGachaAmount) end
                 if mapInfo then
                     gMonster = mapInfo.enemy
                     TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
@@ -2475,7 +2483,34 @@ ChestMenu:Toggle("Premium Chest",function(bool)
     end)
 end)
 ----------------------------------------------------------------------------------------------------------------------
+--------------------------------------WEB HOOK----------------------------------------------------------
 
+
+
+WebhookMenu:Box("Webhook:","string",function(value) -- "number" or "string"
+    shared.WH_webhookLink = value
+    saveFile(dataToSave)
+end)
+
+WebhookMenu:Toggle("Best Gacha",function(bool)
+    shared.ToggleWHBG=bool
+    WH_bestGacha = shared.Toggle
+    saveFile(dataToSave)
+end)
+
+WebhookMenu:Toggle("Quest Complete",function(bool)
+    shared.ToggleWHQC=bool
+    WH_questComplete = shared.Toggle
+    saveFile(dataToSave)
+end)
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -2487,14 +2522,21 @@ spawn(function()
     end
 end)
 
-local dataToSave = {
+dataToSave = {
+
+    ["Webhook:"] = {var = "WH_webhookLink"},
+
+    ["Best Gacha"] = {var = "ToggleWHBG"},
+    ["Quest Complete"] = {var = "ToggleWHQC"},
+
+
     ["Daily Chest"] = {var = "ToggleCDC"},
     ["Group Chest"] = {var = "ToggleCGC"},
     ["VIP Chest"] = {var = "ToggleCVC"},
     ["Premium Chest"] = {var = "ToggleCPC"},
 
     ["Auto Rankup"] = {var = "ToggleARU"},
-    ["Join Dungeon"] = {var = "ToggleJD"},
+    ["Join Dungeons"] = {var = "ToggleJD"},
     ["Auto Prestige"] = {var = "ToggleAAP"},
     ["Auto Click"] = {var = "ToggleACC"},
 
