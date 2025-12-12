@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v2.7")
+print("v2.8")
 
 local dataToSave = {}
 local WH_webhookLink -- "shared.WH_webhookLink"
@@ -53,7 +53,19 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Running_Track_Progression"] = { token = "Running Track Coin" }
+                ["Running_Track_Progression"] = { token = "Running Track Coin" },
+                ["Star_Luck"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Damage"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Energy"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Coins"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Drops"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Avatar_Soul_Drop"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Movement_Speed"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Fast_Roll"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Star_Speed"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Critical_Energy"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Energy_Critical_Chance"] = {token = "Coins", Upgrading_Name = "Upgrades"},
+                ["Exp"] = {token = "Coins", Upgrading_Name = "Upgrades"},
             },
         },
         enemies = {
@@ -2011,21 +2023,6 @@ local function getTokenType(_gacha)
     end
 end
 
-local function openGacha(_gacha, _amount)
-    local token = getTokenStats()
-    local tokenName = getTokenType(_gacha)
-    if token and (token.name ~= tokenName or (token.name == tokenName and token.amount > 10)) then
-        local args = {
-            [1] = {
-                Open_Amount = _amount or 1,
-                Action = "_Gacha_Activate",
-                Name = _gacha
-            }
-        }
-        rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
-    end
-end
-
 local Inventory = PGui:WaitForChild("Inventory_1")
 local Hub = Inventory:WaitForChild("Hub")
 local Powers = Hub:WaitForChild("Powers")
@@ -2060,6 +2057,26 @@ local function checkUnlockedPower(_power)
         end
     end
 end
+
+local function openGacha(_gacha, _amount)
+    local token = getTokenStats()
+    local tokenName = getTokenType(_gacha)
+    if token and (token.name ~= tokenName or (token.name == tokenName and token.amount > 10)) then
+        local bPower = getBestPower(_gacha)
+        local unlocked = checkUnlockedPower(bPower)
+        if not unlocked then
+            local args = {
+                [1] = {
+                    Open_Amount = _amount or 1,
+                    Action = "_Gacha_Activate",
+                    Name = _gacha
+                }
+            }
+            rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+        end
+    end
+end
+
 GachaMenu:Toggle("Show Currency",function(bool)
     shared.ToggleSC=bool
     spawn(function()
@@ -2073,11 +2090,12 @@ GachaMenu:Toggle("Show Currency",function(bool)
 end)
 
 local sGacha
+local sGachaAmount = 4
 local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4,5},true,function(SItem)
     sGachaAmount = tonumber(SItem)
 end)
 
-local DropListG2 = GachaMenu:Dropdown("Select Gacha",GACHA,true,function(SItem)
+local DropListG2 = GachaMenu:Dropdown("Select Gacha",{"All", GACHA},true,function(SItem)
     sGacha = SItem
 end)
 
@@ -2087,10 +2105,12 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
     spawn(function()
         while shared.ToggleAG do
             if sGacha then
-                local bPower = getBestPower(sGacha)
-                local unlocked = checkUnlockedPower(bPower)
-                if not unlocked then
-                    openGacha(sGacha, sGachaAmount)
+                if sGacha == "All" then
+                    for _,v in pairs(GACHA) do
+                        openGacha(v) task.wait(0.3)
+                    end
+                else
+                    openGacha(sGacha)
                 end
             end
             task.wait(1)
@@ -2193,7 +2213,7 @@ local function openUpgrade(_upgrade)
 end
 
 local sUpgrade
-local DropListU = UpgradeMenu:Dropdown("Select Upgrade",UPGRADES,true,function(SItem)
+local DropListU = UpgradeMenu:Dropdown("Select Upgrade",{"All", unpack(UPGRADES)},true,function(SItem)
     sUpgrade = SItem
 end)
 
@@ -2202,7 +2222,14 @@ UpgradeMenu:Toggle("Auto Upgrade",function(bool)
     spawn(function()
         while shared.ToggleAU do
             if sUpgrade then
-                openUpgrade(sUpgrade)
+                if sUpgrade == "All" then
+                    for _,v in pairs(UPGRADES)do
+                        openUpgrade(v) task.wait(0.3)
+                    end
+                else
+                    openUpgrade(sUpgrade)
+                end
+                
             end
             task.wait(1)
         end
