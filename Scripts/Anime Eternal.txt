@@ -1698,7 +1698,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
     end)
 end)
 
-local qAmount = 5000
+local qAmount = 10000
 Auto:Button("Possible Quests",function()
     spawn(function()
         for i = 1, qAmount do
@@ -2059,9 +2059,7 @@ GachaMenu:Toggle("Show Currency",function(bool)
 end)
 
 local sGacha
-local sGachaAmount = 4
-
-local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4},true,function(SItem)
+local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4,5},true,function(SItem)
     sGachaAmount = tonumber(SItem)
 end)
 
