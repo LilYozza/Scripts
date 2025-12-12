@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.6")
+print("v7.7")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -225,76 +225,79 @@ local function getFruit(_amount, _blacklist)
     return t
 end
 
---SMITHING EVENT ------------------------------------------------------------------------------------------------------------------------
-local PortalEvent = UpdateItems:WaitForChild("PortalPlatform", 5) or Workspace:WaitForChild("PortalPlatform", 5)
+--STREAK EVENT ------------------------------------------------------------------------------------------------------------------------
+local PortalEvent = UpdateItems:WaitForChild("Model1", 5) or Workspace:WaitForChild("Model1", 5)
 if PortalEvent then
-    local EventMenu = w:CreateFolder("Portal Event")
+    local EventMenu = w:CreateFolder("Christmas Event")
+    local EventShop = ALLDATA.EventShopStock
 
-    local frame = PortalEvent.Model["2"].Frame
-    local correctPart = nil
+    local function submitEvent()
+        rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitAll"):FireServer(Player)
+    end
 
-    for _, child in ipairs(frame:GetChildren()) do
-        if child:IsA("BasePart") then
-            local ui = child:FindFirstChild("TraderEventUI")
-            if ui and ui:FindFirstChild("TraderGui") then
-                correctPart = child
-                break
+    local function buyEventStock(_name, _type)
+        for _,v in pairs(_type.Stocks) do
+            if v.Stock > 0 then
+                --if v.UnlockedShopItems and v.UnlockedShopItems[1] and FindInTable(v.UnlockedShopItems, _name) then
+                print("Buying: x" .. v.Stock, _, "Type:", _name)
+                for i = 1, v.Stock do
+                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name) task.wait(0.1)
+                end
             end
         end
     end
-    local RequireFrame = correctPart.TraderEventUI.InfoFrame.RequireFrame
-    --TODO
-        -- SMART HAND IN (Find Crops in garden / hand then hands it in)
 
-    --SUBMIT ALL
-   --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TraderEvent"):WaitForChild("Trader_SubmitFruitRE"):FireServer()
-    local function submit()
-        GameEvents:WaitForChild("TraderEvent"):WaitForChild("Trader_SubmitFruitRE"):FireServer()
-    end
-
-    local function getRequiredInfo()
-        if RequireFrame then
-            local requireLabel = RequireFrame.ItemName
-            local amountLabel = RequireFrame:WaitForChild("ImageLabel"):WaitForChild("Amount")
-            local t = {
-                item = requireLabel.Text,
-                amount = fromSuffixString(amountLabel),
-                requireLabel = requireLabel,
-                amountLabel = amountLabel
-            }
-            return t
-        end
-    end
-    
-   EventMenu:Button("Submit All",function()
+    EventMenu:Button("Submit Hand",function()
         spawn(function()
-            submit()
+            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitHeld"):FireServer(Player)
         end)
-    end) 
-   
-   EventMenu:Toggle("Auto Submit",function(bool)
-        shared.TogglePEAS=bool
+    end)
+
+    EventMenu:Button("Submit All",function()
+        spawn(function() submitEvent() end)
+    end)
+
+    EventMenu:Toggle("Auto Submit",function(bool)
+        shared.ToggleCEAS=bool
         spawn(function()
-            while shared.TogglePEAS do
-                local requiredInfo = getRequiredInfo()
-                if requiredInfo and requiredInfo.item then
-                    local cPlant = checkPlantInventory(requiredInfo.item)
-                    if not cPlant then
-                        local plant = checkPlantGarden(requiredInfo.item)
-                        if plant and not IsMaxInventory() then 
-                            CollectPlant(plant) task.wait(1)
-                            print("Collecting:", requiredInfo.item)
-                            cPlant = checkPlantInventory(requiredInfo.item)
-                        end
-                    end
-                    if cPlant then
-                        submit()
-                    end
+            while shared.ToggleCEAS do
+                if IsMaxInventory() then
+                    submitEvent()
                 end
                 task.wait(1)
             end
         end)
     end)
+
+    EventMenu:Toggle("Buy Shop",function(bool)
+        shared.ToggleEBS=bool
+        spawn(function()
+            while shared.ToggleEBS do
+                    buyEventStock("Santa's Stash", EventShop["Santa's Stash"])
+                task.wait(1)
+            end
+        end)
+    end)
+
+    local gpPlayer = "All"
+    local CEDropList = Auto:Dropdown("All",{"All",unpack(GetDisplayNames())},true,function(SItem)
+        gpPlayer = SItem
+    end)
+
+
+    EventMenu:Toggle("Gift Presents",function(bool)
+        shared.ToggleCEGP=bool
+        spawn(function()
+            while shared.ToggleCEGP do
+                --Check Present
+                --If Present Then Gift to selected Option
+                task.wait(1)
+            end
+        end)
+    end)
+
+    Players.ChildAdded:Connect(function() CEDropList:Refresh({"All",unpack(GetDisplayNames())}) end)
+    Players.ChildRemoved:Connect(function() CEDropList:Refresh({"All",unpack(GetDisplayNames())}) end)
 
 
 end
