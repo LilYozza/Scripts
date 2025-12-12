@@ -280,7 +280,7 @@ if PortalEvent then
     end)
 
     local gpPlayer = "All"
-    local CEDropList = Auto:Dropdown("All",{"All",unpack(GetDisplayNames())},true,function(SItem)
+    local CEDropList = EventMenu:Dropdown("All",{"All",unpack(GetDisplayNames())},true,function(SItem)
         gpPlayer = SItem
     end)
 
