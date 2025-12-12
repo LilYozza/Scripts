@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.7")
+print("v7.8")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -289,8 +289,20 @@ if PortalEvent then
         shared.ToggleCEGP=bool
         spawn(function()
             while shared.ToggleCEGP do
-                --Check Present
-                --If Present Then Gift to selected Option
+                if gpPlayer then
+                    if gpPlayer == "All" then
+                        for _,v in pairs(Players)do
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", v)
+                            task.wait(0.3)
+                        end
+                    else
+                        local _player = GetPlayerByDisplayName(gpPlayer)
+                        if _player then
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", _player)
+                        end
+                    end
+                    task.wait(30)
+                end
                 task.wait(1)
             end
         end)
