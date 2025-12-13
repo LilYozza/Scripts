@@ -231,8 +231,14 @@ if PortalEvent then
     local EventMenu = w:CreateFolder("Christmas Event")
     local EventShop = ALLDATA.EventShopStock
 
+    --[[
     local function submitEvent()
         rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitAll"):FireServer(Player)
+    end
+    ]]--
+
+    local function submitEvent()
+        rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitAll"):FireServer(Player)
     end
 
     local function buyEventStock(_name, _type)
@@ -249,7 +255,7 @@ if PortalEvent then
 
     EventMenu:Button("Submit Hand",function()
         spawn(function()
-            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitHeld"):FireServer(Player)
+            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitHeld"):FireServer(player)
         end)
     end)
 
