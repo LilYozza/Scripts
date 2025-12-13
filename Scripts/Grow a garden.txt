@@ -681,6 +681,7 @@ local function getCurrentPets()
             table.insert(t, v.PetType)
         end
     end
+    t = SortTableByName(t)
     return t
 end
 
