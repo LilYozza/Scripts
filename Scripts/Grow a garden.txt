@@ -231,6 +231,8 @@ if PortalEvent then
     local EventMenu = w:CreateFolder("Christmas Event")
     local EventShop = ALLDATA.EventShopStock
 
+    local giftEvent = ALLDATA.ChristmasEvent.GiftingV2
+
     --[[
     local function submitEvent()
         rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitAll"):FireServer(Player)
@@ -238,7 +240,9 @@ if PortalEvent then
     ]]--
 
     local function submitEvent()
-        rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitAll"):FireServer(Player)
+        if (giftEvent.CurrentCycle and giftEvent.LastClaimedCycle) and (giftEvent.LastClaimedCycle ~= giftEvent.CurrentCycle) then
+            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitAll"):FireServer(Player)
+        end
     end
 
     local function buyEventStock(_name, _type)
@@ -267,9 +271,7 @@ if PortalEvent then
         shared.ToggleCEAS=bool
         spawn(function()
             while shared.ToggleCEAS do
-                if IsMaxInventory() then
-                    submitEvent()
-                end
+                submitEvent()
                 task.wait(1)
             end
         end)
@@ -299,14 +301,14 @@ if PortalEvent then
                     if gpPlayer == "All" then
                         for _,v in pairs(Players:GetPlayers())do
                             if v ~= Player then
-                                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", v)
-                                task.wait(1)
+                                rs:WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", v)
+                                task.wait(1.5)
                             end
                         end
                     else
                         local _player = GetPlayerByDisplayName(gpPlayer)
                         if _player then
-                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", _player)
+                            rs:WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", _player)
                         end
                     end
                     task.wait(30)
