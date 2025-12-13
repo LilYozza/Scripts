@@ -671,9 +671,79 @@ StockMenu:Toggle("Buy Merchant",function(bool)
     end)
 end)
 
-
 local PetMutationMachine = ALLDATA.PetMutationMachine
 local PetDataTable = ALLDATA.PetsData.PetInventory.Data
+
+local function getCurrentPets()
+    local t = {}
+    for _,v in pairs(PetDataTable) do
+        if v.PetType and not table.find(t, v.PetType) then
+            table.insert(t, v.PetType)
+        end
+    end
+    return t
+end
+
+local function getPetCount(_pet)
+    local count = 0
+    for _,v in pairs(PetDataTable)do
+        if v.PetType and v.PetType:lower() == _pet:lower() then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+local function sellPet(_pet)
+    rs:WaitForChild("GameEvents"):WaitForChild("SellPet_RE"):FireServer(_pet)
+end
+
+PetMenu:Button("Sell Pet",function()
+    spawn(function()
+        local pet = Player.Character:FindFirstChildOfClass("Tool")
+        if pet and pet:GetAttribute("PetType") == "Pet" and pet:GetAttribute("d") == false then 
+            print("Selling:", pet)
+            sellPet(pet)
+        end
+    end)
+end)
+
+local sPetDelete
+local PETDropList = PetMenu:Dropdown("Select Pet",{"All", unpack(getCurrentPets())},true,function(SItem)
+    sPetDelete = SItem
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        PETDropList:Refresh({"All", unpack(getCurrentPets())})
+    end
+end)
+
+PetMenu:Toggle("Delete Pet",function(bool)
+    shared.ToggleADP=bool
+    spawn(function()
+        while shared.ToggleADP do
+            if sPetDelete then
+                if getPetCount(sPetDelete) > 1 then
+                    for _,v in pairs(PetDataTable) do
+                        if v.PetType == sPetDelete then
+                            local pet = getPet(v.UUID)
+                            if pet then
+                                print("Selling:", pet)
+                                sellPet(pet) task.wait(1)
+                            end
+                            break
+                        end
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+
 PetMenu:Toggle("Mutation Machine",function(bool)
     shared.TogglePMMM=bool
     spawn(function()
