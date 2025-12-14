@@ -793,20 +793,44 @@ task.spawn(function()
     end
 end)
 
+local function addToTable(_tbl, _item)
+    if not table.find(_tbl, _item) then
+        table.insert(_tbl, _item)
+        print("Added:", sPetDelete)
+    end
+end
+
+local function removetoTable(_tbl, _item)
+    if table.find(_tbl, _item) then
+        table.insert(_tbl, _item)
+        print("Removed:", sPetDelete)
+    end
+end
+
 PetMenu:Button("Add",function()
     spawn(function()
-        if sPetDelete and not table.find(sPetDeleteTable, sPetDelete) then
-            table.insert(sPetDeleteTable, sPetDelete)
-            print("Added", sPetDelete)
+        if sPetDelete then
+            if sPetDelete == "All" then
+                for _,v in pairs(getCurrentPets())do
+                    addToTable(sPetDeleteTable, v)
+                end
+            else
+                addToTable(sPetDeleteTable, sPetDelete)
+            end
         end
     end)
 end)
 
 PetMenu:Button("Remove",function()
     spawn(function()
-        if sPetDelete and table.find(sPetDeleteTable, sPetDelete) then
-            RemoveFromTable(sPetDeleteTable, sPetDelete)
-            print("Removed", sPetDelete)
+        if sPetDelete then
+            if sPetDelete == "All" then
+                for _,v in pairs(getCurrentPets())do
+                    removetoTable(sPetDeleteTable, v)
+                end
+            else
+                removetoTable(sPetDeleteTable, sPetDelete)
+            end
         end
     end)
 end)
