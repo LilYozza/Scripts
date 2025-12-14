@@ -250,13 +250,15 @@ getgenv().SortTableByNumber = function(_tbl) -- ONLY ACCEPTS TABLES WITH .NAME P
     return _tbl
 end
 
-getgenv().SortTableByName = function(_tbl) -- ONLY ACCEPTS TABLES WITH .NAME PROPERTY ATM
-    table.sort(_tbl, function(a, b)
-        return a.Name < b.Name
-    end)
-    return _tbl
-end
+getgenv().SortTableByName = function(tbl)
+    table.sort(tbl, function(a, b)
+        local aVal = type(a) == "string" and a or a.Name
+        local bVal = type(b) == "string" and b or b.Name
 
+        return tostring(aVal):lower() < tostring(bVal):lower()
+    end)
+    return tbl
+end
 getgenv().SortTableByDistance = function(_tbl, _part)
     if _tbl and typeof(_tbl) == "table" then
         _part = _part or Player.Character:WaitForChild("HumanoidRootPart")
