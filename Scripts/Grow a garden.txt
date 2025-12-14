@@ -738,7 +738,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
     spawn(function()
         while shared.ToggleAAH do
             for _,v in pairs(Objects_Physical:GetChildren())do
-                if v.Name == "PetEgg" and v:GetAttribute("READY") == true then
+                if v.Name == "PetEgg" and v:GetAttribute("READY") == true and v:GetAttribute("TimeToHatch") <= 0 then
                     local hitbox = v:FindFirstChildWhichIsA("Part")
                     local eggType = v:GetAttribute("EggName")
                     rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
