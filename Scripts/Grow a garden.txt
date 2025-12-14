@@ -602,7 +602,7 @@ Auto:Toggle("Open Pack",function(bool)
 end)
 
 -------------------------------------------------------------------------------------------------
-
+--[[
 Auto:Button("Ascend",function()
     spawn(function()
         local rebirthData = ALLDATA.RebirthData.RequiredPlants[1] or nil
@@ -626,6 +626,20 @@ Auto:Button("Ascend",function()
             end
         end
         GameEvents:WaitForChild("BuyRebirth"):FireServer()
+    end)
+end)
+]]--
+local confirmImg = "rbxassetid://104713419928195"
+local AscendBtn = PGui:WaitForChild("RebirthConfirmation"):WaitForChild("Frame"):WaitForChild("ItemFrame"):WaitForChild("Frame"):WaitForChild("Confirm")
+Auto:Toggle("Auto Ascend",function(bool)
+    shared.ToggleAAS=bool
+    spawn(function()
+        while shared.ToggleAAS do
+            if AscendBtn and AscendBtn.Image ~= confirmImg then
+                GameEvents:WaitForChild("BuyRebirth"):FireServer()
+            end
+            task.wait(1)
+        end
     end)
 end)
 
@@ -718,18 +732,42 @@ local function sellPet(_pet)
     rs:WaitForChild("GameEvents"):WaitForChild("SellPet_RE"):FireServer(_pet)
 end
 
+local replaceEgg = false
 PetMenu:Toggle("Auto Hatch",function(bool)
     shared.ToggleAAH=bool
     spawn(function()
         while shared.ToggleAAH do
             for _,v in pairs(Objects_Physical:GetChildren())do
                 if v.Name == "PetEgg" and v:GetAttribute("READY") == true then
+                    local savedPos = v.Position
+                    local eggType = v:GetAttribute("EggName")
                     rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
+                    if replaceEgg then
+                        -- Equip Egg
+                        local egg = checkBackpack(eggType)
+                        if egg then
+                            print("Found Egg:", egg)
+                            local hum = Player.Character:WaitForChild("Humanoid")
+                            hum:EquipTool(egg) task.wait(0.3)
+
+                            local args = {
+                                [1] = "CreateEgg",
+                                [2] = savedPos
+                            }
+                            rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args))
+                        end
+                    end
                 end
             end
             task.wait(1)
         end
     end)
+end)
+
+
+PetMenu:Toggle("Replace Egg",function(bool)
+    shared.ToggleARE=bool
+    replaceEgg = shared.ToggleARE
 end)
 
 
@@ -891,4 +929,6 @@ local dataToSave = {
     ["Buy Gears"] = {var = "ToggleBG"},
     ["Buy Eggs"] = {var = "ToggleBE"},
     ["Buy Merchant"] = {var = "ToggleBM"},
+
+    ["Auto Ascend"] = {var = "ToggleAAS"}
 } SaveManager(dataToSave)
