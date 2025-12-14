@@ -583,6 +583,21 @@ Auto:Toggle("Auto Digger",function(bool)
     end)
 end)
 
+Auto:Toggle("Open Pack",function(bool)
+    shared.ToggleAOP=bool
+    spawn(function()
+        while shared.ToggleAOP do
+            local tool = Player.Character:FindFirstChildOfClass("Tool")
+            if tool and tool:GetAttribute("Uses") == 1 and (tool:GetAttribute("e") and tool:GetAttribute("e") > 0) then
+                tool:Activate() task.wait()
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPack"):WaitForChild("SpinFinished"):FireServer()
+            end
+            
+            task.wait(0.3)
+        end
+    end)
+end)
+
 -------------------------------------------------------------------------------------------------
 
 Auto:Button("Ascend",function()
