@@ -710,6 +710,7 @@ PetMenu:Button("Sell Pet",function()
 end)
 
 local sPetDelete
+local sPetDeleteTable = {}
 local PETDropList = PetMenu:Dropdown("Select Pet",{"All", unpack(getCurrentPets())},true,function(SItem)
     sPetDelete = SItem
 end)
@@ -720,21 +721,39 @@ task.spawn(function()
     end
 end)
 
+PetMenu:Button("Add",function()
+    spawn(function()
+        if sPetDelete and not table.find(sPetDeleteTable, sPetDelete) then
+            table.insert(sPetDeleteTable, sPetDelete)
+        end
+    end)
+end)
+
+PetMenu:Button("Remove",function()
+    spawn(function()
+        if sPetDelete and table.find(sPetDeleteTable, sPetDelete) then
+            RemoveFromTable(sPetDeleteTable, sPetDelete)
+        end
+    end)
+end)
+
 PetMenu:Toggle("Delete Pet",function(bool)
     shared.ToggleADP=bool
     spawn(function()
         while shared.ToggleADP do
-            if sPetDelete then
-                if getPetCount(sPetDelete) > 1 then
-                    for _,v in pairs(PetDataTable) do
-                        if v.PetType == sPetDelete then
-                            local pet = getPet(v.UUID)
-                            if pet then
-                                print("Selling:", pet)
-                                local hum = Player.Character:WaitForChild("Humanoid")
-                                hum:EquipTool(pet) task.wait(0.3)
-                                sellPet(pet) task.wait(1)
-                                break
+            if next(sPetDeleteTable) ~= nil then
+                for __, _pet in pairs(sPetDeleteTable) do
+                    if getPetCount(_pet) > 1 then
+                        for _,v in pairs(PetDataTable) do
+                            if v.PetType == _pet then
+                                local pet = getPet(v.UUID)
+                                if pet then
+                                    print("Selling:", pet)
+                                    local hum = Player.Character:WaitForChild("Humanoid")
+                                    hum:EquipTool(pet) task.wait(0.3)
+                                    sellPet(pet) task.wait(0.3)
+                                    break
+                                end
                             end
                         end
                     end
