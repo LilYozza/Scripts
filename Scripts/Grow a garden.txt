@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v7.9")
+print("v8")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -671,6 +671,7 @@ StockMenu:Toggle("Buy Merchant",function(bool)
     end)
 end)
 
+local Objects_Physical = Important:WaitForChild("Objects_Physical")
 local PetMutationMachine = ALLDATA.PetMutationMachine
 local PetDataTable = ALLDATA.PetsData.PetInventory.Data
 
@@ -698,6 +699,21 @@ end
 local function sellPet(_pet)
     rs:WaitForChild("GameEvents"):WaitForChild("SellPet_RE"):FireServer(_pet)
 end
+
+PetMenu:Toggle("Auto Hatch",function(bool)
+    shared.ToggleAAH=bool
+    spawn(function()
+        while shared.ToggleAAH do
+            for _,v in pairs(Objects_Physical:GetChildren())do
+                if v.Name == "PetEgg" and v:GetAttribute("READY") == true then
+                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
 
 PetMenu:Button("Sell Pet",function()
     spawn(function()
