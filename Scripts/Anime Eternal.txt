@@ -28,7 +28,7 @@ local PGui = Player.PlayerGui
 -->Base Variables<--
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"}
 
-local CODES = {"Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
+local CODES = {"Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
 
 local gameData = {
     [0] = {
@@ -242,7 +242,11 @@ local gameData = {
     [5] = {
         world = {
             name = "Slayer_Village",
-            raids = {},
+            raids = {
+                ["Breathing_Raid"] = {
+                    rewards = {"Shallow Breath", "Uneven Breath", "Basic Breath Control", "Steady Breath", "Deep Breath", "Focused Breath", "Total Breathing", "Perfect Breathing"}
+                }
+            },
             gachaTable = {
                 ["Demon_Arts"] = { 
                     token = "Demon Arts Token",
@@ -2540,6 +2544,38 @@ ChestMenu:Toggle("Premium Chest",function(bool)
         end
     end)
 end)
+ChestMenu:Toggle("Christmas",function(bool)
+    shared.ToggleCPCC=bool
+    spawn(function()
+        while shared.ToggleCPCC do
+            claimChest("Christmas_Chest") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("Santa Chest",function(bool)
+    shared.ToggleCSCA=bool
+    spawn(function()
+        while shared.ToggleCSCA do
+            claimChest("Santa_Chest") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("Ice Chest",function(bool)
+    shared.ToggleIC=bool
+    spawn(function()
+        while shared.ToggleIC do
+            claimChest("Ice_Chest") task.wait(60)
+        end
+    end)
+end)
+ChestMenu:Toggle("Christmas Tree",function(bool)
+    shared.ToggleCTC=bool
+    spawn(function()
+        while shared.ToggleCTC do
+            claimChest("Christmas_Tree_Chest") task.wait(60)
+        end
+    end)
+end)
 ----------------------------------------------------------------------------------------------------------------------
 --------------------------------------WEB HOOK----------------------------------------------------------
 
@@ -2598,5 +2634,9 @@ dataToSave = {
     ["Auto Prestige"] = {var = "ToggleAAP"},
     ["Auto Click"] = {var = "ToggleACC"},
 
-    ["Buy Key"] = {var = "ToggleRMBK"}
+    ["Buy Key"] = {var = "ToggleRMBK"},
+    ["Christmas"] = {var = "ToggleCPCC"},
+    ["Santa Chest"] = {var = "ToggleCSCA"},
+    ["Ice Chest"] = {var = "ToggleIC"},
+    ["Christmas Tree"] = {var = "ToggleCTC"}
 } SaveManager(dataToSave)
