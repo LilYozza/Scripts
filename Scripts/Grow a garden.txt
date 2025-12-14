@@ -746,7 +746,7 @@ PetMenu:Toggle("Delete Pet",function(bool)
             for __, _pet in pairs(sPetDeleteTable) do
                 if getPetCount(_pet) > 1 then
                     for _,v in pairs(PetDataTable) do
-                        if v.PetType == _pet and v.PetData.Level >= 50 then
+                        if v.PetType == _pet and v.PetData.Level < 50 then
                             local pet = getPet(v.UUID)
                             if pet then
                                 print("Selling:", pet)
