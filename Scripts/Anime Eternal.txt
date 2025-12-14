@@ -2114,7 +2114,7 @@ local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4,5},true,function(SIt
     sGachaAmount = tonumber(SItem)
 end)
 
-local DropListG2 = GachaMenu:Dropdown("Select Gacha",{"All", GACHA},true,function(SItem)
+local DropListG2 = GachaMenu:Dropdown("Select Gacha",{"All", unpack(GACHA)},true,function(SItem)
     sGacha = SItem
 end)
 
