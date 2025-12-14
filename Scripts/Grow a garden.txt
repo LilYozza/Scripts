@@ -731,9 +731,11 @@ PetMenu:Toggle("Delete Pet",function(bool)
                             local pet = getPet(v.UUID)
                             if pet then
                                 print("Selling:", pet)
+                                local hum = Player.Character:WaitForChild("Humanoid")
+                                hum:EquipTool(pet) task.wait(0.3)
                                 sellPet(pet) task.wait(1)
+                                break
                             end
-                            break
                         end
                     end
                 end
