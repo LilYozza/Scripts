@@ -739,7 +739,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
         while shared.ToggleAAH do
             for _,v in pairs(Objects_Physical:GetChildren())do
                 if v.Name == "PetEgg" and v:GetAttribute("READY") == true then
-                    local savedPos = v.Position
+                    local hitbox = v:FindFirstChildWhichIsA("Part")
                     local eggType = v:GetAttribute("EggName")
                     rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
                     if replaceEgg then
@@ -752,7 +752,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
 
                             local args = {
                                 [1] = "CreateEgg",
-                                [2] = savedPos
+                                [2] = hitbox.Position
                             }
                             rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args))
                         end
