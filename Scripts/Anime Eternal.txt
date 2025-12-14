@@ -1074,20 +1074,42 @@ local gameData = {
     [31] = {
         world = {
             name = "Night_Raid_Base",
-            raids = {},
+            raids = {
+                ["Crimson_Canyon"] = {
+                    key = {type = 2, id = 10},
+                }
+            },
             gachaTable = {
-
+                ["Energy_Teigu"] = {
+                    token = "Energy Teigu Token",
+                    list = {"Water Dragon", "Magical Physician", "Gaia Foundation", "Black Marlin", "Susanoo", "Little War Horn", "Spectator", "Shambhala"}
+                },
+                ["Damage_Teigu"] = {
+                    token = "Damage Teigu Token",
+                    list = {"Belvaac", "Cross Tail", "Lionelle", "Yatsufusa", "Grand Chariot", "Pumpkin", "Incursio", "Murasame"}
+                }
             },
             upgradeTable = {}
         },
         enemies = {
-            
+            { name = 'Sheene', tokens = {"Energy Teigu Token", "Scythe Coin"}},
+            { name = 'Vols', tokens = {"Damage Teigu Token", "Scythe Coin"}},
+            { name = 'Leina', tokens = {"Energy Teigu Token", "Legendary Beast Essence", "Scythe Coin"}},
+            { name = 'Buran', tokens = {"Damage Teigu Token", "Mythical Beast Essence", "Scythe Coin"}},
+            { name = 'Tatsumo', tokens = {"Energy Teigu Token", "Phantom Beast Essence", "Scythe Coin"}}, 
+            { name = 'Kurona', tokens = {"Damage Teigu Token", "Supreme Beast Essence", "Scythe Coin"}}, 
+            { name = 'Susanoe', tokens = {"Energy Teigu Token", "Scythe Coin"}},
+            { name = 'Akara', tokens = {"Damage Teigu Token", "Scythe Coin"}, type = "boss"}, 
         }
     },
     [32] = {
         world = {
             name = "Salty_School",
-            raids = {},
+            raids = {
+                ["Body_Improvement"] = {
+                    key = {type = 2, id = 11},
+                }
+            },
             gachaTable = {
 
             },
@@ -1111,9 +1133,6 @@ local gameData = {
         }
     },
 }
-
-
-
 
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 then
