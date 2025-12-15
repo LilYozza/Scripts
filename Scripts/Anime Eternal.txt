@@ -1776,6 +1776,7 @@ local function getLabDoor()
     local t = {}
 
     local dType
+    local lastDoor
     local dungeonInfo = getCurrentDungeon()
     if dungeonInfo.title:lower():match("maze") then 
         dType = "maze"
@@ -1795,7 +1796,7 @@ local function getLabDoor()
                 local _door = _v:FindFirstChild("Door")
                 if _door then
                     local prox = _door:FindFirstChild("Prompt")
-                    --local isReady = _door.BrickColor == BrickColor.new("Neon orange")
+                    local isEarly = _door.BrickColor == BrickColor.new("Persimmon")
                     if prox and prox.Enabled then
                         t = {
                             dungeon = v,
@@ -1803,12 +1804,17 @@ local function getLabDoor()
                             door = _door,
                             prompt = prox
                         }
-                        return t
+                        if not isEarly then
+                            return t
+                        else
+                            if not lastDoor then lastDoor = t end
+                        end
                     end
                 end
             end
         end
     end
+    return lastDoor
 end
 
 local sMonster, gMonster, uMonster
