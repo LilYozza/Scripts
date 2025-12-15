@@ -14,7 +14,7 @@ local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
 print("v2.8")
-
+local sGachaAmount = 5
 local dataToSave = {}
 local WH_webhookLink -- "shared.WH_webhookLink"
 local WH_bestGacha = false
@@ -2119,9 +2119,8 @@ GachaMenu:Toggle("Show Currency",function(bool)
 end)
 
 local sGacha
-local sGachaAmount = 4
-local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4,5},true,function(SItem)
-    sGachaAmount = tonumber(SItem)
+local DropListG1 = GachaMenu:Dropdown(sGachaAmount,{1,2,3,4,5,6},true,function(SItem)
+    sGachaAmount = SItem
 end)
 
 local DropListG2 = GachaMenu:Dropdown("Select Gacha",{"All", unpack(GACHA)},true,function(SItem)
@@ -2136,10 +2135,10 @@ GachaMenu:Toggle("Auto Gacha",function(bool)
             if sGacha then
                 if sGacha == "All" then
                     for _,v in pairs(GACHA) do
-                        openGacha(v) task.wait(0.3)
+                        openGacha(v, sGachaAmount) task.wait(0.3)
                     end
                 else
-                    openGacha(sGacha)
+                    openGacha(sGacha, sGachaAmount)
                 end
             end
             task.wait(1)
