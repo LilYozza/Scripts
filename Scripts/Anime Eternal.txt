@@ -2096,7 +2096,7 @@ local function openGacha(_gacha, _amount)
         if not unlocked then
             local args = {
                 [1] = {
-                    Open_Amount = _amount or 1,
+                    Open_Amount = tonumber(_amount) or 1,
                     Action = "_Gacha_Activate",
                     Name = _gacha
                 }
