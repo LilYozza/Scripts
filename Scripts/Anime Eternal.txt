@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3")
+print("v3.1")
 local sGachaAmount = 5
 local dataToSave = {}
 local WH_webhookLink -- "shared.WH_webhookLink"
@@ -2421,13 +2421,24 @@ DailyMenu:Button("Demon Fruit",function()
     end)
 end)
 
+DailyMenu:Toggle("Exorcisms",function(bool)
+    shared.ToggleDME=bool
+    spawn(function()
+        while shared.ToggleDME do
+            acceptQuest(2303)
+            if itemFindQuest("Exorcisms") then
+                task.wait(2)
+                completeQuest(2303)
+                task.wait(3)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
 DailyMenu:Button("Exorcisms",function()
     spawn(function()
-        acceptQuest(2303)
-        if itemFindQuest("Exorcisms") then
-            task.wait(2)
-            completeQuest(2303)
-        end
+
     end)
 end)
 
