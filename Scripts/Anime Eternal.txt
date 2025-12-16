@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v2.9")
+print("v3")
 local sGachaAmount = 5
 local dataToSave = {}
 local WH_webhookLink -- "shared.WH_webhookLink"
@@ -1677,7 +1677,7 @@ local function itemFindQuest(_name, timeout)
     if location then
         local item = location:GetChildren()[1]
         if not item:FindFirstChild("ProximityPrompt") then
-            item = location:FindFirstChild("HumanoidRootPart")
+            item = item:FindFirstChild("HumanoidRootPart")
         end
         local oldPos = GetPos()
         MoveTo(item) task.wait(1)
