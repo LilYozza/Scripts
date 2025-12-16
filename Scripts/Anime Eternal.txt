@@ -2429,16 +2429,9 @@ DailyMenu:Toggle("Exorcisms",function(bool)
             if itemFindQuest("Exorcisms") then
                 task.wait(2)
                 completeQuest(2303)
-                task.wait(3)
             end
             task.wait(1)
         end
-    end)
-end)
-
-DailyMenu:Button("Exorcisms",function()
-    spawn(function()
-
     end)
 end)
 
