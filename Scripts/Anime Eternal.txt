@@ -1110,17 +1110,30 @@ local gameData = {
         world = {
             name = "Salty_School",
             raids = {
-                ["Body_Improvement"] = {
+                ["Body_Improvement_Challenge"] = {
                     key = {type = 2, id = 11},
                 }
             },
             gachaTable = {
-
+                ["Psycho_Flow"] = {
+                    token = "Psycho Flow Token",
+                    list = {"ESP Sensing", "Psychic Aura", "Psychic Barriers", "Exorcism", "Spirit Summoning", "Spirit Possession", "Energy Manipulation", "Energy Absorption"}
+                },
+                ["Psycho_Destruction"] = {
+                    token = "Psycho Destruction Token"
+                }
             },
             upgradeTable = {}
         },
         enemies = {
-            
+            { name = 'Arataki', tokens = {"Psycho Flow Token"}},
+            { name = 'Taruka', tokens = {"Psycho Destruction Token"}},
+            { name = 'Retsu', tokens = {"Psycho Flow Token", "Psycho Destruction Token"}},
+            { name = 'Mob', tokens = {"Psycho Flow Token", "Psycho Destruction Token"}},
+            { name = 'Shoi', tokens = {"Psycho Flow Token", "Psycho Destruction Token"}},
+            { name = 'Sarizaw', tokens = {"Psycho Flow Token", "Psycho Destruction Token"}}, 
+            { name = 'Mob_100%', tokens = {"Psycho Flow Token", "Psycho Destruction Token"}},
+            { name = 'Dimpy', tokens = {"Psycho Destruction Token", "Psycho Flow Token"}, type = "boss"},   
         }
     },
     [33] = {
@@ -1567,6 +1580,7 @@ local subQuest = {
     {item = "Assassin_Knife", match = "knife"}, 
     {item = "Assassin_Pistol", match = "pistol"}, 
     {item = "Evil_Spirits", match = "evil spirit"},
+    {item = "Exorcisms", match = "exorcise"}
 }
 
 local function getCurrentQuest()
@@ -2400,6 +2414,16 @@ DailyMenu:Button("Demon Fruit",function()
         if itemFindQuest("Demon_Fruit") then
             task.wait(2)
             completeQuest(2302)
+        end
+    end)
+end)
+
+DailyMenu:Button("Exorcisms",function()
+    spawn(function()
+        acceptQuest(2303)
+        if itemFindQuest("Exorcisms") then
+            task.wait(2)
+            completeQuest(2303)
         end
     end)
 end)
