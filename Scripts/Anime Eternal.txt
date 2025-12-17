@@ -2628,6 +2628,7 @@ StatsMenu:Label("Auto Index",{
 StatsMenu:Toggle("Auto Pets",function(bool)
     shared.ToggleSAP=bool
     spawn(function()
+        local autoDeletePet = {}
         while shared.ToggleSAP do
             for i = 1, #gameData do
                 if not shared.ToggleSAP then break end
@@ -2639,7 +2640,10 @@ StatsMenu:Toggle("Auto Pets",function(bool)
                         openStar("Star_"..i)
                         break
                     else
-                        toggleAutoDelete(true, v.id, v.index) task.wait()
+                        if not table.find(autoDeletePet, v.id) then
+                            table.insert(autoDeletePet, v.id)
+                            toggleAutoDelete(true, v.id, v.index) task.wait()
+                        end
                     end
                 end
             end
