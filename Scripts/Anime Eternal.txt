@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.2")
+print("v3.3")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -1716,7 +1716,7 @@ local function itemFindQuest(_name, timeout)
     end
 end
 
-local qMonster
+local qMonster, iMonster
 local tempDungeon = {}
 Auto:Toggle("Complete Quest",function(bool) -- WIP
     shared.ToggleACQ=bool
@@ -1870,10 +1870,12 @@ end)
 
 task.spawn(function()
 	while task.wait(0.1) do
-		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ or shared.ToggleAFG or shared.ToggleAFU then
+		if shared.ToggleAA or shared.ToggleAD or shared.ToggleACQ or shared.ToggleAFG or shared.ToggleAFU or  shared.ToggleSAA then
 			local cMonster, mode
 			local dungeon = getCurrentDungeon()
-            if shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then -- QUESTS
+            if shared.ToggleSAA and iMonster and dungeon and dungeon.inDungeon == false then -- INDEX
+                cMonster = getClosestMonster(iMonster) mode = "AI"
+            elseif shared.ToggleACQ and qMonster and dungeon and dungeon.inDungeon == false then -- QUESTS
                 cMonster = getClosestMonster(qMonster) mode = "QA"
             elseif shared.ToggleAFG and gMonster and dungeon and dungeon.inDungeon == false then -- GACHAS
                 cMonster = getClosestMonster(gMonster) mode = "GA"
@@ -1897,7 +1899,7 @@ task.spawn(function()
                         break
                     end
                     
-                    if ((mode == "QA" or mode == "GA" or mode == "UA") and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
+                    if ((mode == "QA" or mode == "GA" or mode == "UA" or mode == "AI") and dungeon.inDungeon == true) or os.clock() - startTime >= 30 then
                         qMonster = nil
                         gMonster = nil
                         uMonster = nil
@@ -1910,6 +1912,7 @@ task.spawn(function()
                     or (mode == "QA" and not shared.ToggleACQ)
                     or (mode == "GA" and not shared.ToggleAFG)
                     or (mode == "UA" and not shared.ToggleAFU)
+                    or (mode == "AI" and not shared.ToggleSAA)
             elseif mode == "AD" and dungeon.inDungeon == true then
                 if dungeon.title:lower():match("labyrinth") or dungeon.title:lower():match("maze") then
                     local currentDoor = getLabDoor()
@@ -2661,9 +2664,14 @@ StatsMenu:Toggle("Auto Ava",function(bool)
         while shared.ToggleSAA do
             for i = 1, #gameData do
                 if not shared.ToggleSAA then break end
-                local items = getIndexItems(ChampionFrames, i)
-                if indexLocked(items) then
-                    -- TARGET ENEMY
+                local items = getIndexItems(ChampionFrames, i) or {}
+                for _,v in pairs(items)do
+                    local newMonster = v.name:gsub("%s", "_")
+                    iMonster = newMonster
+                    local mapInfo = findMap(iMonster)
+                    if mapInfo then
+                        TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                    end
                 end
             end
             task.wait(1)
