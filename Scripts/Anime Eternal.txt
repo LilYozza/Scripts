@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.2")
+print("v3.3")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -31,7 +31,7 @@ local PGui = Player.PlayerGui
 -->Base Variables<--
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"}
 
-local CODES = {"Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
+local CODES = {"Update29P3", "Update29P3Code", "Update29P3Code2", "ChristmasPart1?", "410KLikes", "SuperUPD29Code", "Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
 
 local gameData = {
     [0] = {
@@ -122,6 +122,9 @@ local gameData = {
             raids = {
                 ["Tournament_Raid"] = {
                     key = {type = 1, id = 1}
+                },
+                ["Ice_Raid"] = {
+                    rewards = {"Frostbittne", "Snowbound", "Glacier-Touched", "Whiteclaw", "Avalanche-Born", "Permafrost Warden", "Elder Yeti", "Frostbound Deity", "Absolute Zero"}
                 }
             },
             gachaTable = {
@@ -134,7 +137,10 @@ local gameData = {
                     list = { "Great Ape", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Super Saiyan Grad 1", "Full Power Super Saiyan", "Super Saiyan 2", "Super Saiyan 3" }
                 }
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["Christmas_Damage"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
+                ["Christmas_Materials_Upgrade"] = {token = "Candy Cane", Upgrading_Name = "Christmas_Materials", bench = true}
+            }
         },
         enemies = {
             { name = 'Kriluni', tokens = {"Dragon Race Token"}}, 
@@ -1154,7 +1160,6 @@ local gameData = {
         }
     },
 }
-
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 and next(_tbl1) ~= nil then
         for name,v in pairs(_tbl1)do
@@ -1724,10 +1729,10 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                     --print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
                         local ntype = v.type:lower()
-                        print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
+                        --print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
                         if ntype == "defeat" and running == false then  -- ATTACK ENEMY
                             running = true
-                            print("???")
+                            --print("???")
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
                             local mapInfo = findMap(qMonster)
@@ -1736,7 +1741,7 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif ntype == "collect" and running == false then   -- COLLECT TOKENS
                             running = true
-                            print("ye")
+                            --print("ye")
                             local mapInfo = findMap(v.name)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
@@ -1789,7 +1794,7 @@ end)
 Auto:Button("Possible Quests",function()
     spawn(function()
         for i = 1, questAmount do
-            acceptQuest(i) task.wait(0.1)
+            acceptQuest(i) task.wait()
         end
     end)
 end)
@@ -2113,8 +2118,8 @@ local function getPowerName(_power)
 end
 
 local function checkUnlockedPower(_power)
-    Hub.Visible = true
-    Powers.Visible = true
+    --Hub.Visible = true
+    --Powers.Visible = true
     for _,v in pairs(PowersList:GetChildren())do
         if v:IsA("ImageButton") then
             local powerName = getPowerName(v)
@@ -2528,6 +2533,94 @@ StatsMenu:Toggle("Luck",function(bool)
     spawn(function()
         while shared.ToggleSL do
            upgradeStat("Primary_Luck") task.wait(1)
+        end
+    end)
+end)
+
+local champIndex = pGui:WaitForChild("Index")
+local Index_Hub = champIndex:WaitForChild("Index_Hub")
+
+local Champion_Index = Index_Hub:WaitForChild("Pets_Index")
+local Avatars_Index = Index_Hub:WaitForChild("Avatars_Index")
+
+local function initIndex(_index)
+    if not _index then return end
+
+    local _main = _index:WaitForChild("Main")
+    local worlds = _main:WaitForChild("Left"):WaitForChild("ScrollingFrame")
+    local items = _main:WaitForChild("Right"):WaitForChild("ScrollingFrame")
+
+    return {worlds = worlds, items = items}
+end
+
+local function getIndexItems(_frames, _world)
+    if not _frames and not _frames.items and not _frames.worlds then return end
+    if _world then
+        local btn = _frames.worlds:FindFirstChild(_world)
+        if btn then SendClick(btn) task.wait() end
+    end
+    local t = {}
+    for _,v in pairs(_frames.items:GetChildren())do
+        if v:IsA("ImageButton") and v.Visible then
+            local name = v:GetAttribute("__Name")
+            local info = {
+                id = v:GetAttribute("___Id") or "Unknown_Id",
+                name = name or "Unknown_Name",
+                locked = name == "???",
+                button = v
+            }
+            table.insert(t, info)
+        end
+    end
+    return t
+end
+
+local function indexLocked(_index)
+    for _,v in pairs(_index)do
+        if v.locked == true then return v end
+    end
+end
+
+local ChampionFrames = initIndex(Champion_Index)
+local AvatarsFrames = initIndex(Avatars_Index)
+
+StatsMenu:Label("Auto Index",{
+    TextSize = 25;
+    TextColor = Color3.fromRGB(255,255,255);
+    BgColor = Color3.fromRGB(69,69,69);
+    
+}) 
+
+StatsMenu:Toggle("Auto Pets",function(bool)
+    shared.ToggleSAP=bool
+    spawn(function()
+        while shared.ToggleSAP do
+            for i = 1, #gameData do
+                if not shared.ToggleSAP then break end
+                local items = getIndexItems(ChampionFrames, i)
+                if indexLocked(items) then
+                    print(i, "Isnt Completed")
+                    openStar("Star_"..i)
+                    break
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+StatsMenu:Toggle("Auto Ava",function(bool)
+    shared.ToggleSAA=bool
+    spawn(function()
+        while shared.ToggleSAA do
+            for i = 1, #gameData do
+                if not shared.ToggleSAA then break end
+                local items = getIndexItems(ChampionFrames, i)
+                if indexLocked(items) then
+                    -- TARGET ENEMY
+                end
+            end
+            task.wait(1)
         end
     end)
 end)
