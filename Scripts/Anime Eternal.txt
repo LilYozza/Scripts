@@ -2631,13 +2631,16 @@ StatsMenu:Toggle("Auto Pets",function(bool)
         while shared.ToggleSAP do
             for i = 1, #gameData do
                 if not shared.ToggleSAP then break end
-                local items = getIndexItems(ChampionFrames, i)
-                local notUnlocked = indexLocked(items)
-                if notUnlocked then
-                    print(i, "Isnt Completed")
-                    toggleAutoDelete(false, notUnlocked.id, notUnlocked.index) task.wait()
-                    openStar("Star_"..i)
-                    break
+                local items = getIndexItems(ChampionFrames, i) or {}
+                for _,v in pairs(items) do
+                    if v.locked == true then
+                        print(i, "Isnt Completed")
+                        toggleAutoDelete(false, v.id, v.index) task.wait()
+                        openStar("Star_"..i)
+                        break
+                    else
+                        toggleAutoDelete(true, v.id, v.index) task.wait()
+                    end
                 end
             end
             task.wait(1)
