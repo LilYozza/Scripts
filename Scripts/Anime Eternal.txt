@@ -138,7 +138,7 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Christmas_Damage"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
+                ["Christmas_Damage_Upgrade"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
                 ["Christmas_Materials_Upgrade"] = {token = "Candy Cane", Upgrading_Name = "Christmas_Materials", bench = true}
             }
         },
@@ -1160,6 +1160,7 @@ local gameData = {
         }
     },
 }
+
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 and next(_tbl1) ~= nil then
         for name,v in pairs(_tbl1)do
