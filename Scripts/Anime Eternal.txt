@@ -13,8 +13,11 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.1")
+print("v3.2")
+
 local sGachaAmount = 5
+local questAmount = 50000
+
 local dataToSave = {}
 local WH_webhookLink -- "shared.WH_webhookLink"
 local WH_bestGacha = false
@@ -1120,7 +1123,8 @@ local gameData = {
                     list = {"ESP Sensing", "Psychic Aura", "Psychic Barriers", "Exorcism", "Spirit Summoning", "Spirit Possession", "Energy Manipulation", "Energy Absorption"}
                 },
                 ["Psycho_Destruction"] = {
-                    token = "Psycho Destruction Token"
+                    token = "Psycho Destruction Token",
+                    list = {"Telekinetic Impact", "Pyrokinesis", "Electricity Manipulation", "Psychic Blasts", "Psychic Crush", "Vector Manipulation", "Gravity Manipulation", "???% State"}
                 }
             },
             upgradeTable = {}
@@ -1152,9 +1156,11 @@ local gameData = {
 }
 
 local function populateTable(_tbl1, _tbl2)
-    if _tbl1 then
+    if _tbl1 and next(_tbl1) ~= nil then
         for name,v in pairs(_tbl1)do
-            table.insert(_tbl2, name)
+            if not table.find(_tbl2, name) then
+                table.insert(_tbl2, name)
+            end
         end
     end
 end
@@ -1167,6 +1173,7 @@ local FIGHTERS = {}
 local WFTABLE = {}
 local KEYS = {}
 local KEYINFO = {}
+local TOKENS = {}
 
 local function IntData()
     for i,v in pairs(gameData)do
@@ -1176,6 +1183,20 @@ local function IntData()
         populateTable(v.world.weaponTable, WEAPONS)
         populateTable(v.world.fighterTable, FIGHTERS)
 
+        --TOKENS
+        for _, enemy in pairs(v.enemies) do
+            for _, token in pairs(enemy) do
+                if not table.find(TOKENS, token) then table.insert(TOKENS, token) end
+            end
+        end
+        for _, gacha in pairs(v.world.gachaTable) do
+            if gacha.token and not table.find(TOKENS, gacha.token) then table.insert(TOKENS, gacha.token) end
+        end
+        for _, upgrade in pairs(v.world.upgradeTable) do
+            if upgrade.token and not table.find(TOKENS, upgrade.token) then table.insert(TOKENS, upgrade.token) end
+        end
+
+        
         --KEYS
         for name, raid in pairs(v.world.raids) do
             if raid.key and raid.key.type then 
@@ -1703,10 +1724,10 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                     --print(v.current, v.max, v.current >= v.max)
                     if not (v.current and v.max and v.current >= v.max) then
                         local ntype = v.type:lower()
-                        --print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
+                        print(_, "running ? ", running, "ntype: ".. ntype, "name: " .. v.name, "type: " .. v.type)
                         if ntype == "defeat" and running == false then  -- ATTACK ENEMY
                             running = true
-                            --print("???")
+                            print("???")
                             local newMonster = v.name:gsub("%s", "_")
                             qMonster = newMonster
                             local mapInfo = findMap(qMonster)
@@ -1715,13 +1736,13 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
                             end
                         elseif ntype == "collect" and running == false then   -- COLLECT TOKENS
                             running = true
-                            --print("ye")
+                            print("ye")
                             local mapInfo = findMap(v.name)
                             if mapInfo then
                                 TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
                                 qMonster = mapInfo.enemy:gsub("%s", "_")
                             else
-                                --print(v.name, "Failed To Find Map")
+                                print(v.name, "Failed To Find Map")
                             end
                         elseif ntype == "star" then  -- OPEN STARS
                             openStar(v.name)
@@ -1764,10 +1785,10 @@ Auto:Toggle("Complete Quest",function(bool) -- WIP
     end)
 end)
 
-local qAmount = 10000
+
 Auto:Button("Possible Quests",function()
     spawn(function()
-        for i = 1, qAmount do
+        for i = 1, questAmount do
             acceptQuest(i) task.wait(0.1)
         end
     end)
@@ -2439,10 +2460,10 @@ end)
 ---------------------------------- STAR MENU ----------------------------------------------------------------------
 local sStar
 local starTable = {}
-for i = 1, (#gameData - 2) do
+for i = 1, (#gameData) do
     table.insert(starTable, "Star_"..i)
 end
-local starList = StarsMenu:Dropdown("Select Star",starTable,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local starList = StarsMenu:Dropdown("Select Star",starTable,true,function(SItem)
     sStar = SItem
 end)
 
