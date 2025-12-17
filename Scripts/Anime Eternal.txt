@@ -2631,15 +2631,16 @@ StatsMenu:Toggle("Auto Pets",function(bool)
     spawn(function()
         local autoDeletePet = {}
         while shared.ToggleSAP do
+            local isBreak = false
             for i = 1, #gameData do
                 if not shared.ToggleSAP then break end
                 local items = getIndexItems(ChampionFrames, i) or {}
                 for _,v in pairs(items) do
                     if v.locked == true then
                         print(i, "Isnt Completed")
-                        toggleAutoDelete(false, v.id, v.index) task.wait()
+                        toggleAutoDelete(false, v.id, v.index) task.wait(0.1)
                         openStar("Star_"..i)
-                        break
+                        isBreak = true break
                     else
                         if not table.find(autoDeletePet, v.id) then
                             table.insert(autoDeletePet, v.id)
@@ -2647,6 +2648,7 @@ StatsMenu:Toggle("Auto Pets",function(bool)
                         end
                     end
                 end
+                if isBreak then break end
             end
             task.wait(1)
         end
