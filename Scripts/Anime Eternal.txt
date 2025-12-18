@@ -2072,7 +2072,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
             if sRaid and currentRaid and currentRaid.inDungeon == false then
                 if buyKeyRM then buyKey(sRaid) end
                 task.wait(2)
-                joinDungeon(sRaid, rMultipler)
+                joinDungeon(sRaid, rMultipler) task.wait(2)
                 repeat task.wait(1) 
                     currentRaid = getCurrentDungeon()
                     if shared.ToggleRAL then
@@ -2081,7 +2081,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
                             leaveDungeon()
                         end
                     end
-                until not shared.ToggleAR or currentRaid.inDungeon == true
+                until not shared.ToggleAR or currentRaid.inDungeon == false
             end
             task.wait(1)
         end
@@ -2091,14 +2091,12 @@ end)
 RaidMenu:Toggle("Buy Key",function(bool)
     shared.ToggleRMBK=bool
     spawn(function()
-        buyKeyRM =  shared.ToggleRMBK
+        buyKeyRM = shared.ToggleRMBK
     end)
 end)
 
 RaidMenu:Slider("Wave",{
-    min = 1;
-    max = 1000;
-    precise = true;
+    min = 1; max = 1000; precise = true;
 },function(value)
     leaveRaidNum = value
 end)
@@ -2671,7 +2669,7 @@ StatsMenu:Toggle("Auto Pets",function(bool)
                     local items = getIndexItems(ChampionFrames, i) or {}
                     for _,v in pairs(items) do
                         if v.locked == true then
-                            print(i, "Isnt Completed")
+                            --print(i, "Isnt Completed")
                             toggleAutoDelete(false, v.id, v.index) task.wait(0.1)
                             openStar("Star_"..i)
                             isBreak = true break
