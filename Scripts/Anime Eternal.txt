@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.6")
+print("v3.6.5")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -2698,8 +2698,8 @@ local function checkAvIndex(_index, _world)
         table.insert(eList, eName)
     end
     for _,v in pairs(enemies)do
-        if not table.find(eList, v) then
-            return v
+        if not table.find(eList, v.name) then
+            return v.name
         end
     end
 end
