@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.6.5")
+print("v3.6")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -2717,7 +2717,7 @@ StatsMenu:Toggle("Auto Ava",function(bool)
                     for _,v in pairs(items)do
                         if v.locked == true then
                             local newMonster = (checkAvIndex(items, i) or ""):gsub("%s", "_")
-                            print(newMonster)
+                            --print(newMonster)
                             iMonster = newMonster
                             local mapInfo = findMap(iMonster)
                             if mapInfo then
