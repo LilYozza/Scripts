@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.7")
+print("v3.8")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -1734,15 +1734,24 @@ local function itemFindQuest(_name, timeout)
     timeout = timeout or 5
     local location = Workspace:WaitForChild(_name, timeout) or nil
     if location then
+        --[[
         local item = location:GetChildren()[1]
         if not item:FindFirstChild("ProximityPrompt") then
-            item = item:FindFirstChild("HumanoidRootPart")
+            local hrp = item:FindFirstChild("HumanoidRootPart")
+            if hrp then item = hrp else
+                local item = item:GetChildren()[1]
+            end
         end
-        local oldPos = GetPos()
-        MoveTo(item) task.wait(1)
-        fireproximityprompt(item.ProximityPrompt)
-        MoveTo(oldPos)
-        return true
+        ]]--
+        for _,v in pairs(location:GetDescendants())do
+            if v:IsA("ProximityPrompt") and v.Parent:IsA("BasePart") then
+                local oldPos = GetPos()
+                MoveTo(item) task.wait(1)
+                fireproximityprompt(item.ProximityPrompt)
+                MoveTo(oldPos)
+                return true
+            end
+        end
     else
         return false
     end
