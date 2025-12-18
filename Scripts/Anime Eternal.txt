@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.6")
+print("v3.7")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -1149,14 +1149,32 @@ local gameData = {
     [33] = {
         world = {
             name = "Mugen_District",
-            raids = {},
+            raids = {
+                ["Mugen_Dungeon"] = {
+                    key = {type = 2, id = 12},
+                }
+            },
             gachaTable = {
-
+                ["Slayer_Marks"] = {
+                    token = "Slayer Mark Token",
+                    list = {"Dull Mark", "Flicker Mark", "Ember Mark", "Claw Mark", "Shatter Mark", "Pulse Mark", "Surge Mark", "Eternal Mark"}
+                },
+                ["Demon_Bloodline"] = {
+                    token = "Demon Bloodline Token",
+                    list = {"Dried Bloodline", "Stirred Bloodline", "Awoken Bloodline", "Ferocious Bloodline", "Elite Bloodline", "Royal Bloodline", "Primordial Bloodline", "Origin Bloodline"}
+                }
             },
             upgradeTable = {}
         },
         enemies = {
-            
+            { name = 'Insaka', tokens = {"Slayer Mark Token"}},
+            { name = 'Zantsu', tokens = {"Demon Bloodline Token"}}, 
+            { name = 'Tanjaro', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}}, 
+            { name = 'Rengeki', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}},
+            { name = 'Tangan', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}}, 
+            { name = 'Deki', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}},
+            { name = 'Giutero', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}}, 
+            { name = 'Akazi', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}, type = "boss"}, 
         }
     },
 }
@@ -1537,6 +1555,9 @@ local function TeleportMap(_map, _index, _walk, _dungeonCheck)
     local loaded = nil
     local str = ". "
     local folder = Islands
+
+    _walk = true -- TEMP OVERRIDE
+
     if _map == "Earth_City" then folder = IslandStuff str = str .. _map end
 
     for _, v in pairs(folder:GetChildren()) do
@@ -1617,7 +1638,8 @@ local subQuest = {
     {item = "Assassin_Knife", match = "knife"}, 
     {item = "Assassin_Pistol", match = "pistol"}, 
     {item = "Evil_Spirits", match = "evil spirit"},
-    {item = "Exorcisms", match = "exorcise"}
+    {item = "Exorcisms", match = "exorcise"},
+    {item = "Lost_Bento_Box", match = "bento"}
 }
 
 local function getCurrentQuest()
@@ -2497,6 +2519,17 @@ DailyMenu:Toggle("Exorcisms",function(bool)
         end
     end)
 end)
+
+DailyMenu:Button("Bento Box",function()
+    spawn(function()
+        acceptQuest(2305)
+        if itemFindQuest("Lost_Bento_Box") then
+            task.wait(2)
+            completeQuest(2305)
+        end
+    end)
+end)
+
 
 --------------------------------------------------------------------------------------------------------------------
 ---------------------------------- STAR MENU ----------------------------------------------------------------------
