@@ -2076,6 +2076,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
                 repeat task.wait(1) 
                     currentRaid = getCurrentDungeon()
                     if shared.ToggleRAL then
+                        print(currentRaid.room, " : ", leaveRaidNum)
                         if leaveRaidNum > 0 and currentRaid.room >= leaveRaidNum then
                             leaveDungeon()
                         end
