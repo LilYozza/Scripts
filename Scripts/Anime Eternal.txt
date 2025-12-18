@@ -2075,9 +2075,9 @@ RaidMenu:Toggle("Auto Raid",function(bool)
                 joinDungeon(sRaid, rMultipler) task.wait(2)
                 repeat task.wait(1) 
                     currentRaid = getCurrentDungeon()
-                    if shared.ToggleRAL then
-                        print(currentRaid.room, " : ", leaveRaidNum)
-                        if leaveRaidNum > 0 and currentRaid.room >= leaveRaidNum then
+                    if shared.ToggleRAL and currentRaid.wave then
+                        --print(currentRaid.wave, " : ", leaveRaidNum)
+                        if leaveRaidNum > 0 and currentRaid.wave >= leaveRaidNum then
                             leaveDungeon()
                         end
                     end
