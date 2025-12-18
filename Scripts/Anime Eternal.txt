@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.4")
+print("v3.5")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -1329,15 +1329,15 @@ local Dungeon_Header = Dungeon:WaitForChild("Default_Header")
 local Dungeon_Notification = Dungeon:WaitForChild("Dungeon_Notification")
 
 local function getCurrentDungeon()
-    local t = {}
     local Main = Dungeon_Header:WaitForChild("Main"):WaitForChild("Main")
-    t = {
+    local waveText = Main.Wave.Text
+
+    return {
         inDungeon = Dungeon_Header.Visible,
         title = Main.Title.Text,
-        wave = Main.Wave.Text,
-        room = Main.Wave.Text
+        wave = tonumber(waveText:match("%d+")) or 0, -- 256
+        --room = tonumber(Main.Room.Text:match("%d+")) or 0 -- if Room exists
     }
-    return t
 end
 
 local function joinDungeon(_name, _multipler)
@@ -1934,8 +1934,31 @@ Auto:Toggle("Auto Attack",function(bool)
     shared.ToggleAA=bool
 end)
 
+
+
+
+Auto:Button("Redeem Codes",function()
+    spawn(function()
+        for _,v in pairs(CODES)do
+            local args = {
+                [1] = {
+                    ["Action"] = "_Redeem_Code",
+                    ["Text"] = v
+                }
+            }
+            rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args)) task.wait(1)
+        end
+    end)
+end)
+
+Auto:Button("Other",function()
+    spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/AIHub091/AI-Hub/refs/heads/main/Anime-Eternal/Script.lua"))()
+    end)
+end)
+
 local triggeredAD
-Auto:Toggle("Auto Dungeon",function(bool)
+RaidMenu:Toggle("Auto Dungeon",function(bool)
     shared.ToggleAD=bool
     triggeredAD = false
 end)
@@ -2020,6 +2043,7 @@ RaidMenu:Toggle("Join Dungeons",function(bool)
 end)
 
 local sRaid
+local leaveRaidNum = 0
 local buyKeyRM = false
 local RaidList = RaidMenu:Dropdown("Select Raid",RAIDS,true,function(SItem)
     sRaid = SItem
@@ -2039,7 +2063,14 @@ RaidMenu:Toggle("Auto Raid",function(bool)
                 if buyKeyRM then buyKey(sRaid) end
                 task.wait(2)
                 joinDungeon(sRaid, rMultipler)
-                repeat task.wait(1) currentRaid = getCurrentDungeon() until not shared.ToggleAR or currentRaid.inDungeon == true
+                repeat task.wait(1) 
+                    currentRaid = getCurrentDungeon()
+                    if shared.ToggleRAL then
+                        if leaveRaidNum > 0 and currentRaid.room >= leaveRaidNum then
+                            break
+                        end
+                    end
+                until not shared.ToggleAR or currentRaid.inDungeon == true
             end
             task.wait(1)
         end
@@ -2053,25 +2084,18 @@ RaidMenu:Toggle("Buy Key",function(bool)
     end)
 end)
 
-Auto:Button("Redeem Codes",function()
-    spawn(function()
-        for _,v in pairs(CODES)do
-            local args = {
-                [1] = {
-                    ["Action"] = "_Redeem_Code",
-                    ["Text"] = v
-                }
-            }
-            rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args)) task.wait(1)
-        end
-    end)
+RaidMenu:Slider("Slider",{
+    min = 1;
+    max = 1000;
+    precise = true;
+},function(value)
+    leaveRaidNum = value
 end)
 
-Auto:Button("Other",function()
-    spawn(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AIHub091/AI-Hub/refs/heads/main/Anime-Eternal/Script.lua"))()
-    end)
+RaidMenu:Toggle("Auto Leave",function(bool)
+    shared.ToggleRAL=bool
 end)
+
 
 ---------------------------------- GACHA MENU ----------------------------------------------------------------------
 ---
@@ -2627,25 +2651,29 @@ StatsMenu:Toggle("Auto Pets",function(bool)
     shared.ToggleSAP=bool
     spawn(function()
         local autoDeletePet = {}
+        local completedIndex = {}
         while shared.ToggleSAP do
             local isBreak = false
             for i = 1, #gameData do
                 if not shared.ToggleSAP then break end
-                local items = getIndexItems(ChampionFrames, i) or {}
-                for _,v in pairs(items) do
-                    if v.locked == true then
-                        print(i, "Isnt Completed")
-                        toggleAutoDelete(false, v.id, v.index) task.wait(0.1)
-                        openStar("Star_"..i)
-                        isBreak = true break
-                    else
-                        if not table.find(autoDeletePet, v.id) then
-                            table.insert(autoDeletePet, v.id)
-                            toggleAutoDelete(true, v.id, v.index) task.wait()
+                if not table.find(completedIndex, i) then
+                    local items = getIndexItems(ChampionFrames, i) or {}
+                    for _,v in pairs(items) do
+                        if v.locked == true then
+                            print(i, "Isnt Completed")
+                            toggleAutoDelete(false, v.id, v.index) task.wait(0.1)
+                            openStar("Star_"..i)
+                            isBreak = true break
+                        else
+                            if not table.find(autoDeletePet, v.id) then
+                                table.insert(autoDeletePet, v.id)
+                                toggleAutoDelete(true, v.id, v.index) task.wait()
+                            end
                         end
                     end
+                    
+                    if isBreak then break else table.insert(completedIndex, i) end
                 end
-                if isBreak then break end
             end
             task.wait(1)
         end
@@ -2657,23 +2685,26 @@ StatsMenu:Toggle("Auto Ava",function(bool)
     spawn(function()
         while shared.ToggleSAA do
             local isBreak = false
+            local completedIndex = {}
             for i = 1, #gameData do
                 if not shared.ToggleSAA then break end
-                local items = getIndexItems(ChampionFrames, i) or {}
-                for _,v in pairs(items)do
-                    if v.locked == true then
-                        local newMonster = v.name:gsub("%s", "_")
-                        iMonster = newMonster
-                        local mapInfo = findMap(iMonster)
-                        if mapInfo then
-                            TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
-                        else
-                            print(iMonster, "Map Not Found")
+                if not table.find(completedIndex, i) then
+                    local items = getIndexItems(ChampionFrames, i) or {}
+                    for _,v in pairs(items)do
+                        if v.locked == true then
+                            local newMonster = v.name:gsub("%s", "_")
+                            iMonster = newMonster
+                            local mapInfo = findMap(iMonster)
+                            if mapInfo then
+                                TeleportMap(mapInfo.world, mapInfo.index, mapInfo.isBoss)
+                            else
+                                print(iMonster, "Map Not Found")
+                            end
+                            isBreak = true break
                         end
-                        isBreak = true break
                     end
+                    if isBreak then break else table.insert(completedIndex, i) end
                 end
-                if isBreak then break end
             end
             task.wait(1)
         end
