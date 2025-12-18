@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.5")
+print("v3.6")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -2689,6 +2689,23 @@ StatsMenu:Toggle("Auto Pets",function(bool)
     end)
 end)
 
+local function checkAvIndex(_index, _world)
+    local enemies = gameData[_world].enemies
+    if not enemies or not _index then return nil end
+    local indexSet = {}
+    for _, item in ipairs(_index) do
+        if item.name then
+            indexSet[item.name:lower():gsub("_", " ")] = true
+        end
+    end
+    for _, enemy in ipairs(enemies) do
+        if not indexSet[enemy.name:lower():gsub("_", " ")] then
+            return enemy.name
+        end
+    end
+    return nil
+end
+
 StatsMenu:Toggle("Auto Ava",function(bool)
     shared.ToggleSAA=bool
     spawn(function()
@@ -2701,7 +2718,7 @@ StatsMenu:Toggle("Auto Ava",function(bool)
                     local items = getIndexItems(ChampionFrames, i) or {}
                     for _,v in pairs(items)do
                         if v.locked == true then
-                            local newMonster = v.name:gsub("%s", "_")
+                            local newMonster = (checkAvIndex(v, i) or ""):gsub("%s", "_")
                             iMonster = newMonster
                             local mapInfo = findMap(iMonster)
                             if mapInfo then
