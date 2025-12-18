@@ -2709,9 +2709,9 @@ end
 StatsMenu:Toggle("Auto Ava",function(bool)
     shared.ToggleSAA=bool
     spawn(function()
+        local completedIndex = {}
         while shared.ToggleSAA do
             local isBreak = false
-            local completedIndex = {}
             for i = 1, #gameData do
                 if not shared.ToggleSAA then break end
                 if not table.find(completedIndex, i) then
@@ -2719,6 +2719,7 @@ StatsMenu:Toggle("Auto Ava",function(bool)
                     for _,v in pairs(items)do
                         if v.locked == true then
                             local newMonster = (checkAvIndex(v, i) or ""):gsub("%s", "_")
+                            print(newMonster)
                             iMonster = newMonster
                             local mapInfo = findMap(iMonster)
                             if mapInfo then
