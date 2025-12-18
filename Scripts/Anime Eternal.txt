@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.6.2")
+print("v3.6.3")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -2693,13 +2693,13 @@ local function checkAvIndex(_index, _world)
     local enemies = gameData[_world].enemies
     if not enemies or not _index then return nil end
     local eList = {}
-    for _,v in pairs(enemies)do
-        table.insert(eList, v.name)
-    end
     for _,v in pairs(_index)do
-        local eName = (_index.name or ""):gsub("^%[Av%]%s*", "")
-        if not table.find(eList, eName) then
-            return eName
+        local eName = (v.name or ""):gsub("^%[Av%]%s*", "")
+        table.insert(eList, eName)
+    end
+    for _,v in pairs(enemies)do
+        if not table.find(eList, v) then
+            return v
         end
     end
 end
