@@ -1356,6 +1356,16 @@ local function joinDungeon(_name, _multipler)
     rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
 end
 
+local function leaveDungeon()
+    local args = {
+        [1] = {
+            ["Action"] = "Dungeon_Leave"
+        }
+    }
+
+    rs:WaitForChild("Events"):WaitForChild("To_Server"):FireServer(unpack(args))
+end
+
 
 
 local function rankUp()
@@ -2067,7 +2077,7 @@ RaidMenu:Toggle("Auto Raid",function(bool)
                     currentRaid = getCurrentDungeon()
                     if shared.ToggleRAL then
                         if leaveRaidNum > 0 and currentRaid.room >= leaveRaidNum then
-                            break
+                            leaveDungeon()
                         end
                     end
                 until not shared.ToggleAR or currentRaid.inDungeon == true
@@ -2084,7 +2094,7 @@ RaidMenu:Toggle("Buy Key",function(bool)
     end)
 end)
 
-RaidMenu:Slider("Slider",{
+RaidMenu:Slider("Wave",{
     min = 1;
     max = 1000;
     precise = true;
