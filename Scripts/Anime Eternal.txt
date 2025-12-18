@@ -1745,10 +1745,10 @@ local function itemFindQuest(_name, timeout)
         ]]--
         for _,v in pairs(location:GetDescendants())do
             if v:IsA("ProximityPrompt") and v.Parent:IsA("BasePart") then
-                local oldPos = GetPos()
-                MoveTo(item) task.wait(1)
-                fireproximityprompt(item.ProximityPrompt)
-                MoveTo(oldPos)
+                --local oldPos = GetPos()
+                --MoveTo(item) task.wait(1)
+                fireproximityprompt(v)
+                --MoveTo(oldPos)
                 return true
             end
         end
