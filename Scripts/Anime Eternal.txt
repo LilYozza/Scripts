@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v3.8")
+print("v3.9")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -31,7 +31,7 @@ local PGui = Player.PlayerGui
 -->Base Variables<--
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"}
 
-local CODES = {"Update29P3", "Update29P3Code", "Update29P3Code2", "ChristmasPart1?", "ChristmasPart1!", "410KLikes", "SuperUPD29Code", "Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
+local CODES = {"Update30Late", "Update30", "790KFav", "Update30Code2", "Update30Code3", "275MVisits",  "Update30Code", "Update30Late2", "Update29P3", "Update29P3Code", "Update29P3Code2", "ChristmasPart1?", "ChristmasPart1!", "410KLikes", "SuperUPD29Code", "Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
 
 local gameData = {
     [0] = {
@@ -42,8 +42,6 @@ local gameData = {
                     key = {type = 1, id = 15},
                     list = {"Common Labyrinth Power", "Uncommon Labyrinth Power", "Rare Labyrinth Power", "Epic Labyrinth Power", "Legendary Labyrinth Power", "Mythical Labyrinth Power", "Phantom Labyrinth Power", "Supreme Labyrinth Power"}
                 },
-                ["Halloween_Raid"] = {},
-                ["Graveyard_Defense"] = {},
                 ["Running_Track_Raid"] = {
                     key = {type = 1, id = 14, limit = 1},
                     drops = { "Running Track Coin" }
@@ -116,6 +114,47 @@ local gameData = {
 
         }
     },
+    [101] = {
+        world = {
+            name = "Halloween_Event_World",
+            raids = {
+                ["Halloween_Raid"] = {},
+                ["Graveyard_Defense"] = {},
+            },
+            gachaTable = {
+            },
+            upgradeTable = {}
+        },
+        enemies = {
+            { name = 'Carrotto', tokens = {}, drops = {"Candy Aura"}},
+            { name = 'Evil_Bald_Man', tokens = {}, drops = {"Pumpkin Aura"}},
+            { name = 'Pumpkinado', tokens = {}, drops = {"Plague Aura"}},
+            { name = 'Bald_Warlock', tokens = {}, drops = {"Spookweb Aura"}}, 
+            { name = 'Spook-suke', tokens = {}, drops = {"Overdrive Saw", "Demonflame Aura"}}, 
+        }
+    },
+    [102] = {
+        world = {
+            name = "Christmas_Event_World",
+            raids = {
+                ["Ice_Raid"] = {
+                    rewards = {"Frostbittne", "Snowbound", "Glacier-Touched", "Whiteclaw", "Avalanche-Born", "Permafrost Warden", "Elder Yeti", "Frostbound Deity", "Absolute Zero"}
+                }
+            },
+            gachaTable = {
+                ["Christmas_Glove"] = {
+                    token = "Candy_Cane",
+                    list = {"Common Christmas Glove", "Uncommon Christmas Glove", "Rare Christmas Glove", "Epic Christmas Glove", "Legendary Christmas Glove", "Mythical Christmas Glove", "Phantom Christmas Glove", "Supreme Christmas Glove", "Exotic Christmas Glove"}
+                }
+            },
+            upgradeTable = {
+                ["Christmas_Damage_Upgrade"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
+                ["Christmas_Materials_Upgrade"] = {token = "Candy Cane", Upgrading_Name = "Christmas_Materials", bench = true}
+            }
+        },
+        enemies = {
+        }
+    },
     [1] = {
         world = {
             name = "Earth_City",
@@ -123,9 +162,6 @@ local gameData = {
                 ["Tournament_Raid"] = {
                     key = {type = 1, id = 1}
                 },
-                ["Ice_Raid"] = {
-                    rewards = {"Frostbittne", "Snowbound", "Glacier-Touched", "Whiteclaw", "Avalanche-Born", "Permafrost Warden", "Elder Yeti", "Frostbound Deity", "Absolute Zero"}
-                }
             },
             gachaTable = {
                 ["Dragon_Race"] = { 
@@ -138,8 +174,6 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Christmas_Damage_Upgrade"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
-                ["Christmas_Materials_Upgrade"] = {token = "Candy Cane", Upgrading_Name = "Christmas_Materials", bench = true}
             }
         },
         enemies = {
@@ -1152,6 +1186,7 @@ local gameData = {
             raids = {
                 ["Mugen_Dungeon"] = {
                     key = {type = 2, id = 12},
+                    rewards = {"Standing Ticket", "Economy Ticket", "Third Class Ticket", "Second Class Ticket", "Sleeper Cabin Ticket", "First Class Ticket", "Blood-Inked Ticket", "Infinity Ticket"}
                 }
             },
             gachaTable = {
@@ -1175,6 +1210,18 @@ local gameData = {
             { name = 'Deki', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}},
             { name = 'Giutero', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}}, 
             { name = 'Akazi', tokens = {"Slayer Mark Token", "Demon Bloodline Token"}, type = "boss"}, 
+        }
+    },
+    [34] = {
+        world = {
+            name = "Easton_Academy",
+            raids = {
+            },
+            gachaTable = {
+            },
+            upgradeTable = {}
+        },
+        enemies = {
         }
     },
 }
