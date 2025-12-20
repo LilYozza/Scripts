@@ -238,11 +238,18 @@ if PortalEvent then
         rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitAll"):FireServer(Player)
     end
     ]]--
-
+    --[[
     local function submitEvent()
         if (giftEvent.CurrentCycle and giftEvent.LastClaimedCycle) and (giftEvent.LastClaimedCycle ~= giftEvent.CurrentCycle) then
             rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitAll"):FireServer(Player)
         end
+    end
+    ]]--
+
+    -- game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasTree_ClaimSeed"):FireServer()
+
+    local function submitEvent()
+        rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasTree_SubmitAll"):FireServer()
     end
 
     local function buyEventStock(_name, _type)
@@ -259,7 +266,7 @@ if PortalEvent then
 
     EventMenu:Button("Submit Hand",function()
         spawn(function()
-            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitHeld"):FireServer(player)
+            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasTree_SubmitHeld"):FireServer()
         end)
     end)
 
@@ -596,7 +603,7 @@ Auto:Toggle("Open Pack",function(bool)
                 --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPack"):WaitForChild("SpinFinished"):FireServer()
             end
             
-            task.wait(1)
+            task.wait(0.6)
         end
     end)
 end)
