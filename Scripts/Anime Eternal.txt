@@ -143,7 +143,7 @@ local gameData = {
             },
             gachaTable = {
                 ["Christmas_Glove"] = {
-                    token = "Candy_Cane",
+                    token = "Candy Cane",
                     list = {"Common Christmas Glove", "Uncommon Christmas Glove", "Rare Christmas Glove", "Epic Christmas Glove", "Legendary Christmas Glove", "Mythical Christmas Glove", "Phantom Christmas Glove", "Supreme Christmas Glove", "Exotic Christmas Glove"}
                 }
             },
@@ -1225,6 +1225,7 @@ local gameData = {
         }
     },
 }
+
 
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 and next(_tbl1) ~= nil then
