@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v8.1")
+print("v8")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -99,9 +99,9 @@ local function checkPlant(_plant, _name, _mutations)
         if _plant:GetAttribute("Favorited") then return end -- IS FAVOURITE CHECK 
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
         if _mutations and _mutations[1] then  -- MUTATIONS CHECK
-        if _mutations[1] == "any" then return _plant end
+            if _mutations[1] == "any" then print("yes") return _plant end
             for _, m in ipairs(_mutations) do
-                if not _plant:GetAttribute(m) then return end
+                if not _plant:GetAttribute(m) then return nil end
             end
         end -- MUTATION CHECKER
         return _plant
@@ -203,7 +203,7 @@ end
 local blacklistHarvest = {}
 local function getFruit(_amount, _blacklist, _mutationCheck)
     _blacklist = _blacklist or {}
-    if _mutationCheck then _mutationCheck = {"any"} end
+    if _mutationCheck then print("mCheck On") _mutationCheck = {"any"} end
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
@@ -485,7 +485,8 @@ Auto:Toggle("Auto Harvest", function(bool)
     task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
-                local t = getFruit(nil,blacklistHarvest,shared.ToggleAMM)
+                local mCheck = shared.ToggleAMM
+                local t = getFruit(nil,blacklistHarvest,mCheck)
                 shuffle(t)
                 mod:FireServer(t)
 
