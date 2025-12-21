@@ -100,10 +100,15 @@ local function checkPlant(_plant, _name, _mutations)
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
         if _mutations and _mutations[1] then
             if _mutations[1] == "any" then
-                -- must have a mutation → name starts with "["
-                if _plant.Name:sub(1, 1) ~= "[" then return end
-                return _plant
+                -- must have at least one boolean attribute set to true
+                for _, value in pairs(_plant:GetAttributes()) do
+                    if value == true then
+                        return _plant
+                    end
+                end
+                return
             end
+
             for _, m in ipairs(_mutations) do
                 if not _plant:GetAttribute(m) then
                     return
