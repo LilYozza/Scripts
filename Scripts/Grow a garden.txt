@@ -98,12 +98,18 @@ local function checkPlant(_plant, _name, _mutations)
     if _plant:HasTag("Harvestable") then
         if _plant:GetAttribute("Favorited") then return end -- IS FAVOURITE CHECK 
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
-        if _mutations and _mutations == "any" then return _plant end
-        if _mutations and _mutations[1] then  -- MUTATIONS CHECK
-            for _, m in ipairs(_mutations) do
-                if not _plant:GetAttribute(m) then return end
+        if _mutations and _mutations[1] then
+            if _mutations[1] == "any" then
+                -- must have a mutation → name starts with "["
+                if _plant.Name:sub(1, 1) ~= "[" then return end
+                return _plant
             end
-        end -- MUTATION CHECKER
+            for _, m in ipairs(_mutations) do
+                if not _plant:GetAttribute(m) then
+                    return
+                end
+            end
+        end
         return _plant
     end
 end
@@ -203,7 +209,7 @@ end
 local blacklistHarvest = {}
 local function getFruit(_amount, _blacklist, _mutationCheck)
     _blacklist = _blacklist or {}
-    if _mutationCheck then print("mCheck On") _mutationCheck = "any" end
+    if _mutationCheck then _mutationCheck = {"any"} end
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
