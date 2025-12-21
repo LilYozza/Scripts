@@ -98,7 +98,7 @@ local function checkPlant(_plant, _name, _mutations)
     if _plant:HasTag("Harvestable") then
         if _plant:GetAttribute("Favorited") then return end -- IS FAVOURITE CHECK 
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
-        if _mutations and _mutations[1] then  -- MUTATIONS CHECK
+        if _mutations and _mutations[1] and _mutations[1] ~= "any" then  -- MUTATIONS CHECK
             for _, m in ipairs(_mutations) do
                 if not _plant:GetAttribute(m) then return end
             end
@@ -200,8 +200,9 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
 end
 
 local blacklistHarvest = {}
-local function getFruit(_amount, _blacklist)
+local function getFruit(_amount, _blacklist, _mutationCheck)
     _blacklist = _blacklist or {}
+    if _mutationCheck then _mutationCheck = {"any"} end
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
@@ -212,11 +213,11 @@ local function getFruit(_amount, _blacklist)
             local fruitsFolder = plant:FindFirstChild("Fruits")
             if not plant:HasTag("Harvestable") and fruitsFolder then
                 for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                    local cFruit = checkPlant(fruit)
+                    local cFruit = checkPlant(fruit,nil,_mutationCheck)
                     if cFruit then t[#t+1] = fruit end
                 end
             else
-                local cFruit = checkPlant(plant)
+                local cFruit = checkPlant(plant,nil,_mutationCheck)
                 if cFruit then t[#t+1] = plant end
             end 
         end
@@ -423,7 +424,7 @@ end
 local sblacklistCrop
 local cropsToHarvest = {"Blueberry", "Strawberry", "Tomato"}
 
-local DropList = Auto:Dropdown("blacklist",cropsToHarvest,true,function(SItem) --true/false, replaces the current title "Dropdown" with the option that t
+local DropList = Auto:Dropdown("blacklist",cropsToHarvest,true,function(SItem)
     sblacklistCrop = SItem
 end)
 
@@ -474,12 +475,16 @@ local function shuffle(t)
     end
 end
 
+Auto:Toggle("Mutation",function(bool)
+    shared.ToggleAMM=bool
+end)
+
 Auto:Toggle("Auto Harvest", function(bool)
     shared.ToggleAH = bool
     task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
-                local t = getFruit(nil,blacklistHarvest)
+                local t = getFruit(nil,blacklistHarvest,shared.ToggleAMM)
                 shuffle(t)
                 mod:FireServer(t)
 
@@ -739,7 +744,11 @@ local function sellPet(_pet)
     rs:WaitForChild("GameEvents"):WaitForChild("SellPet_RE"):FireServer(_pet)
 end
 
-local replaceEgg = false
+PetMenu:Toggle("Replace Egg",function(bool)
+    shared.ToggleARE=bool
+end)
+
+
 PetMenu:Toggle("Auto Hatch",function(bool)
     shared.ToggleAAH=bool
     spawn(function()
@@ -749,7 +758,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
                     local hitbox = v:FindFirstChildWhichIsA("Part")
                     local eggType = v:GetAttribute("EggName")
                     rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
-                    if replaceEgg then
+                    if shared.ToggleARE then
                         -- Equip Egg
                         local egg = checkBackpack(eggType)
                         if egg then
@@ -761,7 +770,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
                                 [1] = "CreateEgg",
                                 [2] = hitbox.Position
                             }
-                            rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args))
+                            rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args)) task.wait(1)
                         end
                     end
                 end
@@ -770,13 +779,6 @@ PetMenu:Toggle("Auto Hatch",function(bool)
         end
     end)
 end)
-
-
-PetMenu:Toggle("Replace Egg",function(bool)
-    shared.ToggleARE=bool
-    replaceEgg = shared.ToggleARE
-end)
-
 
 PetMenu:Button("Sell Pet",function()
     spawn(function()
@@ -961,5 +963,6 @@ local dataToSave = {
     ["Buy Eggs"] = {var = "ToggleBE"},
     ["Buy Merchant"] = {var = "ToggleBM"},
 
-    ["Auto Ascend"] = {var = "ToggleAAS"}
+    ["Auto Ascend"] = {var = "ToggleAAS"},
+    ["Replace Egg"] = {var = "ToggleARE"}
 } SaveManager(dataToSave)
