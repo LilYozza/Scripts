@@ -15,7 +15,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v8")
+print("v8.1")
 
 -->Base Variables<--
 local function Sheckles() return ALLDATA.Sheckles end
@@ -98,7 +98,8 @@ local function checkPlant(_plant, _name, _mutations)
     if _plant:HasTag("Harvestable") then
         if _plant:GetAttribute("Favorited") then return end -- IS FAVOURITE CHECK 
         if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
-        if _mutations and _mutations[1] and _mutations[1] ~= "any" then  -- MUTATIONS CHECK
+        if _mutations and _mutations[1] then  -- MUTATIONS CHECK
+        if _mutations[1] == "any" then return _plant end
             for _, m in ipairs(_mutations) do
                 if not _plant:GetAttribute(m) then return end
             end
