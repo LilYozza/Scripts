@@ -792,7 +792,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
                 if v.Name == "PetEgg" and v:GetAttribute("READY") == true and v:GetAttribute("TimeToHatch") <= 0 then
                     local hitbox = v:FindFirstChildWhichIsA("Part")
                     local eggType = v:GetAttribute("EggName")
-                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
+                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(1)
                     if shared.ToggleARE then
                         -- Equip Egg
                         local egg = checkBackpack(eggType)
@@ -805,7 +805,7 @@ PetMenu:Toggle("Auto Hatch",function(bool)
                                 [1] = "CreateEgg",
                                 [2] = hitbox.Position
                             }
-                            rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args)) task.wait(1)
+                            rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args)) task.wait(0.3)
                         end
                     end
                 end
