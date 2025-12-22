@@ -94,29 +94,38 @@ local function checkPlantInventory(_plant, _mutations)
 	end
 end
 
-local function checkPlant(_plant, _name, _mutations)
-    if _plant:HasTag("Harvestable") then
-        if _plant:GetAttribute("Favorited") then return end -- IS FAVOURITE CHECK 
-        if _name and _plant.Name:lower() ~= _name:lower() then return end -- PLANT TYPE CHECK
-        if _mutations and _mutations[1] then
-            if _mutations[1] == "any" then
-                -- must have at least one boolean attribute set to true
-                for _, value in pairs(_plant:GetAttributes()) do
-                    if value == true then
-                        return _plant
-                    end
-                end
-                return
-            end
+local function checkPlant(_plant, _name, _mutations, _strict)
+    if not _plant:HasTag("Harvestable") then return end
+    if _plant:GetAttribute("Favorited") then return end
+    if _name and _plant.Name:lower() ~= _name:lower() then return end
 
+    if _mutations and _mutations[1] then
+        -- "any" special case: must have at least one boolean attribute
+        if _mutations[1] == "any" then
+            for _, value in pairs(_plant:GetAttributes()) do
+                if value == true then
+                    return _plant
+                end
+            end
+            return
+        end
+        if _strict then
             for _, m in ipairs(_mutations) do
-                if not _plant:GetAttribute(m) then
+                if _plant:GetAttribute(m) ~= true then
                     return
                 end
             end
+        else
+            for _, m in ipairs(_mutations) do
+                if _plant:GetAttribute(m) == true then
+                    return _plant
+                end
+            end
+            return
         end
-        return _plant
     end
+
+    return _plant
 end
 
 
@@ -216,10 +225,13 @@ local blacklistHarvest = {}
 local function getFruit(_amount, _blacklist)
     _blacklist = _blacklist or {}
     local _mutationCheck
+    local _mode = true
     if shared.ToggleEMM then
         _mutationCheck = crhistmasMutations
+        _mode = false
     elseif shared.ToggleAMM then
-        _mutationCheck = {"any"} 
+        _mutationCheck = {"any"}
+        _mode = false
     end
     local t = {}
     local counter = 0
@@ -231,11 +243,11 @@ local function getFruit(_amount, _blacklist)
             local fruitsFolder = plant:FindFirstChild("Fruits")
             if not plant:HasTag("Harvestable") and fruitsFolder then
                 for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                    local cFruit = checkPlant(fruit,nil,_mutationCheck)
+                    local cFruit = checkPlant(fruit,nil,_mutationCheck,_mode)
                     if cFruit then t[#t+1] = fruit end
                 end
             else
-                local cFruit = checkPlant(plant,nil,_mutationCheck)
+                local cFruit = checkPlant(plant,nil,_mutationCheck,_mode)
                 if cFruit then t[#t+1] = plant end
             end 
         end
