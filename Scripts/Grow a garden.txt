@@ -213,14 +213,13 @@ end
 
 local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
-local function getFruit(_amount, _blacklist, _mutationCheck)
+local function getFruit(_amount, _blacklist)
     _blacklist = _blacklist or {}
-    if _mutationCheck then 
-        if shared.ToggleEMM then
-            _mutationCheck = crhistmasMutations
-        else
-            _mutationCheck = {"any"} 
-        end
+    local _mutationCheck
+    if shared.ToggleEMM then
+        _mutationCheck = crhistmasMutations
+    elseif shared.ToggleAMM then
+        _mutationCheck = {"any"} 
     end
     local t = {}
     local counter = 0
