@@ -211,10 +211,17 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
     return t
 end
 
+local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
 local function getFruit(_amount, _blacklist, _mutationCheck)
     _blacklist = _blacklist or {}
-    if _mutationCheck then _mutationCheck = {"any"} end
+    if _mutationCheck then 
+        if shared.ToggleEMM then
+            _mutationCheck = crhistmasMutations
+        else
+            _mutationCheck = {"any"} 
+        end
+    end
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
@@ -276,6 +283,10 @@ if PortalEvent then
             end
         end
     end
+
+    Auto:Toggle("Christmas Mutations",function(bool)
+        shared.ToggleEMM=bool
+    end)
 
     EventMenu:Button("Submit Hand",function()
         spawn(function()
@@ -487,7 +498,7 @@ local function shuffle(t)
     end
 end
 
-Auto:Toggle("Mutation",function(bool)
+Auto:Toggle("Any Mutation",function(bool)
     shared.ToggleAMM=bool
 end)
 
@@ -496,7 +507,8 @@ Auto:Toggle("Auto Harvest", function(bool)
     task.spawn(function()
         while shared.ToggleAH do
             if not IsMaxInventory() then
-                local t = getFruit(nil,blacklistHarvest,shared.ToggleAMM)
+                local mutationFilter = shared.ToggleEMM
+                local t = getFruit(nil,blacklistHarvest, mutationFilter)
                 shuffle(t)
                 mod:FireServer(t)
 
