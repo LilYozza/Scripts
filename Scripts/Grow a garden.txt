@@ -18,6 +18,8 @@ local Player=game.Players.LocalPlayer
 print("v8")
 
 -->Base Variables<--
+local harvestMutationTypes = {"All", "Any"}
+
 local function Sheckles() return ALLDATA.Sheckles end
 
 local Farms = Workspace:WaitForChild("Farm")
@@ -263,6 +265,7 @@ if PortalEvent then
     local EventShop = ALLDATA.EventShopStock
 
     local giftEvent = ALLDATA.ChristmasEvent.GiftingV2
+    table.insert(harvestTypes, "Christmas")
 
     --[[
     local function submitEvent()
@@ -511,9 +514,21 @@ local function shuffle(t)
     end
 end
 
+local mutationType = "All"
+Auto:Dropdown(mutationType,harvestMutationTypes,true,function(SItem)
+    mutationType = SItem
+end)
+
+local harvestType = "Mass"
+Auto:Dropdown(harvestType,{"Mass", "Single"},true,function(SItem)
+    harvestType = SItem
+end)
+
 Auto:Toggle("Any Mutation",function(bool)
     shared.ToggleAMM=bool
 end)
+
+
 
 Auto:Toggle("Auto Harvest", function(bool)
     shared.ToggleAH = bool
@@ -523,7 +538,14 @@ Auto:Toggle("Auto Harvest", function(bool)
                 local spaceLeft = math.max(0, getSpaceLeft())
                 local t = getFruit(spaceLeft,blacklistHarvest)
                 --shuffle(t)
-                mod:FireServer(t)
+                if harvestType == "Mass" then
+                    mod:FireServer(t)
+                elseif harvestType == "Single" then
+                    for i,v in pairs(t) do
+                        mod:FireServer({v})
+                        if i % 5 == 0 then task.wait() end
+                    end
+                end
 
 
                 --[[
