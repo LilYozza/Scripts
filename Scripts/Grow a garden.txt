@@ -265,7 +265,7 @@ if PortalEvent then
     local EventShop = ALLDATA.EventShopStock
 
     local giftEvent = ALLDATA.ChristmasEvent.GiftingV2
-    table.insert(harvestTypes, "Christmas")
+    table.insert(harvestMutationTypes, "Christmas")
 
     --[[
     local function submitEvent()
