@@ -256,7 +256,7 @@ local function getFruit(_amount, _blacklist)
     return t
 end
 
---STREAK EVENT ------------------------------------------------------------------------------------------------------------------------
+--CHRISTMAS EVENT ------------------------------------------------------------------------------------------------------------------------
 local PortalEvent = UpdateItems:WaitForChild("Model1", 5) or Workspace:WaitForChild("Model1", 5)
 if PortalEvent then
     local EventMenu = w:CreateFolder("Christmas Event")
@@ -313,7 +313,9 @@ if PortalEvent then
         shared.ToggleCEAS=bool
         spawn(function()
             while shared.ToggleCEAS do
-                submitEvent()
+                if getInventoryCount() > 20 then
+                    submitEvent()
+                end
                 task.wait(1)
             end
         end)
