@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v4.1")
+print("v4.2")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -31,7 +31,7 @@ local PGui = Player.PlayerGui
 -->Base Variables<--
 local defaultDungeons = { "Leaf_Raid", "Dungeon_Easy", "Dungeon_Medium", "Dungeon_Hard", "Dungeon_Insane", "Dungeon_Crazy", "Dungeon_Nightmare"}
 
-local CODES = {"Update30P3", "Update30P3Code", "ChristmasPart2or3?", "Part3ChristmasOR2?", "800KFav", "Update30Late3", "Update30P2", "415KLikes", "795KFav", "Update30P2Code", "280MVisits", "Update30P2Super", "Update30Late", "Update30", "790KFav", "Update30Code2", "Update30Code3", "275MVisits",  "Update30Code", "Update30Late2", "Update29P3", "Update29P3Code", "Update29P3Code2", "ChristmasPart1?", "ChristmasPart1!", "410KLikes", "SuperUPD29Code", "Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
+local CODES = {"Update30P4", "Update30P4Code", "ChristmasToday!", "MerryChristmas!", "MerryChristmas!2", "Update30P3", "Update30P3Code", "ChristmasPart2or3?", "Part3ChristmasOR2?", "800KFav", "Update30Late3", "Update30P2", "415KLikes", "795KFav", "Update30P2Code", "280MVisits", "Update30P2Super", "Update30Late", "Update30", "790KFav", "Update30Code2", "Update30Code3", "275MVisits",  "Update30Code", "Update30Late2", "Update29P3", "Update29P3Code", "Update29P3Code2", "ChristmasPart1?", "ChristmasPart1!", "410KLikes", "SuperUPD29Code", "Update29P2", "Update29P2Code", "IsChristmasComing?!", "Update29P2Code2", "785KFav", "Update29", "Update29Code", "270MVisits", "Update29Code2", "Update29Code3", "ChristmasSoon?!", "Update29RestartCode", "SlashX","Derp","Heyyyo","JosephR","Update27","400KLikes","760KFav","NoThanksgivingCode","Update27Code","Update27Delay","Update27Restart","Update27HeroKey","Update27P2","765KFav","770KFav","Update27P2Code","255MVisits","NoThanksgivingCode2","Update28","Update28Code","775KFav","260MVisits","Update28P2","405Klikes","265MVisits","Update28P3","Update28P2Code","Update28P2Code2","Update28P2Code3","780KFav","Update28P3Code","Update28P3Code2"}
 
 local gameData = {
     [0] = {
@@ -139,6 +139,9 @@ local gameData = {
             raids = {
                 ["Ice_Raid"] = {
                     rewards = {"Frostbittne", "Snowbound", "Glacier-Touched", "Whiteclaw", "Avalanche-Born", "Permafrost Warden", "Elder Yeti", "Frostbound Deity", "Absolute Zero"}
+                },
+                ["Santa_Raid"] = {
+                    rewards = {"Titan Claus", "Ironbeard Noel", "Frosthammer Santa", "Redcloak Colossus", "Northstar Juggernaut", "Yulebreaker", "Polar Might Santa", "Kringle the Unyielding", "Snowfist Claus"}
                 }
             },
             gachaTable = {
@@ -150,6 +153,8 @@ local gameData = {
             upgradeTable = {
                 ["Christmas_Damage_Upgrade"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
                 ["Christmas_Damage_Upgrade_2"] = {token = "Winter Glove", Upgrading_Name = "Christmas_Damage", bench = true},
+                ["Christmas_Damage_Upgrade_3"] = {token = "Gingerbread", Upgrading_Name = "Christmas_Damage", bench = true},
+                ["Christmas_Damage_Upgrade_4"] = {token = "Snowman", Upgrading_Name = "Christmas_Damage", bench = true},
                 ["Christmas_Materials_Upgrade"] = {token = "Candy Cane", Upgrading_Name = "Christmas_Materials", bench = true}
             }
         },
