@@ -1224,10 +1224,30 @@ local gameData = {
             raids = {
             },
             gachaTable = {
+                ["Magic_Type"] = {
+                    token = "Magic Type Token",
+                    list = {"Iron Magic", "Shuriken Magic", "Rose Magic", "Explosion Magic", "Graviole Magic", "Partisan Magic", "Sands Magic", "Lights Magic", "Timez Magic"}
+                },
+                ["The_Muscule"] = {
+                    token = "The Muscule Token",
+                    list = {"Finger Poke", "Wrist Strength", "Grip Crush", "Abdominal Crunch", "Hamstring Magic", "Spine Magic: Cobra", "Triceps Magic: Ballista", "Biceps Magic: Guillotine", "Unlimited Physical Mode"}
+                }
             },
-            upgradeTable = {}
+            upgradeTable = {
+                ["House_of_Killer_Whale"] = { token = "Whale Token", Upgrading_Name = "Energy", bench = true},
+                ["House_of_Eagle"] = { token = "Eagle Token", Upgrading_Name = "Star_Luck", bench = true},
+                ["House_of_Wold"] = { token = "Wolf Token", Upgrading_Name = "Coins", bench = true}
+            }
         },
         enemies = {
+            { name = 'Fyn', tokens = {"Magic Type Token"}},
+            { name = 'Dot', tokens = {"The Muscule Token"}},
+            { name = 'Lanz', tokens = {"Eagle Token"}},
+            { name = 'Margery', tokens = {"Whale Token"}}, 
+            { name = 'Rayn', tokens = {"Wolf Token"}},
+            { name = 'Abiss', tokens = {"Magic Type Token", "The Muscule Token"}},
+            { name = 'Mashe', tokens = {"Magic Type Token", "The Muscule Token"}}, 
+            { name = 'War_Cell', tokens = {"Magic Type Token", "The Muscule Token"}, type = "boss"}, 
         }
     },
 }
