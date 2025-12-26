@@ -1,8 +1,40 @@
+local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
+local dataToSave = {}
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+shared.pAmount = 1
+Auto:Slider("Players",{
+    min = 1; max = 6; precise = true;
+},function(value)
+    shared.pAmount = value
+end)
+
+Auto:Toggle("Player Check",function(bool)
+    shared.ToggleHC=bool
+    spawn(function()
+        while shared.ToggleHC do
+            if #Players:GetPlayers() > shared.pAmount and shared.ToggleHC then
+                Player:Kick("Someone Joined.")
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
 Auto:Button("Atlas",function()
     spawn(function()
         --loadstring(game:HttpGet("https://raw.githubusercontent.com/Chris8889/atlasbss/main/script.lua"))()
 	local t = loadstring(game:HttpGet("https://raw.githubusercontent.com/Chris12089/atlasbss/main/script.lua"))()
     end)
 end)
+
+
+dataToSave = {
+    ["Players"] = {var = "pAmount"},
+    ["Player Check"] = {var = "ToggleHC"}
+} SaveManager(dataToSave)
