@@ -1,4 +1,4 @@
-print("Script Version: 1.0.1")
+print("Script Version: 1.0.2")
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -7,12 +7,11 @@ local Player=game.Players.LocalPlayer
 
 -->Base Variables<--
 local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen"):WaitForChild("WinPortal"):WaitForChild("Touch")
-
 -->Non Return Functions<--
 
 -->Return Functions<--
 
-local winSpeed = 100
+local winSpeed = 1000
 Auto:Slider("Win Speed (ms)",{
     min = 100; max = 5000; precise = true;
 },function(value)
@@ -25,7 +24,7 @@ Auto:Toggle("Auto Win",function(bool)
     spawn(function()
         while shared.ToggleAW do
             local timeToWait = winSpeed / 1000
-            Touch(winPart)
+            MoveTo(winPart)
             task.wait(timeToWait)
         end
     end)
