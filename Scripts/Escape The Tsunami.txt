@@ -1,0 +1,53 @@
+w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+--local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
+--local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
+
+local Players=game:GetService("Players")
+local Player=game.Players.LocalPlayer
+
+-->Base Variables<--
+local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen.WinPortal")
+
+-->Non Return Functions<--
+
+-->Return Functions<--
+
+local winSpeed = 100
+Auto:Slider("Win Speed",{
+    min = 100; max = 5000; precise = true;
+},function(value)
+    winSpeed = value
+end)
+
+
+Auto:Toggle("Auto Win",function(bool)
+    shared.ToggleAW=bool
+    spawn(function()
+        while shared.ToggleAW do
+            Touch(winPart)
+            task.wait(winSpeed)
+        end
+    end)
+end)
+
+local args = {
+    [1] = "EggService.open",
+    [2] = {
+        [1] = {
+            ["name"] = "Egg10",
+            ["type"] = "Egg"
+        }
+    }
+}
+
+
+Auto:Toggle("Max Egg",function(bool)
+    shared.ToggleME=bool
+    spawn(function()
+        while shared.ToggleME do
+            game:GetService("ReplicatedStorage"):WaitForChild("CommonModules"):WaitForChild("Systems"):WaitForChild("NetworkSystem"):WaitForChild("Network"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+            task.wait(1)
+        end
+    end)
+end)
