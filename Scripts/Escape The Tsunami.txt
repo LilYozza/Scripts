@@ -1,5 +1,6 @@
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
+print("Version: 1.0.0")
 --local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
 --local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
@@ -7,7 +8,7 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 -->Base Variables<--
-local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen"):WaitForChild("WinPortal")
+local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen"):WaitForChild("WinPortal"):WaitForChild("Touch")
 
 -->Non Return Functions<--
 
