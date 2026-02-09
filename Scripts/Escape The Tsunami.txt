@@ -1,8 +1,6 @@
+print("Script Version: 1.0.1")
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
-print("Version: 1.0.0")
---local PathFinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/PathFinding.txt"))()
---local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
@@ -15,7 +13,7 @@ local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):
 -->Return Functions<--
 
 local winSpeed = 100
-Auto:Slider("Win Speed",{
+Auto:Slider("Win Speed (ms)",{
     min = 100; max = 5000; precise = true;
 },function(value)
     winSpeed = value
@@ -26,8 +24,9 @@ Auto:Toggle("Auto Win",function(bool)
     shared.ToggleAW=bool
     spawn(function()
         while shared.ToggleAW do
+            local timeToWait = winSpeed / 1000
             Touch(winPart)
-            task.wait(winSpeed)
+            task.wait(timeToWait)
         end
     end)
 end)
