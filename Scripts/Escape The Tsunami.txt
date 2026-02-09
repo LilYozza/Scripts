@@ -1,4 +1,4 @@
-print("Script Version: 1.0.2")
+print("Script Version: 1.0.3")
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -7,6 +7,7 @@ local Player=game.Players.LocalPlayer
 
 -->Base Variables<--
 local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen"):WaitForChild("WinPortal"):WaitForChild("Touch")
+local effectFrame = Player.PlayerGui:WaitForChild("Effects")
 -->Non Return Functions<--
 
 -->Return Functions<--
@@ -24,6 +25,8 @@ Auto:Toggle("Auto Win",function(bool)
     spawn(function()
         while shared.ToggleAW do
             local timeToWait = winSpeed / 1000
+            local toHide = effectFrame:FindFirstChild("ConfettiFrame")
+            if toHide then toHide.Visible = false end
             MoveTo(winPart)
             task.wait(timeToWait)
         end
