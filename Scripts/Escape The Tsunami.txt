@@ -55,13 +55,17 @@ local args = {
     }
 }
 
+local pWins = Player.leaderstats:WaitForChild("Wins")
 
 Auto:Toggle("Max Egg",function(bool)
     shared.ToggleME=bool
     spawn(function()
         while shared.ToggleME do
-            game:GetService("ReplicatedStorage"):WaitForChild("CommonModules"):WaitForChild("Systems"):WaitForChild("NetworkSystem"):WaitForChild("Network"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
-            task.wait(1)
+            if pWins and fromSuffixString(pWins.Value) >= 10 then
+                game:GetService("ReplicatedStorage"):WaitForChild("CommonModules"):WaitForChild("Systems"):WaitForChild("NetworkSystem"):WaitForChild("Network"):WaitForChild("RemoteFunction"):InvokeServer(unpack(args))
+                task.wait(0.5)
+            end
+            task.wait()
         end
     end)
 end)
