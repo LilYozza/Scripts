@@ -7,7 +7,7 @@ local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
 -->Base Variables<--
-local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen.WinPortal")
+local winPart = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds"):WaitForChild("Frozen"):WaitForChild("WinPortal")
 
 -->Non Return Functions<--
 
