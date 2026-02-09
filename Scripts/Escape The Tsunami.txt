@@ -7,7 +7,7 @@ local Player=game.Players.LocalPlayer
 
 -->Base Variables<--
 local Worlds = workspace:WaitForChild("DynamicObjects"):WaitForChild("Worlds")
-local effectFrame = Player.PlayerGui:WaitForChild("Effects")
+
 -->Non Return Functions<--
 
 -->Return Functions<--
@@ -35,8 +35,8 @@ Auto:Toggle("Auto Win",function(bool)
             local timeToWait = winSpeed / 1000
             local touchPart = getWorldWin()
             if touchPart then
-                local toHide = effectFrame:FindFirstChild("ConfettiFrame")
-                if toHide then toHide.Visible = false end
+                local toDelete = Player.PlayerGui:FindFirstChild("Effects")
+                if toDelete then toDelete:Destroy() end
                 MoveTo(touchPart)
             end
             
