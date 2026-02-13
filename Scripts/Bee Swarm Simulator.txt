@@ -18,7 +18,7 @@ Auto:Toggle("Player Check",function(bool)
     spawn(function()
         while shared.ToggleHC do
             if #Players:GetPlayers() > shared.pAmount and shared.ToggleHC then
-                Player:Kick("Someone Joined.")
+                --Player:Kick("Someone Joined.")
             end
             task.wait(1)
         end
