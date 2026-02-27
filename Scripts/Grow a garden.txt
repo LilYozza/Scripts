@@ -1,4 +1,4 @@
-print("Version 1.0.1")
+print("Version 1.0.0")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -225,10 +225,17 @@ end
 
 local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
-local function getFruit(_amount, _blacklist, _mutationCheck, _mode)
+local function getFruit(_amount, _blacklist, _mutationCheck)
     _blacklist = _blacklist or {}
     _mutationCheck = _mutationCheck or {"any"}
-    _mode = _mode or false
+    local _mode = true
+    if shared.ToggleEMM then
+        _mutationCheck = crhistmasMutations
+        _mode = false
+    elseif shared.ToggleAMM then
+        _mutationCheck = {"any"}
+        _mode = false
+    end
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
@@ -264,13 +271,15 @@ if ValentinesEvent then
         shared.ToggleEAH=bool
         spawn(function()
             while shared.ToggleEAH do
-                local spaceLeft = math.max(0, getSpaceLeft())
-                local t = getFruit(spaceLeft, nil, eventMutations)
-                --shuffle(t)
+                if not IsMaxInventory() then
+                    local spaceLeft = math.max(0, getSpaceLeft())
+                    local t = getFruit(spaceLeft, nil, eventMutations)
+                    --shuffle(t)
 
-                for i,v in pairs(t) do
-                    mod:FireServer({v})
-                    if i % 5 == 0 then task.wait() end
+                    for i,v in pairs(t) do
+                        mod:FireServer({v})
+                        if i % 5 == 0 then task.wait() end
+                    end
                 end
 
                 task.wait(1)
