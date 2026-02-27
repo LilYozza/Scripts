@@ -1,4 +1,4 @@
-print("Version 1.0.0")
+print("Version 1.0.1")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -259,6 +259,14 @@ local function getFruit(_amount, _blacklist, _mutationCheck)
     return t
 end
 
+local function getSpaceLeft()
+    local InvCount = getInventoryCount()
+    local bonus = Player:GetAttribute("BonusBackpackSize") or 0
+    local max = 200 + bonus
+    local value = math.max(0, max - InvCount)
+    return value
+end
+
 --Valentines EVENT ------------------------------------------------------------------------------------------------------------------------
 local ValentinesEvent = UpdateItems:WaitForChild("ValantineStand", 5) or Workspace:WaitForChild("ValantineStand", 5)
 if ValentinesEvent then
@@ -437,13 +445,7 @@ end
 
 ]]
 
-local function getSpaceLeft()
-    local InvCount = getInventoryCount()
-    local bonus = Player:GetAttribute("BonusBackpackSize") or 0
-    local max = 200 + bonus
-    local value = math.max(0, max - InvCount)
-    return value
-end
+
 
 local function shuffle(t)
     for i = #t, 2, -1 do
