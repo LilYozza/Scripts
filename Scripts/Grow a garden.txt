@@ -1,4 +1,4 @@
-print("Version 1.0.0")
+print("Version 1.0.1")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -225,17 +225,10 @@ end
 
 local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
-local function getFruit(_amount, _blacklist)
+local function getFruit(_amount, _blacklist, _mutationCheck, _mode)
     _blacklist = _blacklist or {}
-    local _mutationCheck
-    local _mode = true
-    if shared.ToggleEMM then
-        _mutationCheck = crhistmasMutations
-        _mode = false
-    elseif shared.ToggleAMM then
-        _mutationCheck = {"any"}
-        _mode = false
-    end
+    _mutationCheck = _mutationCheck or {"any"}
+    _mode = _mode or false
     local t = {}
     local counter = 0
     for _, plant in ipairs(Plants_Physical:GetChildren()) do
@@ -272,7 +265,7 @@ if ValentinesEvent then
         spawn(function()
             while shared.ToggleEAH do
                 local spaceLeft = math.max(0, getSpaceLeft())
-                local t = getFruit(spaceLeft, eventMutations)
+                local t = getFruit(spaceLeft, nil, eventMutations)
                 --shuffle(t)
 
                 for i,v in pairs(t) do
@@ -286,6 +279,20 @@ if ValentinesEvent then
     end)
 
     -- Auto Submit
+    EventMenu:Toggle("Auto Submit",function(bool)
+        shared.ToggleEAS=bool
+        spawn(function()
+            while shared.ToggleEAS do
+                    local cPlant = checkPlantInventory(nil, eventMutations)
+                    if cPlant then
+                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("ValentinesEvent"):WaitForChild("GiveHeartstruckFruits"):InvokeServer()
+                    end
+                task.wait(1)
+            end
+        end)
+    end)
+   
+
 
     -- Auto Collect Rewards
     -- Auto Buy Items
