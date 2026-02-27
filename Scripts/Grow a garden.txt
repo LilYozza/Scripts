@@ -1,3 +1,4 @@
+print("Version 1.0.0")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -15,7 +16,7 @@ local SPMenu = w:CreateFolder("Season Pass")
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
 
-print("v8")
+
 
 -->Base Variables<--
 local harvestMutationTypes = {"All", "Any"}
@@ -258,115 +259,36 @@ local function getFruit(_amount, _blacklist)
     return t
 end
 
---CHRISTMAS EVENT ------------------------------------------------------------------------------------------------------------------------
-local PortalEvent = UpdateItems:WaitForChild("Model1", 5) or Workspace:WaitForChild("Model1", 5)
-if PortalEvent then
-    local EventMenu = w:CreateFolder("Christmas Event")
-    local EventShop = ALLDATA.EventShopStock
+--Valentines EVENT ------------------------------------------------------------------------------------------------------------------------
+local ValentinesEvent = UpdateItems:WaitForChild("ValantineStand", 5) or Workspace:WaitForChild("ValantineStand", 5)
+if ValentinesEvent then
+    local EventMenu = w:CreateFolder("Valentines")
+    --local EventShop = ALLDATA.EventShopStock
 
-    local giftEvent = ALLDATA.ChristmasEvent.GiftingV2
-    table.insert(harvestMutationTypes, "Christmas")
-
-    --[[
-    local function submitEvent()
-        rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("Christmas_SubmitAll"):FireServer(Player)
-    end
-    ]]--
-    --[[
-    local function submitEvent()
-        if (giftEvent.CurrentCycle and giftEvent.LastClaimedCycle) and (giftEvent.LastClaimedCycle ~= giftEvent.CurrentCycle) then
-            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasGiftV2_SubmitAll"):FireServer(Player)
-        end
-    end
-    ]]--
-
-    -- game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasTree_ClaimSeed"):FireServer()
-
-    local function submitEvent()
-        rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasTree_SubmitAll"):FireServer()
-    end
-
-    local function buyEventStock(_name, _type)
-        for _,v in pairs(_type.Stocks) do
-            if v.Stock > 0 then
-                --if v.UnlockedShopItems and v.UnlockedShopItems[1] and FindInTable(v.UnlockedShopItems, _name) then
-                print("Buying: x" .. v.Stock, _, "Type:", _name)
-                for i = 1, v.Stock do
-                    GameEvents:WaitForChild("BuyEventShopStock"):FireServer(_, _name) task.wait(0.1)
-                end
-            end
-        end
-    end
-
-    Auto:Toggle("Christmas Mutations",function(bool)
-        shared.ToggleEMM=bool
-    end)
-
-    EventMenu:Button("Submit Hand",function()
+    -- Auto Collect Mutation
+    local eventMutations = {"Heartstruck", "Cute", "Heartbound"}
+    EventMenu:Toggle("Auto Harvest",function(bool)
+        shared.ToggleEAH=bool
         spawn(function()
-            rs:WaitForChild("GameEvents"):WaitForChild("ChristmasEvent"):WaitForChild("ChristmasTree_SubmitHeld"):FireServer()
-        end)
-    end)
+            while shared.ToggleEAH do
+                local spaceLeft = math.max(0, getSpaceLeft())
+                local t = getFruit(spaceLeft, eventMutations)
+                --shuffle(t)
 
-    EventMenu:Button("Submit All",function()
-        spawn(function() submitEvent() end)
-    end)
-
-    EventMenu:Toggle("Auto Submit",function(bool)
-        shared.ToggleCEAS=bool
-        spawn(function()
-            while shared.ToggleCEAS do
-                if getInventoryCount() > 20 then
-                    submitEvent()
+                for i,v in pairs(t) do
+                    mod:FireServer({v})
+                    if i % 5 == 0 then task.wait() end
                 end
+
                 task.wait(1)
             end
         end)
     end)
 
-    EventMenu:Toggle("Buy Shop",function(bool)
-        shared.ToggleEBS=bool
-        spawn(function()
-            while shared.ToggleEBS do
-                    buyEventStock("Santa's Stash", EventShop["Santa's Stash"])
-                task.wait(1)
-            end
-        end)
-    end)
+    -- Auto Submit
 
-    local gpPlayer = "All"
-    local CEDropList = EventMenu:Dropdown("All",{"All",unpack(GetDisplayNames())},true,function(SItem)
-        gpPlayer = SItem
-    end)
-
-
-    EventMenu:Toggle("Gift Presents",function(bool)
-        shared.ToggleCEGP=bool
-        spawn(function()
-            while shared.ToggleCEGP do
-                if gpPlayer then
-                    if gpPlayer == "All" then
-                        for _,v in pairs(Players:GetPlayers())do
-                            if v ~= Player then
-                                rs:WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", v)
-                                task.wait(1.5)
-                            end
-                        end
-                    else
-                        local _player = GetPlayerByDisplayName(gpPlayer)
-                        if _player then
-                            rs:WaitForChild("GameEvents"):WaitForChild("TryUseGear"):FireServer("Player Gift", _player)
-                        end
-                    end
-                    task.wait(30)
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-    Players.ChildAdded:Connect(function() CEDropList:Refresh({"All",unpack(GetDisplayNames())}) end)
-    Players.ChildRemoved:Connect(function() CEDropList:Refresh({"All",unpack(GetDisplayNames())}) end)
+    -- Auto Collect Rewards
+    -- Auto Buy Items
 
 
 end
