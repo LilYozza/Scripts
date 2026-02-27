@@ -82,21 +82,58 @@ local function getInventoryCount()
     return count
 end
 
-local function checkPlantInventory(_plant, _mutations)
-	for _, v in pairs(ALLDATA.InventoryData) do
-		local data = v.ItemData
-		if v.ItemType == "Holdable" and data and (not _plant or string.lower(data.ItemName) == string.lower(_plant)) and data.IsFavorite == false  then
-			local str = string.lower(data.MutationString or "")
-            if _mutations then
-                for _, m in ipairs(_mutations) do
-                    if not str:find(string.lower(m)) then return end
-                end
-            end
-			return v, _
-		end
-	end
+local function IsMaxInventory()
+    local count = getInventoryCount()
+    local bonus = Player:GetAttribute("BonusBackpackSize")
+    if 199 + (bonus or 0) > count then
+        return false
+    else
+        return true
+    end
 end
 
+local function getSpaceLeft()
+    local InvCount = getInventoryCount()
+    local bonus = Player:GetAttribute("BonusBackpackSize") or 0
+    local max = 200 + bonus
+    local value = math.max(0, max - InvCount)
+    return value
+end
+
+--Check Garden
+--Check Backpack / Hand / Inventory
+--Check Plant (Name, Mutation)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local function checkPlantInventory(_plant, _mutations, _strict)
+    for _, v in pairs(ALLDATA.InventoryData) do
+        local data = v.ItemData
+        if v.ItemType == "Holdable" and data and (not _plant or data.ItemName:lower() == _plant:lower()) and not data.IsFavorite then
+            local str, matches = (data.MutationString or ""):lower(), 0
+            for _, m in ipairs(_mutations or {}) do
+                if str:find(m:lower(), 1, true) then matches = matches + 1 end
+            end
+            local valid = _strict and (matches == #_mutations) or (not _strict and matches > 0)
+            if not _mutations or valid then return v, _ end
+        end
+    end
+end
 local function checkPlant(_plant, _name, _mutations, _strict)
     if not _plant:HasTag("Harvestable") then return end
     if _plant:GetAttribute("Favorited") then return end
@@ -189,15 +226,7 @@ local function getPet(_petID)
 end
 
 
-local function IsMaxInventory()
-    local count = getInventoryCount()
-    local bonus = Player:GetAttribute("BonusBackpackSize")
-    if 199 + (bonus or 0) > count then
-        return false
-    else
-        return true
-    end
-end
+
 
 local function CollectPlant(_plant, _name, _mutations)
     local plant = checkPlant(_plant, _name, _mutations)
@@ -259,13 +288,7 @@ local function getFruit(_amount, _blacklist, _mutationCheck)
     return t
 end
 
-local function getSpaceLeft()
-    local InvCount = getInventoryCount()
-    local bonus = Player:GetAttribute("BonusBackpackSize") or 0
-    local max = 200 + bonus
-    local value = math.max(0, max - InvCount)
-    return value
-end
+
 
 --Valentines EVENT ------------------------------------------------------------------------------------------------------------------------
 local ValentinesEvent = UpdateItems:WaitForChild("ValantineStand", 5) or Workspace:WaitForChild("ValantineStand", 5)
@@ -300,10 +323,13 @@ if ValentinesEvent then
         shared.ToggleEAS=bool
         spawn(function()
             while shared.ToggleEAS do
+                if not IsMaxInventory() then
                     local cPlant = checkPlantInventory(nil, eventMutations)
                     if cPlant then
                         game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("ValentinesEvent"):WaitForChild("GiveHeartstruckFruits"):InvokeServer()
+                        print("Handed In Fruit")
                     end
+                end
                 task.wait(1)
             end
         end)
