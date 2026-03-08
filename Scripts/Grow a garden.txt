@@ -1,4 +1,4 @@
-print("Version 1.0.1")
+print("Version 1.0.2")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -136,24 +136,48 @@ local function checkPlantInventory(_plant, _mutations, _strict)
 end
 local function checkPlant(_plant, _name, _mutations, _strict)
     -- 1. Base Filters
-    if not _plant:HasTag("Harvestable") or _plant:GetAttribute("Favorited") then return end
-    if _name and _plant.Name:lower() ~= _name:lower() then return end
+    if not _plant:HasTag("Harvestable") or _plant:GetAttribute("Favorited") then 
+        return 
+    end
+    if _name and _plant.Name:lower() ~= _name:lower() then 
+        return 
+    end
 
     if _mutations and #_mutations > 0 then
-        local matches = 0
-        local isAny = (_mutations == "any")
+        -- Detect if "any" is in the mutation list
+        local isAny = false
+        for _, m in ipairs(_mutations) do
+            if m:lower() == "any" then
+                isAny = true
+                break
+            end
+        end
 
-        -- Count matches (or check all attributes if "any")
-        for _, m in pairs(isAny and _plant:GetAttributes() or _mutations) do
-            if (isAny and m == true) or (not isAny and _plant:GetAttribute(m) == true) then
-                matches = matches + 1
-                if not _strict then break end -- Optimization: stop early if not strict
+        local matches = 0
+        if isAny then
+            -- Count any true attribute
+            for _, value in pairs(_plant:GetAttributes()) do
+                if value == true then
+                    matches = matches + 1
+                    if not _strict then break end
+                end
+            end
+        else
+            -- Count only listed mutations
+            for _, m in ipairs(_mutations) do
+                if _plant:GetAttribute(m) == true then
+                    matches = matches + 1
+                    if not _strict then break end
+                end
             end
         end
 
         -- Validation Gate
-        local isValid = _strict and (matches == #_mutations) or (matches > 0)
-        if not isValid then return end
+        local isValid = _strict and (isAny and matches == #_plant:GetAttributes() or matches == #_mutations)
+                            or (matches > 0)
+        if not isValid then 
+            return 
+        end
     end
 
     return _plant
@@ -486,7 +510,7 @@ Auto:Toggle("Auto Harvest", function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 local spaceLeft = math.max(0, getSpaceLeft())
-                local t = getFruit(spaceLeft)
+                local t = getFruit(spaceLeft, nil, nil)
                 --shuffle(t)
                 if harvestType == "Mass" then
                     mod:FireServer(t)
