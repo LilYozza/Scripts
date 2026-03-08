@@ -486,7 +486,7 @@ Auto:Toggle("Auto Harvest", function(bool)
         while shared.ToggleAH do
             if not IsMaxInventory() then
                 local spaceLeft = math.max(0, getSpaceLeft())
-                local t = getFruit(spaceLeft,blacklistHarvest)
+                local t = getFruit(spaceLeft)
                 --shuffle(t)
                 if harvestType == "Mass" then
                     mod:FireServer(t)
