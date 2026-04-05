@@ -1,4 +1,4 @@
-print("Version 1.0.2")
+print("Version 1.0.3")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -54,6 +54,11 @@ local function getFarm()
             end
         end
     end
+end
+
+local function getWeight(_text)
+    local weight = tonumber((string.match(_text, "%[(%d+%.?%d*)%s*[Kk][Gg]%]")))
+    return weight
 end
 
 --Post Variables
@@ -199,7 +204,7 @@ local function checkPlantGarden(_name, _mutations)
     end
 end
 
-local function checkBackpack(_item, _amount)
+local function checkBackpack(_item, _amount, _weight, wtype)
     if not _item then return end
 
     local function matchTool(t)
@@ -210,12 +215,18 @@ local function checkBackpack(_item, _amount)
         local eAttr = t:GetAttribute("e")
         local name = t.Name
 
+
+        local weight = getWeight(name)
+        wtype = wtype or true
+
         if _amount and (not eAttr or eAttr < _amount) then return end
 
-        if hAttr then
-            if hAttr == _item then return t, cAttr end
-        elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
-            return t, cAttr
+        if (weight and _weight and ((wtype and weight >= _weight) or (not wtype and weight <= _weight))) or not _weight then
+            if hAttr then
+                if hAttr == _item then return t, cAttr end
+            elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
+                return t, cAttr
+            end
         end
     end
 
@@ -267,6 +278,8 @@ local function getSeedInfo(_item) -- FOR DAILY SEEDS
     return t
 end
 
+
+
 local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
 local function getFruit(_amount, _blacklist, _mutationCheck)
@@ -298,44 +311,55 @@ end
 
 
 
---Valentines EVENT ------------------------------------------------------------------------------------------------------------------------
-local ValentinesEvent = UpdateItems:WaitForChild("ValantineStand", 5) or Workspace:WaitForChild("ValantineStand", 5)
-if ValentinesEvent then
+--Easter EVENT ------------------------------------------------------------------------------------------------------------------------
+local eventItemName = "Easter2026"
+local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
+if EventItem then
     local EventMenu = w:CreateFolder("Valentines")
     --local EventShop = ALLDATA.EventShopStock
+    
 
-    -- Auto Collect Mutation
-    local eventMutations = {"Heartstruck", "Cute", "Heartbound"}
-    EventMenu:Toggle("Auto Harvest",function(bool)
-        shared.ToggleEAH=bool
+    --EasterEventData - Table
+        --RequiredPlantInfo - Table
+            --RequiredPlantSize
+            --RequiredPlant 
+        --HasEnabledEasterGarden - Bool
+
+
+    EventMenu:Toggle("Auto Buy",function(bool)
+        shared.ToggleEAB=bool
         spawn(function()
             while shared.ToggleEAH do
-                if not IsMaxInventory() then
-                    local spaceLeft = math.max(0, getSpaceLeft())
-                    local t = getFruit(spaceLeft, nil, eventMutations)
-                    --shuffle(t)
-
-                    for i,v in pairs(t) do
-                        mod:FireServer({v})
-                        if i % 5 == 0 then task.wait() end
-                    end
-                end
-
+        
                 task.wait(1)
             end
         end)
     end)
+
+    
+
 
     -- Auto Submit
     EventMenu:Toggle("Auto Submit",function(bool)
         shared.ToggleEAS=bool
         spawn(function()
             while shared.ToggleEAS do
-                if getInventoryCount() > 0 then
-                    local cPlant = checkPlantInventory(nil, eventMutations)
-                    if cPlant then
-                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("ValentinesEvent"):WaitForChild("GiveHeartstruckFruits"):InvokeServer()
-                        print("Handed In Fruit")
+                local rPlantTable = ALLDATA.RequiredPlantInfo
+                if rPlantTable then
+                    local plant = rPlantTable.RequiredPlant
+                    local size = rPlantTable.RequiredPlantSize
+                    if plant and size then
+                       --Get plant with size 
+                       local iPlant = checkBackpack(plant,nil,size)
+                       
+                        if iPlant then
+                            print("HERE!!!!", iPlant)
+                            Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
+                            task.wait(0.5)
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
+                        else
+                            print("nah,,,,,,,,")
+                        end
                     end
                 end
                 task.wait(1)
