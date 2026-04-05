@@ -1,4 +1,4 @@
-print("Version 1.0.3")
+print("Version 1.0.4")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -315,7 +315,7 @@ end
 local eventItemName = "Easter2026"
 local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
 if EventItem then
-    local EventMenu = w:CreateFolder("Valentines")
+    local EventMenu = w:CreateFolder("Easter")
     --local EventShop = ALLDATA.EventShopStock
     
 
@@ -325,13 +325,29 @@ if EventItem then
             --RequiredPlant 
         --HasEnabledEasterGarden - Bool
 
+    local function buyShop(_item)
+        local args = {
+            [1] = _item,
+            [2] = "Easter Seed Shop"
+        }
+
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock"):FireServer(unpack(args))
+
+    end
+
 
     EventMenu:Toggle("Auto Buy",function(bool)
         shared.ToggleEAB=bool
         spawn(function()
-            while shared.ToggleEAH do
-        
-                task.wait(1)
+            while shared.ToggleEAB do
+                local stock = ALLDATA.EasterStock.Stocks
+                for _,v in pairs(stock)do
+                    if v.Stock > 0 then 
+                        print("[Event] Buying:", _)
+                        buyShop(_) task.wait()
+                    end
+                end
+                task.wait(300)
             end
         end)
     end)
@@ -346,9 +362,11 @@ if EventItem then
             while shared.ToggleEAS do
                 local rPlantTable = ALLDATA.RequiredPlantInfo
                 if rPlantTable then
+                    print("y1")
                     local plant = rPlantTable.RequiredPlant
                     local size = rPlantTable.RequiredPlantSize
                     if plant and size then
+                        print(plant, size)
                        --Get plant with size 
                        local iPlant = checkBackpack(plant,nil,size)
                        
