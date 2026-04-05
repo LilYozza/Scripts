@@ -1,4 +1,4 @@
-print("Version 1.1.0")
+print("Version 1.1.1")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -367,7 +367,24 @@ if EventItem then
         end)
     end)
 
-
+    EventMenu:Button("Easter Hunt",function()
+        spawn(function()
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Easter2026"):WaitForChild("EasterEventStartEggHunt"):InvokeServer()
+            local oldPos = GetPos()
+            for _,v in pairs(workspace:GetChildren())do
+                if v:IsA("Model") and v.Name == "Model" then
+                    for __,_v in pairs(v:GetDescendants())do
+                        if _v:IsA("ProximityPrompt") then
+                            MoveTo(_v.Parent) task.wait(0.5)
+                            fireproximityprompt(_v) task.wait(0.5)
+                        end
+                    end
+                end
+            end
+            task.wait(0.5)
+            MoveTo(oldPos)
+        end)
+    end)
     
 
 
@@ -405,6 +422,9 @@ if EventItem then
             end
         end)
     end)
+
+    --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Easter2026"):WaitForChild("EasterEventStartEggHunt"):InvokeServer()
+
    
 
 
