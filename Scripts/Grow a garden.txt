@@ -1,4 +1,4 @@
-print("Version 1.1.1")
+print("Version 1.1.2")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -204,7 +204,7 @@ local function checkPlantGarden(_name, _mutations)
     end
 end
 
-local function checkBackpack(_item, _amount, _weight, wtype)
+local function checkBackpack(_item, _amount,_mutation, _weight, wtype)
     if not _item then return end
 
     local function matchTool(t)
@@ -222,10 +222,12 @@ local function checkBackpack(_item, _amount, _weight, wtype)
         if _amount and (not eAttr or eAttr < _amount) then return end
 
         if (weight and _weight and ((wtype and weight >= _weight) or (not wtype and weight <= _weight))) or not _weight then
-            if hAttr then
-                if hAttr == _item then return t, cAttr end
-            elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
-                return t, cAttr
+            if (_mutation and _item:GetAttribute(_mutation)) or not _mutation then
+                if hAttr then
+                    if hAttr == _item then return t, cAttr end
+                elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
+                    return t, cAttr
+                end
             end
         end
     end
@@ -398,10 +400,12 @@ if EventItem then
                     --print("y1")
                     local plant = rPlantTable.RequiredPlant
                     local size = rPlantTable.RequiredPlantSize
+                    local mutation = rPlantTable.RequiredPlantMutation or nil
+
                     if plant and size then
                         print(plant, size)
                        --Get plant with size 
-                       local iPlant = checkBackpack(plant,nil,size)
+                       local iPlant = checkBackpack(plant,nil,mutation,size)
                        
                         if iPlant then
                             --print("HERE!!!!", iPlant)
