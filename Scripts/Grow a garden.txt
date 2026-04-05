@@ -1,4 +1,4 @@
-print("Version 1.0.7")
+print("Version 1.0.8")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -364,7 +364,7 @@ if EventItem then
             while shared.ToggleEAS do
                 local rPlantTable = ALLDATA.EasterEventData.RequiredPlantInfo
                 if rPlantTable then
-                    print("y1")
+                    --print("y1")
                     local plant = rPlantTable.RequiredPlant
                     local size = rPlantTable.RequiredPlantSize
                     if plant and size then
@@ -373,12 +373,12 @@ if EventItem then
                        local iPlant = checkBackpack(plant,nil,size)
                        
                         if iPlant then
-                            print("HERE!!!!", iPlant)
+                            --print("HERE!!!!", iPlant)
                             Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
-                            task.wait(0.5)
+                            task.wait(5)
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
                         else
-                            print("nah,,,,,,,,")
+                            --print("nah,,,,,,,,")
                         end
                     end
                 end
