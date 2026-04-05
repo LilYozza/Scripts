@@ -1,4 +1,4 @@
-print("Version 1.0.6")
+print("Version 1.0.7")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -362,7 +362,7 @@ if EventItem then
         shared.ToggleEAS=bool
         spawn(function()
             while shared.ToggleEAS do
-                local rPlantTable = ALLDATA.RequiredPlantInfo
+                local rPlantTable = ALLDATA.EasterEventData.RequiredPlantInfo
                 if rPlantTable then
                     print("y1")
                     local plant = rPlantTable.RequiredPlant
