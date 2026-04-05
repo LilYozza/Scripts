@@ -1,4 +1,4 @@
-print("Version 1.0.4")
+print("Version 1.0.5")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -340,9 +340,9 @@ if EventItem then
         shared.ToggleEAB=bool
         spawn(function()
             while shared.ToggleEAB do
-                local stock = ALLDATA.EasterStock.Stocks
+                local stock = ALLDATA.EventShopStock["Easter Seed Shop"].Stocks
                 for _,v in pairs(stock)do
-                    if v.Stock > 0 then 
+                    if v.Stock and v.Stock > 0 then 
                         print("[Event] Buying:", _)
                         buyShop(_) task.wait()
                     end
