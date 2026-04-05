@@ -1,4 +1,4 @@
-print("Version 1.1.2")
+print("Version 1.1.3")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -222,7 +222,7 @@ local function checkBackpack(_item, _amount,_mutation, _weight, wtype)
         if _amount and (not eAttr or eAttr < _amount) then return end
 
         if (weight and _weight and ((wtype and weight >= _weight) or (not wtype and weight <= _weight))) or not _weight then
-            if (_mutation and _item:GetAttribute(_mutation)) or not _mutation then
+            if (_mutation and t:GetAttribute(_mutation)) or not _mutation then
                 if hAttr then
                     if hAttr == _item then return t, cAttr end
                 elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
