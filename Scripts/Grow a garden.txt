@@ -1,4 +1,4 @@
-print("Version 1.0.8")
+print("Version 1.0.9")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -318,6 +318,7 @@ if EventItem then
     local EventMenu = w:CreateFolder("Easter")
     --local EventShop = ALLDATA.EventShopStock
     
+    local Event_Point = eventItemName:FindFirstChild("Event_Point")
 
     --EasterEventData - Table
         --RequiredPlantInfo - Table
@@ -375,8 +376,13 @@ if EventItem then
                         if iPlant then
                             --print("HERE!!!!", iPlant)
                             Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
-                            task.wait(5)
+                            
+                            local oldPos = GetPos()
+                            MoveTo(Event_Point) task.wait(1)
+
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
+                            task.wait(1) MoveTo(oldPos)
+                            task.wait(5)
                         else
                             --print("nah,,,,,,,,")
                         end
