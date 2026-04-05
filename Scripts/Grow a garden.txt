@@ -318,7 +318,7 @@ if EventItem then
     local EventMenu = w:CreateFolder("Easter")
     --local EventShop = ALLDATA.EventShopStock
     
-    local Event_Point = eventItemName:FindFirstChild("Event_Point")
+    local Event_Point = EventItem:FindFirstChild("Event_Point")
 
     --EasterEventData - Table
         --RequiredPlantInfo - Table
