@@ -1,4 +1,4 @@
-print("Version 1.1.4")
+print("Version 1.1.5")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -139,13 +139,18 @@ local function checkPlantInventory(_plant, _mutations, _strict)
         end
     end
 end
-local function checkPlant(_plant, _name, _mutations, _strict)
+local function checkPlant(_plant, _name, _mutations, _strict, _size)
     -- 1. Base Filters
     if not _plant:HasTag("Harvestable") or _plant:GetAttribute("Favorited") then 
         return 
     end
     if _name and _plant.Name:lower() ~= _name:lower() then 
         return 
+    end
+
+    local weight = _plant:FindFirstChild("Weight")
+    if _size and (not weight or (weight and _size < weight.Value)) then
+        return
     end
 
     if _mutations and #_mutations > 0 then
@@ -189,16 +194,16 @@ local function checkPlant(_plant, _name, _mutations, _strict)
 end
 
 
-local function checkPlantGarden(_name, _mutations)
+local function checkPlantGarden(_name, _mutations, _size)
     for _,v in pairs(Plants_Physical:GetChildren())do
         local Fruits = v:FindFirstChild("Fruits")
         if Fruits then
             for __,_v in pairs(Fruits:GetChildren())do
-                local find = checkPlant(_v, _name, _mutations)
+                local find = checkPlant(_v, _name, _mutations,nil, _size)
                 if find then return find end
             end
         else
-            local find = checkPlant(v, _name, _mutations)
+            local find = checkPlant(v, _name, _mutations,nil, _size)
             if find then return find end
         end
     end
@@ -409,9 +414,12 @@ if EventItem then
                     local mutation = rPlantTable.RequiredPlantMutation or nil
 
                     if plant and size then
-                        print(plant, size)
+                        --print(plant, size)
                        --Get plant with size 
                        local iPlant = checkBackpack(plant,nil,mutation,size)
+                       if not iPlant then
+                        iPlant = checkPlantGarden(plant,{mutation},size)
+                       end
                        
                         if iPlant then
                             --print("HERE!!!!", iPlant)
@@ -427,6 +435,18 @@ if EventItem then
                             --print("nah,,,,,,,,")
                         end
                     end
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
+    EventMenu:Toggle("Buy Egg",function(bool)
+        shared.ToggleEBE=bool
+        spawn(function()
+            while shared.ToggleEBE do
+                if IsMaxInventory() then
+                    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
                 end
                 task.wait(1)
             end
