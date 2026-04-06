@@ -1,4 +1,4 @@
-print("Version 1.1.6")
+print("Version 1.1.5")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -149,7 +149,7 @@ local function checkPlant(_plant, _name, _mutations, _strict, _size)
     end
 
     local weight = _plant:FindFirstChild("Weight")
-    if _size and (not weight or (weight and _size < weight.Value)) then
+    if _size and (not weight or _size < weight.Value) then
         return
     end
 
@@ -428,14 +428,16 @@ if EventItem then
                        --Get plant with size 
                        local iPlant = checkBackpack(plant,nil,mutation,size)
                        if not iPlant then
+                        print("searching Garden for:", plant, mutation, size)
                             local cPlant = checkPlantGarden(plant,{mutation},size)
                             if cPlant and not IsMaxInventory() then
+                                print("Found")
                                 mod:FireServer({cPlant})
                                 task.wait(1)
                                 iPlant = checkBackpack(plant,nil,mutation,size)
+                                if not iPlant then print("Picked but not found") end
                             end
                        end
-                       
                         if iPlant then
                             --print("HERE!!!!", iPlant)
                             Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
