@@ -1,4 +1,4 @@
-print("Version 1.1.6")
+print("Version 1.1.7")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -150,7 +150,7 @@ local function checkPlant(_plant, _name, _mutations, _strict, _size)
 
     local weight = _plant:FindFirstChild("Weight")
     if _size and (not weight or _size > weight.Value) then
-        print("Failed Weight", weight, _size, weight.Value )
+        --print("Failed Weight", weight, _size, weight.Value )
         return
     end
 
@@ -409,7 +409,18 @@ if EventItem then
             MoveTo(oldPos)
         end)
     end)
-    
+
+    local plantLabel = EventMenu:Label("Plant",{
+        TextSize = 25;
+        TextColor = Color3.fromRGB(255,255,255);
+        BgColor = Color3.fromRGB(69,69,69);
+    }) 
+
+    local infoLabel = EventMenu:Label("info",{
+        TextSize = 25;
+        TextColor = Color3.fromRGB(255,255,255);
+        BgColor = Color3.fromRGB(69,69,69);
+    }) 
 
 
     -- Auto Submit
@@ -425,18 +436,21 @@ if EventItem then
                     local mutation = rPlantTable.RequiredPlantMutation or nil
 
                     if plant and size then
+                        local mutationText = mutation or "None"
+                        plantLabel:Refresh(plant)
+                        infoLabel:Refresh(size .. " " .. mutationText)
                         --print(plant, size)
                        --Get plant with size 
                        local iPlant = checkBackpack(plant,nil,mutation,size)
                        if not iPlant then
-                        print("searching Garden for:", plant, mutation, size)
+                        --print("searching Garden for:", plant, mutation, size)
                             local cPlant = checkPlantGarden(plant,{mutation},size)
                             if cPlant and not IsMaxInventory() then
-                                print("Found")
+                                --print("Found")
                                 mod:FireServer({cPlant})
                                 task.wait(1)
                                 iPlant = checkBackpack(plant,nil,mutation,size)
-                                if not iPlant then print("Picked but not found") end
+                                --if not iPlant then print("Picked but not found") end
                             end
                        end
                         if iPlant then
