@@ -333,6 +333,16 @@ if EventItem then
             --RequiredPlant 
         --HasEnabledEasterGarden - Bool
 
+
+    --SpecialCurrency
+        --ChocCoins
+
+
+    --EasterEventData
+        --GoldenEgg
+            --BuyAmount
+            --LastBuyTime
+
     local function buyShop(_item, _amount)
         
         local args = {
@@ -418,7 +428,12 @@ if EventItem then
                        --Get plant with size 
                        local iPlant = checkBackpack(plant,nil,mutation,size)
                        if not iPlant then
-                        iPlant = checkPlantGarden(plant,{mutation},size)
+                            local cPlant = checkPlantGarden(plant,{mutation},size)
+                            if cPlant and not IsMaxInventory() then
+                                mod:FireServer({cPlant})
+                                task.wait(1)
+                                iPlant = checkBackpack(plant,nil,mutation,size)
+                            end
                        end
                        
                         if iPlant then
@@ -430,7 +445,7 @@ if EventItem then
 
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
                             task.wait(1) MoveTo(oldPos)
-                            task.wait(5)
+                            task.wait(2)
                         else
                             --print("nah,,,,,,,,")
                         end
@@ -441,12 +456,24 @@ if EventItem then
         end)
     end)
 
+    --SpecialCurrency
+        --ChocCoins
+
+    --EasterEventData
+        --GoldenEgg
+            --BuyAmount
+            --LastBuyTime
+
+    local startingPrice = 25000
     EventMenu:Toggle("Buy Egg",function(bool)
         shared.ToggleEBE=bool
         spawn(function()
             while shared.ToggleEBE do
-                if IsMaxInventory() then
-                    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
+                local cCoins = ALLDATA.SpecialCurrency.ChocCoins
+                local amount = ALLDATA.GoldenEgg.BuyAmount
+                local price = startingPrice * (2 ^ amount)
+                if amount and price < cCoins then
+                    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("TryBuyGoldenEggRE"):FireServer()
                 end
                 task.wait(1)
             end
