@@ -1,4 +1,4 @@
-print("Version 1.1.5")
+print("Version 1.1.6")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -149,8 +149,8 @@ local function checkPlant(_plant, _name, _mutations, _strict, _size)
     end
 
     local weight = _plant:FindFirstChild("Weight")
-    if _size and (not weight or _size < weight.Value) then
-        print("Failed Weight", weight, weight.Value, _size)
+    if _size and (not weight or _size > weight.Value) then
+        print("Failed Weight", weight, _size, weight.Value )
         return
     end
 
