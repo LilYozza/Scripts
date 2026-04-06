@@ -1,4 +1,4 @@
-print("Version 1.1.9")
+print("Version 1.1.8")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -464,13 +464,28 @@ if EventItem then
         end
     end)
 
+    --
+
+    
+
+    EventMenu:Toggle("Auto Restart",function(bool)
+        shared.ToggleEAS=bool
+    end)
+
 
     -- Auto Submit
     EventMenu:Toggle("Auto Submit",function(bool)
         shared.ToggleEAS=bool
         spawn(function()
             while shared.ToggleEAS do
+
+                if shared.ToggleEAS then
+                    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("ClaimPremiumPack") task.wait(1)
+                end
+            
+
                 local rPlantTable = ALLDATA.EasterEventData.RequiredPlantInfo
+
                 if rPlantTable then
                     --print("y1")
                     local plant = rPlantTable.RequiredPlant
