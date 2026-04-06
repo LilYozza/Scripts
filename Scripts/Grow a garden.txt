@@ -1,4 +1,4 @@
-print("Version 1.1.3")
+print("Version 1.1.4")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -354,6 +354,12 @@ if EventItem then
                 end
                 task.wait(1)
             end
+        end)
+    end)
+
+    EventMenu:Button("Sell",function()
+        spawn(function()
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
         end)
     end)
 
