@@ -1,4 +1,4 @@
-print("Version 1.1.6")
+print("Version 1.1.5")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -141,7 +141,6 @@ local function checkPlantInventory(_plant, _mutations, _strict)
 end
 local function checkPlant(_plant, _name, _mutations, _strict, _size)
     -- 1. Base Filters
-    print("Checking:",_plant, _name, _mutations, _strict, _size)
     if not _plant:HasTag("Harvestable") or _plant:GetAttribute("Favorited") then 
         return 
     end
@@ -151,6 +150,7 @@ local function checkPlant(_plant, _name, _mutations, _strict, _size)
 
     local weight = _plant:FindFirstChild("Weight")
     if _size and (not weight or _size < weight.Value) then
+        print("Failed Weight", weight, weight.Value, _size)
         return
     end
 
