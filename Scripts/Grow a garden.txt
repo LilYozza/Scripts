@@ -1,4 +1,4 @@
-print("Version 1.1.7")
+print("Version 1.1.9")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -327,6 +327,10 @@ if EventItem then
     --local EventShop = ALLDATA.EventShopStock
     
     local Event_Point = EventItem:FindFirstChild("Event_Point")
+    
+
+    --workspace.Interaction.UpdateItems.Easter2026
+    local HuntNPC = EventItem:WaitForChild("EggHuntPlatform"):WaitForChild("EasterEggHuntNPC"):WaitForChild("RootPart")
 
     --EasterEventData - Table
         --RequiredPlantInfo - Table
@@ -393,22 +397,36 @@ if EventItem then
 
     EventMenu:Button("Easter Hunt",function()
         spawn(function()
-            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Easter2026"):WaitForChild("EasterEventStartEggHunt"):InvokeServer()
-            local oldPos = GetPos()
-            for _,v in pairs(workspace:GetChildren())do
-                if v:IsA("Model") and v.Name == "Model" then
-                    for __,_v in pairs(v:GetDescendants())do
-                        if _v:IsA("ProximityPrompt") then
-                            MoveTo(_v.Parent) task.wait(0.5)
-                            fireproximityprompt(_v) task.wait(0.5)
+            --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Easter2026"):WaitForChild("EasterEventStartEggHunt"):InvokeServer()
+            if HuntNPC then
+                local oldPos = GetPos()
+
+                local prox = HuntNPC:FindFirstChildWhichIsA("ProximityPrompt")
+                MoveTo(HuntNPC, Vector3.new(0,5,0)) task.wait(1)
+                fireproximityprompt(prox) task.wait(1)
+
+
+                for _,v in pairs(workspace:GetChildren())do
+                    if v:IsA("Model") and v.Name == "Model" then
+                        for __,_v in pairs(v:GetDescendants())do
+                            if _v:IsA("ProximityPrompt") then
+                                MoveTo(_v.Parent, Vector3.new(0,5,0)) task.wait(0.5)
+                                fireproximityprompt(_v) task.wait(0.5)
+                            end
                         end
                     end
                 end
+                task.wait(0.5)
+                MoveTo(oldPos)
             end
-            task.wait(0.5)
-            MoveTo(oldPos)
         end)
     end)
+
+    local proLabel = EventMenu:Label("info",{
+        TextSize = 25;
+        TextColor = Color3.fromRGB(255,255,255);
+        BgColor = Color3.fromRGB(69,69,69);
+    })
 
     local plantLabel = EventMenu:Label("Plant",{
         TextSize = 25;
@@ -422,6 +440,8 @@ if EventItem then
         BgColor = Color3.fromRGB(69,69,69);
     })
 
+--EasterEventData
+    --Progression
 
     spawn(function()
         while task.wait(1) do
@@ -433,8 +453,13 @@ if EventItem then
                 if plant and size then
                     local mutationText = mutation or "None"
                       plantLabel:Refresh(plant)
-                    infoLabel:Refresh(size .. "KG, " .. mutationText)
+                    infoLabel:Refresh(size .. "KG " .. mutationText)
                 end
+            end
+            if proLabel then
+                local Progression = ALLDATA.EasterEventData.Progression
+                local str = (Progression - 1) .. "/50"
+                proLabel:Refresh(str)
             end
         end
     end)
@@ -473,7 +498,7 @@ if EventItem then
                             Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
                             
                             local oldPos = GetPos()
-                            MoveTo(Event_Point) task.wait(1)
+                            MoveTo(Event_Point, Vector3.new(0,5,0)) task.wait(1)
 
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
                             task.wait(1) MoveTo(oldPos)
