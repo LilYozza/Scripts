@@ -1,4 +1,4 @@
-print("Version 1.1.7")
+print("Version 1.1.8")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -420,7 +420,24 @@ if EventItem then
         TextSize = 25;
         TextColor = Color3.fromRGB(255,255,255);
         BgColor = Color3.fromRGB(69,69,69);
-    }) 
+    })
+
+
+    spawn(function()
+        while task.wait(1) do
+            if plantLabel and infoLabel then
+                    local rPlantTable = ALLDATA.EasterEventData.RequiredPlantInfo
+                    local plant = rPlantTable.RequiredPlant
+                    local size = rPlantTable.RequiredPlantSize
+                    local mutation = rPlantTable.RequiredPlantMutation or nil
+                if plant and size then
+                    local mutationText = mutation or "None"
+                      plantLabel:Refresh(plant)
+                    infoLabel:Refresh(size .. "KG, " .. mutationText)
+                end
+            end
+        end
+    end)
 
 
     -- Auto Submit
@@ -436,9 +453,7 @@ if EventItem then
                     local mutation = rPlantTable.RequiredPlantMutation or nil
 
                     if plant and size then
-                        local mutationText = mutation or "None"
-                        plantLabel:Refresh(plant)
-                        infoLabel:Refresh(size .. " " .. mutationText)
+
                         --print(plant, size)
                        --Get plant with size 
                        local iPlant = checkBackpack(plant,nil,mutation,size)
