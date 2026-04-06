@@ -1,4 +1,4 @@
-print("Version 1.1.5")
+print("Version 1.1.6")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -470,7 +470,7 @@ if EventItem then
         spawn(function()
             while shared.ToggleEBE do
                 local cCoins = ALLDATA.SpecialCurrency.ChocCoins
-                local amount = ALLDATA.GoldenEgg.BuyAmount
+                local amount = ALLDATA.EasterEventData.GoldenEgg.BuyAmount
                 local price = startingPrice * (2 ^ amount)
                 if amount and price < cCoins then
                     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("TryBuyGoldenEggRE"):FireServer()
