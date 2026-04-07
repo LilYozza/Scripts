@@ -1,4 +1,4 @@
-print("Version 1.1.8")
+print("Version 1.1.9")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -319,7 +319,9 @@ end
 
 
 
---Easter EVENT ------------------------------------------------------------------------------------------------------------------------
+--Easter EVENT #########################################################################################################
+
+--######################################################################################################################
 local eventItemName = "Easter2026"
 local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
 if EventItem then
@@ -480,7 +482,7 @@ if EventItem then
         spawn(function()
             while shared.ToggleEAS do
 
-                if shared.ToggleEAS and (ALLDATA.EasterEventData.Progression - 1) > 50 then
+                if shared.ToggleEAS and (ALLDATA.EasterEventData.Progression - 1) >= 50 then
                     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("ClaimPremiumPack") task.wait(1)
                 end
             
