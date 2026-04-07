@@ -1,4 +1,4 @@
-print("Version 1.1.7")
+print("Version 1.1.8")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -513,15 +513,12 @@ if EventItem then
                             --print("HERE!!!!", iPlant)
                             Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
                             
-                            local oldPos = GetPos()
-                            if GetDistance(Event_Point) > 5 then
+                            --local oldPos = GetPos()
+                            if GetDistance(Event_Point) > 10 then
                                 MoveTo(Event_Point, Vector3.new(0,5,0)) task.wait(1)
                             end
 
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
-                            if GetDistance(oldPos) > 5 then
-                                task.wait(1) MoveTo(oldPos)
-                            end
                             task.wait(2)
                         else
                             --print("nah,,,,,,,,")
