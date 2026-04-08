@@ -1,4 +1,4 @@
-print("Version 1.1.1")
+print("Version 1.1.2")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -724,7 +724,7 @@ Auto:Toggle("Auto Harvest", function(bool)
     shared.ToggleAH = bool
     task.spawn(function()
         while shared.ToggleAH do
-            if not IsMaxInventory() then
+            if getSpaceLeft() > 0 then
                 local spaceLeft = math.max(0, getSpaceLeft())
                 local t = getFruit(spaceLeft, nil, nil)
                 --shuffle(t)
