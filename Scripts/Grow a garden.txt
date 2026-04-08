@@ -1,4 +1,4 @@
-print("Version 1.1.9")
+print("Version 1.1.1")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -90,7 +90,7 @@ end
 local function IsMaxInventory()
     local count = getInventoryCount()
     local bonus = Player:GetAttribute("BonusBackpackSize")
-    if 199 + (bonus or 0) > count then
+    if 200 + (bonus or 0) > count then
         return false
     else
         return true
@@ -759,13 +759,22 @@ Auto:Toggle("Auto Harvest", function(bool)
     end)
 end)
 
+local spaceLeft = 20
+Auto:Slider("Space Left",{
+    min = 0;
+    max = 200;
+    precise = true;
+},function(value)
+    spaceLeft = value
+end)
+
 local moveBack = false
 -->Return Functions<--
 Auto:Toggle("Auto Sell",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do
-            if IsMaxInventory() then
+            if getSpaceLeft() < spaceLeft then
                 local samHRP = Steven:FindFirstChild("HumanoidRootPart")
                 local distance = GetDistance(samHRP)
                 local old = GetPos()
