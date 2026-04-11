@@ -363,7 +363,7 @@ if EventItem then
     end
 
 
-    --
+    --CRAFTS_COMPLETED
 
 
     EventMenu:Toggle("Candy Blossom",function(bool)
@@ -379,7 +379,8 @@ if EventItem then
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CandyBlossomCrafting"):WaitForChild("Submit"):FireServer()
                         end
                     end
-                    if progress["Candy Blossom Shard"] == 0 then
+                    local amt = progress["CRAFTS_COMPLETED"] + 1
+                    if progress["Candy Blossom Shard"] < amt then
                         local shard = checkBackpack("Candy Blossom Shard")
                         if shard then
                             Player.Character:WaitForChild("Humanoid"):EquipTool(shard) task.wait(0.5)
