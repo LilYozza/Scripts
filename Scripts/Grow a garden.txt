@@ -1,4 +1,4 @@
-print("Version 1.1.2")
+print("Version 1.2.1 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -323,7 +323,7 @@ end
 
 --######################################################################################################################
 local eventItemName = "Easter2026"
-local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
+local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Interaction:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
 if EventItem then
     local EventMenu = w:CreateFolder("Easter")
     --local EventShop = ALLDATA.EventShopStock
@@ -361,6 +361,36 @@ if EventItem then
             task.wait()
         end
     end
+
+
+    --
+
+
+    EventMenu:Toggle("Candy Blossom",function(bool)
+        shared.ToggleECB=bool
+        spawn(function()
+            while shared.ToggleECB do
+                local progress = ALLDATA.CandyBlossomCraftingProgress
+                if progress then
+                    if progress.eggs < 50 then
+                        local gEgg = checkBackpack("Golden Egg")
+                        if gEgg then
+                            Player.Character:WaitForChild("Humanoid"):EquipTool(gEgg) task.wait(0.5)
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CandyBlossomCrafting"):WaitForChild("Submit"):FireServer()
+                        end
+                    end
+                    if progress["Candy Blossom Shard"] == 0 then
+                        local shard = checkBackpack("Candy Blossom Shard")
+                        if shard then
+                            Player.Character:WaitForChild("Humanoid"):EquipTool(shard) task.wait(0.5)
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CandyBlossomCrafting"):WaitForChild("Submit"):FireServer()
+                        end
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end)
 
 
     EventMenu:Toggle("Auto Buy",function(bool)
