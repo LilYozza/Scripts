@@ -1,4 +1,4 @@
-print("Version 1.2.1 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.2 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -372,7 +372,7 @@ if EventItem then
             while shared.ToggleECB do
                 local progress = ALLDATA.CandyBlossomCraftingProgress
                 if progress then
-                    if progress.eggs < 50 then
+                    if progress["Eggs"] < 50 then
                         local gEgg = checkBackpack("Golden Egg")
                         if gEgg then
                             Player.Character:WaitForChild("Humanoid"):EquipTool(gEgg) task.wait(0.5)
