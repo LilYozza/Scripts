@@ -1,4 +1,4 @@
-print("Version 1.2.9 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.1 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -20,6 +20,7 @@ local Player=game.Players.LocalPlayer
 
 
 -->Base Variables<--
+local busy = false
 local harvestMutationTypes = {"All", "Any"}
 
 local function Sheckles() return ALLDATA.Sheckles end
@@ -446,7 +447,8 @@ if EventItem then
                 
                 if HuntNPC then
                     local eggCooldown = Player:GetAttribute("EasterEggHuntCooldownRemaining")
-                    if eggCooldown <= 0 then
+                    if eggCooldown <= 0 and not busy then
+                        busy = true
                         --Teleport To NPC and Open Prompt
                         local oldPos = GetPos()
                         local prox = HuntNPC:FindFirstChildWhichIsA("ProximityPrompt")
@@ -482,6 +484,7 @@ if EventItem then
                             --Done
                             MoveTo(oldPos)
                         end
+                        busy = false
                     end
                 end
                 task.wait(1)
@@ -576,7 +579,8 @@ if EventItem then
                                 --if not iPlant then print("Picked but not found") end
                             end
                        end
-                        if iPlant then
+                        if iPlant and not busy then
+                            busy = true
                             --print("HERE!!!!", iPlant)
                             Player.Character:WaitForChild("Humanoid"):EquipTool(iPlant)
                             
@@ -587,9 +591,9 @@ if EventItem then
 
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SeedPackGiverEvent"):FireServer("SubmitHeldPlant")
                             task.wait(2)
-                        else
-                            --print("nah,,,,,,,,")
+                            busy = false
                         end
+
                     end
                 end
                 task.wait(1)
@@ -834,7 +838,8 @@ Auto:Toggle("Auto Sell",function(bool)
     shared.ToggleAS=bool
     spawn(function()
         while shared.ToggleAS do
-            if getSpaceLeft() < spaceLeft then
+            if getSpaceLeft() < spaceLeft and not busy then
+                busy = true
                 local samHRP = Steven:FindFirstChild("HumanoidRootPart")
                 local distance = GetDistance(samHRP)
                 local old = GetPos()
@@ -853,6 +858,7 @@ Auto:Toggle("Auto Sell",function(bool)
                 SellAll()
                 if moveBack then task.wait(1) MoveTo(old) end
                 task.wait(5)
+                busy = false
             end
             task.wait(1)
         end
@@ -1005,7 +1011,8 @@ local function craftItem(_item)
 
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 
-    if submitItemBtn and WorkbenchPart then
+    if submitItemBtn and WorkbenchPart and not busy then
+        busy = true
         local oldPos = GetPos()
         
         task.wait(1)
@@ -1027,6 +1034,7 @@ local function craftItem(_item)
 
         task.wait(1)
         MoveTo(oldPos)
+        busy = false
     end
 end
 
@@ -1045,7 +1053,7 @@ end
 
 
 local selectedCraftItem
-local craftItems = {"Reclaimer"}
+local craftItems = {"Lightning Rod", "Tanning Mirror", "Reclaimer", "Event Lantern x30", "Anti Bee Egg", "Small Toy x3", "Small Treat x3", "Pet Pouch", "Pack Bee", "Silver Ingot", "Gold Ingot", "Silver Piggy", "Golden Piggy", "Chimera Stone"}
 local CMDropList = CrafMenu:Dropdown("Select Item",craftItems,true,function(SItem)
     selectedCraftItem = SItem
 end)
@@ -1073,6 +1081,7 @@ CrafMenu:Toggle("Auto Craft",function(bool)
                     if craftingTable[1].IsDone == true then
                         ClaimCraft()
                     end
+                    -- If Input is ready but not began
                 else
                     if selectedCraftItem then
                         craftItem(selectedCraftItem)
