@@ -1,4 +1,4 @@
-print("Version 1.2.8 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.9 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1010,7 +1010,6 @@ local function craftItem(_item)
         
         task.wait(1)
 
-        local hrp = GetHrp()
         local targetPos = WorkbenchPart.CFrame * CFrame.new(0, 0, -5)
         local facingCFrame = CFrame.lookAt(targetPos.Position, WorkbenchPart.Position)
         MoveTo(facingCFrame) task.wait(1)
