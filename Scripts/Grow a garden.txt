@@ -9,7 +9,7 @@ local ALLDATA = DataService:GetData()
 
 w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Main")
-local PlantingMenu = w:CreateWindow("Planting")
+local PlantingMenu = w:CreateFolder("Planting")
 local CrafMenu = w:CreateFolder("Crafting")
 local StockMenu = w:CreateFolder("Stock")
 local PetMenu = w:CreateFolder("Pets")
