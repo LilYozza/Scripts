@@ -1,4 +1,4 @@
-print("Version 1.2.4 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.5 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -434,29 +434,56 @@ if EventItem then
         end)
     end)
 
-    EventMenu:Button("Easter Hunt",function()
+    --Player.Character:GetAttribute("EasterEggHunt_CARRYING")
+    --Player:GetAttribute("EasterEggHuntCooldownRemaining")
+
+
+    EventMenu:Toggle("Easter Hunt",function(bool)
+        shared.ToggleEEH=bool
         spawn(function()
-            --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Easter2026"):WaitForChild("EasterEventStartEggHunt"):InvokeServer()
-            if HuntNPC then
-                local oldPos = GetPos()
+            while shared.ToggleEEH do
+                
+                if HuntNPC then
+                    local eggCooldown = Player:GetAttribute("EasterEggHuntCooldownRemaining")
+                    if eggCooldown <= 0 then
+                        --Teleport To NPC and Open Prompt
+                        local oldPos = GetPos()
+                        local prox = HuntNPC:FindFirstChildWhichIsA("ProximityPrompt")
+                        MoveTo(HuntNPC, Vector3.new(0,5,0)) task.wait(1)
+                        fireproximityprompt(prox) task.wait(2)
 
-                local prox = HuntNPC:FindFirstChildWhichIsA("ProximityPrompt")
-                MoveTo(HuntNPC, Vector3.new(0,5,0)) task.wait(1)
-                fireproximityprompt(prox) task.wait(1)
-
-
-                for _,v in pairs(workspace:GetChildren())do
-                    if v:IsA("Model") and v.Name == "Model" then
-                        for __,_v in pairs(v:GetDescendants())do
-                            if _v:IsA("ProximityPrompt") then
-                                MoveTo(_v.Parent, Vector3.new(0,5,0)) task.wait(0.5)
-                                fireproximityprompt(_v) task.wait(0.5)
+                        local billboardObjects = Player:WaitForChild("PlayerGui"):WaitForChild("Billboard_UI"):WaitForChild("Objects")
+                        if billboardObjects then
+                            -- Select Prompt
+                            for _, child in billboardObjects:GetChildren() do
+                                local frame = child:FindFirstChild("Frame")
+                                local textElement = frame and frame:FindFirstChild("Frame") and frame.Frame:FindFirstChild("Text_Element")
+                                    
+                                if textElement and textElement:GetAttribute("Text") == "Start Egg Hunt" then
+                                    local button = textElement.Parent.Parent:FindFirstChildWhichIsA("ImageButton")
+                                    if button and button.Active then
+                                        SendClick(button)
+                                        task.wait(1)
+                                    end
+                                end
                             end
+                            -- Collect Eggs
+                            for _,v in pairs(workspace:GetChildren())do
+                                if v:IsA("Model") and v.Name == "Model" then
+                                    for __,_v in pairs(v:GetDescendants())do
+                                        if _v:IsA("ProximityPrompt") then
+                                            MoveTo(_v.Parent, Vector3.new(0,5,0)) task.wait(0.5)
+                                            fireproximityprompt(_v) task.wait(0.5)
+                                        end
+                                    end
+                                end
+                            end
+                            --Done
+                            MoveTo(oldPos)
                         end
                     end
                 end
-                task.wait(0.5)
-                MoveTo(oldPos)
+                task.wait(1)
             end
         end)
     end)
