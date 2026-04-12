@@ -1,4 +1,4 @@
-print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.8 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -992,7 +992,8 @@ end)
 
  
 --CrafMenu ----------------------------------------------------------------------
-local submitItemBtn = game:GetService("Players").LocalPlayer.PlayerGui.CraftingCancel.Frame.Yes
+local submitItemBtn = Player.PlayerGui.CraftingCancel.Frame.Yes
+local WorkbenchPart = workspace:WaitForChild("CraftingTables").EventCraftingWorkBench.PrimaryPart
 
 local function craftItem(_item)
     local args = {
@@ -1004,22 +1005,47 @@ local function craftItem(_item)
 
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 
-    if submitItemBtn then
+    if submitItemBtn and Workbench then
+        local oldPos = GetPos()
+        
         task.wait(1)
-        -- Move To Shop ?
-        SendClick(submitItemBtn)
-        print("Submitted All Items")
 
+        local hrp = GetHrp()
+        local targetPos = WorkbenchPart.CFrame * CFrame.new(0, 0, -5)
+        local facingCFrame = CFrame.lookAt(targetPos.Position, WorkbenchPart.Position)
+        MoveTo(facingCFrame) task.wait(1)
+
+        SendClick(submitItemBtn) task.wait(1)
+
+        local args = {
+            [1] = "Craft",
+            [2] = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
+            [3] = "GearEventWorkbench"
+        }
+
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+
+
+        task.wait(1)
+        MoveTo(oldPos)
     end
+end
 
+local function ClaimCraft()
+    local args = {
+        [1] = "Claim",
+        [2] = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
+        [3] = "GearEventWorkbench",
+        [4] = 1
+    }
 
-
-
-
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 end
 
 
-local selectedItem
+
+
+local selectedCraftItem
 local craftItems = {"Reclaimer"}
 local CMDropList = CrafMenu:Dropdown("Select Item",craftItems,true,function(SItem)
     selectedItem = SItem
@@ -1028,18 +1054,33 @@ end)
 
 CrafMenu:Button("Craft Test",function()
     spawn(function()
-        if selectedItem then
-            craftItem(selectedItem)
+        if selectedCraftItem then
+            craftItem(selectedCraftItem)
         end
     end)
 end)
+
+
+--ALLDATA.CraftingData.GlobalCraftingObjectData["Workbench-1"].MachineData.GearEventWorkbench.CraftingItems[1].TimeRemaining
+-- ALLDATA.CraftingData.GlobalCraftingObjectData["Workbench-1"].MachineData.GearEventWorkbench.CraftingItems[1].TimeRemaining
 
 CrafMenu:Toggle("Auto Craft",function(bool)
     shared.ToggleCMAC=bool
     spawn(function()
         while shared.ToggleCMAC do
-
-            task.wait()
+            local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData["Workbench-1"].MachineData.GearEventWorkbench.CraftingItems
+            if craftingTable then
+                if craftingTable[1] then
+                    if craftingTable[1].IsDone == true then
+                        ClaimCraft()
+                    end
+                else
+                    if selectedCraftItem then
+                        craftItem(selectedCraftItem)
+                    end
+                end
+            end
+            task.wait(1)
         end
     end)
 end)
