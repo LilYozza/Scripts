@@ -1005,7 +1005,7 @@ local function craftItem(_item)
 
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 
-    if submitItemBtn and Workbench then
+    if submitItemBtn and WorkbenchPart then
         local oldPos = GetPos()
         
         task.wait(1)
