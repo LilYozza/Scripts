@@ -1,4 +1,4 @@
-print("Version 1.2.5 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -463,7 +463,7 @@ if EventItem then
                                     local button = textElement.Parent.Parent:FindFirstChildWhichIsA("ImageButton")
                                     if button and button.Active then
                                         SendClick(button)
-                                        task.wait(1)
+                                        task.wait(5)
                                     end
                                 end
                             end
