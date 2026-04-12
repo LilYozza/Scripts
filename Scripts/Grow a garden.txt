@@ -1017,7 +1017,7 @@ PlantingMenu:Button("Set Position",function()
     end)
 end)
 
-Auto:Toggle("Plant Hand",function(bool)
+PlantingMenu:Toggle("Plant Hand",function(bool)
     shared.TogglePMPH=bool
     spawn(function()
         while shared.TogglePMPH do
