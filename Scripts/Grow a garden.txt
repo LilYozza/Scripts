@@ -1048,7 +1048,7 @@ end
 local selectedCraftItem
 local craftItems = {"Reclaimer"}
 local CMDropList = CrafMenu:Dropdown("Select Item",craftItems,true,function(SItem)
-    selectedItem = SItem
+    selectedCraftItem = SItem
 end)
 
 
