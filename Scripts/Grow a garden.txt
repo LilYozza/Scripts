@@ -485,7 +485,7 @@ if EventItem then
         spawn(function()
             while shared.ToggleEEB do
 
-                local EvilInfo = ALLDATA["EvilBunnyData"]
+                local EvilInfo = ALLDATA.EasterEventData["EvilBunnyData"]
                 if EvilInfo then
                     if EvilInfo.QuestState == "Active" then
 
