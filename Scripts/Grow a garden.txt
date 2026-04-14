@@ -1,4 +1,4 @@
-print("Version 1.2.2 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.3 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -8,6 +8,7 @@ local DataService = require(rs:WaitForChild("Modules"):WaitForChild("DataService
 local ALLDATA = DataService:GetData()
 
 w = library:CreateWindow("Main")
+
 local Auto = w:CreateFolder("Main")
 local PlantingMenu = w:CreateFolder("Planting")
 local CrafMenu = w:CreateFolder("Crafting")
@@ -328,7 +329,8 @@ end
 local eventItemName = "Easter2026"
 local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Interaction:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
 if EventItem then
-    local EventMenu = w:CreateFolder("Easter")
+    local eventWindow = library:CreateWindow("Event")
+    local EventMenu = eventWindow:CreateFolder("Easter")
     --local EventShop = ALLDATA.EventShopStock
     
     local Event_Point = EventItem:FindFirstChild("Event_Point")
@@ -454,23 +456,35 @@ if EventItem then
                         local oldPos = GetPos()
                         local prox = HuntNPC:FindFirstChildWhichIsA("ProximityPrompt")
                         MoveTo(HuntNPC, Vector3.new(0,5,0)) task.wait(1)
-                        fireproximityprompt(prox) task.wait(3)
+                        fireproximityprompt(prox)
 
                         local billboardObjects = Player:WaitForChild("PlayerGui"):WaitForChild("Billboard_UI"):WaitForChild("Objects")
                         if billboardObjects then
                             -- Select Prompt
-                            for _, child in billboardObjects:GetChildren() do
-                                local frame = child:FindFirstChild("Frame")
-                                local textElement = frame and frame:FindFirstChild("Frame") and frame.Frame:FindFirstChild("Text_Element")
-                                    
-                                if textElement and textElement:GetAttribute("Text") == "Start Egg Hunt" then
-                                    local button = textElement.Parent.Parent:FindFirstChildWhichIsA("ImageButton")
-                                    if button and button.Active then
-                                        SendClick(button)
-                                        task.wait(5)
+
+                            local timer = false
+                            local button
+                            task.spawn(function()
+                                timer = Timer(10)
+                            end)
+                            
+
+                            repeat task.wait(1)
+                                for _, child in billboardObjects:GetChildren() do
+                                    local frame = child:FindFirstChild("Frame")
+                                    local textElement = frame and frame:FindFirstChild("Frame") and frame.Frame:FindFirstChild("Text_Element")
+                                        
+                                    if textElement and textElement:GetAttribute("Text") == "Start Egg Hunt" then
+                                        local found = textElement.Parent.Parent:FindFirstChildWhichIsA("ImageButton")
+                                        if button and button.Active then
+                                            button = found
+                                        end
                                     end
                                 end
-                            end
+                            until timer or button
+                            SendClick(button)
+                            task.wait(5)
+
                             -- Collect Eggs
                             for _,v in pairs(workspace:GetChildren())do
                                 if v:IsA("Model") and v.Name == "Model" then
