@@ -476,7 +476,7 @@ if EventItem then
                                         
                                     if textElement and textElement:GetAttribute("Text") == "Start Egg Hunt" then
                                         local found = textElement.Parent.Parent:FindFirstChildWhichIsA("ImageButton")
-                                        if button and button.Active then
+                                        if found and found.Active then
                                             button = found
                                         end
                                     end
