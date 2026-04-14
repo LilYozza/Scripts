@@ -1,4 +1,4 @@
-print("Version 1.2.5 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.4 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -488,20 +488,30 @@ if EventItem then
                 local EvilInfo = ALLDATA.EasterEventData["EvilBunnyData"]
                 if EvilInfo then
                     if EvilInfo.QuestState == "Active" then
-
+                        
                         local targetPlant = EvilInfo.TargetPlantName
                         local foundPlant = findPlant(targetPlant)
+                        print("Doing Evil Bunny", targetPlant, foundPlant)
                         if foundPlant then
                             local oldPos = foundPlant.PrimaryPart.Position
-                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
-                            if  shared.ToggleER and oldPos then
-                                plantSeed(foundPlant.Name, oldPos)
+                            local oldName = foundPlant.Name
+
+                            local shovel = checkBackpack("Shovel")
+                            if shovel then
+                                print("Shoveling:", foundPlant)
+                                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
+                                if  shared.ToggleER and oldPos then
+                                    print("replanting:", oldName)
+                                    plantSeed(oldName, oldPos)
+                                end
                             end
                         end
 
                     elseif EvilInfo.QuestState == "Complete" then
+                        print("Collecting Evil Bunny Reward")
                         game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyClaim"):InvokeServer() task.wait(1)
                     elseif EvilInfo.QuestState == "Idle" and (os.time() - EvilInfo.LastSacrificeTime) > 601 then
+                        print("Starting Evil Bunny")
                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyGiveQuest"):InvokeServer()
                     end
                 end
