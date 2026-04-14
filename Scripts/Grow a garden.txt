@@ -1,4 +1,4 @@
-print("Version 1.2.5 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -455,7 +455,7 @@ if EventItem then
         shared.ToggleEAS=bool
         spawn(function()
             while shared.ToggleEAS do
-                if getSpaceLeft() < 20 then
+                if getSpaceLeft() < 20 and not busy then
                     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
                 end
                 task.wait(1)
@@ -491,7 +491,7 @@ if EventItem then
                         
                         local targetPlant = EvilInfo.TargetPlantName
                         local foundPlant = findPlant(targetPlant)
-                        print("Doing Evil Bunny", targetPlant, foundPlant)
+                        --print("Doing Evil Bunny", targetPlant, foundPlant)
                         if foundPlant then
                             local oldPos = foundPlant.PrimaryPart.Position
                             local oldName = foundPlant.Name
@@ -499,21 +499,21 @@ if EventItem then
                             local shovel = checkBackpack("Shovel")
                             if shovel then
                                 Player.Character:WaitForChild("Humanoid"):EquipTool(shovel)
-                                print("Shoveling:", foundPlant)
+                                --print("Shoveling:", foundPlant)
                                 game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
                                 Player.Character:WaitForChild("Humanoid"):UnequipTools()
                                 if  shared.ToggleER and oldPos then
-                                    print("replanting:", oldName)
+                                    --print("replanting:", oldName)
                                     plantSeed(oldName, oldPos)
                                 end
                             end
                         end
 
                     elseif EvilInfo.QuestState == "Complete" then
-                        print("Collecting Evil Bunny Reward")
+                        --print("Collecting Evil Bunny Reward")
                         game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyClaim"):InvokeServer() task.wait(1)
                     elseif EvilInfo.QuestState == "Idle" and (os.time() - EvilInfo.LastSacrificeTime) > 601 then
-                        print("Starting Evil Bunny")
+                        --print("Starting Evil Bunny")
                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyGiveQuest"):InvokeServer()
                     end
                 end
@@ -893,7 +893,7 @@ Auto:Toggle("Auto Harvest", function(bool)
     shared.ToggleAH = bool
     task.spawn(function()
         while shared.ToggleAH do
-            if getSpaceLeft() > 0 then
+            if getSpaceLeft() > 0 and not busy then
                 local spaceLeft = math.max(0, getSpaceLeft())
                 local t = getFruit(spaceLeft, nil, nil)
                 --shuffle(t)
