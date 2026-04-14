@@ -1,4 +1,4 @@
-print("Version 1.2.3 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.4 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -199,6 +199,15 @@ local function checkPlant(_plant, _name, _mutations, _strict, _size)
 end
 
 
+local function findPlant(_plant)
+    for _,v in pairs(Plants_Physical:GetChildren())do
+        if v.Name == _plant then
+            return v
+        end
+    end
+end
+
+
 local function checkPlantGarden(_name, _mutations, _size)
     for _,v in pairs(Plants_Physical:GetChildren())do
         local Fruits = v:FindFirstChild("Fruits")
@@ -321,6 +330,21 @@ local function getFruit(_amount, _blacklist, _mutationCheck)
     return t
 end
 
+local function plantSeed(_seed, _pos)
+    local pos = typeof(_pos) == "CFrame" and _pos.Position or _pos
+
+    local x = pos.X
+    local y = pos.Z
+    
+    local args = {
+        [1] = Vector3.new(x, 0.13552570343017578, y),
+        [2] = _seed
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
+end
+
+
 
 
 --Easter EVENT #########################################################################################################
@@ -439,9 +463,62 @@ if EventItem then
         end)
     end)
 
+    --EvilBunnyData
+        --TotalSacrifices
+        --QuestState
+        --TargetPlantName
+        --TargetPlantKey
+        --QuestStartTime
+        --PlnatScore
+        --LastSacrificeTime
+
+
+    --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyGiveQuest"):InvokeServer()
+    --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyClaim"):InvokeServer()
+
+    Auto:Toggle("Replant",function(bool)
+        shared.ToggleER=bool
+    end)
+
+    EventMenu:Toggle("Evil Bunny",function(bool)
+        shared.ToggleEEB=bool
+        spawn(function()
+            while shared.ToggleEEB do
+
+                local EvilInfo = ALLDATA["EvilBunnyData"]
+                if EvilInfo then
+                    if EvilInfo.QuestState == "Active" then
+                        local targetPlant = EvilInfo.TargetPlantName
+                        local foundPlant = findPlant(targetPlant)
+                        if foundPlant then
+                            --Maybe equip shovel ?
+                            local oldPos = foundPlant.PrimaryPart.Position
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
+                            if  shared.ToggleER and oldPos then
+                                plantSeed(foundPlant.Name, oldPos)
+                            end
+                        end
+
+                    elseif EvilInfo.QuestState == "Complete" then
+                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyClaim"):InvokeServer()
+                        task.wait(600)
+                    elseif EvilInfo.QuestState == "Idle" then
+                       game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyGiveQuest"):InvokeServer()
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
+
+
+
+
+
+
     --Player.Character:GetAttribute("EasterEggHunt_CARRYING")
     --Player:GetAttribute("EasterEggHuntCooldownRemaining")
-
 
     EventMenu:Toggle("Easter Hunt",function(bool)
         shared.ToggleEEH=bool
@@ -465,7 +542,8 @@ if EventItem then
                             local timer = false
                             local button
                             task.spawn(function()
-                                timer = Timer(10)
+                                task.wait(10)
+                                timer = true
                             end)
                             
 
@@ -482,6 +560,7 @@ if EventItem then
                                     end
                                 end
                             until timer or button
+                            task.wait(2)
                             SendClick(button)
                             task.wait(5)
 
@@ -1012,17 +1091,6 @@ end)
 ]]--
 
 -- PlantingMenu -------------------------------------------------------------------
-
-local function plantSeed(_seed, _pos)
-    local args = {
-        [1] = Vector3.new(_pos.Position.x, 0.13552570343017578, _pos.Position.z),
-        [2] = _seed
-    }
-
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
-end
-
-
 local plantPos
 PlantingMenu:Button("Set Position",function()
     spawn(function()
