@@ -476,7 +476,7 @@ if EventItem then
     --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyGiveQuest"):InvokeServer()
     --game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EvilBunny"):WaitForChild("EvilBunnyClaim"):InvokeServer()
 
-    Auto:Toggle("Replant",function(bool)
+    EventMenu:Toggle("Replant",function(bool)
         shared.ToggleER=bool
     end)
 
@@ -488,9 +488,12 @@ if EventItem then
                 local EvilInfo = ALLDATA["EvilBunnyData"]
                 if EvilInfo then
                     if EvilInfo.QuestState == "Active" then
+
                         local targetPlant = EvilInfo.TargetPlantName
                         local foundPlant = findPlant(targetPlant)
+                        print("Active:", targetPlant, foundPlant)
                         if foundPlant then
+                            print(foundPlant)
                             --Maybe equip shovel ?
                             local oldPos = foundPlant.PrimaryPart.Position
                             game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
