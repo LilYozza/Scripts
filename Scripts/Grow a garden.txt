@@ -1,4 +1,4 @@
-print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -303,6 +303,7 @@ end
 
 local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
+--[[
 local function getFruit(_amount, _blacklist, _mutationCheck)
     _blacklist = _blacklist or {}
     _mutationCheck = _mutationCheck or {"any"}
@@ -326,6 +327,23 @@ local function getFruit(_amount, _blacklist, _mutationCheck)
             end 
         end
         if _amount and #t >= _amount then break end
+    end
+    return t
+end
+]]
+
+local function getFruit(_amount, _blacklist, _mutationcheck)
+    local index, t = 1, {}
+    local harvestablePrompts = CollectionService:GetTagged("CollectPrompt")
+    print("Found " .. #harvestablePrompts .. " harvestable fruits.")
+    for _, prompt in pairs(harvestablePrompts) do
+        local plant = prompt.Parent.Parent
+        if (plant:IsDescendantOf(Plants_Physical)) then
+            if index > _amount then break end
+            if not table.find(_blacklist, plant.Name) then
+                local cPlant = checkPlant(plant, nil, _mutationcheck, false)
+            end
+        end
     end
     return t
 end
@@ -848,27 +866,6 @@ Auto:Button("Reset",function()
         blacklistHarvest = {}
     end)
 end)
-
---[[
-
-for _,v in pairs(Plants_Physical:GetChildren())do
-    if not table.find(blacklistHarvest, v.Name) and v:GetAttribute("DoneGrowTime") then
-        local fruitCheck = v:FindFirstChild("Fruit_Spawn")
-        if fruitCheck then
-            local Fruits = v:FindFirstChild("Fruits")
-            if Fruits then
-                for __,_v in pairs(Fruits:GetChildren())do
-                    if shared.ToggleAH and not IsMaxInventory() then CollectPlant(_v) end
-                end 
-            end
-        else
-            if shared.ToggleAH and not IsMaxInventory() then CollectPlant(v) end
-        end
-    end
-end
-
-]]
-
 
 
 local function shuffle(t)
