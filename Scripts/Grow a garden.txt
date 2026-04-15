@@ -1,4 +1,4 @@
-print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -338,7 +338,7 @@ local function getFruit(_amount, _blacklist, _mutationcheck)
     print("Found " .. #harvestablePrompts .. " harvestable fruits.")
     for _, prompt in pairs(harvestablePrompts) do
         local plant = prompt.Parent.Parent
-        if (plant:IsDescendantOf(Plants_Physical)) then
+        if (plant:IsDescendantOf(Plants_Physical) and prompt.Enabled == true and plant:HasTag("Harvestable")) then
             if _amount and index > _amount then break end
             if not _blacklist or not table.find(_blacklist, plant.Name) then
                 --local cPlant = checkPlant(plant, nil, _mutationcheck, false)
@@ -895,7 +895,7 @@ Auto:Toggle("Auto Harvest", function(bool)
             if getSpaceLeft() > 0 and not busy then
                 local spaceLeft = math.max(0, getSpaceLeft())
                 local t = getFruit(spaceLeft, nil, nil)
-                --shuffle(t)
+                shuffle(t)
                 if harvestType == "Mass" then
                     print("Fruit Past:", #t, "Space Left:", spaceLeft)
                     mod:FireServer(t)
@@ -923,7 +923,7 @@ Auto:Toggle("Auto Harvest", function(bool)
                 end
                 ]]--
             end
-            task.wait(1)
+            task.wait(2)
         end
     end)
 end)
