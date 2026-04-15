@@ -1,4 +1,4 @@
-print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -336,14 +336,17 @@ local function getFruit(_amount, _blacklist, _mutationcheck)
     local index, t = 1, {}
     local harvestablePrompts = CollectionService:GetTagged("CollectPrompt")
     --print("Found " .. #harvestablePrompts .. " harvestable fruits.")
-    for _, prompt in pairs(harvestablePrompts) do
-        local plant = prompt.Parent.Parent
-        if (plant:IsDescendantOf(Plants_Physical) and prompt.Enabled == true and plant:HasTag("Harvestable")) then
-            if _amount and index > _amount then break end
-            if not _blacklist or not table.find(_blacklist, plant.Name) then
-                --local cPlant = checkPlant(plant, nil, _mutationcheck, false)
-                t[index] = plant
-                index = index + 1
+    for _, prompt in ipairs(harvestablePrompts) do
+        if _amount and index > _amount then break end
+        local plant = (prompt.Parent and prompt.Parent.Parent) or nil
+        if (plant and plant:IsDescendantOf(Plants_Physical) and prompt.Enabled == true and plant:HasTag("Harvestable")) then
+            local DoneGrowTime = plant:GetAttribute("DoneGrowTime")
+            if not DoneGrowTime or (os.time() > DoneGrowTime) then
+                if not _blacklist or not table.find(_blacklist, plant.Name) then
+                    --local cPlant = checkPlant(plant, nil, _mutationcheck, false)
+                    t[index] = plant
+                    index = index + 1
+                end
             end
         end
     end
