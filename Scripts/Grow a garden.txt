@@ -1,4 +1,4 @@
-print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -897,6 +897,7 @@ Auto:Toggle("Auto Harvest", function(bool)
                 local t = getFruit(spaceLeft, nil, nil)
                 --shuffle(t)
                 if harvestType == "Mass" then
+                    print("Fruit Past:", #t, "Space Left:", spaceLeft)
                     mod:FireServer(t)
                 elseif harvestType == "Single" then
                     for i,v in pairs(t) do
