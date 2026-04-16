@@ -1,4 +1,4 @@
-print("Version 1.2.6 - Easter Part 2 (Candy Blossom)")
+print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -898,14 +898,15 @@ Auto:Toggle("Auto Harvest", function(bool)
             if getSpaceLeft() > 0 and not busy then
                 local spaceLeft = math.max(0, getSpaceLeft())
                 local t = getFruit(spaceLeft, nil, nil)
-                shuffle(t)
+                --shuffle(t)
                 if harvestType == "Mass" then
                     --print("Fruit Past:", #t, "Space Left:", spaceLeft)
                     mod:FireServer(t)
                 elseif harvestType == "Single" then
                     for i,v in pairs(t) do
                         mod:FireServer({v})
-                        if i % 5 == 0 then task.wait() end
+                        task.wait()
+                        --if i % 5 == 0 then task.wait() end
                     end
                 end
 
@@ -1093,6 +1094,23 @@ Auto:Button("Remove Farms",function()
         for _,v in pairs(Farms:GetChildren()) do
             if v ~= Farm then v:Destroy() end
         end
+    end)
+end)
+
+local function ultraLow(i)
+	for _,o in ipairs(i:GetDescendants()) do
+		if o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("PointLight") or o:IsA("SpotLight") or o:IsA("SurfaceLight") then o.Enabled=false
+		elseif o:IsA("BasePart") then o.CastShadow=false o.Reflectance=0 o.Material=Enum.Material.Plastic o.Transparency = 1 o.CanCollide = false
+		elseif o:IsA("MeshPart") then o.RenderFidelity=Enum.RenderFidelity.Performance
+		elseif o:IsA("Decal") or o:IsA("Texture") then o.Transparency=1
+		elseif o:IsA("Sound") then o.Volume=0
+		end
+	end
+end
+
+Auto:Button("Test Use",function()
+    spawn(function()
+        ultraLow(Plants_Physical)
     end)
 end)
 
