@@ -112,7 +112,7 @@ Auto:Toggle("Auto Buy",function(bool)
                     local head = v:FindFirstChild("Head")
                     if price and head then
                         if TCollect and price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value)+Tycoon.CurrencyToCollect.Value then Touch(Essentials.Giver,0.3)end
-                        if price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then Touch(head,0.3)end
+                        if price.Value<=fromSuffixString(Player.leaderstats.Blocks.Value) then MoveTo(head, Vector3.new(0,5,0)) task.wait(0.5)end
                     end
                 end
             end task.wait()
