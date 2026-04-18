@@ -1,4 +1,4 @@
-print("Version 1.2.7 - Easter Part 2 (Candy Blossom)")
+print("Version 1.3.0 - Easter Part 3 (Team Packaging)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -68,6 +68,7 @@ end
 --Post Variables
 local Farm = getFarm()
 local Important = Farm:WaitForChild("Important")
+local Center_Point = Farm:WaitForChild("Center_Point")
 local Plants_Physical = Important:WaitForChild("Plants_Physical")
 --[[
 local function getInventoryCount()
@@ -545,74 +546,104 @@ if EventItem then
         end)
     end)
 
+    
+
+    local CandyPackaging = UpdateItems:WaitForChild("CandyPackaging", 5)
+    if CandyPackaging then
+        local function parseTime(text)
+            -- Extract the m:ss part
+            local minutes, seconds = string.match(text, "(%d+):(%d+)")
+            
+            if minutes and seconds then
+                minutes = tonumber(minutes)
+                seconds = tonumber(seconds)
+                
+                return minutes * 60 + seconds -- total time in seconds
+            end
+            
+            return nil
+        end
+
+        local Stacks = CandyPackaging:WaitForChild("Stacks")
+        local function getStack(_player)
+            for _,v in pairs(Stacks:GetChildren())do
+                if v:IsA("Model") and v.PrimaryPart and v.PrimaryPart.Transparency == 0 then
+                    local label = v.Sign.Billboard.SurfaceGui.Frame.TextLabel
+                    if label.text == _player.Name then
+                        return v
+                    end
+                end
+                
+            end
+        end
+
+        local function getTime(_stack)
+            if _stack then
+                local label = _stack.Sign.Timer.BillboardGui.Frame.TextLabel.Text
+                if label then
+                    local time = parseTime(label)
+                    return time
+                end
+            end
+            return math.huge
+        end
 
 
+        local stack = getStack(Player)
 
+
+        -- game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TeamEvents"):WaitForChild("CandyPackaging"):WaitForChild("SubmitAllRE"):FireServer()
+        EventMenu:Toggle("Harvest All",function(bool)
+            shared.ToggleEHA=bool
+        end)
+
+        EventMenu:Toggle("Candy Packing",function(bool)
+            shared.ToggleEAP=bool
+            spawn(function()
+                while shared.ToggleEAP do
+                    if stack then
+                        local timer = getTime(stack)
+                        if timer and timer <= 0 then
+                            -- Harvest All Fruit ?
+                            if shared.ToggleEHA and not IsMaxInventory() then
+                                local fruit = getFruit(getSpaceLeft())
+                                mod:FireServer(fruit) task.wait(5)
+                                print("Handing in fruit...")
+                            end
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TeamEvents"):WaitForChild("CandyPackaging"):WaitForChild("SubmitAllRE"):FireServer()
+                        end
+                    else
+                        print("Couldnt Find Stack...")
+                        stack = getStack(Player)
+                    end
+                    task.wait(1)
+                end
+            end)
+        end)
+    end
 
 
 
     --Player.Character:GetAttribute("EasterEggHunt_CARRYING")
     --Player:GetAttribute("EasterEggHuntCooldownRemaining")
 
-    EventMenu:Toggle("Easter Hunt",function(bool)
-        shared.ToggleEEH=bool
+    EventMenu:Toggle("Egg Wars",function(bool)
+        shared.ToggleEEG=bool
         spawn(function()
-            while shared.ToggleEEH do
-                
-                if HuntNPC then
-                    local eggCooldown = Player:GetAttribute("EasterEggHuntCooldownRemaining")
-                    if eggCooldown <= 0 and not busy then
-                        busy = true
-                        --Teleport To NPC and Open Prompt
-                        local oldPos = GetPos()
-                        local prox = HuntNPC:FindFirstChildWhichIsA("ProximityPrompt")
-                        MoveTo(HuntNPC, Vector3.new(0,5,0)) task.wait(1)
-                        fireproximityprompt(prox)
-
-                        local billboardObjects = Player:WaitForChild("PlayerGui"):WaitForChild("Billboard_UI"):WaitForChild("Objects")
-                        if billboardObjects then
-                            -- Select Prompt
-
-                            local timer = false
-                            local button
-                            task.spawn(function()
-                                task.wait(10)
-                                timer = true
-                            end)
-                            
-
-                            repeat task.wait(1)
-                                for _, child in billboardObjects:GetChildren() do
-                                    local frame = child:FindFirstChild("Frame")
-                                    local textElement = frame and frame:FindFirstChild("Frame") and frame.Frame:FindFirstChild("Text_Element")
-                                        
-                                    if textElement and textElement:GetAttribute("Text") == "Start Egg Hunt" then
-                                        local found = textElement.Parent.Parent:FindFirstChildWhichIsA("ImageButton")
-                                        if found and found.Active then
-                                            button = found
-                                        end
-                                    end
-                                end
-                            until timer or button
-                            task.wait(2)
-                            SendClick(button)
-                            task.wait(5)
-
-                            -- Collect Eggs
-                            for _,v in pairs(workspace:GetChildren())do
-                                if v:IsA("Model") and v.Name == "Model" then
-                                    for __,_v in pairs(v:GetDescendants())do
-                                        if _v:IsA("ProximityPrompt") then
-                                            MoveTo(_v.Parent, Vector3.new(0,5,0)) task.wait(0.5)
-                                            fireproximityprompt(_v) task.wait(0.5)
-                                        end
-                                    end
+            while shared.ToggleEEG do
+                for _,v in pairs(Workspace:GetChildren())do
+                    if v.Name == "Model" and v:IsA("Model") then
+                        local h = v:FindFirstChild("Highlight")
+                        if h then
+                            for __,_v in pairs(v:GetDescendants())do
+                                if _v:IsA("ProximityPrompt") then
+                                    MoveTo(_v.Parent,Vector3.new(0,5,0)) task.wait(0.5)
+                                    fireproximityprompt(_v) task.wait(0.5)
+                                    MoveTo(Center_Point) task.wait(0.5)
+                                    break
                                 end
                             end
-                            --Done
-                            MoveTo(oldPos)
                         end
-                        busy = false
                     end
                 end
                 task.wait(1)
