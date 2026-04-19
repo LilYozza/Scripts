@@ -1,4 +1,4 @@
-print("Version 1.3.3 - Easter Part 3 (Team Packaging)")
+print("Version 1.3.4 - Easter Part 3 (Team Packaging)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -562,7 +562,7 @@ if EventItem then
                                 game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
                                 Player.Character:WaitForChild("Humanoid"):UnequipTools()
                                 if  shared.ToggleER and oldPos then
-                                    local seed = checkBackpack(targetPlant .. " Seed")
+                                    local seed = checkBackpack("Easter " .. targetPlant .. " Seed")
                                     if seed then
                                         Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
                                         plantSeed(seed, oldPos) task.wait(0.5)
@@ -683,7 +683,7 @@ if EventItem then
     end)
 
     local infoWindow1
-    Auto:Button("Show Info",function()
+    EventMenu:Button("Show Info",function()
         spawn(function()
             if infoWindow1 then
                 infoWindow1:Destroy()
