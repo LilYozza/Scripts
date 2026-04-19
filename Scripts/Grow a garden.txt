@@ -1,4 +1,4 @@
-print("Version 1.3.4 - Easter Part 3 (Team Packaging)")
+print("Version 1.3.5 - Easter Part 3 (Team Packaging)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -561,8 +561,8 @@ if EventItem then
                                 --print("Shoveling:", foundPlant)
                                 game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
                                 Player.Character:WaitForChild("Humanoid"):UnequipTools()
-                                if  shared.ToggleER and oldPos then
-                                    local seed = checkBackpack("Easter " .. targetPlant .. " Seed")
+                                if shared.ToggleER and oldPos then
+                                    local seed = checkBackpack(targetPlant .. " Seed")
                                     if seed then
                                         Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
                                         plantSeed(seed, oldPos) task.wait(0.5)
@@ -673,7 +673,7 @@ if EventItem then
                                     break
                                 end
                             end
-                            MoveTo(oldPos, Vector3.new(0,10,0))
+                            MoveTo(oldPos, Vector3.new(0,1,0))
                         end
                     end
                 end
@@ -686,8 +686,8 @@ if EventItem then
     EventMenu:Button("Show Info",function()
         spawn(function()
             if infoWindow1 then
-                infoWindow1:Destroy()
-                infoWindow1 = nil
+                --infoWindow1:Destroy()
+                --infoWindow1 = nil
             else
                 infoWindow1 = library:CreateWindow("Plant Info")
                 local infoFolder1 = infoWindow1:CreateFolder("Plant Info")
