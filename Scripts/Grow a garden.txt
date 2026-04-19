@@ -1,4 +1,4 @@
-print("Version 1.3.7 - Easter Part 3 (Team Packaging)")
+print("Version 1.3.8 - Easter Part 3 (Team Packaging)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -233,6 +233,7 @@ local function checkBackpack(_item, _amount,_mutation, _weight, wtype)
         local cAttr = t:GetAttribute("c")
         local hAttr = t:GetAttribute("h")
         local eAttr = t:GetAttribute("e")
+        local UUIDAttr = t:GetAttribute("UUID")
         local name = t.Name
 
 
@@ -243,9 +244,7 @@ local function checkBackpack(_item, _amount,_mutation, _weight, wtype)
 
         if (weight and _weight and ((wtype and weight >= _weight) or (not wtype and weight <= _weight))) or not _weight then
             if (_mutation and t:GetAttribute(_mutation)) or not _mutation then
-                if hAttr then
-                    if hAttr == _item then return t, cAttr end
-                elseif cAttr == _item or (name and name:lower():match(_item:lower())) then
+                if (hAttr and hAttr == _item) or (cAttr and cAttr == _item) or (UUIDAttr and UUIDAttr == _item:upper()) or (name and (name == _item or (name:lower():match(_item:lower())))) then
                     return t, cAttr
                 end
             end
@@ -555,7 +554,7 @@ if EventItem then
                         if foundPlant then
                             local oldPos = foundPlant.PrimaryPart.Position
 
-                            local shovel = checkBackpack("Shovel [Destroy Plants]")
+                            local shovel = checkBackpack("Shovel")
                             if shovel then
                                 Player.Character:WaitForChild("Humanoid"):EquipTool(shovel)
                                 --print("Shoveling:", foundPlant)
@@ -619,6 +618,9 @@ if EventItem then
         local stack = getStack(Player)
         local bill = stack.Sign.Timer:WaitForChild("BillboardGui")
         local label = bill.Frame:WaitForChild("TextLabel")
+        local maxLabel = stack.Sign.Face.SurfaceGui.Frame:WaitForChild("Max")
+
+        --
 
         -- game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TeamEvents"):WaitForChild("CandyPackaging"):WaitForChild("SubmitAllRE"):FireServer()
         EventMenu:Toggle("Harvest All",function(bool)
@@ -629,7 +631,7 @@ if EventItem then
             shared.ToggleEAP=bool
             spawn(function()
                 while shared.ToggleEAP do
-                    if stack then
+                    if stack and maxLabel.Visible == false then
                         local timer = parseTime(label.Text)
                         if timer and (timer <= 0 or (bill and bill.Enabled == false)) then
                             if shared.ToggleEHA and not IsMaxInventory() then
