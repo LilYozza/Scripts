@@ -224,7 +224,7 @@ local function checkPlantGarden(_name, _mutations, _size)
     end
 end
 
-local function checkBackpack(_item, _amount,_mutation, _weight, wtype)
+local function checkBackpack(_item, _amount,_mutation, _weight, wtype, _match)
     if not _item then return end
 
     local function matchTool(t)
@@ -244,7 +244,7 @@ local function checkBackpack(_item, _amount,_mutation, _weight, wtype)
 
         if (weight and _weight and ((wtype and weight >= _weight) or (not wtype and weight <= _weight))) or not _weight then
             if (_mutation and t:GetAttribute(_mutation)) or not _mutation then
-                if (hAttr and hAttr == _item) or (cAttr and cAttr == _item) or (UUIDAttr and UUIDAttr == _item:upper()) or (name and (name == _item or (name:lower():match(_item:lower())))) then
+                if (hAttr and hAttr == _item) or (cAttr and cAttr == _item) or (UUIDAttr and UUIDAttr == _item:upper()) or (name and (name == _item or (not _match and name:lower():match(_item:lower())))) then
                     return t, cAttr
                 end
             end
@@ -554,7 +554,7 @@ if EventItem then
                         if foundPlant then
                             local oldPos = foundPlant.PrimaryPart.Position
 
-                            local shovel = checkBackpack("Shovel")
+                            local shovel = checkBackpack("Shovel",nil,nil,nil,nil,true)
                             if shovel then
                                 Player.Character:WaitForChild("Humanoid"):EquipTool(shovel)
                                 --print("Shoveling:", foundPlant)
