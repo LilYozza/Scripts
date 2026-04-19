@@ -1,4 +1,4 @@
-print("Version 1.3.5 - Easter Part 3 (Team Packaging)")
+print("Version 1.3.6 - Easter Part 3 (Team Packaging)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -565,7 +565,7 @@ if EventItem then
                                     local seed = checkBackpack(targetPlant .. " Seed")
                                     if seed then
                                         Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
-                                        plantSeed(seed, oldPos) task.wait(0.5)
+                                        plantSeed(seed:GetAttribute("Seed"), oldPos) task.wait(0.5)
                                         Player.Character:WaitForChild("Humanoid"):UnequipTools()
                                     end
                                 end
@@ -1178,6 +1178,11 @@ Auto:Button("Remove Farms",function()
     end)
 end)
 
+--remove me if needed
+for _,v in pairs(Farms:GetChildren()) do
+    if v ~= Farm then v:Destroy() end
+end
+
 local function ultraLow(i)
 	for _,o in ipairs(i:GetDescendants()) do
 		if o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("PointLight") or o:IsA("SpotLight") or o:IsA("SurfaceLight") then o.Enabled=false
@@ -1189,7 +1194,9 @@ local function ultraLow(i)
 	end
 end
 
-Auto:Button("Test Use",function()
+
+
+Auto:Button("Plant Lag",function()
     spawn(function()
         ultraLow(Plants_Physical)
     end)
