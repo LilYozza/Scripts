@@ -1,4 +1,4 @@
-print("Version 1.3.2 - Easter Part 3 (Team Packaging)")
+print("Version 1.3.3 - Easter Part 3 (Team Packaging)")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -416,8 +416,44 @@ if EventItem then
     end
 
 
-    --CRAFTS_COMPLETED
-    --
+    --[[
+        TO DO
+        Option In Below Certian coin then harvest + sell [TESTING] 
+        Fix Spam Packaging
+        Fix Replant [TESTING]
+        Fix Teleport back to Oldpos after hunt [TESTING]
+
+
+    ]]--
+    local coinThreshhold = 1000000
+
+    EventMenu:Slider("Amount",{
+        min = 100; -- min value of the slider
+        max = 1000000; -- max value of the slider
+        precise = true; -- max 2 decimals
+    },function(value)
+        coinThreshhold = value
+    end)
+
+    EventMenu:Toggle("Auto Coins",function(bool)
+        shared.ToggleEAC=bool
+        spawn(function()
+            while shared.ToggleEAC do
+
+                if ALLDATA.SpecialCurrency.ChocCoins < coinThreshhold and not busy then
+                    if IsMaxInventory() then
+                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
+                    else
+                        local fruit = getFruit(getSpaceLeft())
+                        mod:FireServer(fruit) task.wait(5)
+                    end
+                end
+
+
+                task.wait(1)
+            end
+        end)
+    end)
 
     EventMenu:Toggle("Candy Blossom",function(bool)
         shared.ToggleECB=bool
@@ -518,7 +554,6 @@ if EventItem then
                         --print("Doing Evil Bunny", targetPlant, foundPlant)
                         if foundPlant then
                             local oldPos = foundPlant.PrimaryPart.Position
-                            local oldName = foundPlant.Name
 
                             local shovel = checkBackpack("Shovel")
                             if shovel then
@@ -527,8 +562,12 @@ if EventItem then
                                 game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Remove_Item"):FireServer(foundPlant) task.wait(1)
                                 Player.Character:WaitForChild("Humanoid"):UnequipTools()
                                 if  shared.ToggleER and oldPos then
-                                    --print("replanting:", oldName)
-                                    plantSeed(oldName, oldPos)
+                                    local seed = checkBackpack(targetPlant .. " Seed")
+                                    if seed then
+                                        Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
+                                        plantSeed(seed, oldPos) task.wait(0.5)
+                                        Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                                    end
                                 end
                             end
                         end
@@ -577,21 +616,9 @@ if EventItem then
             end
         end
 
-        local function getTime(_stack)
-            if _stack then
-                local bill = _stack.Sign.Timer.BillboardGui
-                local label = bill.Frame.TextLabel.Text
-                if label then
-                    local time = parseTime(label)
-                    return time, bill
-                end
-            end
-            return math.huge
-        end
-
-
         local stack = getStack(Player)
-
+        local bill = stack.Sign.Timer:WaitForChild("BillboardGui")
+        local label = bill.Frame:WaitForChild("TextLabel")
 
         -- game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TeamEvents"):WaitForChild("CandyPackaging"):WaitForChild("SubmitAllRE"):FireServer()
         EventMenu:Toggle("Harvest All",function(bool)
@@ -603,7 +630,7 @@ if EventItem then
             spawn(function()
                 while shared.ToggleEAP do
                     if stack then
-                        local timer, bill = getTime(stack)
+                        local timer = parseTime(label.Text)
                         if timer and (timer <= 0 or (bill and bill.Enabled == false)) then
                             if shared.ToggleEHA and not IsMaxInventory() then
                                 local fruit = getFruit(getSpaceLeft())
@@ -646,7 +673,7 @@ if EventItem then
                                     break
                                 end
                             end
-                            MoveTo(oldPos)
+                            MoveTo(oldPos, Vector3.new(0,10,0))
                         end
                     end
                 end
@@ -655,50 +682,69 @@ if EventItem then
         end)
     end)
 
-    local proLabel = EventMenu:Label("info",{
-        TextSize = 20;
-        TextColor = Color3.fromRGB(255,255,255);
-        BgColor = Color3.fromRGB(69,69,69);
-    })
+    local infoWindow1
+    Auto:Button("Show Info",function()
+        spawn(function()
+            if infoWindow1 then
+                infoWindow1:Destroy()
+                infoWindow1 = nil
+            else
+                infoWindow1 = library:CreateWindow("Plant Info")
+                local infoFolder1 = infoWindow1:CreateFolder("Plant Info")
+                local proLabel = infoFolder1:Label("info",{
+                    TextSize = 20;
+                    TextColor = Color3.fromRGB(255,255,255);
+                    BgColor = Color3.fromRGB(69,69,69);
+                })
 
-    local plantLabel = EventMenu:Label("Plant",{
-        TextSize = 20;
-        TextColor = Color3.fromRGB(255,255,255);
-        BgColor = Color3.fromRGB(69,69,69);
-    }) 
+                local plantLabel = infoFolder1:Label("Plant",{
+                    TextSize = 20;
+                    TextColor = Color3.fromRGB(255,255,255);
+                    BgColor = Color3.fromRGB(69,69,69);
+                }) 
 
-    local infoLabel = EventMenu:Label("info",{
-        TextSize = 20;
-        TextColor = Color3.fromRGB(255,255,255);
-        BgColor = Color3.fromRGB(69,69,69);
-    })
+                local infoLabel = infoFolder1:Label("info",{
+                    TextSize = 20;
+                    TextColor = Color3.fromRGB(255,255,255);
+                    BgColor = Color3.fromRGB(69,69,69);
+                })
+
+                spawn(function()
+                    while infoWindow1 do
+                        if plantLabel and infoLabel then
+                                local rPlantTable = ALLDATA.EasterEventData.RequiredPlantInfo
+                                local plant = rPlantTable.RequiredPlant
+                                local size = rPlantTable.RequiredPlantSize
+                                local mutation = rPlantTable.RequiredPlantMutation or nil
+                            if plant and size then
+                                local mutationText = mutation or "None"
+                                local plantText = string.gsub(plant, "Easter", "")
+                                plantLabel:Refresh(plantText)
+                                infoLabel:Refresh(size .. "KG " .. mutationText)
+                            end
+                        end
+                        if proLabel then
+                            local Progression = ALLDATA.EasterEventData.Progression
+                            local str = (Progression - 1) .. "/50"
+                            proLabel:Refresh(str)
+                        end
+                        task.wait(1)
+                    end
+                    print("Loop Broke")
+                end)
+            end
+        end)
+    end)
+
+
 
 --EasterEventData
     --Progression
 
-    spawn(function()
-        while task.wait(1) do
-            if plantLabel and infoLabel then
-                    local rPlantTable = ALLDATA.EasterEventData.RequiredPlantInfo
-                    local plant = rPlantTable.RequiredPlant
-                    local size = rPlantTable.RequiredPlantSize
-                    local mutation = rPlantTable.RequiredPlantMutation or nil
-                if plant and size then
-                    local mutationText = mutation or "None"
-                    local plantText = string.gsub(plant, "Easter", "")
-                      plantLabel:Refresh(plantText)
-                    infoLabel:Refresh(size .. "KG " .. mutationText)
-                end
-            end
-            if proLabel then
-                local Progression = ALLDATA.EasterEventData.Progression
-                local str = (Progression - 1) .. "/50"
-                proLabel:Refresh(str)
-            end
-        end
-    end)
 
-    --
+
+    
+
 
     
 
