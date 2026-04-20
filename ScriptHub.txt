@@ -463,10 +463,6 @@ local Games = {
 		Name = 'Only Run!!',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Only%20Run!!.txt'
 	},
-	[5818771056] = {
-		Name = 'Alpine Slide to Telamon!',
-		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Alpine%20Slide%20to%20Telamon!.txt'
-	},
 	[18738679670] = {
 		Name = 'Pick Right Path to RICH!',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Pick%20Right%20Path%20to%20RICH!.txt'
@@ -694,20 +690,27 @@ local Games = {
 }
 repeat task.wait()until game:IsLoaded()
 
-getgenv().library = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt'))()
-getgenv().Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
-
-local _g = Games[game.PlaceId] or Games[game.GameId]
-if _g then
-    print("Running:",_g.Name)
-    local s,e = pcall(function()
-        spawn(function() loadstring(game:HttpGet(_g.Script))()end)
-    end)
-    if not s then
-        print(e) print("Error Loading",_g.Name, "Script... Reloading....")
-    end
+-- Altas Fix
+if game.PlaceId == 1537690962 or game.GameId == 1537690962 then
+    -- Run atlas
+    task.wait(15) -- Enough Time To Exit
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Chris12089/atlasbss/main/script.lua"))()
 else
-     print("No Script Found For Game")
-end
+    getgenv().library = loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/UILibrary.txt'))()
+    getgenv().Essential_Functions = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Essential_Functions.txt"))()
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+    local _g = Games[game.PlaceId] or Games[game.GameId]
+    if _g then
+        print("Running:",_g.Name)
+        local s,e = pcall(function()
+            spawn(function() loadstring(game:HttpGet(_g.Script))()end)
+        end)
+        if not s then
+            print(e) print("Error Loading",_g.Name, "Script... Reloading....")
+        end
+    else
+        print("No Script Found For Game")
+    end
+
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/LilYozza/Scripts/main/Misc/Misc.txt'))()
+end
