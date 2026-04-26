@@ -273,6 +273,7 @@ local function checkBackpack(_item, _amount,_mutation, _weight, wtype, _match)
         local cAttr = t:GetAttribute("c")
         local hAttr = t:GetAttribute("h")
         local eAttr = t:GetAttribute("e")
+        local seedName = t:GetAttribute("Seed")
         local UUIDAttr = t:GetAttribute("UUID")
         local name = t.Name
 
@@ -618,17 +619,21 @@ local function main_Quest_Thread(_questID)
                             placeEgg(targetEgg, rndPos)
                         end
                     elseif type == "PlantWithTrait" then
+                        print("Planting State")
                         local seedToFind = "Carrot Seed"
                         if Player:GetAttribute("CurrentSlot") == "Easter 2026" then
                             seedToFind = "Easter Carrot Seed"
                         end
+                        print("Seed To Find:", seedToFind)
                         local seed = checkBackpack(seedToFind)
                         if seed then
                             Print("Found Seed:", seed)
                             local rndPos = getRandomPos()
                             Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
                             plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
-                            Player.Character:WaitForChild("Humanoid"):UnequipTools()                            
+                            Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                        else
+                            print("Couldnt Find Seed:", seedToFind)
                         end
 
                     else
