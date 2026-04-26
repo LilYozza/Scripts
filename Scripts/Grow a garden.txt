@@ -1,4 +1,4 @@
-print("Version 1.4.0.3 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.4 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -617,8 +617,23 @@ local function main_Quest_Thread(_questID)
                             Print("Placing:", targetEgg, "At:", rndPos)
                             placeEgg(targetEgg, rndPos)
                         end
+                    elseif type == "PlantWithTrait" then
+                        local seedToFind = "Carrot Seed"
+                        if Player:GetAttribute("CurrentSlot") == "Easter 2026" then
+                            seedToFind = "Easter Carrot Seed"
+                        end
+                        local seed = checkBackpack(seedToFind)
+                        if seed then
+                            Print("Found Seed:", seed)
+                            local rndPos = getRandomPos()
+                            Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
+                            plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
+                            Player.Character:WaitForChild("Humanoid"):UnequipTools()                            
+                        end
+
                     else
-                        Print(type, "NOT ADDED!!!")
+                        Print("INFO:",type, "NOT ADDED!!!")
+                        PrintTable("INFO:",arguments)
                     end
                 else
                     if not quest.Claimed then
@@ -1387,13 +1402,19 @@ for _,v in pairs(Farms:GetChildren()) do
 end
 
 local function ultraLow(i)
+	local o = i
+	if o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("PointLight") or o:IsA("SpotLight") or o:IsA("SurfaceLight") then o.Enabled=false
+	elseif o:IsA("BasePart") then o.CastShadow=false o.Reflectance=0 o.Material=Enum.Material.Plastic o.Transparency=1 o.CanCollide=false
+	elseif o:IsA("MeshPart") then o.RenderFidelity=Enum.RenderFidelity.Performance
+	elseif o:IsA("Decal") or o:IsA("Texture") then o.Transparency=1
+	elseif o:IsA("Sound") then o.Volume=0 end
+
 	for _,o in ipairs(i:GetDescendants()) do
 		if o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("PointLight") or o:IsA("SpotLight") or o:IsA("SurfaceLight") then o.Enabled=false
-		elseif o:IsA("BasePart") then o.CastShadow=false o.Reflectance=0 o.Material=Enum.Material.Plastic o.Transparency = 1 o.CanCollide = false
+		elseif o:IsA("BasePart") then o.CastShadow=false o.Reflectance=0 o.Material=Enum.Material.Plastic o.Transparency=1 o.CanCollide=false
 		elseif o:IsA("MeshPart") then o.RenderFidelity=Enum.RenderFidelity.Performance
 		elseif o:IsA("Decal") or o:IsA("Texture") then o.Transparency=1
-		elseif o:IsA("Sound") then o.Volume=0
-		end
+		elseif o:IsA("Sound") then o.Volume=0 end
 	end
 end
 
