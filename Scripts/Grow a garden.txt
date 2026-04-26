@@ -1,4 +1,4 @@
-print("Version 1.4.0 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.1 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -738,7 +738,18 @@ if EventItem then
     end)
 
     
-
+    EventMenu:Toggle("Auto Quest",function(bool)
+        shared.ToggleEAQ=bool
+        spawn(function()
+            while shared.ToggleEAQ do
+                local questID = ALLDATA.TeamEventData.EasterTraining.QuestContainerId
+                if questID then
+                   main_Quest_Thread(questID) 
+                end
+                task.wait(1)
+            end
+        end)
+    end)
 
 
 
