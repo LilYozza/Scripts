@@ -1,4 +1,4 @@
-print("Version 1.4.0.8 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.9 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -431,11 +431,11 @@ end
 
 local function placeEgg(_egg, _pos, _max)
     -- AUTO SET POST IF NONE GIVEN
-    _pos = _pos or nil
+    _pos = _pos or getRandomPos()
 
     --Check Max
         --Check How many current eggs
-    local PlayerEggs = getEggs(_egg)
+    local PlayerEggs = getEggs(_egg) or 0
     if #PlayerEggs >= _max then return end
     local egg = checkBackpack(_egg)
     if egg and _pos then
@@ -497,7 +497,7 @@ local function Print(...)
     end
 end
 
-
+local PlayerMaxEggs = 5
 local QuestContainers = ALLDATA["QuestContainers"]
 local function main_Quest_Thread(_questID)
     if not _questID and QuestContainers then return end
@@ -576,7 +576,8 @@ local function main_Quest_Thread(_questID)
                         Print("Switching Garden To Slot 1")
                         changeGarden("Save Slot #1")
                         -- HARVEST THEM FIRST
-                        local Targeteggs = getEggs(targetEgg)
+                       -- local Targeteggs = getEggs(targetEgg)
+                        local Targeteggs = getEggs()
                         if Targeteggs then
                             for _,v in pairs(Targeteggs)do
                                 if v and v.Ready and v.TimeToHatch <= 0 then
@@ -592,7 +593,7 @@ local function main_Quest_Thread(_questID)
                         if #Targeteggs < amountLeft then
 
                             local allEggs = getEggs()
-                            local spaceLeft = (#Targeteggs + #allEggs) - 5
+                            local spaceLeft = PlayerMaxEggs - #allEggs
                             if spaceLeft > 0 then
                                 local rndPos = getRandomPos()
                                 Print("Placing:", targetEgg, "At:", rndPos)
