@@ -247,6 +247,7 @@ local function checkPlantGardenAmount(_name, _mutations, _size)
             if find then count = count + 1 end
         end
     end
+    return count
 end
 
 
