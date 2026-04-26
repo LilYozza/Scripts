@@ -1,4 +1,4 @@
-print("Version 1.4.0.2 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.3 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -450,6 +450,18 @@ local function changeGarden(_garden)
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SaveSlotService"):WaitForChild("RequestChangeSlots"):FireServer(_garden)
 end
 
+local function buyEventShop(_item, _amount)
+    
+    local args = {
+        [1] = _item,
+        [2] = "Easter Seed Shop"
+    }
+    for i = 1, _amount do
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock"):FireServer(unpack(args))
+        task.wait()
+    end
+end
+
 local eventGarden = "Easter 2026"
 local QuestContainers = ALLDATA["QuestContainers"]
 local function main_Quest_Thread(_questID)
@@ -516,8 +528,16 @@ local function main_Quest_Thread(_questID)
 
                     elseif type == "BuyEventShopItem" then
                         print("Buying Event Shop Item .... NOT CODED")
-                        -- Check Item Stock
-                        -- Buy Item target amount of times
+                        local plant = arguments[1]
+                        local stock = ALLDATA.EventShopStock["Easter Seed Shop"].Stocks
+                        for _,v in pairs(stock) do
+                            if _ == plant and v.Stock and v.Stock > 1 then
+                                local buyAmount = math.max(0, math.min(amountLeft, stock))
+                                buyEventShop(_, buyAmount)
+                            end
+                        end
+                        
+
                     
                     elseif type == "HatchEgg" then
                         print("Hatching Egg.... NOT CODED")
@@ -525,6 +545,8 @@ local function main_Quest_Thread(_questID)
                         -- Plant eggs if needed
                         -- hatch eggs if available
 
+                    else
+                        print(type, "NOT ADDED!!!")
                     end
                 else
                     if not quest.Claimed then
@@ -571,17 +593,7 @@ if EventItem then
             --BuyAmount
             --LastBuyTime
 
-    local function buyShop(_item, _amount)
-        
-        local args = {
-            [1] = _item,
-            [2] = "Easter Seed Shop"
-        }
-        for i = 1, _amount do
-            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock"):FireServer(unpack(args))
-            task.wait()
-        end
-    end
+
 
 
     --[[
@@ -665,7 +677,7 @@ if EventItem then
                 for _,v in pairs(stock)do
                     if v.Stock and v.Stock > 0 then 
                         --print("[Event] Buying:", _)
-                        buyShop(_, v.Stock) task.wait()
+                        buyEventShop(_, v.Stock) task.wait()
                     end
                 end
                 task.wait(1)
