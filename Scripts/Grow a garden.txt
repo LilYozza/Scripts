@@ -440,8 +440,7 @@ local function craftItem(_item, _type)
 
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 
-    if submitItemBtn and WorkbenchPart and not busy then
-        busy = true
+    if submitItemBtn and WorkbenchPart then
         local oldPos = GetPos() task.wait(1)
         local targetPos = WorkbenchPart.CFrame * CFrame.new(0, 0, -5)
         local facingCFrame = CFrame.lookAt(targetPos.Position, WorkbenchPart.Position)
@@ -457,7 +456,6 @@ local function craftItem(_item, _type)
         game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args)) task.wait(1)
         
         MoveTo(oldPos)
-        busy = false
     end
 end
 local function ClaimCraft(_type)
