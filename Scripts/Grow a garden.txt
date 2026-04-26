@@ -1,4 +1,4 @@
-print("Version 1.4.0.4 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.5 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -70,6 +70,7 @@ local Farm = getFarm()
 local Important = Farm:WaitForChild("Important")
 local Center_Point = Farm:WaitForChild("Center_Point")
 local Plants_Physical = Important:WaitForChild("Plants_Physical")
+local Spawn_Point = Farm:WaitForChild("Spawn_Point")
 
 local Objects_Physical = Important:WaitForChild("Objects_Physical")
 local Plant_Locations = Important:WaitForChild("Plant_Locations")
@@ -395,6 +396,10 @@ local function getFruit(_amount, _blacklist, _mutationcheck)
 end
 
 local function plantSeed(_seed, _pos)
+    local dis = GetDistance(Spawn_Point)
+    if dis > 15 then
+        MoveTo(Spawn_Point)
+    end
     local pos = typeof(_pos) == "CFrame" and _pos.Position or _pos
 
     local x = pos.X
@@ -503,6 +508,7 @@ local function Print(...)
     end
 end
 
+local singleHarvest = {"Easter Candy Carrot", "Easter Liquorice"}
 local PlayerMaxEggs = 5
 local QuestContainers = ALLDATA["QuestContainers"]
 local function main_Quest_Thread(_questID)
@@ -549,22 +555,24 @@ local function main_Quest_Thread(_questID)
                             end
                             mod:FireServer({plantSearch}) task.wait(0.5)
                         else
-                            --Get Pos
                             Print(plant, "Not Found....")
-                            local rndPos = getRandomPos()
-                            Print("Getting Random Position:", rndPos)
                             local planted = findPlant(MainPlant)
-                            if not planted then
-                                print("Plant not planted")
-                                local seed = checkBackpack(plant .. " Seed")
-                                Print("Finding Seed:", plant .. " Seed")
-                                if seed then
-                                    Print("Found Seed:", seed)
-                                    Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
-                                    plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
-                                    Player.Character:WaitForChild("Humanoid"):UnequipTools()
-                                else
-                                    Print("Seed Not Found:", seed)
+                            if not planted or table.find(singleHarvest, MainPlant) then
+                                local amount = checkPlantGardenAmount(MainPlant)
+                                if amount < amountLeft then
+                                    local rndPos = getRandomPos()
+                                    --Print("Getting Random Position:", rndPos)
+                                    print("Plant not planted")
+                                    local seed = checkBackpack(plant .. " Seed")
+                                    Print("Finding Seed:", plant .. " Seed")
+                                    if seed then
+                                        Print("Found Seed:", seed)
+                                        Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
+                                        plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
+                                        Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                                    else
+                                        Print("Seed Not Found:", seed)
+                                    end
                                 end
                             else
                                 print("Plant Already Exist")
