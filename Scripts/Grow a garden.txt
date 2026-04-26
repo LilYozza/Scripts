@@ -631,7 +631,7 @@ local function main_Quest_Thread(_questID)
                         print("Planting State")
                         local seedToFind = "Carrot Seed"
                         if Player:GetAttribute("CurrentSlot") == "Easter 2026" then
-                            seedToFind = "Easter Carrot Seed"
+                            seedToFind = "Easter Candy Carrot Seed"
                         end
                         print("Seed To Find:", seedToFind)
                         local seed = checkBackpack(seedToFind)
