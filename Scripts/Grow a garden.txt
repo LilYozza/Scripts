@@ -1,4 +1,4 @@
-print("Version 1.4.0.5 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.6 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -446,8 +446,27 @@ local function placeEgg(_egg, _pos, _max)
 
 end
 
-local function changeGarden(_garden)
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SaveSlotService"):WaitForChild("RequestChangeSlots"):FireServer(_garden)
+
+
+local function getGardenID(_name)
+    local slots = ALLDATA.SaveSlots
+    for name,v in pairs(slots) do
+        if v.SlotName == _name then
+            return name
+        end
+    end
+end
+
+local lastCall = 0
+local function changeGarden(_slot)
+    if os.time() - lastCall < 180 then return end
+
+    local CurrentSlot = Player:GetAttribute("CurrentSlot")
+    if CurrentSlot ~= _slot then
+        lastCall = os.time()
+        local gardenID = getGardenID(_slot)
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SaveSlotService"):WaitForChild("RequestChangeSlots"):FireServer(gardenID)
+    end
 end
 
 local function buyEventShop(_item, _amount)
@@ -478,7 +497,7 @@ local function Print(...)
     end
 end
 
-local eventGarden = "Easter 2026"
+
 local QuestContainers = ALLDATA["QuestContainers"]
 local function main_Quest_Thread(_questID)
     if not _questID and QuestContainers then return end
@@ -504,13 +523,7 @@ local function main_Quest_Thread(_questID)
                         --EASTER EVENT
                         local matches = (plant:match("^(%S+)") == "Easter")
                         if matches then
-                            local CurrentSlot = Player:GetAttribute("CurrentSlot")
-                            if CurrentSlot ~= eventGarden then
-                                Print("Not in easter Garden.... Switching Now.....")
-                                --load this slot
-                                changeGarden("EASTER_2026")
-                                Print("Garden Changed to:", eventGarden)
-                            end
+                            changeGarden("Easter 2026")
                         end
 
 
@@ -558,11 +571,34 @@ local function main_Quest_Thread(_questID)
 
                     
                     elseif type == "HatchEgg" then
-                        Print("Hatching Egg.... NOT CODED")
-                        -- Check Garden for type of eggs
-                        -- Plant eggs if needed
-                        -- hatch eggs if available
+                        local targetEgg = arguments[1]
+                        Print("Hatching Egg State")
+                        Print("Switching Garden To Slot 1")
+                        changeGarden("Save Slot #1")
+                        -- HARVEST THEM FIRST
+                        local Targeteggs = getEggs(targetEgg)
+                        if Targeteggs then
+                            for _,v in pairs(Targeteggs)do
+                                if v and v.Ready and v.TimeToHatch <= 0 then
+                                    print("Harvesting Egg:", v.Name)
+                                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v.Egg) task.wait(0.3)
+                                end
+                            end
+                            task.wait(1)
+                        end
+                        
+                        -- NOW PLANT
+                        Targeteggs = getEggs(targetEgg)
+                        if #Targeteggs < amountLeft then
 
+                            local allEggs = getEggs()
+                            local spaceLeft = (#Targeteggs + #allEggs) - 5
+                            if spaceLeft > 0 then
+                                local rndPos = getRandomPos()
+                                Print("Placing:", targetEgg, "At:", rndPos)
+                                placeEgg(targetEgg, rndPos)
+                            end
+                        end 
                     else
                         Print(type, "NOT ADDED!!!")
                     end
