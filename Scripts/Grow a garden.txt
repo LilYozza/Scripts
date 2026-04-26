@@ -1,4 +1,4 @@
-print("Version 1.4.0.2 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.3 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1397,7 +1397,22 @@ local function ultraLow(i)
 	end
 end
 
-
+local con
+Auto:Toggle("Plant Lag",function(bool)
+    shared.TogglePL=bool
+    spawn(function()
+        if shared.TogglePL then
+            for _, v in ipairs(Plants_Physical:GetDescendants()) do
+                ultraLow(v)
+            end
+            con = Plants_Physical.DescendantAdded:Connect(function(obj)
+                ultraLow(obj)
+            end)
+        else
+            if con then con:Disconnect() con = nil end
+        end
+    end)
+end)
 
 Auto:Button("Plant Lag",function()
     spawn(function()
