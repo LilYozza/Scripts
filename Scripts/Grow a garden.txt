@@ -522,10 +522,10 @@ local function main_Quest_Thread(_questID)
 
                     local amountLeft = target - progress
                     if type == "Harvest" then
-                        local plant = arguments[1]
-
+                        local MainPlant = arguments[1]
+                        local plant = MainPlant
                         --Candy Blossom Name Fix
-                        if plant == "Candy Blossom 2026" then
+                        if MainPlant == "Candy Blossom 2026" then
                             plant = "Candy Blossom"
                         end
                         Print("Harvesting Quest:")
@@ -539,7 +539,7 @@ local function main_Quest_Thread(_questID)
 
                         Print("Looking For Plant:", plant)
                         
-                        local plantSearch = checkPlantGarden(plant)
+                        local plantSearch = checkPlantGarden(MainPlant)
                         if plantSearch then
                             --Harvest if able
                             Print(plant, "Found, Harvesting...")
@@ -552,7 +552,7 @@ local function main_Quest_Thread(_questID)
                             Print(plant, "Not Found....")
                             local rndPos = getRandomPos()
                             Print("Getting Random Position:", rndPos)
-                            local planted = findPlant(plant)
+                            local planted = findPlant(MainPlant)
                             if not planted then
                                 print("Plant not planted")
                                 local seed = checkBackpack(plant .. " Seed")
