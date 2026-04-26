@@ -1,4 +1,4 @@
-print("Version 1.4.0.2 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.3 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -474,7 +474,7 @@ local function main_Quest_Thread(_questID)
                         print("Harvesting Quest:")
 
                         --EASTER EVENT
-                        local matches = (str:match("^(%S+)") == "Easter")
+                        local matches = (plant:match("^(%S+)") == "Easter")
                         if matches then
                             local CurrentSlot = Player:GetAttribute("CurrentSlot")
                             if CurrentSlot ~= eventGarden then
