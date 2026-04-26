@@ -1,4 +1,4 @@
-print("Version 1.3.8 - Easter Part 3 (Team Packaging)")
+print("Version 1.4.0 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -70,6 +70,15 @@ local Farm = getFarm()
 local Important = Farm:WaitForChild("Important")
 local Center_Point = Farm:WaitForChild("Center_Point")
 local Plants_Physical = Important:WaitForChild("Plants_Physical")
+
+local Objects_Physical = Important:WaitForChild("Objects_Physical")
+local Plant_Locations = Important:WaitForChild("Plant_Locations")
+local points = Plant_Locations:GetChildren()
+local point1 = points[1]
+local point2 = points[2]
+
+local PetMutationMachine = ALLDATA.PetMutationMachine
+local PetDataTable = ALLDATA.PetsData.PetInventory.Data
 --[[
 local function getInventoryCount()
     local amt = {}
@@ -128,7 +137,22 @@ end
 
 
 
+local function getRandomPos()
 
+    -- randomly choose one of the two parts
+    local chosenPart = (math.random(1, 2) == 1) and point1 or point2
+
+    local size = chosenPart.Size
+    local cf = chosenPart.CFrame
+
+    -- random offset inside the part
+    local x = (math.random() - 0.5) * size.X
+    local y = (math.random() - 0.5) * size.Y
+    local z = (math.random() - 0.5) * size.Z
+
+    -- convert local offset to world position
+    return (cf * CFrame.new(x, y, z)).Position
+end
 
 
 local function checkPlantInventory(_plant, _mutations, _strict)
@@ -204,6 +228,22 @@ local function findPlant(_plant)
     for _,v in pairs(Plants_Physical:GetChildren())do
         if v.Name == _plant then
             return v
+        end
+    end
+end
+
+local function checkPlantGardenAmount(_name, _mutations, _size)
+    local count = 0
+    for _,v in pairs(Plants_Physical:GetChildren())do
+        local Fruits = v:FindFirstChild("Fruits")
+        if Fruits then
+            for __,_v in pairs(Fruits:GetChildren())do
+                local find = checkPlant(_v, _name, _mutations,nil, _size)
+                if find then count = count + 1 end
+            end
+        else
+            local find = checkPlant(v, _name, _mutations,nil, _size)
+            if find then count = count + 1 end
         end
     end
 end
@@ -357,16 +397,129 @@ local function plantSeed(_seed, _pos)
     local pos = typeof(_pos) == "CFrame" and _pos.Position or _pos
 
     local x = pos.X
-    local y = pos.Z
+    local z = pos.Z
     
     local args = {
-        [1] = Vector3.new(x, 0.13552570343017578, y),
+        [1] = Vector3.new(x, 0.13552570343017578, z),
         [2] = _seed
     }
 
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
 end
 
+local function getEggs(_egg)
+    local t = {}
+
+    for _, v in pairs(Objects_Physical:GetChildren()) do
+        if v.Name == "PetEgg" then
+            local eggName = v:GetAttribute("EggName")
+
+            if not _egg or eggName == _egg then
+                table.insert(t, {
+                    Name = eggName,
+                    Ready = v:GetAttribute("READY"),
+                    TimeToHatch = v:GetAttribute("TimeToHatch"),
+                    Part = v:FindFirstChildWhichIsA("Part"),
+                    Egg = v
+                })
+            end
+        end
+    end
+
+    return t
+end
+
+local function placeEgg(_egg, _pos, _max)
+    -- AUTO SET POST IF NONE GIVEN
+    _pos = _pos or nil
+
+    --Check Max
+        --Check How many current eggs
+    local PlayerEggs = getEggs(_egg)
+    if #PlayerEggs >= _max then return end
+    local egg = checkBackpack(_egg)
+    if egg and _pos then
+        local hum = Player.Character:WaitForChild("Humanoid")
+        hum:EquipTool(egg) task.wait(0.3)
+        rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("CreateEgg", _pos) task.wait(0.3)
+    end
+
+end
+
+
+
+
+local QuestContainers = ALLDATA["QuestContainers"]
+local function main_Quest_Thread(_questID)
+    if not _questID and QuestContainers then return end
+    local questsTable = QuestContainers[_questID]
+    if questsTable and not busy then
+        busy = true
+        local Redeemed = questsTable.Redeemed
+        local quests = questsTable.Quests
+        if quests then
+            for questNum, quest in pairs(quests) do
+                if not quest.Completed then
+                    local type = quest.Type
+                    local progress = quest.Progress
+                    local target = quest.Target -- THE AMOUNT NEEDED
+                    local arguments = quest.Arguments
+                    print("QUESTDATA", type, progress .. "/" .. target, arguments)
+
+                    local amountLeft = target - progress
+                    if type == "Harvest" then
+                        local plant = arguments[1]
+                        print("Harvesting Quest:")
+                        print("Looking For Plant:", plant)
+                        
+                        local plantSearch = checkPlantGarden(plant)
+                        if plantSearch then
+                            --Harvest if able
+                            print(plant, "Found, Harvesting...")
+                            mod({plantSearch}) task.wait(0.5)
+                        else
+                            --Get Pos
+                            print(plant, "Not Found....")
+                            local rndPos = getRandomPos()
+                            print("Getting Random Position:", rndPos)
+                            local seed = checkBackpack(plant .. " Seed")
+                            print("Finding Seed:", plant .. " Seed")
+                            if seed then
+                                print("Found Seed:", seed)
+                                Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
+                                plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
+                                Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                            else
+                                print("Seed Not Found:", seed)
+                            end
+                        end
+
+                    elseif type == "Plant" then
+                        print("Planting Plant.... NOT CODED")
+                        --plant plant
+
+                    elseif type == "BuyEventShopItem" then
+                        print("Buying Event Shop Item .... NOT CODED")
+                        -- Check Item Stock
+                        -- Buy Item target amount of times
+                    
+                    elseif type == "HatchEgg" then
+                        print("Hatching Egg.... NOT CODED")
+                        -- Check Garden for type of eggs
+                        -- Plant eggs if needed
+                        -- hatch eggs if available
+
+                    end
+                else
+                    if not quest.Claimed then
+                        -- Claim maybe ?
+                    end
+                end
+            end
+        end
+        busy = false
+    end
+end
 
 
 
@@ -586,72 +739,7 @@ if EventItem then
 
     
 
-    local CandyPackaging = UpdateItems:WaitForChild("CandyPackaging", 5)
-    if CandyPackaging then
-        local function parseTime(text)
-            -- Extract the m:ss part
-            local minutes, seconds = string.match(text, "(%d+):(%d+)")
-            
-            if minutes and seconds then
-                minutes = tonumber(minutes)
-                seconds = tonumber(seconds)
-                
-                return minutes * 60 + seconds -- total time in seconds
-            end
-            
-            return nil
-        end
 
-        local Stacks = CandyPackaging:WaitForChild("Stacks")
-        local function getStack(_player)
-            for _,v in pairs(Stacks:GetChildren())do
-                if v:IsA("Model") and v.PrimaryPart and v.PrimaryPart.Transparency == 0 then
-                    local label = v.Sign.Billboard.SurfaceGui.Frame.TextLabel
-                    if label.text == _player.Name then
-                        return v
-                    end
-                end
-                
-            end
-        end
-
-        local stack = getStack(Player)
-        local bill = stack.Sign.Timer:WaitForChild("BillboardGui")
-        local label = bill.Frame:WaitForChild("TextLabel")
-        local maxLabel = stack.Sign.Face.SurfaceGui.Frame:WaitForChild("Max")
-
-        --
-
-        -- game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TeamEvents"):WaitForChild("CandyPackaging"):WaitForChild("SubmitAllRE"):FireServer()
-        EventMenu:Toggle("Harvest All",function(bool)
-            shared.ToggleEHA=bool
-        end)
-
-        EventMenu:Toggle("Candy Packing",function(bool)
-            shared.ToggleEAP=bool
-            spawn(function()
-                while shared.ToggleEAP do
-                    if stack and maxLabel.Visible == false then
-                        local timer = parseTime(label.Text)
-                        if timer and (timer <= 0 or (bill and bill.Enabled == false)) then
-                            if shared.ToggleEHA and not IsMaxInventory() then
-                                local fruit = getFruit(getSpaceLeft())
-                                mod:FireServer(fruit) task.wait(5)
-                            end
-                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("TeamEvents"):WaitForChild("CandyPackaging"):WaitForChild("SubmitAllRE"):FireServer()
-                            print("Handing in fruit...")
-                        else
-                            --if not timer then print(timer, "???") end
-                        end
-                    else
-                        print("Couldnt Find Stack...")
-                        stack = getStack(Player)
-                    end
-                    task.wait(1)
-                end
-            end)
-        end)
-    end
 
 
 
@@ -1386,9 +1474,7 @@ StockMenu:Toggle("Buy Merchant",function(bool)
     end)
 end)
 
-local Objects_Physical = Important:WaitForChild("Objects_Physical")
-local PetMutationMachine = ALLDATA.PetMutationMachine
-local PetDataTable = ALLDATA.PetsData.PetInventory.Data
+
 
 local function getCurrentPets()
     local t = {}
@@ -1424,33 +1510,36 @@ PetMenu:Toggle("Auto Hatch",function(bool)
     shared.ToggleAAH=bool
     spawn(function()
         while shared.ToggleAAH do
+            local eggs = getEggs()
+            for _, egg in pairs(eggs)do
+               if egg and egg.Ready and egg.TimeToHatch <= 0 then
+                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", egg.Egg) task.wait(0.3)
+                    if shared.ToggleARE then
+                        task.wait(1)
+                        placeEgg(egg.Name, egg.Part.Position)
+                    end
+               end 
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+--[[
             for _,v in pairs(Objects_Physical:GetChildren())do
                 if v.Name == "PetEgg" and v:GetAttribute("READY") == true and v:GetAttribute("TimeToHatch") <= 0 then
                     local hitbox = v:FindFirstChildWhichIsA("Part")
                     local eggType = v:GetAttribute("EggName")
                     rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v) task.wait(0.3)
                     if shared.ToggleARE then
-                        -- Equip Egg
                         task.wait(1)
-                        local egg = checkBackpack(eggType)
-                        if egg then
-                            print("Found Egg:", egg)
-                            local hum = Player.Character:WaitForChild("Humanoid")
-                            hum:EquipTool(egg) task.wait(0.3)
-
-                            local args = {
-                                [1] = "CreateEgg",
-                                [2] = hitbox.Position
-                            }
-                            rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer(unpack(args)) task.wait(0.3)
-                        end
+                        placeEgg(eggType, hitbox.Position)
                     end
                 end
             end
-            task.wait(1)
-        end
-    end)
-end)
+
+
+]]
 
 PetMenu:Button("Sell Pet",function()
     spawn(function()
