@@ -1,4 +1,4 @@
-print("Version 1.4.0.1 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.2 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -466,7 +466,11 @@ local function changeGarden(_slot)
     if CurrentSlot ~= _slot then
         lastCall = os.time()
         local gardenID = getGardenID(_slot)
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SaveSlotService"):WaitForChild("RequestChangeSlots"):FireServer(gardenID)
+        if gardenID then
+            print("Switching To Garden:", _slot)
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SaveSlotService"):WaitForChild("RequestChangeSlots"):FireServer(gardenID)
+            return true
+        end
     end
 end
 
@@ -519,6 +523,11 @@ local function main_Quest_Thread(_questID)
                     local amountLeft = target - progress
                     if type == "Harvest" then
                         local plant = arguments[1]
+
+                        --Candy Blossom Name Fix
+                        if plant:Match("Candy Blossom 2026") then
+                            plant = "Candy Blossom"
+                        end
                         Print("Harvesting Quest:")
 
                         --EASTER EVENT
@@ -534,6 +543,9 @@ local function main_Quest_Thread(_questID)
                         if plantSearch then
                             --Harvest if able
                             Print(plant, "Found, Harvesting...")
+                            if IsMaxInventory() then
+                                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
+                            end
                             mod:FireServer({plantSearch}) task.wait(0.5)
                         else
                             --Get Pos
@@ -574,7 +586,6 @@ local function main_Quest_Thread(_questID)
                     elseif type == "HatchEgg" then
                         local targetEgg = arguments[1]
                         Print("Hatching Egg State")
-                        Print("Switching Garden To Slot 1")
                         changeGarden("Save Slot #1")
                         -- HARVEST THEM FIRST
                        -- local Targeteggs = getEggs(targetEgg)
@@ -598,7 +609,8 @@ local function main_Quest_Thread(_questID)
                             if spaceLeft > 0 then
                                 local rndPos = getRandomPos()
                                 Print("Placing:", targetEgg, "At:", rndPos)
-                                placeEgg(targetEgg, rndPos, amountLeft)
+                                local clamp = math.min(amountLeft, PlayerMaxEggs)
+                                placeEgg(targetEgg, rndPos, clamp)
                             end
                         end 
                     else
