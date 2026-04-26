@@ -1,4 +1,4 @@
-print("Version 1.4.0.5 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.6 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -414,6 +414,63 @@ local function plantSeed(_seed, _pos)
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
 end
 
+local submitItemBtn = Player.PlayerGui.CraftingCancel.Frame.Yes
+local CraftingTypes = {
+    Gear = {
+        Workbench = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
+        Type = "GearEventWorkbench",
+        Machine = "Workbench-1"
+    },
+    Seed = {
+        Workbench = workspace:WaitForChild("CraftingTables"):WaitForChild("SeedEventCraftingWorkBench"),
+        Type = "SeedEventWorkbench",
+        Machine = "SeedEventWorkbench"
+    }
+}
+local function craftItem(_item, _type)
+
+    local type = CraftingTypes[_type]
+    local WorkbenchPart = type.Workbench.PrimaryPart
+    local args = {
+        [1] = "SetRecipe",
+        [2] = type.Workbench,
+        [3] = type.Type,
+        [4] = _item
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+
+    if submitItemBtn and WorkbenchPart and not busy then
+        busy = true
+        local oldPos = GetPos() task.wait(1)
+        local targetPos = WorkbenchPart.CFrame * CFrame.new(0, 0, -5)
+        local facingCFrame = CFrame.lookAt(targetPos.Position, WorkbenchPart.Position)
+        MoveTo(facingCFrame) task.wait(1)
+
+        SendClick(submitItemBtn) task.wait(1)
+
+        local args = {
+            [1] = "Craft",
+            [2] = type.Workbench,
+            [3] = type.Type
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args)) task.wait(1)
+        
+        MoveTo(oldPos)
+        busy = false
+    end
+end
+local function ClaimCraft(_type)
+    local type = CraftingTypes[_type]
+    local args = {
+        [1] = "Claim",
+        [2] = type.Workbench,
+        [3] = type.Type,
+        [4] = 1
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+end
+
 local function getEggs(_egg)
     local t = {}
 
@@ -664,7 +721,23 @@ local function main_Quest_Thread(_questID)
                         else
                             print("Couldnt Find Seed:", seedToFind)
                         end
+                    elseif type == "Craft" then
+                        local craftType = arguments[1]
+                        local item = arguments[2]
 
+                        local craft = CraftingTypes[craftType]
+                        local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData[craft.Machine].MachineData[craft.Type].CraftingItems
+                        if craftingTable then
+                            if craftingTable[1] then
+                                if craftingTable[1].IsDone == true then
+                                    ClaimCraft(craftType)
+                                end
+                                -- If Input is ready but not began
+                            else
+                                craftItem(item, craftType)
+                            end
+                        end
+                        task.wait(1)
                     else
                         Print("INFO:",type, "NOT ADDED!!!")
                         PrintTable("INFO:",arguments)
@@ -1509,66 +1582,7 @@ PlantingMenu:Toggle("Plant Hand",function(bool)
         end
     end)
 end)
-
-
-
-
- 
 --CrafMenu ----------------------------------------------------------------------
-local submitItemBtn = Player.PlayerGui.CraftingCancel.Frame.Yes
-local WorkbenchPart = workspace:WaitForChild("CraftingTables").EventCraftingWorkBench.PrimaryPart
-
-local function craftItem(_item)
-    local args = {
-        [1] = "SetRecipe",
-        [2] = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
-        [3] = "GearEventWorkbench",
-        [4] = _item
-    }
-
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-
-    if submitItemBtn and WorkbenchPart and not busy then
-        busy = true
-        local oldPos = GetPos()
-        
-        task.wait(1)
-
-        local targetPos = WorkbenchPart.CFrame * CFrame.new(0, 0, -5)
-        local facingCFrame = CFrame.lookAt(targetPos.Position, WorkbenchPart.Position)
-        MoveTo(facingCFrame) task.wait(1)
-
-        SendClick(submitItemBtn) task.wait(1)
-
-        local args = {
-            [1] = "Craft",
-            [2] = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
-            [3] = "GearEventWorkbench"
-        }
-
-        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-
-
-        task.wait(1)
-        MoveTo(oldPos)
-        busy = false
-    end
-end
-
-local function ClaimCraft()
-    local args = {
-        [1] = "Claim",
-        [2] = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
-        [3] = "GearEventWorkbench",
-        [4] = 1
-    }
-
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-end
-
-
-
-
 local selectedCraftItem
 local craftItems = {"Lightning Rod", "Tanning Mirror", "Reclaimer", "Event Lantern x30", "Anti Bee Egg", "Small Toy x3", "Small Treat x3", "Pet Pouch", "Pack Bee", "Silver Ingot", "Gold Ingot", "Silver Piggy", "Golden Piggy", "Chimera Stone"}
 local CMDropList = CrafMenu:Dropdown("Select Item",craftItems,true,function(SItem)
@@ -1592,7 +1606,7 @@ CrafMenu:Toggle("Auto Craft",function(bool)
                     -- If Input is ready but not began
                 else
                     if selectedCraftItem then
-                        craftItem(selectedCraftItem)
+                        craftItem(selectedCraftItem, "Gear")
                     end
                 end
             end
