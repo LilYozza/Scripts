@@ -586,33 +586,31 @@ local function main_Quest_Thread(_questID)
                     elseif type == "HatchEgg" then
                         local targetEgg = arguments[1]
                         Print("Hatching Egg State")
+
                         changeGarden("Save Slot #1")
-                        -- HARVEST THEM FIRST
-                       -- local Targeteggs = getEggs(targetEgg)
+
+                        -- HARVEST FIRST
                         local Targeteggs = getEggs()
                         if Targeteggs then
-                            for _,v in pairs(Targeteggs)do
+                            for _, v in pairs(Targeteggs) do
                                 if v and v.Ready and v.TimeToHatch <= 0 then
                                     print("Harvesting Egg:", v.Name)
-                                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v.Egg) task.wait(0.3)
+                                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v.Egg)
+                                    task.wait(0.3)
                                 end
                             end
                             task.wait(1)
                         end
-                        
-                        -- NOW PLANT
-                        Targeteggs = getEggs(targetEgg)
-                        if #Targeteggs < amountLeft then
 
-                            local allEggs = getEggs()
-                            local spaceLeft = PlayerMaxEggs - #allEggs
-                            if spaceLeft > 0 then
-                                local rndPos = getRandomPos()
-                                Print("Placing:", targetEgg, "At:", rndPos)
-                                local clamp = math.min(amountLeft, PlayerMaxEggs)
-                                placeEgg(targetEgg, rndPos, clamp)
-                            end
-                        end 
+                        -- NOW PLANT (ONLY ONE)
+                        local allEggs = getEggs() or {}
+                        local spaceLeft = PlayerMaxEggs - #allEggs
+
+                        if spaceLeft > 0 and amountLeft > 0 then
+                            local rndPos = getRandomPos()
+                            Print("Placing:", targetEgg, "At:", rndPos)
+                            placeEgg(targetEgg, rndPos)
+                        end
                     else
                         Print(type, "NOT ADDED!!!")
                     end
