@@ -525,7 +525,7 @@ local function main_Quest_Thread(_questID)
                         local plant = arguments[1]
 
                         --Candy Blossom Name Fix
-                        if plant:Match("Candy Blossom 2026") then
+                        if plant == "Candy Blossom 2026" then
                             plant = "Candy Blossom"
                         end
                         Print("Harvesting Quest:")
