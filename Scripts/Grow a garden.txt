@@ -552,15 +552,21 @@ local function main_Quest_Thread(_questID)
                             Print(plant, "Not Found....")
                             local rndPos = getRandomPos()
                             Print("Getting Random Position:", rndPos)
-                            local seed = checkBackpack(plant .. " Seed")
-                            Print("Finding Seed:", plant .. " Seed")
-                            if seed then
-                                Print("Found Seed:", seed)
-                                Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
-                                plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
-                                Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                            local planted = findPlant(plant)
+                            if not planted then
+                                print("Plant not planted")
+                                local seed = checkBackpack(plant .. " Seed")
+                                Print("Finding Seed:", plant .. " Seed")
+                                if seed then
+                                    Print("Found Seed:", seed)
+                                    Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
+                                    plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
+                                    Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                                else
+                                    Print("Seed Not Found:", seed)
+                                end
                             else
-                                Print("Seed Not Found:", seed)
+                                print("Plant Already Exist")
                             end
                         end
 
