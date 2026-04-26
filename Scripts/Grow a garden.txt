@@ -722,18 +722,23 @@ local function main_Quest_Thread(_questID)
                             print("Couldnt Find Seed:", seedToFind)
                         end
                     elseif type == "Craft" then
+                        print("Crafting State")
                         local craftType = arguments[1]
                         local item = arguments[2]
 
                         local craft = CraftingTypes[craftType]
                         local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData[craft.Machine].MachineData[craft.Type].CraftingItems
+                        print("Craft Type:", craft.Type)
+                        print("Crafting Table:", craftingTable)
                         if craftingTable then
                             if craftingTable[1] then
                                 if craftingTable[1].IsDone == true then
+                                    print("Claiming Item:", item)
                                     ClaimCraft(craftType)
                                 end
                                 -- If Input is ready but not began
                             else
+                                print("Crafting Item:", item)
                                 craftItem(item, craftType)
                             end
                         end
