@@ -462,6 +462,22 @@ local function buyEventShop(_item, _amount)
     end
 end
 
+local lastMessage = ""
+local function Print(...)
+    local t = {...}
+    local msg = ""
+    for i, v in ipairs(t) do
+        msg  = msg .. tostring(v)
+        if i < #t then
+            msg = msg .. "\t"
+        end
+    end
+    if msg ~= lastMessage then
+        print(msg)
+        lastMessage = msg
+    end
+end
+
 local eventGarden = "Easter 2026"
 local QuestContainers = ALLDATA["QuestContainers"]
 local function main_Quest_Thread(_questID)
@@ -478,63 +494,63 @@ local function main_Quest_Thread(_questID)
                     local progress = quest.Progress
                     local target = quest.Target -- THE AMOUNT NEEDED
                     local arguments = quest.Arguments
-                    print("QUESTDATA", type, progress .. "/" .. target, arguments)
+                    Print("QUESTDATA", type, progress .. "/" .. target, arguments)
 
                     local amountLeft = target - progress
                     if type == "Harvest" then
                         local plant = arguments[1]
-                        print("Harvesting Quest:")
+                        Print("Harvesting Quest:")
 
                         --EASTER EVENT
                         local matches = (plant:match("^(%S+)") == "Easter")
                         if matches then
                             local CurrentSlot = Player:GetAttribute("CurrentSlot")
                             if CurrentSlot ~= eventGarden then
-                                print("Not in easter Garden.... Switching Now.....")
+                                Print("Not in easter Garden.... Switching Now.....")
                                 --load this slot
                                 changeGarden("EASTER_2026")
-                                print("Garden Changed to:", eventGarden)
+                                Print("Garden Changed to:", eventGarden)
                             end
                         end
 
 
-                        print("Looking For Plant:", plant)
+                        Print("Looking For Plant:", plant)
                         
                         local plantSearch = checkPlantGarden(plant)
                         if plantSearch then
                             --Harvest if able
-                            print(plant, "Found, Harvesting...")
+                            Print(plant, "Found, Harvesting...")
                             mod:FireServer({plantSearch}) task.wait(0.5)
                         else
                             --Get Pos
-                            print(plant, "Not Found....")
+                            Print(plant, "Not Found....")
                             local rndPos = getRandomPos()
-                            print("Getting Random Position:", rndPos)
+                            Print("Getting Random Position:", rndPos)
                             local seed = checkBackpack(plant .. " Seed")
-                            print("Finding Seed:", plant .. " Seed")
+                            Print("Finding Seed:", plant .. " Seed")
                             if seed then
-                                print("Found Seed:", seed)
+                                Print("Found Seed:", seed)
                                 Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
                                 plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
                                 Player.Character:WaitForChild("Humanoid"):UnequipTools()
                             else
-                                print("Seed Not Found:", seed)
+                                Print("Seed Not Found:", seed)
                             end
                         end
 
                     elseif type == "Plant" then
-                        print("Planting Plant.... NOT CODED")
+                        Print("Planting Plant.... NOT CODED")
                         --plant plant
 
                     elseif type == "BuyEventShopItem" then
                         local plant = arguments[2]
-                        print("Checking Event Shop Item:", plant)
+                        Print("Checking Event Shop Item:", plant)
                         
                         local stock = ALLDATA.EventShopStock["Easter Seed Shop"].Stocks
                         for _,v in pairs(stock) do
                             if _ == plant and v.Stock and v.Stock > 0 then
-                                local buyAmount = math.max(0, math.min(amountLeft, stock))
-                                print("Buying", _)
+                                local buyAmount = math.max(0, math.min(amountLeft, v.Stock))
+                                Print("Buying", _)
                                 buyEventShop(_, buyAmount)
                             end
                         end
@@ -542,13 +558,13 @@ local function main_Quest_Thread(_questID)
 
                     
                     elseif type == "HatchEgg" then
-                        print("Hatching Egg.... NOT CODED")
+                        Print("Hatching Egg.... NOT CODED")
                         -- Check Garden for type of eggs
                         -- Plant eggs if needed
                         -- hatch eggs if available
 
                     else
-                        print(type, "NOT ADDED!!!")
+                        Print(type, "NOT ADDED!!!")
                     end
                 else
                     if not quest.Claimed then
