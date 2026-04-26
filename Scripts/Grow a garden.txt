@@ -1,4 +1,4 @@
-print("Version 1.4.0.9 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.1 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -431,11 +431,12 @@ end
 
 local function placeEgg(_egg, _pos, _max)
     -- AUTO SET POST IF NONE GIVEN
+    _max = _max or 0
     _pos = _pos or getRandomPos()
 
     --Check Max
         --Check How many current eggs
-    local PlayerEggs = getEggs(_egg) or 0
+    local PlayerEggs = getEggs(_egg)
     if #PlayerEggs >= _max then return end
     local egg = checkBackpack(_egg)
     if egg and _pos then
@@ -597,7 +598,7 @@ local function main_Quest_Thread(_questID)
                             if spaceLeft > 0 then
                                 local rndPos = getRandomPos()
                                 Print("Placing:", targetEgg, "At:", rndPos)
-                                placeEgg(targetEgg, rndPos)
+                                placeEgg(targetEgg, rndPos, amountLeft)
                             end
                         end 
                     else
