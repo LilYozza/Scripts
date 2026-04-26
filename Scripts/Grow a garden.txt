@@ -1,4 +1,4 @@
-print("Version 1.4.0.4 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.5 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -528,12 +528,13 @@ local function main_Quest_Thread(_questID)
 
                     elseif type == "BuyEventShopItem" then
                         local plant = arguments[2]
-                        print("Buying Event Shop Item:", plant)
+                        print("Checking Event Shop Item:", plant)
                         
                         local stock = ALLDATA.EventShopStock["Easter Seed Shop"].Stocks
                         for _,v in pairs(stock) do
-                            if _ == plant and v.Stock and v.Stock > 1 then
+                            if _ == plant and v.Stock and v.Stock > 0 then
                                 local buyAmount = math.max(0, math.min(amountLeft, stock))
+                                print("Buying", _)
                                 buyEventShop(_, buyAmount)
                             end
                         end
