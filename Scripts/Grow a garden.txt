@@ -1,4 +1,4 @@
-print("Version 1.4.0.6 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.7 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -549,6 +549,7 @@ local function buyEventShop(_item, _amount)
 end
 
 local lastMessage = ""
+local SkipRollBtn = PGui:WaitForChild("RollCrate_UI"):WaitForChild("Frame"):WaitForChild("Skip") 
 local function Print(...)
     local t = {...}
     local msg = ""
@@ -717,33 +718,48 @@ local function main_Quest_Thread(_questID)
                             end
                             Player.Character:WaitForChild("Humanoid"):UnequipTools()
                         else
-                            print("Couldnt Find Seed:", seedToFind)
+                            Print("Couldnt Find Seed:", seedToFind)
                         end
                     elseif type == "Craft" then
-                        print("Crafting State")
+                        Print("Crafting State")
                         local craftType = arguments[1]
                         local item = arguments[2]
 
                         local craft = CraftingTypes[craftType]
                         local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData[craft.Machine].MachineData[craft.Type].CraftingItems
-                        print("Craft Type:", craft.Type)
-                        print("Crafting Table:", craftingTable)
+                        Print("Craft Type:", craft.Type)
+                        Print("Crafting Table:", craftingTable)
                         if craftingTable then
                             if craftingTable[1] then
                                 if craftingTable[1].IsDone == true then
-                                    print("Claiming Item:", item)
+                                    Print("Claiming Item:", item)
                                     ClaimCraft(craftType)
                                 end
                                 -- If Input is ready but not began
                             else
-                                print("Crafting Item:", item)
+                                Print("Crafting Item:", item)
                                 craftItem(item, craftType)
                             end
                         end
                         task.wait(1)
+                    elseif type == "OpenSeedPack" then
+                        Print("Opening Pack State")
+                        local packToOpen = arguments[1]
+                        local pack = checkBackpack(packToOpen)
+                        if pack then
+                            Print("Found Pack:", pack)
+                            for i = 1, amountLeft, 1 do
+                                Player.Character:WaitForChild("Humanoid"):EquipTool(pack) task.wait(0.5)
+                                pack:Activate()
+                                if SkipRollBtn then SendClick(SkipRollBtn) end
+                                task.wait(5)
+                            end
+                            Player.Character:WaitForChild("Humanoid"):UnequipTools()
+                        end
+
                     else
                         Print("INFO:",type, "NOT ADDED!!!")
-                        PrintTable("INFO:",arguments)
+                        PrintTable(arguments)
                     end
                 else
                     if not quest.Claimed then
@@ -1438,7 +1454,7 @@ Auto:Toggle("Auto Digger",function(bool)
 end)
 ]]--
 
-local SkipRollBtn = PGui:WaitForChild("RollCrate_UI"):WaitForChild("Frame"):WaitForChild("Skip") 
+
 
 Auto:Toggle("Open Pack",function(bool)
     shared.ToggleAOP=bool
