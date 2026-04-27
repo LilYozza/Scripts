@@ -1,4 +1,4 @@
-print("Version 1.4.0.9 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.1 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -566,6 +566,17 @@ local function Print(...)
     end
 end
 
+local function PlaceSprinker(_type, _pos)
+    _pos = _pos or getRandomPos()
+    local item = checkBackpack(_type)
+    if item then
+        local cf = CFrame.new(_pos)
+        Player.Character:WaitForChild("Humanoid"):EquipTool(item) task.wait(0.5)
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SprinklerService"):FireServer("Create", cf)
+        Player.Character:WaitForChild("Humanoid"):UnequipTools()    
+    end
+end
+
 local singleHarvest = {"Easter Candy Carrot", "Easter Liquorice"}
 local PlayerMaxEggs = 5
 local QuestContainers = ALLDATA["QuestContainers"]
@@ -775,6 +786,11 @@ local function main_Quest_Thread(_questID)
                             Player.Character:WaitForChild("Humanoid"):UnequipTools()
                         end
 
+                    elseif type == "PlaceObject" then
+                        Print("Place Object State")
+                        local object = arguments[1]
+                        Print("Attempting To Place:", object)
+                        PlaceSprinker(object)
                     else
                         Print("INFO:",type, "NOT ADDED!!!")
                         PrintTable(arguments)
