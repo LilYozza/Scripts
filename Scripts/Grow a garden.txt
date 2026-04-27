@@ -1,4 +1,4 @@
-print("Version 1.4.0.7 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.8 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -720,6 +720,23 @@ local function main_Quest_Thread(_questID)
                         else
                             Print("Couldnt Find Seed:", seedToFind)
                         end
+                    elseif type == "HarvestTargetWithWeight" then
+                        print("Harvesting With Weight State")
+                        local plant = arguments[2]
+                        local size = arguments[1]
+                        local mutation = arguments[3] or nil
+
+                        local cPlant = checkPlantGarden(plant,{mutation},size)
+                        if IsMaxInventory() then
+                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
+                        end
+                        if cPlant and not IsMaxInventory() then
+                            Print("Found Plant:", plant, size)
+                            mod:FireServer({cPlant})
+                            task.wait(1)
+                        else
+                            Print("Cannot Find Plant")
+                        end
                     elseif type == "Craft" then
                         Print("Crafting State")
                         local craftType = arguments[1]
@@ -752,7 +769,7 @@ local function main_Quest_Thread(_questID)
                                 Player.Character:WaitForChild("Humanoid"):EquipTool(pack) task.wait(0.5)
                                 pack:Activate()
                                 if SkipRollBtn then SendClick(SkipRollBtn) end
-                                task.wait(5)
+                                task.wait(10)
                             end
                             Player.Character:WaitForChild("Humanoid"):UnequipTools()
                         end
