@@ -1,4 +1,4 @@
-print("Version 1.4.0.2 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.3 - Easter Part 4 (Team Quests) - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1765,13 +1765,15 @@ PetMenu:Toggle("Auto Hatch",function(bool)
         while shared.ToggleAAH do
             local eggs = getEggs()
             for _, egg in pairs(eggs)do
-               if egg and egg.Ready and egg.TimeToHatch <= 0 then
+                if egg and egg.Ready and egg.TimeToHatch <= 0 and not busy then
+                    busy = true
                     rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", egg.Egg) task.wait(0.3)
                     if shared.ToggleARE then
                         task.wait(1)
                         placeEgg(egg.Name, egg.Part.Position)
                     end
-               end 
+                    busy = false
+                end 
             end
             task.wait(1)
         end
@@ -1867,11 +1869,13 @@ PetMenu:Toggle("Delete Pet",function(bool)
                     for _,v in pairs(PetDataTable) do
                         if v.PetType == _pet and v.PetData.Level < 50 then
                             local pet = getPet(v.UUID)
-                            if pet then
+                            if pet and not busy then
+                                busy = true
                                 print("Selling:", pet)
                                 local hum = Player.Character:WaitForChild("Humanoid")
                                 hum:EquipTool(pet) task.wait(0.3)
                                 sellPet(pet) task.wait(0.3)
+                                busy = false
                                 break
                             end
                         end
