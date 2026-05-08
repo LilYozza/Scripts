@@ -1,4 +1,4 @@
-print("Version 1.4.0.5 - Webhook - TESTING ONLY")
+print("Version 1.4.1 - Webhook - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1846,6 +1846,16 @@ StockMenu:Toggle("Webhook",function(bool)
         end
     end)
 end)
+
+StockMenu:Button("Send Stock",function()
+    spawn(function()
+        if webhook then
+            updateStock(stocksTable)
+            SendMessage(webhook, stocksTable)
+        end
+    end)
+end)
+
 
 
 local function getCurrentPets()
