@@ -1,4 +1,4 @@
-print("Version 1.4.7 - Webhook - TESTING ONLY")
+print("Version 1.4.8 - Webhook - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -78,48 +78,56 @@ local function updateStock(_stock)
 end
 local stocksTable = {
     ["Seeds"] = {
+        Priority = 1,
         Name = "Seed Stock",
         Reference = ALLDATA.SeedStocks.Shop,
         Time = "Seed",
         LastUpdated = "Unknown"
     },
     ["Daily Seeds"] = {
+        Priority = 2,
         Name = "Daily Seed Stock",
         Reference = ALLDATA.SeedStocks["Daily Deals"],
         Time = "Seed",
         LastUpdated = "Unknown"
     },
     ["Gear"] = {
+        Priority = 3,
         Name = "Gear Stock",
         Reference = ALLDATA.GearStock,
         Time = "Gear",
         LastUpdated = "Unknown"
     },
     ["PetEggStock"] = {
+        Priority = 4,
         Name = "Egg Stock",
         Reference = ALLDATA.PetEggStock,
         Time = "Egg",
         LastUpdated = "Unknown"
     },
     ["TravelingMerchantShopStock"] = {
+        Priority = 7,
         Name = "Traveling Merchant Stock",
         Reference = ALLDATA.TravelingMerchantShopStock,
         LastUpdated = "Unknown",
         Type = "Unknown"
     },
     ["EventShopStock"] = {
+        Priority = 6,
         Name = "Event Stock",
         Reference = ALLDATA.EventShopStock["Easter Seed Shop"],
         Time = "ShopSeed",
         LastUpdated = "Unknown"
     },
     ["SeasonPass"] = {
+        Priority = 5,
         Name = "Season Pass Stock",
         Reference = ALLDATA.SeasonPass["Season 4"],
         Time = "ShopItem",
         LastUpdated = "Unknown"
     },
     ["CosmeticStock"] = {
+        Priority = 100,
         Name = "Cosmetic Stock",
         Reference = ALLDATA.CosmeticStock.TabStocks.Cosmetics,
         LastUpdated = "Unknown"
