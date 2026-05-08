@@ -1,4 +1,4 @@
-print("Version 1.4.1 - Webhook - TESTING ONLY")
+print("Version 1.4.2 - Webhook - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -54,9 +54,7 @@ local function poll(_stock)
 end
 local function updateStock(_stock)
     for name, stock in pairs(_stock) do
-        if not stock.Stock then
-            stock.Stock = stock.Reference.Stocks
-        end
+        stock.Stock = stock.Reference.Stocks
         if name == "TravelingMerchantShopStock" then
             stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
             stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
@@ -65,7 +63,6 @@ local function updateStock(_stock)
         end
     end
 end
-
 local stocksTable = {
     ["Seeds"] = {
         Name = "Seed Stock",
