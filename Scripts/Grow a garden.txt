@@ -59,7 +59,10 @@ local function updateStock(_stock)
             stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
             stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
         else
-            stock.LastUpdated = os.time()
+            local ref = stock.Reference 
+            local CurrentTime = ref[stock.Time]
+            stock.LastUpdated = CurrentTime or os.time()
+            --stock.LastUpdated = os.time()
         end
     end
 end
