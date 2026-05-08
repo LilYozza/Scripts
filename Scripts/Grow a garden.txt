@@ -1447,6 +1447,41 @@ local DropList = Auto:Dropdown("blacklist",cropsToHarvest,true,function(SItem)
     sblacklistCrop = SItem
 end)
 
+local webhook
+Auto:Box("Link","string",function(value) 
+    webhook = value
+end)
+
+Auto:Toggle("Webhook",function(bool)
+    shared.ToggleSWH=bool
+    spawn(function()
+        while shared.ToggleSWH do
+            if webhook then
+                print("checking")
+                local diff = poll(stocksTable)
+                if diff then
+                    print("There Has Been A Change, Sending Update")
+                    updateStock(stocksTable)
+                    SendMessage(webhook, stocksTable)
+                else
+                    print("Not Changed")
+                end
+                task.wait(1)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Auto:Button("Send Stock",function()
+    spawn(function()
+        if webhook then
+            updateStock(stocksTable)
+            SendMessage(webhook, stocksTable)
+        end
+    end)
+end)
+
 Auto:Button("Blacklist",function()
     spawn(function()
         if not table.find(blacklistHarvest, sblacklistCrop) then table.insert(blacklistHarvest, sblacklistCrop) end
@@ -1849,45 +1884,6 @@ StockMenu:Toggle("Buy Merchant",function(bool)
         end
     end)
 end)
-
-local webhook
-StockMenu:Box("Box","string",function(value) 
-    webhook = value
-end)
-
-
-
-StockMenu:Toggle("Webhook",function(bool)
-    shared.ToggleSWH=bool
-    spawn(function()
-        while shared.ToggleSWH do
-            if webhook then
-                print("checking")
-                local diff = poll(stocksTable)
-                if diff then
-                    print("There Has Been A Change, Sending Update")
-                    updateStock(stocksTable)
-                    SendMessage(webhook, stocksTable)
-                else
-                    print("Not Changed")
-                end
-                task.wait(1)
-            end
-            task.wait()
-        end
-    end)
-end)
-
-StockMenu:Button("Send Stock",function()
-    spawn(function()
-        if webhook then
-            updateStock(stocksTable)
-            SendMessage(webhook, stocksTable)
-        end
-    end)
-end)
-
-
 
 local function getCurrentPets()
     local t = {}
