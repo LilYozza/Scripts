@@ -1,4 +1,4 @@
-print("Version 1.4.5 - Webhook - TESTING ONLY")
+print("Version 1.4.6 - Webhook - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -65,7 +65,7 @@ local function updateStock(_stock)
                 if k.Stock then
                     local newStock = table.clone(k)
                     newStock.MaxStock = k.Stock
-                    table.insert(t, newStock)
+                    t[i] = newStock
                 end
             end
             stock.Stock = t
