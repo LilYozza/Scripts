@@ -1,4 +1,4 @@
-print("Version 1.4.0.4 - Easter Part 4 (Team Quests) - TESTING ONLY")
+print("Version 1.4.0.5 - Webhook - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -18,6 +18,98 @@ local SPMenu = w:CreateFolder("Season Pass")
 
 local Players=game:GetService("Players")
 local Player=game.Players.LocalPlayer
+
+
+function SendMessage(url, message)
+    if not url then return end
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    local data = {
+        ["content"] = message
+    }
+    local body = HttpService:JSONEncode(data)
+    local response = request({
+        Url = url,
+        Method = "POST",
+        Headers = headers,
+        Body = body
+    })
+    print("Sent")
+end
+local lastSnapshots = {}
+local function poll(_stock)
+    local foundUpdate = false
+    for name, stock in pairs(_stock) do
+        local ref = stock.Reference 
+        if ref and ref[stock.Time] then
+            local CurrentTime = ref[stock.Time]
+            if not lastSnapshots[name] or lastSnapshots[name] ~= CurrentTime then
+                foundUpdate = true
+            end
+            lastSnapshots[name] = CurrentTime
+        end
+    end
+    return foundUpdate
+end
+local function updateStock(_stock)
+    for name, stock in pairs(_stock) do
+        if not stock.Stock then
+            stock.Stock = stock.Reference.Stocks
+        end
+        if name == "TravelingMerchantShopStock" then
+            stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
+            stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
+        else
+            stock.LastUpdated = os.time()
+        end
+    end
+end
+
+local stocksTable = {
+    ["Seeds"] = {
+        Name = "Seed Stock",
+        Reference = ALLDATA.SeedStocks.Shop,
+        Time = "Seed",
+        LastUpdated = "Unknown"
+    },
+    ["Daily Seeds"] = {
+        Name = "Daily Seed Stock",
+        Reference = ALLDATA.SeedStocks["Daily Deals"],
+        Time = "Seed",
+        LastUpdated = "Unknown"
+    },
+    ["Gear"] = {
+        Name = "Gear Stock",
+        Reference = ALLDATA.GearStock,
+        Time = "Gear",
+        LastUpdated = "Unknown"
+    },
+    ["PetEggStock"] = {
+        Name = "Egg Stock",
+        Reference = ALLDATA.PetEggStock,
+        Time = "Egg",
+        LastUpdated = "Unknown"
+    },
+    ["TravelingMerchantShopStock"] = {
+        Name = "Traveling Merchant Stock",
+        Reference = ALLDATA.TravelingMerchantShopStock,
+        LastUpdated = "Unknown",
+        Type = "Unknown"
+    },
+    ["EventShopStock"] = {
+        Name = "Event Stock",
+        Reference = ALLDATA.EventShopStock["Easter Seed Shop"],
+        Time = "ShopSeed",
+        LastUpdated = "Unknown"
+    },
+    ["SeasonPass"] = {
+        Name = "Season Pass Stock",
+        Reference = ALLDATA.SeasonPass["Season 4"],
+        Time = "ShopItem",
+        LastUpdated = "Unknown"
+    }
+}
 
 
 
@@ -1727,6 +1819,33 @@ StockMenu:Toggle("Buy Merchant",function(bool)
     end)
 end)
 
+local webhook
+StockMenu:Box("Box","string",function(value) 
+    webhook = value
+end)
+
+
+
+StockMenu:Toggle("Webhook",function(bool)
+    shared.ToggleSWH=bool
+    spawn(function()
+        while shared.ToggleSWH do
+            if webhook then
+                print("checking")
+                local diff = poll(stocksTable)
+                if diff then
+                    print("There Has Been A Change, Sending Update")
+                    updateStock(stocksTable)
+                    SendMessage(webhook, stocksTable)
+                else
+                    print("Not Changed")
+                end
+                task.wait(5)
+            end
+            task.wait()
+        end
+    end)
+end)
 
 
 local function getCurrentPets()
