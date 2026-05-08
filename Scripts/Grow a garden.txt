@@ -1,4 +1,4 @@
-print("Version 1.4.2 - Webhook - TESTING ONLY")
+print("Version 1.4.5 - Webhook - TESTING ONLY")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -58,11 +58,19 @@ local function updateStock(_stock)
         if name == "TravelingMerchantShopStock" then
             stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
             stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
+        elseif name == "CosmeticStock" then
+            stock.LastUpdated = ALLDATA.CosmeticStock.CosmeticSeed
+            local t = {}
+            for i,k in pairs(stock.Reference)do
+                if k.Stock then
+                    local newStock = table.clone(k)
+                    newStock.MaxStock = k.Stock
+                    table.insert(t, newStock)
+                end
+            end
+            stock.Stock = t
         else
-            local ref = stock.Reference 
-            local CurrentTime = ref[stock.Time]
-            stock.LastUpdated = CurrentTime or os.time()
-            --stock.LastUpdated = os.time()
+            stock.LastUpdated = os.time()
         end
     end
 end
@@ -107,6 +115,11 @@ local stocksTable = {
         Name = "Season Pass Stock",
         Reference = ALLDATA.SeasonPass["Season 4"],
         Time = "ShopItem",
+        LastUpdated = "Unknown"
+    },
+    ["CosmeticStock"] = {
+        Name = "Cosmetic Stock",
+        Reference = ALLDATA.CosmeticStock.TabStocks.Cosmetics,
         LastUpdated = "Unknown"
     }
 }
