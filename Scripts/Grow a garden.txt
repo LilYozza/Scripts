@@ -53,37 +53,66 @@ local function poll(_stock)
     return foundUpdate
 end
 local function updateStock(_stock)
+    task.wait(2) -- Gonna Wait for Slow Stock Updates
     for name, stock in pairs(_stock) do
-        stock.Stock = stock.Reference.Stocks
         local ref = stock.Reference
-        --Adds Seed
-        if ref and ref[stock.Time] then
-            local CurrentTime = ref[stock.Time] 
-            stock.Seed = CurrentTime
-        end
-        if name == "TravelingMerchantShopStock" then
-            stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
-            stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
-            stock.Seed = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
-        elseif name == "CosmeticStock" then
-            stock.LastUpdated = ALLDATA.CosmeticStock.CosmeticSeed
-            stock.Seed = ALLDATA.CosmeticStock.CosmeticSeed
-            local t = {}
-            for _,v in pairs(stock.Reference)do
-                for i,k in pairs(v)do
-                    if k.Stock then
-                        local newStock = table.clone(k)
-                        newStock.MaxStock = k.Stock
-                        t[i] = newStock
+
+        if ref then
+            -- Default stock reference
+            stock.Stock = ref.Stocks
+
+            -- Adds Seed
+            if ref[stock.Time] then
+                stock.Seed = ref[stock.Time]
+            end
+
+            if name == "TravelingMerchantShopStock" then
+                stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
+                stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
+                stock.Seed = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
+
+            elseif name == "CosmeticStock" then
+                stock.LastUpdated = ALLDATA.CosmeticStock.CosmeticSeed
+                stock.Seed = ALLDATA.CosmeticStock.CosmeticSeed
+
+                -- Reuse table instead of recreating every update
+                local t = stock.Stock
+
+                if type(t) ~= "table" or t == ref.Stocks then
+                    t = {}
+                else
+                    table.clear(t)
+                end
+
+                for _, v in pairs(ref) do
+                    if type(v) == "table" then
+                        for i, k in pairs(v) do
+                            if type(k) == "table" and k.Stock then
+                                local newStock = t[i]
+                                if type(newStock) ~= "table" then
+                                    newStock = {}
+                                    t[i] = newStock
+                                else
+                                    table.clear(newStock)
+                                end
+                                for key, value in pairs(k) do
+                                    newStock[key] = value
+                                end
+                                newStock.MaxStock = k.Stock
+                            end
+                        end
                     end
                 end
+
+                stock.Stock = t
+
+            else
+                stock.LastUpdated = os.time()
             end
-            stock.Stock = t
-        else
-            stock.LastUpdated = os.time()
         end
     end
 end
+
 local stocksTable = {
     ["Seeds"] = {
         Priority = 1,
