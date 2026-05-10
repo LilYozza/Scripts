@@ -1006,6 +1006,19 @@ if EventItem then
         end
 
     end
+    local function getNextCrop()
+        for _,v in pairs(Player.Backpack:GetChildren())do
+
+            local honeyAtt = v:GetAttribute("b")
+            local nameAtt = v:GetAttribute("f")
+            if nameAtt and honeyAtt and honeyAtt == "j" and checkPollinated(v) then
+                if nameAtt:lower():find("honey") then
+                    return v
+                end
+            end
+        end
+
+    end
 
     --Set Poistion
     local eventPlantPos
@@ -1139,7 +1152,7 @@ if EventItem then
         shared.ToggleEMAC=bool
         spawn(function()
             while shared.ToggleEMAC do
-                if getInventoryCount() > 0 then
+                if getInventoryCount() > 0 and getNextCrop() then
                     if incData and incData.IsRunning == false and incData.HoneyStored <= 0 then
                         EACRemote:FireServer("SubmitAll")
                     end
