@@ -1066,7 +1066,7 @@ if EventItem then
             while shared.ToggleESS do
                 if EEStype and EESremote then
                     local ESSStocks = ALLDATA.EventShopStock["Honey Seed Shop"].Stocks
-                    buyStocks(ESSStocks, EEStype, EESremote)
+                    buyStocks(ESSStocks, EESremote, EEStype)
                 end
                 task.wait(1)
             end
