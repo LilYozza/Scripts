@@ -943,9 +943,13 @@ if EventItem then
     local EventPlant = eventWindow:CreateFolder("Plant")
     local EventStockMenu = eventWindow:CreateFolder("Stock")
     local EventUpgrades = eventWindow:CreateFolder("Upgrades")
+    local blacklistMenu = eventWindow:CreateFolder("Blacklists")
     --local EventShop = ALLDATA.EventShopStock
     
     local Event_Point = EventItem:FindFirstChild("Event_Point")
+    local blacklistEventItems = {}
+    local BeeEggList = {"Common Bee Egg", "Rare Bee Egg", "Mythical Bee Egg"}
+    local BeeSeedList = {"Honey Carrot", "Honey Blueberry", "Honey Tomato", "Honey Strawberry"}
 
     --local honeyCoins = ALLDATA.SpecialCurrency.HoneyCoins
     local function checkCoinCount(_amount)
@@ -980,7 +984,7 @@ if EventItem then
 
     local function buyStocks(_stocks, _remote, _type)
         for name, v in pairs(_stocks) do
-            if v.Stock and v.Stock > 0 then
+            if v.Stock and v.Stock > 0 and not table.find(blacklistEventItems, name) then
                 for i = 1, v.Stock do
                     if _type and _type == "Honey Seed Shop" and not name:find("Carrot") then
                         if not checkCoinCount(50) then break end
@@ -1190,6 +1194,28 @@ if EventItem then
     }
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("PlaceBeeEggRE"):FireServer(unpack(args))
     ]]--
+
+    local selectedItemEvent
+    blacklistMenu:Button("Add",function()
+        spawn(function()
+            if selectedItemEvent and not table.find(blacklistEventItems, selectedItemEvent) then
+                table.insert(blacklistEventItems, selectedItemEvent)
+            end
+        end)
+    end)
+    blacklistMenu:Button("Remove",function()
+        spawn(function()
+            if selectedItemEvent and table.find(blacklistEventItems, selectedItemEvent) then
+                RemoveFromTable(blacklistEventItems, selectedItemEvent)
+            end
+        end)
+    end)
+    Auto:Dropdown("Select Egg",BeeEggList,true,function(SItem)
+        selectedItemEvent = SItem
+    end)
+    Auto:Dropdown("Select Seed",BeeSeedList,true,function(SItem)
+        selectedItemEvent = SItem
+    end)
 
 end
 --------------------------------------------------------------------------------------------------------------------------------------
