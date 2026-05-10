@@ -1128,7 +1128,7 @@ if EventItem then
         spawn(function()
             while shared.ToggleEMAC do
                 if getInventoryCount() > 0 then
-                    if incData and incData.IsRunning == false and incData.HoneyStore <= 0 then
+                    if incData and incData.IsRunning == false and incData.HoneyStored <= 0 then
                         EACRemote:FireServer("SubmitAll")
                     end
                 end
@@ -1143,7 +1143,7 @@ if EventItem then
         shared.ToggleECH=bool
         spawn(function()
             while shared.ToggleECH do
-                if incData and incData.HoneyStore > 0 and incData.TimeLeft == 0 then
+                if incData and incData.HoneyStored > 0 and incData.TimeLeft == 0 then
                     ECHRemote:FireServer("CollectHoney")
                 end
                 task.wait(1)
