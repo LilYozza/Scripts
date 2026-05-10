@@ -1210,10 +1210,10 @@ if EventItem then
             end
         end)
     end)
-    Auto:Dropdown("Select Egg",BeeEggList,true,function(SItem)
+    blacklistMenu:Dropdown("Select Egg",BeeEggList,true,function(SItem)
         selectedItemEvent = SItem
     end)
-    Auto:Dropdown("Select Seed",BeeSeedList,true,function(SItem)
+    blacklistMenu:Dropdown("Select Seed",BeeSeedList,true,function(SItem)
         selectedItemEvent = SItem
     end)
 
