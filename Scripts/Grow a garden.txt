@@ -519,7 +519,7 @@ end
 
 local function plantSeed(_seed, _pos)
     local dis = GetDistance(Spawn_Point)
-    if dis > 15 then
+    if dis > 100 then
         MoveTo(Spawn_Point)
     end
     local pos = typeof(_pos) == "CFrame" and _pos.Position or _pos
@@ -1091,7 +1091,7 @@ if EventItem then
         shared.ToggleESS=bool
         spawn(function()
             while shared.ToggleESS do
-                if EEStype and EESremote and checkCoinCount(50) then
+                if EEStype and EESremote then
                     local ESSStocks = ALLDATA.EventShopStock["Honey Seed Shop"].Stocks
                     buyStocks(ESSStocks, EESremote, ESStype)
                 end
@@ -1115,7 +1115,7 @@ if EventItem then
     
     local EACRemote = rs:WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE")
     --CompressAll
-    AEventMenuuto:Button("Compress",function()
+    EventMenu:Button("Compress",function()
         spawn(function()
             EACRemote:FireServer("SubmitAll")
         end)
