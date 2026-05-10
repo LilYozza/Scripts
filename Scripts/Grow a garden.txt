@@ -1,4 +1,4 @@
-print("Version 1.5.4 - Bee Event - Basics - Testing")
+print("Version 1.5.6 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -948,25 +948,30 @@ if EventItem then
 
     --local honeyCoins = ALLDATA.SpecialCurrency.HoneyCoins
 
-    local function getPollinatedFruit(_amount, _blacklist, _mutationcheck)
-        local index, t = 1, {}
-        local harvestablePrompts = CollectionService:GetTagged("CollectPrompt")
-        print("Found " .. #harvestablePrompts .. " harvestable fruits.")
-        for _, prompt in ipairs(harvestablePrompts) do
-            if _amount and index > _amount then break end
-            local plant = (prompt.Parent and prompt.Parent.Parent) or nil
-            if (plant and plant:IsDescendantOf(Plants_Physical) and prompt.Enabled == true and plant:HasTag("Harvestable")) then
-                local pollinated = plant:GetAttribute("PollinateTimeRemaining")
-                if pollinated and (pollinated <= 0) then
-                    if not _blacklist or not table.find(_blacklist, plant.Name) then
-                        --local cPlant = checkPlant(plant, nil, _mutationcheck, false)
-                        t[index] = plant
-                        index = index + 1
+
+    local function checkPollinated(plant)
+        for name, value in pairs(plant:GetAttributes()) do
+            if string.find(name:lower(), "pollinated") then
+                return true
+            end
+        end
+    end
+    local function getPollinatedFruit(amount)
+        local results = {}
+        local prompts = CollectionService:GetTagged("CollectPrompt")
+        for _, prompt in ipairs(prompts) do
+            local plant = prompt:FindFirstAncestorOfClass("Model")
+            if plant and plant:IsDescendantOf(Plants_Physical) then
+                local tags = CollectionService:GetTags(plant)
+                if checkPollinated(plant) and prompt.Enabled then
+                    table.insert(results, plant)
+                    if amount and #results >= amount then
+                        break
                     end
                 end
             end
         end
-        return t
+        return results
     end
 
     local function buyStocks(_stocks, _remote, _type)
@@ -1042,7 +1047,7 @@ if EventItem then
                 if getSpaceLeft() > 0 and not busy then
                     local spaceLeft = math.max(0, getSpaceLeft())
                     local hCrops = getPollinatedFruit(spaceLeft)
-                    if hCrops then mod:FireServer({hCrops}) end
+                    if hCrops then mod:FireServer(hCrops) end
                 end
                 task.wait(5)
             end
