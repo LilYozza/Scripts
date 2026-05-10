@@ -1,4 +1,4 @@
-print("Version 1.5.0 - Webhook - TESTING ONLY")
+print("Version 1.5.0 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -156,6 +156,13 @@ local stocksTable = {
         Time = "ShopSeed",
         LastUpdated = "Unknown"
     },
+    ["EventSeedStock"] = {
+        Priority = 6,
+        Name = "Event Seed Stock",
+        Reference = ALLDATA.EventShopStock["Honey Seed Shop"],
+        Time = "ShopSeed",
+        LastUpdated = "Unknown"
+    },
     ["BeeEggShopStock"] = {
         Priority = 7,
         Name = "Bee Egg Stock",
@@ -282,20 +289,6 @@ end
 --Check Garden
 --Check Backpack / Hand / Inventory
 --Check Plant (Name, Mutation)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 local function getRandomPos()
 
@@ -476,14 +469,6 @@ local function getPet(_petID)
     end
 end
 
-
-
-
-local function CollectPlant(_plant, _name, _mutations)
-    local plant = checkPlant(_plant, _name, _mutations)
-    if plant then mod:FireServer({plant}) task.wait() end
-end
-
 local function getStockInfo(_item)
     local t = {
         name = _item.Parent.Name,
@@ -507,36 +492,9 @@ end
 
 local crhistmasMutations = {"Snowy","Snowtouched","Ornamented","Arctic","Eggnog","Glacial","Snowfall","Peppermint"}
 local blacklistHarvest = {}
---[[
-local function getFruit(_amount, _blacklist, _mutationCheck)
-    _blacklist = _blacklist or {}
-    _mutationCheck = _mutationCheck or {"any"}
-    local _mode = false
-    local t = {}
-    local counter = 0
-    for _, plant in ipairs(Plants_Physical:GetChildren()) do
-        counter = counter + 1
-        if counter % 50 == 0 then task.wait() end
 
-        if not table.find(_blacklist, plant.Name) then
-            local fruitsFolder = plant:FindFirstChild("Fruits")
-            if not plant:HasTag("Harvestable") and fruitsFolder then
-                for _, fruit in ipairs(fruitsFolder:GetChildren()) do
-                    local cFruit = checkPlant(fruit,nil,_mutationCheck,_mode)
-                    if cFruit then t[#t+1] = fruit end
-                end
-            else
-                local cFruit = checkPlant(plant,nil,_mutationCheck,_mode)
-                if cFruit then t[#t+1] = plant end
-            end 
-        end
-        if _amount and #t >= _amount then break end
-    end
-    return t
-end
-]]
 
-local function getFruit(_amount, _blacklist, _mutationcheck)
+local function getFruit(_amount, _blacklist, _mutationList)
     local index, t = 1, {}
     local harvestablePrompts = CollectionService:GetTagged("CollectPrompt")
     --print("Found " .. #harvestablePrompts .. " harvestable fruits.")
@@ -547,9 +505,11 @@ local function getFruit(_amount, _blacklist, _mutationcheck)
             local DoneGrowTime = plant:GetAttribute("DoneGrowTime")
             if not DoneGrowTime or (os.time() > DoneGrowTime) then
                 if not _blacklist or not table.find(_blacklist, plant.Name) then
-                    --local cPlant = checkPlant(plant, nil, _mutationcheck, false)
-                    t[index] = plant
-                    index = index + 1
+                    local cPlant = checkPlant(plant, nil, _mutationList, false)
+                    if cPlant then
+                        t[index] = plant
+                        index = index + 1
+                    end
                 end
             end
         end
@@ -979,10 +939,168 @@ local eventItemName = "BeeEvent"
 local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Interaction:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
 if EventItem then
     local eventWindow = library:CreateWindow("Event")
-    local EventMenu = eventWindow:CreateFolder("Bee")
+    local EventMenu = eventWindow:CreateFolder("Bee Event")
+    local EventPlant = eventWindow:CreateFolder("Plant")
+    local EventStockMenu = eventWindow:CreateFolder("Stock")
     --local EventShop = ALLDATA.EventShopStock
     
     local Event_Point = EventItem:FindFirstChild("Event_Point")
+
+    local function getPollinatedFruit(_amount, _blacklist, _mutationcheck)
+        local index, t = 1, {}
+        local harvestablePrompts = CollectionService:GetTagged("CollectPrompt")
+        print("Found " .. #harvestablePrompts .. " harvestable fruits.")
+        for _, prompt in ipairs(harvestablePrompts) do
+            if _amount and index > _amount then break end
+            local plant = (prompt.Parent and prompt.Parent.Parent) or nil
+            if (plant and plant:IsDescendantOf(Plants_Physical) and prompt.Enabled == true and plant:HasTag("Harvestable")) then
+                local pollinated = plant:GetAttribute("PollinateTimeRemaining")
+                if pollinated and (pollinated <= 0) then
+                    if not _blacklist or not table.find(_blacklist, plant.Name) then
+                        --local cPlant = checkPlant(plant, nil, _mutationcheck, false)
+                        t[index] = plant
+                        index = index + 1
+                    end
+                end
+            end
+        end
+        return t
+    end
+
+    local function buyStocks(_stocks, _remote, _type)
+        for name,v in pairs(_stocks)do
+            if v.Stock and v.Stock > 0 then
+                for i = 1, v.Stock do
+                    --print("Buying:", name, "Type:", _type)
+                    if _type then
+                        _remote:FireServer(name, _type)
+                    else
+                        _remote:InvokeServer(name)
+                    end
+                end
+            end
+        end
+    end
+
+    --Set Poistion
+    local eventPlantPos
+    local isEventRandomPos = false
+    EventPlant:Button("Set/Remove Pos",function()
+        spawn(function()
+            eventPlantPos = GetPos()
+        end)
+    end)
+    --Random Placing
+    EventPlant:Toggle("Auto",function(bool)
+        shared.ToggleERP=bool
+        isEventRandomPos = shared.ToggleER
+    end)
+    --Auto Plant
+    EventPlant:Toggle("Auto Plant",function(bool)
+        shared.ToggleEAP=bool
+        spawn(function()
+            while shared.ToggleEAP do
+                --GET EVENT SEEDS ONLY ##############
+                local eventSeed
+                if eventSeed then
+                    local newPos
+                    if isEventRandomPos then newPos = getRandomPos()
+                    elseif eventPlantPos then newPos = eventPlantPos end
+                    if newPos then
+                        plantSeed(eventSeed, newPos)
+                    end
+                end
+                task.wait()
+            end
+        end)
+    end)
+    --Auto Harvest
+    EventPlant:Toggle("Auto Harvest",function(bool)
+        shared.ToggleEAH=bool
+        spawn(function()
+            while shared.ToggleEAH do
+                if getSpaceLeft() > 0 and not busy then
+                    local spaceLeft = math.max(0, getSpaceLeft())
+                    local hCrops = getPollinatedFruit(spaceLeft)
+                    if hCrops then mod:FireServer(hCrops) end
+                end
+                task.wait(5)
+            end
+        end)
+    end)
+
+
+    --Auto Buy Event Stock 
+    local EEStype = "Honey Coin Shop"
+    local EESremote = rs:WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock")
+    EventStockMenu:Toggle("Event Shop",function(bool)
+        shared.ToggleEES=bool
+        spawn(function()
+            while shared.ToggleEES do
+                if EEStype and EESremote then
+                    local EESStocks = ALLDATA.EventShopStock["Honey Coin Shop"].Stocks
+                    buyStocks(EESStocks, EEStype, EESremote)
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+    --Auto Buy Bee Eggs
+    local EBERemote = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BeeColonyEggShopService"):WaitForChild("BuyBeeEggStock")
+    EventStockMenu:Toggle("Bee Eggs",function(bool)
+        shared.ToggleEBE=bool
+        spawn(function()
+            while shared.ToggleEBE do
+                if EBERemote then
+                    local EBEStocks = ALLDATA.BeeEggShopStock.Stocks
+                    buyStocks(EBEStocks, EBERemote)
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+    --Auto Buy Seed Shop
+    EventStockMenu:Toggle("Event Seeds",function(bool)
+        shared.ToggleESS=bool
+        spawn(function()
+            while shared.ToggleESS do
+                if EEStype and EESremote then
+                    local ESSStocks = ALLDATA.EventShopStock["Honey Seed Shop"].Stocks
+                    buyStocks(ESSStocks, EEStype, EESremote)
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+    
+
+    --Auto Collect Honey
+    local args = {
+        [1] = "CollectHoney"
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE"):FireServer(unpack(args))
+    --Auto buy Honey Seed Stock(SAM)
+    local args = {
+        [1] = "Honey Carrot",
+        [2] = "Honey Seed Shop"
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock"):FireServer(unpack(args))
+    --Auto Compress
+    local args = {
+        [1] = "SubmitAll"
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE"):FireServer(unpack(args))
+    --Auto Hatch Egg
+    local args = {
+        [1] = "{6ef06247-f980-44a9-85cb-091de7cc9c83}"
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("HatchBeeSwarmEgg"):FireServer(unpack(args))
+    --Auto Place Egg
+    local args = {
+        [1] = 1
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("PlaceBeeEggRE"):FireServer(unpack(args))
+
 
 end
 --------------------------------------------------------------------------------------------------------------------------------------
