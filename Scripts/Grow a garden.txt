@@ -1,4 +1,4 @@
-print("Version 1.5.9 - Bee Event - Basics - Testing")
+print("Version 1.5.1 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -949,7 +949,8 @@ if EventItem then
     local Event_Point = EventItem:FindFirstChild("Event_Point")
     local blacklistEventItems = {}
     local BeeEggList = {"Common Bee Egg", "Rare Bee Egg", "Mythical Bee Egg"}
-    local BeeSeedList = {"Honey Carrot", "Honey Blueberry", "Honey Tomato", "Honey Strawberry"}
+    local BeeSeedList = {["Honey Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=50},["Honey Blueberry"]={Type="Multi",Currency="HoneyCoins",Price=75},["Honey Buttercup"]={Type="Single",Currency="HoneyCoins",Price=250},["Honey Tomato"]={Type="Multi",Currency="HoneyCoins",Price=100},["Honey Corn"]={Type="Multi",Currency="HoneyCoins",Price=150},["Honey Daffodil"]={Type="Single",Currency="HoneyCoins",Price=400},["Honey Watermelon"]={Type="Single",Currency="HoneyCoins",Price=100},["Honey Pumpkin"]={Type="Single",Currency="HoneyCoins",Price=150},["Honey Apple"]={Type="Multi",Currency="HoneyCoins",Price=600},["Honey Bamboo"]={Type="Single",Currency="HoneyCoins",Price=80},["Honey Coconut"]={Type="Multi",Currency="HoneyCoins",Price=1500},["Honey Cactus"]={Type="Multi",Currency="HoneyCoins",Price=2000},["Honey Dragon Fruit"]={Type="Multi",Currency="HoneyCoins",Price=2750},["Honey Mango"]={Type="Multi",Currency="HoneyCoins",Price=3500},["Honey Grape"]={Type="Multi",Currency="HoneyCoins",Price=4500},["Honey Mushroom"]={Type="Single",Currency="HoneyCoins",Price=55},["Honey Pepper"]={Type="Multi",Currency="HoneyCoins",Price=225},["Honey Cacao"]={Type="Multi",Currency="HoneyCoins",Price=255},["Honey Beanstalk"]={Type="Multi",Currency="HoneyCoins",Price=335},["Honey Sunflower"]={Type="Multi",Currency="HoneyCoins",Price=300},["Honey Ember Lily"]={Type="Multi",Currency="HoneyCoins",Price=355},["Honey Sugar Apple"]={Type="Multi",Currency="HoneyCoins",Price=11000},["Honey Burning Bud"]={Type="Multi",Currency="HoneyCoins",Price=16000},["Honey Giant Pinecone"]={Type="Multi",Currency="HoneyCoins",Price=17000},["Honey Elder Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=18000},["Honey Romanesco"]={Type="Multi",Currency="HoneyCoins",Price=22000},["Honey Crimson Thorn"]={Type="Multi",Currency="HoneyCoins",Price=26000},["Honey Zebrazinkle"]={Type="Multi",Currency="HoneyCoins",Price=32000},["Honey Octobloom"]={Type="Multi",Currency="HoneyCoins",Price=38000},["Honey Alien Apple"]={Type="Multi",Currency="HoneyCoins",Price=60000},["Honey Pollenvine"]={Type="Multi",Currency="HoneyCoins",Price=20000}}
+
 
     --local honeyCoins = ALLDATA.SpecialCurrency.HoneyCoins
     local function checkCoinCount(_amount)
@@ -986,8 +987,11 @@ if EventItem then
         for name, v in pairs(_stocks) do
             if v.Stock and v.Stock > 0 and not table.find(blacklistEventItems, name) then
                 for i = 1, v.Stock do
-                    if _type and _type == "Honey Seed Shop" and not name:find("Carrot") then
-                        if not checkCoinCount(50) then break end
+                    if _type then
+                        if _type == "Honey Seed Shop" and not name:find("Carrot") then
+                            local price = BeeSeedList[name]
+                            if not checkCoinCount(price.Price) then break end
+                        end
                     end
                     if _type then
                         _remote:FireServer(name, _type)
