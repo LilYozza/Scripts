@@ -1,4 +1,4 @@
-print("Version 1.5.7 - Bee Event - Basics - Testing")
+print("Version 1.5.8 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1128,7 +1128,7 @@ if EventItem then
         spawn(function()
             while shared.ToggleEMAC do
                 if getInventoryCount() > 0 then
-                    if incData and incData.IsRunning == false then
+                    if incData and incData.IsRunning == false and incData.HoneyStore <= 0 then
                         EACRemote:FireServer("SubmitAll")
                     end
                 end
