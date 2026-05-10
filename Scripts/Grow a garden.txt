@@ -954,8 +954,14 @@ if EventItem then
     local function getKeys(_table)
         local t = {}
         for k, v in pairs(_table) do
-            table.insert(t, k)
-        end return t
+            local name = k
+            if v.Type then
+                if v.Type == "Multi" then name = "(M)" .. name else name = "(S)" .. name end
+            end
+            table.insert(t, name)
+        end 
+        local sortedT = SortTableByName(t)
+        return sortedT
     end
     --local honeyCoins = ALLDATA.SpecialCurrency.HoneyCoins
     local function checkCoinCount(_amount)
