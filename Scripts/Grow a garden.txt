@@ -1073,7 +1073,7 @@ if EventItem then
         end)
     end)
     
-
+    --[[
     --Auto Collect Honey
     local args = {
         [1] = "CollectHoney"
@@ -1100,7 +1100,7 @@ if EventItem then
         [1] = 1
     }
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("PlaceBeeEggRE"):FireServer(unpack(args))
-
+    ]]--
 
 end
 --------------------------------------------------------------------------------------------------------------------------------------
