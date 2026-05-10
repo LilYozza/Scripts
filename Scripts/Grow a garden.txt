@@ -1,4 +1,4 @@
-print("Version 1.5.0 - Bee Event - Basics - Testing")
+print("Version 1.5.1 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -970,8 +970,8 @@ if EventItem then
     local function buyStocks(_stocks, _remote, _type)
         for name,v in pairs(_stocks)do
             if v.Stock and v.Stock > 0 then
+                --print("Buying:", v.Stock, name, "Type:", _type)
                 for i = 1, v.Stock do
-                    --print("Buying:", name, "Type:", _type)
                     if _type then
                         _remote:FireServer(name, _type)
                     else
@@ -991,7 +991,7 @@ if EventItem then
         end)
     end)
     --Random Placing
-    EventPlant:Toggle("Auto",function(bool)
+    EventPlant:Toggle("Random Pos",function(bool)
         shared.ToggleERP=bool
         isEventRandomPos = shared.ToggleER
     end)
@@ -1039,7 +1039,7 @@ if EventItem then
             while shared.ToggleEES do
                 if EEStype and EESremote then
                     local EESStocks = ALLDATA.EventShopStock["Honey Coin Shop"].Stocks
-                    buyStocks(EESStocks, EEStype, EESremote)
+                    buyStocks(EESStocks, EESremote, EEStype)
                 end
                 task.wait(1)
             end
@@ -1060,13 +1060,51 @@ if EventItem then
         end)
     end)
     --Auto Buy Seed Shop
+    local ESStype = "Honey Seed Shop"
     EventStockMenu:Toggle("Event Seeds",function(bool)
         shared.ToggleESS=bool
         spawn(function()
             while shared.ToggleESS do
                 if EEStype and EESremote then
                     local ESSStocks = ALLDATA.EventShopStock["Honey Seed Shop"].Stocks
-                    buyStocks(ESSStocks, EESremote, EEStype)
+                    buyStocks(ESSStocks, EESremote, ESStype)
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
+--BeeEventData
+    --HasEnabledHoneyGarden (bool)
+    --BeeInventoryData {}
+    --HoneyIncubatorData {}
+        --Running (bool)
+        --StartTime (number)
+        --Claimable (bool)
+        --Accelerations (number)
+        --CurrentSeed
+    --BeeSkillTree {}
+
+
+    
+    local EACRemote = rs:WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE")
+    --CompressAll
+    AEventMenuuto:Button("Compress",function()
+        spawn(function()
+            EACRemote:FireServer("SubmitAll")
+        end)
+    end)
+    --Auto Compress
+    EventMenu:Toggle("Auto Compress",function(bool)
+        shared.ToggleEMAC=bool
+        spawn(function()
+            while shared.ToggleEMAC do
+                if getInventoryCount() > 0 then
+                    --CHECK IF COMPRESSOR IS READY
+                    local incData = ALLDATA.BeeEventData.HoneyIncubatorData
+                    if incData and incData.Running == false then
+                        EACRemote:FireServer("SubmitAll")
+                    end
                 end
                 task.wait(1)
             end
@@ -1074,27 +1112,18 @@ if EventItem then
     end)
     
     --[[
+
     --Auto Collect Honey
     local args = {
         [1] = "CollectHoney"
     }
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE"):FireServer(unpack(args))
-    --Auto buy Honey Seed Stock(SAM)
-    local args = {
-        [1] = "Honey Carrot",
-        [2] = "Honey Seed Shop"
-    }
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock"):FireServer(unpack(args))
-    --Auto Compress
-    local args = {
-        [1] = "SubmitAll"
-    }
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE"):FireServer(unpack(args))
+    
     --Auto Hatch Egg
     local args = {
         [1] = "{6ef06247-f980-44a9-85cb-091de7cc9c83}"
     }
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("HatchBeeSwarmEgg"):FireServer(unpack(args))
+
     --Auto Place Egg
     local args = {
         [1] = 1
