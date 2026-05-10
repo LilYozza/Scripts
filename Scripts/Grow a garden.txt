@@ -1,4 +1,4 @@
-print("Version 1.5.2 - Bee Event - Basics - Testing")
+print("Version 1.5.3 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1007,7 +1007,7 @@ if EventItem then
     --Random Placing
     EventPlant:Toggle("Random Pos",function(bool)
         shared.ToggleERP=bool
-        isEventRandomPos = shared.ToggleER
+        isEventRandomPos = shared.ToggleERP
     end)
     --Auto Plant
     EventPlant:Toggle("Auto Plant",function(bool)
