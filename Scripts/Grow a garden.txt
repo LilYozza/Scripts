@@ -1,4 +1,4 @@
-print("Version 1.5.8 - Bee Event - Basics - Testing")
+print("Version 1.5.9 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -948,7 +948,11 @@ if EventItem then
     local Event_Point = EventItem:FindFirstChild("Event_Point")
 
     --local honeyCoins = ALLDATA.SpecialCurrency.HoneyCoins
-
+    local function checkCoinCount(_amount)
+        if ALLDATA.SpecialCurrency.HoneyCoins > _amount then
+            return true
+        end
+    end
 
     local function checkPollinated(plant)
         for name, value in pairs(plant:GetAttributes()) do
@@ -975,10 +979,12 @@ if EventItem then
     end
 
     local function buyStocks(_stocks, _remote, _type)
-        for name,v in pairs(_stocks)do
+        for name, v in pairs(_stocks) do
             if v.Stock and v.Stock > 0 then
-                --print("Buying:", v.Stock, name, "Type:", _type)
                 for i = 1, v.Stock do
+                    if _type and _type == "Honey Seed Shop" and not name:find("Carrot") then
+                        if not checkCoinCount(50) then break end
+                    end
                     if _type then
                         _remote:FireServer(name, _type)
                     else
@@ -1004,6 +1010,7 @@ if EventItem then
     --Set Poistion
     local eventPlantPos
     local isEventRandomPos = false
+    local isAllPSeeds = false
     EventPlant:Button("Set/Remove Pos",function()
         spawn(function()
             eventPlantPos = GetPos()
@@ -1014,14 +1021,23 @@ if EventItem then
         shared.ToggleERP=bool
         isEventRandomPos = shared.ToggleERP
     end)
+    EventPlant:Toggle("All Seeds",function(bool)
+        shared.ToggleEAS=bool
+        isAllPSeeds = shared.ToggleEAS
+    end)
+
     --Auto Plant
     EventPlant:Toggle("Auto Plant",function(bool)
         shared.ToggleEAP=bool
         spawn(function()
             while shared.ToggleEAP do
                 --local eventSeed = getNextSeed()
-
                 local seed = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
+                if not seed and isAllPSeeds then
+                    seed = getNextSeed()
+                    Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(1)
+                    
+                end
                 if seed and not busy then
                     local seedName = seed:GetAttribute("Seed")
                     if seedName then
@@ -1056,11 +1072,7 @@ if EventItem then
         end)
     end)
 
-    local function checkCoinCount(_amount)
-        if ALLDATA.SpecialCurrency.HoneyCoins > _amount then
-            return true
-        end
-    end
+
 
 
     --Auto Buy Event Stock 
