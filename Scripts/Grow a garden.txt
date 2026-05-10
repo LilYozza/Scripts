@@ -1230,7 +1230,9 @@ if EventItem then
     blacklistMenu:Button("Add",function()
         spawn(function()
             local item = CheckTables(selectedItemEvent)
+            print("[Add]:", selectedItemEvent, item)
             if item and not table.find(blacklistEventItems, item) then
+                print("Adding:", item, "To Blacklist")
                 table.insert(blacklistEventItems, item)
             end
         end)
@@ -1238,7 +1240,9 @@ if EventItem then
     blacklistMenu:Button("Remove",function()
         spawn(function()
             local item = CheckTables(selectedItemEvent)
+            print("[Remove]:", selectedItemEvent, item)
             if item and table.find(blacklistEventItems, item) then
+                print("Removing:", item, "To Blacklist")
                 RemoveFromTable(blacklistEventItems, item)
             end
         end)
