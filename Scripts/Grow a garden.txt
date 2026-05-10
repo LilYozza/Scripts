@@ -982,6 +982,18 @@ if EventItem then
         end
     end
 
+    local function getNextSeed()
+        for _,v in pairs(Player.Backpack:GetChildren())do
+            local honeyAtt = v:GetAttribute("Seed")
+            if honeyAtt then
+                if honeyAtt:lower():find("honey") then
+                    return v
+                end
+            end
+        end
+
+    end
+
     --Set Poistion
     local eventPlantPos
     local isEventRandomPos = false
@@ -1000,15 +1012,17 @@ if EventItem then
         shared.ToggleEAP=bool
         spawn(function()
             while shared.ToggleEAP do
-                --GET EVENT SEEDS ONLY ##############
-                local eventSeed
-                if eventSeed then
+                local eventSeed = getNextSeed()
+                if eventSeed and not busy then
+                    busy = true
                     local newPos
                     if isEventRandomPos then newPos = getRandomPos()
                     elseif eventPlantPos then newPos = eventPlantPos end
                     if newPos then
+                        Player.Character:WaitForChild("Humanoid"):EquipTool(eventSeed)
                         plantSeed(eventSeed, newPos)
                     end
+                    busy = false
                 end
                 task.wait()
             end
