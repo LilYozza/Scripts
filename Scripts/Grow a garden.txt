@@ -962,7 +962,6 @@ if EventItem then
         for _, prompt in ipairs(prompts) do
             local plant = prompt:FindFirstAncestorOfClass("Model")
             if plant and plant:IsDescendantOf(Plants_Physical) then
-                local tags = CollectionService:GetTags(plant)
                 if checkPollinated(plant) and prompt.Enabled then
                     table.insert(results, plant)
                     if amount and #results >= amount then
@@ -1047,9 +1046,11 @@ if EventItem then
                 if getSpaceLeft() > 0 and not busy then
                     local spaceLeft = math.max(0, getSpaceLeft())
                     local hCrops = getPollinatedFruit(spaceLeft)
-                    if hCrops then mod:FireServer(hCrops) end
+                    for _,v in pairs(hCrops)do
+                        mod:FireServer({v})
+                    end
                 end
-                task.wait(5)
+                task.wait(1)
             end
         end)
     end)
