@@ -951,6 +951,8 @@ if EventItem then
     local BeeEggList = {["Common Bee Egg"]={Item="CommonBeeEgg",Currency="HoneyCoins",Price=10},["Rare Bee Egg"]={Item="RareBeeEgg",Currency="HoneyCoins",Price=100},["Mythical Bee Egg"]={Item="MythicalBeeEgg",Currency="HoneyCoins",Price=500}}
     local BeeSeedList = {["Honey Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=50},["Honey Blueberry"]={Type="Multi",Currency="HoneyCoins",Price=75},["Honey Buttercup"]={Type="Single",Currency="HoneyCoins",Price=250},["Honey Tomato"]={Type="Multi",Currency="HoneyCoins",Price=100},["Honey Corn"]={Type="Multi",Currency="HoneyCoins",Price=150},["Honey Daffodil"]={Type="Single",Currency="HoneyCoins",Price=400},["Honey Watermelon"]={Type="Single",Currency="HoneyCoins",Price=100},["Honey Pumpkin"]={Type="Single",Currency="HoneyCoins",Price=150},["Honey Apple"]={Type="Multi",Currency="HoneyCoins",Price=600},["Honey Bamboo"]={Type="Single",Currency="HoneyCoins",Price=80},["Honey Coconut"]={Type="Multi",Currency="HoneyCoins",Price=1500},["Honey Cactus"]={Type="Multi",Currency="HoneyCoins",Price=2000},["Honey Dragon Fruit"]={Type="Multi",Currency="HoneyCoins",Price=2750},["Honey Mango"]={Type="Multi",Currency="HoneyCoins",Price=3500},["Honey Grape"]={Type="Multi",Currency="HoneyCoins",Price=4500},["Honey Mushroom"]={Type="Single",Currency="HoneyCoins",Price=55},["Honey Pepper"]={Type="Multi",Currency="HoneyCoins",Price=225},["Honey Cacao"]={Type="Multi",Currency="HoneyCoins",Price=255},["Honey Beanstalk"]={Type="Multi",Currency="HoneyCoins",Price=335},["Honey Sunflower"]={Type="Multi",Currency="HoneyCoins",Price=300},["Honey Ember Lily"]={Type="Multi",Currency="HoneyCoins",Price=355},["Honey Sugar Apple"]={Type="Multi",Currency="HoneyCoins",Price=11000},["Honey Burning Bud"]={Type="Multi",Currency="HoneyCoins",Price=16000},["Honey Giant Pinecone"]={Type="Multi",Currency="HoneyCoins",Price=17000},["Honey Elder Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=18000},["Honey Romanesco"]={Type="Multi",Currency="HoneyCoins",Price=22000},["Honey Crimson Thorn"]={Type="Multi",Currency="HoneyCoins",Price=26000},["Honey Zebrazinkle"]={Type="Multi",Currency="HoneyCoins",Price=32000},["Honey Octobloom"]={Type="Multi",Currency="HoneyCoins",Price=38000},["Honey Alien Apple"]={Type="Multi",Currency="HoneyCoins",Price=60000},["Honey Pollenvine"]={Type="Multi",Currency="HoneyCoins",Price=20000}}
     local eventShopList = {["Honey Honey Daisy Seed"]={Item="HoneyDaisySeed",Currency="HoneyCoins",Price=2510},["Honey Honey Dew Seed"]={Item="HoneyDewSeed",Currency="HoneyCoins",Price=150},["Honey Hive Seed Pack"]={Item="HiveSeedPack1",Currency="HoneyCoins",Price=2500},["Honey Ambercomb Seed"]={Item="AmbercombSeed",Currency="HoneyCoins",Price=2000},["Pollen Radar 2026"]={Item="PollenRadarRender",Currency="HoneyCoins",Price=88},["Honey Coneflower Seed"]={Item="ConeflowerSeed",Currency="HoneyCoins",Price=20006000},["Hive Egg"]={Item="Hive Egg",Currency="HoneyCoins",Price=2500},["Hive Crate"]={Item="HiveCrate",Currency="HoneyCoins",Price=30003000},["Professor Bee"]={Item="ProfessorBee",Currency="HoneyCoins",Price=2500},["Honey Birds of Paradise Seed"]={Item="BirdsofParadiseSeed",Currency="HoneyCoins",Price=10000}}
+
+    
     local function getKeys(_table)
         local t = {}
         for k, v in pairs(_table) do
@@ -1210,28 +1212,44 @@ if EventItem then
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("PlaceBeeEggRE"):FireServer(unpack(args))
     ]]--
 
+    local disBeeEggList = getKeys(BeeEggList)
+    local disBeeSeedList = getKeys(BeeSeedList)
+    local diseventShopList = getKeys(eventShopList)
+
+    local function CheckTables(_name)
+        if not _name then return end
+        for _, t in ipairs({disBeeEggList, disBeeSeedList, diseventShopList}) do
+            for k, v in pairs(t) do
+                local name = _name:gsub("^%b()", ""):gsub("^%s+", "")
+                if name == _name then return name end
+            end
+        end
+    end
+
     local selectedItemEvent
     blacklistMenu:Button("Add",function()
         spawn(function()
-            if selectedItemEvent and not table.find(blacklistEventItems, selectedItemEvent) then
-                table.insert(blacklistEventItems, selectedItemEvent)
+            local item = CheckTables(selectedItemEvent)
+            if item and not table.find(blacklistEventItems, item) then
+                table.insert(blacklistEventItems, item)
             end
         end)
     end)
     blacklistMenu:Button("Remove",function()
         spawn(function()
-            if selectedItemEvent and table.find(blacklistEventItems, selectedItemEvent) then
-                RemoveFromTable(blacklistEventItems, selectedItemEvent)
+            local item = CheckTables(selectedItemEvent)
+            if item and table.find(blacklistEventItems, item) then
+                RemoveFromTable(blacklistEventItems, item)
             end
         end)
     end)
-    blacklistMenu:Dropdown("Select Egg",getKeys(BeeEggList),true,function(SItem)
+    blacklistMenu:Dropdown("Select Egg",disBeeEggList,true,function(SItem)
         selectedItemEvent = SItem
     end)
-    blacklistMenu:Dropdown("Select Seed",getKeys(BeeSeedList),true,function(SItem)
+    blacklistMenu:Dropdown("Select Seed",disBeeSeedList,true,function(SItem)
         selectedItemEvent = SItem
     end)
-    blacklistMenu:Dropdown("Select Item",getKeys(eventShopList),true,function(SItem)
+    blacklistMenu:Dropdown("Select Item",diseventShopList,true,function(SItem)
         selectedItemEvent = SItem
     end)
 
