@@ -1,4 +1,4 @@
-print("Version 1.5.6 - Bee Event - Basics - Testing")
+print("Version 1.5.7 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -942,6 +942,7 @@ if EventItem then
     local EventMenu = eventWindow:CreateFolder("Bee Event")
     local EventPlant = eventWindow:CreateFolder("Plant")
     local EventStockMenu = eventWindow:CreateFolder("Stock")
+    local EventUpgrades = eventWindow:CreateFolder("Upgrades")
     --local EventShop = ALLDATA.EventShopStock
     
     local Event_Point = EventItem:FindFirstChild("Event_Point")
@@ -1106,17 +1107,11 @@ if EventItem then
         end)
     end)
 
---BeeEventData
-    --HasEnabledHoneyGarden (bool)
-    --BeeInventoryData {}
-    --HoneyIncubatorData {}
-        --Running (bool)
-        --StartTime (number)
-        --Claimable (bool)
-        --Accelerations (number)
-        --CurrentSeed
-    --BeeSkillTree {}
-
+--HoneyMachine2026
+    --IsRunning (bool)
+    --HoneyStored (number)
+    --TimeLeft (number)
+    --PlantWeight (number)
 
     
     local EACRemote = rs:WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE")
@@ -1127,14 +1122,13 @@ if EventItem then
         end)
     end)
     --Auto Compress
+    local incData = ALLDATA.HoneyMachine2026
     EventMenu:Toggle("Auto Compress",function(bool)
         shared.ToggleEMAC=bool
         spawn(function()
             while shared.ToggleEMAC do
                 if getInventoryCount() > 0 then
-                    --CHECK IF COMPRESSOR IS READY
-                    local incData = ALLDATA.BeeEventData.HoneyIncubatorData
-                    if incData and incData.Running == false then
+                    if incData and incData.IsRunning == false then
                         EACRemote:FireServer("SubmitAll")
                     end
                 end
@@ -1142,14 +1136,23 @@ if EventItem then
             end
         end)
     end)
-    
-    --[[
 
     --Auto Collect Honey
-    local args = {
-        [1] = "CollectHoney"
-    }
-    
+    local ECHRemote = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE")
+    EventMenu:Toggle("Collect Honey",function(bool)
+        shared.ToggleECH=bool
+        spawn(function()
+            while shared.ToggleECH do
+                if incData and incData.HoneyStore > 0 and incData.TimeLeft == 0 then
+                    ECHRemote:FireServer("CollectHoney")
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
+
+    --[[
     --Auto Hatch Egg
     local args = {
         [1] = "{6ef06247-f980-44a9-85cb-091de7cc9c83}"
