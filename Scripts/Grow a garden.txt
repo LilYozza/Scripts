@@ -1,4 +1,4 @@
-print("Version 1.5.4 - Bee Event - Basics - Testing")
+print("Version 1.5.5 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -1279,8 +1279,8 @@ if EventItem then
         selectedItemEvent = SItem
     end)
 
-    local customEvent1 = {"Rare Bee Egg", "Common Bee Egg", "Professor Bee", "Honey Strawberry", "Honey Blueberry", "Honey Buttercup", "Honey Tomato", "Honey Corn", "Honey Daffodil", "Honey Watermelon", "Honey Pumpkin", "Honey Apple", "Honey Bambo", "Honey Coconut", "Honey Cactus", "Honey Dragon Fruit", "Honey Mango", "Honey Grape", "Honey Mushroom", "Honey Pepper", "Honey Cacao", "Honey Sunflower"}
-    Auto:Button("Custom 1",function()
+    local customEvent1 = {"Rare Bee Egg", "Common Bee Egg", "Professor Bee", "Honey Strawberry", "Honey Blueberry", "Honey Bamboo", "Honey Buttercup", "Honey Tomato", "Honey Corn", "Honey Daffodil", "Honey Watermelon", "Honey Pumpkin", "Honey Apple", "Honey Bambo", "Honey Coconut", "Honey Cactus", "Honey Dragon Fruit", "Honey Mango", "Honey Grape", "Honey Mushroom", "Honey Pepper", "Honey Cacao", "Honey Sunflower"}
+    blacklistMenu:Button("Custom 1",function()
         spawn(function()
             for _,v in pairs(customEvent1)do
                 addItemToBlacklist(v)
