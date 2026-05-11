@@ -1,4 +1,4 @@
-print("Version 1.5.3 - Bee Event - Basics - Testing")
+print("Version 1.5.4 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 local rs = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -952,6 +952,18 @@ if EventItem then
     local BeeSeedList = {["Honey Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=50},["Honey Blueberry"]={Type="Multi",Currency="HoneyCoins",Price=75},["Honey Buttercup"]={Type="Single",Currency="HoneyCoins",Price=250},["Honey Tomato"]={Type="Multi",Currency="HoneyCoins",Price=100},["Honey Corn"]={Type="Multi",Currency="HoneyCoins",Price=150},["Honey Daffodil"]={Type="Single",Currency="HoneyCoins",Price=400},["Honey Watermelon"]={Type="Single",Currency="HoneyCoins",Price=100},["Honey Pumpkin"]={Type="Single",Currency="HoneyCoins",Price=150},["Honey Apple"]={Type="Multi",Currency="HoneyCoins",Price=600},["Honey Bamboo"]={Type="Single",Currency="HoneyCoins",Price=80},["Honey Coconut"]={Type="Multi",Currency="HoneyCoins",Price=1500},["Honey Cactus"]={Type="Multi",Currency="HoneyCoins",Price=2000},["Honey Dragon Fruit"]={Type="Multi",Currency="HoneyCoins",Price=2750},["Honey Mango"]={Type="Multi",Currency="HoneyCoins",Price=3500},["Honey Grape"]={Type="Multi",Currency="HoneyCoins",Price=4500},["Honey Mushroom"]={Type="Single",Currency="HoneyCoins",Price=55},["Honey Pepper"]={Type="Multi",Currency="HoneyCoins",Price=225},["Honey Cacao"]={Type="Multi",Currency="HoneyCoins",Price=255},["Honey Beanstalk"]={Type="Multi",Currency="HoneyCoins",Price=335},["Honey Sunflower"]={Type="Multi",Currency="HoneyCoins",Price=300},["Honey Ember Lily"]={Type="Multi",Currency="HoneyCoins",Price=355},["Honey Sugar Apple"]={Type="Multi",Currency="HoneyCoins",Price=11000},["Honey Burning Bud"]={Type="Multi",Currency="HoneyCoins",Price=16000},["Honey Giant Pinecone"]={Type="Multi",Currency="HoneyCoins",Price=17000},["Honey Elder Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=18000},["Honey Romanesco"]={Type="Multi",Currency="HoneyCoins",Price=22000},["Honey Crimson Thorn"]={Type="Multi",Currency="HoneyCoins",Price=26000},["Honey Zebrazinkle"]={Type="Multi",Currency="HoneyCoins",Price=32000},["Honey Octobloom"]={Type="Multi",Currency="HoneyCoins",Price=38000},["Honey Alien Apple"]={Type="Multi",Currency="HoneyCoins",Price=60000},["Honey Pollenvine"]={Type="Multi",Currency="HoneyCoins",Price=20000}}
     local eventShopList = {["Honey Honey Daisy"]={Item="HoneyDaisy",Currency="HoneyCoins",Price=25},["Honey Honey Dew"]={Item="HoneyDew",Currency="HoneyCoins",Price=150},["Honey Hive Seed Pack"]={Item="HiveSeedPack1",Currency="HoneyCoins",Price=2500},["Honey Ambercomb"]={Item="Ambercomb",Currency="HoneyCoins",Price=2000},["Pollen Radar 2026"]={Item="PollenRadarRender",Currency="HoneyCoins",Price=88},["Honey Coneflower"]={Item="Coneflower",Currency="HoneyCoins",Price=2000},["Hive Egg"]={Item="Hive Egg",Currency="HoneyCoins",Price=2500},["Hive Crate"]={Item="HiveCrate",Currency="HoneyCoins",Price=3000},["Professor Bee"]={Item="ProfessorBee",Currency="HoneyCoins",Price=2500},["Honey Birds of Paradise"]={Item="BirdsofParadise",Currency="HoneyCoins",Price=10000}}
 
+    local function mergeDictionaries(...)
+        local result = {}
+
+        for _, dict in ipairs({...}) do
+            for k, v in pairs(dict) do
+                result[k] = v
+            end
+        end
+
+        return result
+    end
+    local mergedListEvent = mergeDictionaries(BeeEggList, BeeSeedList, eventShopList)
     
     local function getKeys(_table)
         local t = {}
@@ -1008,11 +1020,9 @@ if EventItem then
         for name, v in pairs(_stocks) do
             if v.Stock and v.Stock > 0 and not table.find(blacklistEventItems, name) then
                 for i = 1, v.Stock do
-                    if _type then
-                        if _type == "Honey Seed Shop" and not name:find("Carrot") then
-                            local price = BeeSeedList[name]
-                            if not checkCoinCount(price.Price) then break end
-                        end
+                    local price = mergedListEvent[name]
+                    if price and not checkCoinCount(price.Price) and (not name:find("Carrot")) then
+                        break
                     end
                     if _type then
                         _remote:FireServer(name, _type)
@@ -1075,7 +1085,7 @@ if EventItem then
             while shared.ToggleEAP do
                 --local eventSeed = getNextSeed()
                 local seed = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
-                if not seed and isAllPSeeds then
+                if (not seed or (seed and not seed:GetAttribute("Seed"))) and isAllPSeeds then
                     seed = getNextSeed()
                     Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(1)
                     
@@ -1235,16 +1245,18 @@ if EventItem then
             end
         end
     end
+    local function addItemToBlacklist(_item)
+        if _item and not table.find(blacklistEventItems, _item) then
+            print("Adding:", _item, "To Blacklist")
+            table.insert(blacklistEventItems, _item)
+        end
+    end
 
     local selectedItemEvent
     blacklistMenu:Button("Add",function()
         spawn(function()
             local item = CheckTables(selectedItemEvent)
-            print("[Add]:", selectedItemEvent, item)
-            if item and not table.find(blacklistEventItems, item) then
-                print("Adding:", item, "To Blacklist")
-                table.insert(blacklistEventItems, item)
-            end
+            addItemToBlacklist(item)
         end)
     end)
     blacklistMenu:Button("Remove",function()
@@ -1265,6 +1277,15 @@ if EventItem then
     end)
     blacklistMenu:Dropdown("Select Item",diseventShopList,true,function(SItem)
         selectedItemEvent = SItem
+    end)
+
+    local customEvent1 = {"Rare Bee Egg", "Common Bee Egg", "Professor Bee", "Honey Strawberry", "Honey Blueberry", "Honey Buttercup", "Honey Tomato", "Honey Corn", "Honey Daffodil", "Honey Watermelon", "Honey Pumpkin", "Honey Apple", "Honey Bambo", "Honey Coconut", "Honey Cactus", "Honey Dragon Fruit", "Honey Mango", "Honey Grape", "Honey Mushroom", "Honey Pepper", "Honey Cacao", "Honey Sunflower"}
+    Auto:Button("Custom 1",function()
+        spawn(function()
+            for _,v in pairs(customEvent1)do
+                addItemToBlacklist(v)
+            end
+        end)
     end)
 
 end
