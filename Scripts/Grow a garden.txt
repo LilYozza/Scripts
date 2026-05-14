@@ -21,22 +21,32 @@ local Player=game.Players.LocalPlayer
 
 
 function SendMessage(url, message)
-    if not url then return end
-    local headers = {
-        ["Content-Type"] = "application/json"
-    }
-    local data = {
-        ["content"] = message
-    }
-    local body = HttpService:JSONEncode(data)
-    local response = request({
-        Url = url,
-        Method = "POST",
-        Headers = headers,
-        Body = body
-    })
-    print("Sent")
+    if not url then
+        return
+    end
+
+    task.spawn(function()
+        local success, response = pcall(function()
+            return request({
+                Url = url,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = HttpService:JSONEncode({
+                    content = message
+                })
+            })
+        end)
+
+        if success then
+            print("Sent", response.StatusCode)
+        else
+            warn("Webhook failed:", response)
+        end
+    end)
 end
+
 local lastSnapshots = {}
 local function poll(_stock)
     local foundUpdate = false
