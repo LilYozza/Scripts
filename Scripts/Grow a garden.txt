@@ -168,6 +168,13 @@ local stocksTable = {
         Time = "ShopSeed",
         LastUpdated = "Unknown"
     },
+    ["RoyalJellyShop"] = {
+        Priority = 6,
+        Name = "Royal Jelly Shop",
+        Reference = ALLDATA.EventShopStock["Royal Jelly Shop"],
+        Time = "ShopSeed",
+        LastUpdated = "Unknown"
+    },
     ["EventSeedStock"] = {
         Priority = 6,
         Name = "Event Seed Stock",
