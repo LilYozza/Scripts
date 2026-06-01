@@ -1,4 +1,4 @@
-print("Version 1.5.7 - Bee Event - Wasps - Testing")
+print("Version 1.5.8 - Bee Event - Wasps - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -1134,16 +1134,24 @@ if EventItem then
                 local wEgg = workspace:FindFirstChild("WaspEgg")
                 if wEgg and not busy then
                     busy = true
+                    local startTime = tick()
+
                     while wEgg.Parent and shared.ToggleEW do
+                        if tick() - startTime >= 30 then break end
                         local hitbox = wEgg:FindFirstChild("HitBox")
-                        if hitbox and not busy then
+                        if hitbox then
                             local dis = GetDistance(hitbox)
                             if dis > 10 then
                                 local targetPos = hitbox.CFrame * CFrame.new(0, 0, -5)
                                 local facingCFrame = CFrame.lookAt(targetPos.Position, hitbox.Position)
-                                MoveTo(facingCFrame) task.wait(1)
+
+                                MoveTo(facingCFrame)
+                                task.wait(1)
                             end
+                        else
+                            break
                         end
+
                         task.wait(1)
                     end
                     busy = false
