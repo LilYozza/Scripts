@@ -1,4 +1,4 @@
-print("Version 1.5.5 - Bee Event - Basics - Testing")
+print("Version 1.5.6 - Bee Event - Wasps - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -1134,7 +1134,7 @@ if EventItem then
                 local wEgg = workspace:FindFirstChild("WaspEgg")
                 if wEgg then
                     while wEgg.Parent and shared.ToggleEW do
-                        local hitbox = wEgg.Hitbox
+                        local hitbox = wEgg:FindFirstChild("HitBox")
                         if hitbox then
                             local dis = GetDistance(hitbox)
                             if dis < 10 then MoveTo(hitbox, Vector3.new(0,5,0)) end
