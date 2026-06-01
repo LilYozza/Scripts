@@ -1,8 +1,7 @@
 print("Version 1.5.5 - Bee Event - Basics - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
-local rs = game:GetService("ReplicatedStorage")
-local HttpService = game:GetService("HttpService")
 
+local rs = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 local DataService = require(rs:WaitForChild("Modules"):WaitForChild("DataService"))
 local ALLDATA = DataService:GetData()
@@ -16,195 +15,8 @@ local StockMenu = w:CreateFolder("Stock")
 local PetMenu = w:CreateFolder("Pets")
 local SPMenu = w:CreateFolder("Season Pass")
 
-local Players=game:GetService("Players")
-local Player=game.Players.LocalPlayer
-
-
-function SendMessage(url, message)
-    if not url then return end
-    local headers = {
-        ["Content-Type"] = "application/json"
-    }
-    local data = {
-        ["content"] = message or ""
-    }
-    local body = HttpService:JSONEncode(data)
-    local response
-    local success, err = pcall(function()
-        response = request({
-            Url = url,
-            Method = "POST",
-            Headers = headers,
-            Body = body
-        })
-    end)
-    if not success then
-        warn("Webhook request failed:", err)
-        return
-    end
-    if not response then
-        warn("Webhook returned no response")
-        return
-    end
-    print("Sent:", response.StatusCode)
-end
-
-local lastSnapshots = {}
-local function poll(_stock)
-    local foundUpdate = false
-    for name, stock in pairs(_stock) do
-        local ref = stock.Reference 
-        if ref and ref[stock.Time] then
-            local CurrentTime = ref[stock.Time]
-            if not lastSnapshots[name] or lastSnapshots[name] ~= CurrentTime then
-                foundUpdate = true
-            end
-            lastSnapshots[name] = CurrentTime
-        end
-    end
-    return foundUpdate
-end
-local function updateStock(_stock)
-    task.wait(2) -- Gonna Wait for Slow Stock Updates
-    for name, stock in pairs(_stock) do
-        local ref = stock.Reference
-
-        if ref then
-            -- Default stock reference
-            stock.Stock = ref.Stocks
-
-            -- Adds Seed
-            if ref[stock.Time] then
-                stock.Seed = ref[stock.Time]
-            end
-
-            if name == "TravelingMerchantShopStock" then
-                stock.Type = ALLDATA.TravelingMerchantShopStock.MerchantType
-                stock.LastUpdated = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
-                stock.Seed = ALLDATA.TravelingMerchantShopStock.MerchantStartTime
-
-            elseif name == "CosmeticStock" then
-                stock.LastUpdated = ALLDATA.CosmeticStock.CosmeticSeed
-                stock.Seed = ALLDATA.CosmeticStock.CosmeticSeed
-
-                -- Reuse table instead of recreating every update
-                local t = stock.Stock
-
-                if type(t) ~= "table" or t == ref.Stocks then
-                    t = {}
-                else
-                    table.clear(t)
-                end
-
-                for _, v in pairs(ref) do
-                    if type(v) == "table" then
-                        for i, k in pairs(v) do
-                            if type(k) == "table" and k.Stock then
-                                local newStock = t[i]
-                                if type(newStock) ~= "table" then
-                                    newStock = {}
-                                    t[i] = newStock
-                                else
-                                    table.clear(newStock)
-                                end
-                                for key, value in pairs(k) do
-                                    newStock[key] = value
-                                end
-                                newStock.MaxStock = k.Stock
-                            end
-                        end
-                    end
-                end
-
-                stock.Stock = t
-
-            else
-                stock.LastUpdated = os.time()
-            end
-        end
-    end
-end
-
-local stocksTable = {
-    ["Seeds"] = {
-        Priority = 1,
-        Name = "Seed Stock",
-        Reference = ALLDATA.SeedStocks.Shop,
-        Time = "Seed",
-        LastUpdated = "Unknown"
-    },
-    ["Daily Seeds"] = {
-        Priority = 2,
-        Name = "Daily Seed Stock",
-        Reference = ALLDATA.SeedStocks["Daily Deals"],
-        Time = "Seed",
-        LastUpdated = "Unknown"
-    },
-    ["Gear"] = {
-        Priority = 3,
-        Name = "Gear Stock",
-        Reference = ALLDATA.GearStock,
-        Time = "Gear",
-        LastUpdated = "Unknown"
-    },
-    ["PetEggStock"] = {
-        Priority = 4,
-        Name = "Egg Stock",
-        Reference = ALLDATA.PetEggStock,
-        Time = "Egg",
-        LastUpdated = "Unknown"
-    },
-    ["TravelingMerchantShopStock"] = {
-        Priority = 7,
-        Name = "Traveling Merchant Stock",
-        Reference = ALLDATA.TravelingMerchantShopStock,
-        LastUpdated = "Unknown",
-        Type = "Unknown"
-    },
-    ["EventShopStock"] = {
-        Priority = 6,
-        Name = "Event Stock",
-        Reference = ALLDATA.EventShopStock["Honey Coin Shop"],
-        Time = "ShopSeed",
-        LastUpdated = "Unknown"
-    },
-    ["RoyalJellyShop"] = {
-        Priority = 6,
-        Name = "Royal Jelly Shop",
-        Reference = ALLDATA.EventShopStock["Royal Jelly Shop"],
-        Time = "ShopSeed",
-        LastUpdated = "Unknown"
-    },
-    ["EventSeedStock"] = {
-        Priority = 6,
-        Name = "Event Seed Stock",
-        Reference = ALLDATA.EventShopStock["Honey Seed Shop"],
-        Time = "ShopSeed",
-        LastUpdated = "Unknown"
-    },
-    ["BeeEggShopStock"] = {
-        Priority = 7,
-        Name = "Bee Egg Stock",
-        Reference = ALLDATA.BeeEggShopStock,
-        LastUpdated = "Unknown",
-        Time = "Egg"
-    },
-    ["SeasonPass"] = {
-        Priority = 5,
-        Name = "Season Pass Stock",
-        Reference = ALLDATA.SeasonPass["Season 4"],
-        Time = "ShopItem",
-        LastUpdated = "Unknown"
-    },
-    ["CosmeticStock"] = {
-        Priority = 100,
-        Name = "Cosmetic Stock",
-        Reference = ALLDATA.CosmeticStock.TabStocks.Cosmetics,
-        LastUpdated = "Unknown"
-    }
-}
-
-
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
 
 -->Base Variables<--
 local busy = false
@@ -961,9 +773,10 @@ if EventItem then
     local EventMenu = eventWindow:CreateFolder("Bee Event")
     local EventPlant = eventWindow:CreateFolder("Plant")
     local EventStockMenu = eventWindow:CreateFolder("Stock")
-    local EventUpgrades = eventWindow:CreateFolder("Upgrades")
+    --local EventUpgrades = eventWindow:CreateFolder("Upgrades")
     local blacklistMenu = eventWindow:CreateFolder("Blacklists")
     --local EventShop = ALLDATA.EventShopStock
+    local attackMenu = eventWindow:CreateFolder('Fighting')
     
     local Event_Point = EventItem:FindFirstChild("Event_Point")
     local blacklistEventItems = {}
@@ -1307,6 +1120,71 @@ if EventItem then
         end)
     end)
 
+--BeeEventData
+    --WaspWaveSurvival
+        --LastStartedAt
+        --DefeatLockoutUntil
+        --LastPortalignitedAt
+
+    --attackMenu
+    attackMenu:Toggle("Wasps",function(bool)
+        shared.ToggleEW=bool
+        spawn(function()
+            while shared.ToggleEW do
+                local wEgg = workspace:FindFirstChild("WaspEgg")
+                if wEgg then
+                    while wEgg.Parent and shared.ToggleEW do
+                        local hitbox = wEgg.Hitbox
+                        if hitbox then
+                            local dis = GetDistance(hitbox)
+                            if dis < 10 then MoveTo(hitbox, Vector3.new(0,5,0)) end
+                        end
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
+    --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
+
+
+    local ignitePortalRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
+    local startDungeonRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
+    attackMenu:Toggle("Dungeon",function(bool)
+        shared.ToggleED=bool
+        spawn(function()
+            while shared.ToggleED do
+                local dunData = ALLDATA.BeeEventData.WaspWaveSurvival
+                if dunData then
+                    local portalTime = dunData.DefeatLockoutUntil
+                    local lastTime = dunData.LastStartedAt
+
+                    if portalTime and lastTime
+                        and portalTime > os.time()
+                        and lastTime < portalTime then
+
+                        local ignited = dunData.LastPortalignitedAt or 0
+
+                        if ignited < portalTime then
+                            ignitePortalRemote:InvokeServer()
+                        else
+                            startDungeonRemote:InvokeServer()
+                        end
+
+                        task.wait(1)
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
+
+
+    --
+
+
 end
 --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1403,41 +1281,6 @@ local cropsToHarvest = {"Blueberry", "Strawberry", "Tomato"}
 
 local DropList = Auto:Dropdown("blacklist",cropsToHarvest,true,function(SItem)
     sblacklistCrop = SItem
-end)
-
-local webhook
-Auto:Box("Link","string",function(value) 
-    webhook = value
-end)
-
-Auto:Toggle("Webhook",function(bool)
-    shared.ToggleSWH=bool
-    spawn(function()
-        while shared.ToggleSWH do
-            if webhook then
-                print("checking")
-                local diff = poll(stocksTable)
-                if diff then
-                    print("There Has Been A Change, Sending Update")
-                    updateStock(stocksTable)
-                    SendMessage(webhook, stocksTable)
-                else
-                    print("Not Changed")
-                end
-                task.wait(1)
-            end
-            task.wait()
-        end
-    end)
-end)
-
-Auto:Button("Send Stock",function()
-    spawn(function()
-        if webhook then
-            updateStock(stocksTable)
-            SendMessage(webhook, stocksTable)
-        end
-    end)
 end)
 
 Auto:Button("Blacklist",function()
