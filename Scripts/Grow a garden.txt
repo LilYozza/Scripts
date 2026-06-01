@@ -1137,7 +1137,7 @@ if EventItem then
                         local hitbox = wEgg:FindFirstChild("HitBox")
                         if hitbox then
                             local dis = GetDistance(hitbox)
-                            if dis < 10 then MoveTo(hitbox, Vector3.new(0,5,0)) end
+                            if dis > 10 then MoveTo(hitbox, Vector3.new(0,5,0)) end
                         end
                         task.wait(1)
                     end
