@@ -1151,13 +1151,24 @@ if EventItem then
         end)
     end)
 
-    --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
+    
 
+
+    --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
+    local WaspCon
+    local WaspUI = Player.PlayerGui:WaitForChild("WaspWaveSurvivalUI")
     local ignitePortalRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
     local startDungeonRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
     attackMenu:Toggle("Dungeon",function(bool)
         shared.ToggleED=bool
         spawn(function()
+            if shared.ToggleED then
+                WaspCon = WaspUI:GetPropertyChangedSignal("Enabled"):Connect(function()
+                    busy = WaspUI.Enabled
+                end)
+            else
+                if WaspCon then WaspCon:Disconnect() WaspCon = nil end
+            end
             while shared.ToggleED do
                 local dunData = ALLDATA.BeeEventData.WaspWaveSurvival
                 if dunData then
