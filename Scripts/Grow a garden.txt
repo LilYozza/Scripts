@@ -1,4 +1,4 @@
-print("Version 1.5.6 - Bee Event - Wasps - Testing")
+print("Version 1.5.7 - Bee Event - Wasps - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -1137,7 +1137,11 @@ if EventItem then
                         local hitbox = wEgg:FindFirstChild("HitBox")
                         if hitbox then
                             local dis = GetDistance(hitbox)
-                            if dis > 10 then MoveTo(hitbox, Vector3.new(0,5,0)) end
+                            if dis > 10 then
+                                local targetPos = hitbox.CFrame * hitbox.new(0, 0, -5)
+                                local facingCFrame = CFrame.lookAt(targetPos.Position, hitbox.Position)
+                                MoveTo(facingCFrame) task.wait(1)
+                            end
                         end
                         task.wait(1)
                     end
@@ -1149,8 +1153,6 @@ if EventItem then
 
     --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
 
-
-    local TEN_MINUTES = 10 * 60
     local ignitePortalRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
     local startDungeonRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
     attackMenu:Toggle("Dungeon",function(bool)
@@ -1159,35 +1161,31 @@ if EventItem then
             while shared.ToggleED do
                 local dunData = ALLDATA.BeeEventData.WaspWaveSurvival
                 if dunData then
-                    local portalTime = dunData.DefeatLockoutUntil
+                    local now = os.time()
+                    local currentHourStart = now - (now % 3600)
                     local lastTime = dunData.LastStartedAt
-
-                    if portalTime and lastTime
-                        and portalTime > os.time()
-                        and lastTime < portalTime then
-
-                        local ignited = dunData.LastPortalignitedAt or 0
-
-                        if ignited < portalTime then
+                    if lastTime and lastTime >= currentHourStart then
+                        --print("Waiting for portal cooldown")
+                    else
+                        local ignited = dunData.LastPortalIgnitedAt
+                        if ignited and ignited >= currentHourStart then
+                            if  now - ignited >= 600 then
+                                print("Ready To Enter")
+                                startDungeonRemote:InvokeServer()
+                            else
+                                local remaining = 600 - (now - ignited)
+                                print(("Waiting For Igniting to Finish (%dm %02ds remaining)"):format(math.floor(remaining / 60), remaining % 60))
+                            end
+                        else
+                            print("igniting Portal...")
                             ignitePortalRemote:InvokeServer()
-                        elseif os.time() - ignited >= TEN_MINUTES then
-                            startDungeonRemote:InvokeServer()
                         end
-
-                        --startDungeonRemote:InvokeServer()
-
-                        task.wait(1)
                     end
                 end
                 task.wait(1)
             end
         end)
     end)
-
-
-
-    --
-
 
 end
 --------------------------------------------------------------------------------------------------------------------------------------
