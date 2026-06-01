@@ -1132,10 +1132,11 @@ if EventItem then
         spawn(function()
             while shared.ToggleEW do
                 local wEgg = workspace:FindFirstChild("WaspEgg")
-                if wEgg then
+                if wEgg and not busy then
+                    busy = true
                     while wEgg.Parent and shared.ToggleEW do
                         local hitbox = wEgg:FindFirstChild("HitBox")
-                        if hitbox then
+                        if hitbox and not busy then
                             local dis = GetDistance(hitbox)
                             if dis > 10 then
                                 local targetPos = hitbox.CFrame * CFrame.new(0, 0, -5)
@@ -1145,6 +1146,7 @@ if EventItem then
                         end
                         task.wait(1)
                     end
+                    busy = false
                 end
                 task.wait(1)
             end
@@ -1181,8 +1183,10 @@ if EventItem then
                         local ignited = dunData.LastPortalIgnitedAt
                         if ignited and ignited >= currentHourStart then
                             if  now - ignited >= 600 then
-                                print("Ready To Enter")
-                                startDungeonRemote:InvokeServer()
+                                if not busy then
+                                    print("Ready To Enter")
+                                    startDungeonRemote:InvokeServer()
+                                end
                             else
                                 local remaining = 600 - (now - ignited)
                                 print(("Waiting For Igniting to Finish (%dm %02ds remaining)"):format(math.floor(remaining / 60), remaining % 60))
