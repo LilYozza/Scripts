@@ -1138,7 +1138,7 @@ if EventItem then
                         if hitbox then
                             local dis = GetDistance(hitbox)
                             if dis > 10 then
-                                local targetPos = hitbox.CFrame * hitbox.new(0, 0, -5)
+                                local targetPos = hitbox.CFrame * CFrame.new(0, 0, -5)
                                 local facingCFrame = CFrame.lookAt(targetPos.Position, hitbox.Position)
                                 MoveTo(facingCFrame) task.wait(1)
                             end
