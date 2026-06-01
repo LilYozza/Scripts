@@ -1,4 +1,4 @@
-print("Version 1.5.8 - Bee Event - Wasps - Testing")
+print("Version 1.5.9 - Bee Event - Wasps - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -1002,6 +1002,21 @@ if EventItem then
             end
         end)
     end)
+
+    local ERStype = "Royal Jelly Shop"
+    EventStockMenu:Toggle("Royal Shop",function(bool)
+        shared.ToggleERS=bool
+        spawn(function()
+            while shared.ToggleERS do
+                if ERStype and EESremote then
+                    local ESSStocks = ALLDATA.EventShopStock["Royal Jelly Shop"].Stocks
+                    buyStocks(ESSStocks, EESremote, ERStype)
+                end
+                task.wait(1)
+            end
+        end)
+    end)
+
 
 --HoneyMachine2026
     --IsRunning (bool)
