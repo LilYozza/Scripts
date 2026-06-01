@@ -1149,6 +1149,7 @@ if EventItem then
     --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
 
 
+    local TEN_MINUTES = 10 * 60
     local ignitePortalRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
     local startDungeonRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
     attackMenu:Toggle("Dungeon",function(bool)
@@ -1168,9 +1169,11 @@ if EventItem then
 
                         if ignited < portalTime then
                             ignitePortalRemote:InvokeServer()
-                        else
+                        elseif os.time() - ignited >= TEN_MINUTES then
                             startDungeonRemote:InvokeServer()
                         end
+
+                        --startDungeonRemote:InvokeServer()
 
                         task.wait(1)
                     end
