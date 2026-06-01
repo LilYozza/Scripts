@@ -1162,7 +1162,16 @@ if EventItem then
     end)
 
     
-
+    local Dunglabel = workspace.Interaction.UpdateItems.WaspDungeonPortal.RewardsAttachment.Timer.Label
+    local function checkDungeonTimer()
+        if Dunglabel then
+            if Dunglabel.Text:lower() == "ready" then
+                return 1
+            elseif  Dunglabel.Text:lower() == "ready for ignition" then
+                return 2
+            end
+        end
+    end
 
     --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
     local WaspCon
@@ -1191,17 +1200,19 @@ if EventItem then
                         local ignited = dunData.LastPortalIgnitedAt
                         if ignited and ignited >= currentHourStart then
                             if  now - ignited >= 600 then
-                                if not busy then
+                                if not busy and checkDungeonTimer() == 1 then
                                     print("Ready To Enter")
                                     startDungeonRemote:InvokeServer()
                                 end
                             else
-                                local remaining = 600 - (now - ignited)
-                                print(("Waiting For Igniting to Finish (%dm %02ds remaining)"):format(math.floor(remaining / 60), remaining % 60))
+                               -- local remaining = 600 - (now - ignited)
+                                --print(("Waiting For Igniting to Finish (%dm %02ds remaining)"):format(math.floor(remaining / 60), remaining % 60))
                             end
                         else
-                            print("igniting Portal...")
-                            ignitePortalRemote:InvokeServer()
+                            if checkDungeonTimer() == 2 then
+                                print("igniting Portal...")
+                                ignitePortalRemote:InvokeServer()
+                            end
                         end
                     end
                 end
