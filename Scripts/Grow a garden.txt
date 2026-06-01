@@ -1,4 +1,4 @@
-print("Version 1.5.7 - Bee Event - Wasps - Testing")
+print("Version 1.5.6 - Bee Event - Wasps - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -1139,7 +1139,7 @@ if EventItem then
                             local dis = GetDistance(hitbox)
                             if dis < 10 then MoveTo(hitbox, Vector3.new(0,5,0)) end
                         end
-                        task.wait()
+                        task.wait(1)
                     end
                 end
                 task.wait(1)
