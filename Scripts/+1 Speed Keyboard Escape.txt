@@ -18,6 +18,20 @@ local moveTime = 0
 local REQUIRED_MOVE_TIME = 0.5
 local STOP_DELAY = 0.2
 
+Auto:Slider("move time",{
+    min = 0; max = 5; precise = false;
+},function(value)
+	REQUIRED_MOVE_TIME = value
+    print("REQUIRED_MOVE_TIME", value)
+end)
+
+Auto:Slider("stop delay",{
+    min = 0; max = 5; precise = false;
+},function(value)
+	STOP_DELAY = value
+    print("STOP_DELAY", value)
+end)
+
 local lastPosition
 
 local function setupCharacter(char)
