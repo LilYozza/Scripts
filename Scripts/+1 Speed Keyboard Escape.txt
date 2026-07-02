@@ -1,3 +1,4 @@
+print("test 1")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -15,8 +16,9 @@ local holdingW = false
 -- prevents flicker when tween ends / micro jitter happens
 local moveTimer = 0
 local moveTime = 0
-local REQUIRED_MOVE_TIME = 0.5
-local STOP_DELAY = 0.2
+local REQUIRED_MOVE_TIME = 0.3
+local STOP_DELAY = 0
+local TELEPORT_DISTANCE = 25 -- adjust for your game
 
 Auto:Slider("move time",{
     min = 0; max = 5; precise = false;
@@ -54,54 +56,76 @@ setupCharacter(player.Character or player.CharacterAdded:Wait())
 player.CharacterAdded:Connect(setupCharacter)
 
 local con
-Auto:Toggle("Helper",function(bool)
-    shared.ToggleTH=bool
+local TELEPORT_DISTANCE = 25 -- adjust for your game
+
+Auto:Toggle("Helper", function(bool)
+    shared.ToggleTH = bool
+
     spawn(function()
-		if shared.ToggleTH then
-			con = RunService.RenderStepped:Connect(function(dt)
-				if not root or not root.Parent then return end
+        if shared.ToggleTH then
+            con = RunService.RenderStepped:Connect(function(dt)
+                if not root or not root.Parent then return end
 
-				local currentPosition = root.Position
-				local movement = currentPosition - lastPosition
+                local currentPosition = root.Position
+                local movement = currentPosition - lastPosition
 
-				if movement.Magnitude > 0.01 then
-					moveTime = moveTime + dt
-					moveTimer = STOP_DELAY
+                -- Ignore teleports
+                if movement.Magnitude > TELEPORT_DISTANCE then
+                    lastPosition = currentPosition
+                    moveTime = 0
+                    moveTimer = STOP_DELAY
+                    return
+                end
 
-					local direction = movement.Unit
+                if movement.Magnitude > 0.01 then
+                    moveTime = moveTime + dt
+                    moveTimer = STOP_DELAY
 
-					local targetCFrame = CFrame.lookAt(
-						root.Position,
-						root.Position + Vector3.new(direction.X, 0, direction.Z)
-					)
+                    local direction = movement.Unit
+                    local flatDir = Vector3.new(direction.X, 0, direction.Z)
 
-					root.CFrame = root.CFrame:Lerp(targetCFrame, TURN_SPEED)
+                    if flatDir.Magnitude > 0 then
+                        flatDir = flatDir.Unit
 
-					-- only trigger W if movement is stable for a bit
-					if moveTime >= REQUIRED_MOVE_TIME and not holdingW then
-						holdingW = true
-						VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
-					end
-				else
-					moveTime = 0
-					moveTimer = moveTimer - dt
+                        local yaw = math.atan2(-flatDir.X, -flatDir.Z)
+                        local _, currentYaw, _ = root.CFrame:ToOrientation()
 
-					if moveTimer <= 0 and holdingW then
-						holdingW = false
-						VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
-					end
-				end
+                        root.CFrame = CFrame.new(root.Position) *
+                            CFrame.Angles(
+                                0,
+                                currentYaw + (yaw - currentYaw) * TURN_SPEED,
+                                0
+                            )
+                    end
 
-				lastPosition = currentPosition
-			end)
-		else
-			if con then con:Disconnect() con = nil end
+                    -- Only trigger W if movement is stable for a bit
+                    if moveTime >= REQUIRED_MOVE_TIME and not holdingW then
+                        holdingW = true
+                        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+                    end
+                else
+                    moveTime = 0
+                    moveTimer = moveTimer - dt
 
-			if holdingW then
-				holdingW = false
-				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
-			end
-		end
+                    if moveTimer <= 0 and holdingW then
+                        holdingW = false
+                        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+                    end
+                end
+
+                lastPosition = currentPosition
+            end)
+        else
+            if con then
+                con:Disconnect()
+                con = nil
+            end
+
+            if holdingW then
+                holdingW = false
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+            end
+        end
     end)
 end)
 
