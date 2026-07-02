@@ -686,6 +686,10 @@ local Games = {
 	[109073199927285] = {
 		Name = 'Escape The Tsunami',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Escape%20The%20Tsunami.txt'
+	},
+	[118941584817777] = {
+		Name = '+1 Speed Keyboard Escape',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/+1%20Speed%20Keyboard%20Escape.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()

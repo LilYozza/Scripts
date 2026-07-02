@@ -1,0 +1,98 @@
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local player = Players.LocalPlayer
+
+local character
+local root
+local TURN_SPEED = 1
+local holdingW = false
+
+-- prevents flicker when tween ends / micro jitter happens
+local moveTimer = 0
+local moveTime = 0
+local REQUIRED_MOVE_TIME = 0.20
+local STOP_DELAY = 0.12
+
+local lastPosition
+
+local function setupCharacter(char)
+	character = char
+	root = character:WaitForChild("HumanoidRootPart")
+
+	lastPosition = root.Position
+	moveTimer = 0
+
+	-- safety: release W on death immediately
+	local hum = character:WaitForChild("Humanoid")
+	hum.Died:Connect(function()
+		if holdingW then
+			holdingW = false
+			VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+		end
+	end)
+end
+setupCharacter(player.Character or player.CharacterAdded:Wait())
+player.CharacterAdded:Connect(setupCharacter)
+
+local con
+Auto:Toggle("Helper",function(bool)
+    shared.ToggleTH=bool
+    spawn(function()
+		if shared.ToggleTH then
+			con = RunService.RenderStepped:Connect(function(dt)
+				if not root or not root.Parent then return end
+
+				local currentPosition = root.Position
+				local movement = currentPosition - lastPosition
+
+				if movement.Magnitude > 0.01 then
+					moveTime = moveTime + dt
+					moveTimer = STOP_DELAY
+
+					local direction = movement.Unit
+
+					local targetCFrame = CFrame.lookAt(
+						root.Position,
+						root.Position + Vector3.new(direction.X, 0, direction.Z)
+					)
+
+					root.CFrame = root.CFrame:Lerp(targetCFrame, TURN_SPEED)
+
+					-- only trigger W if movement is stable for a bit
+					if moveTime >= REQUIRED_MOVE_TIME and not holdingW then
+						holdingW = true
+						VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+					end
+				else
+					moveTime = 0
+					moveTimer = moveTime - dt
+
+					if moveTimer <= 0 and holdingW then
+						holdingW = false
+						VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+					end
+				end
+
+				lastPosition = currentPosition
+			end)
+		else
+			if con then con:Disconnect() con = nil end
+
+			if holdingW then
+				holdingW = false
+				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+			end
+		end
+    end)
+end)
+
+Auto:Button("Script",function()
+    spawn(function()
+		loadstring(game:HttpGet("https://www.luxyhub.space/api/loader/luxyhub"))()
+    end)
+end)
