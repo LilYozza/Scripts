@@ -15,8 +15,8 @@ local holdingW = false
 -- prevents flicker when tween ends / micro jitter happens
 local moveTimer = 0
 local moveTime = 0
-local REQUIRED_MOVE_TIME = 0.20
-local STOP_DELAY = 0.12
+local REQUIRED_MOVE_TIME = 0.5
+local STOP_DELAY = 0.2
 
 local lastPosition
 
@@ -70,7 +70,7 @@ Auto:Toggle("Helper",function(bool)
 					end
 				else
 					moveTime = 0
-					moveTimer = moveTime - dt
+					moveTimer = moveTimer - dt
 
 					if moveTimer <= 0 and holdingW then
 						holdingW = false
