@@ -1,4 +1,4 @@
-print("Version 1.5.9 - Bee Event - Wasps - Testing")
+print("Version 1.6.0 - Summer - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -10,7 +10,7 @@ w = library:CreateWindow("Main")
 
 local Auto = w:CreateFolder("Main")
 local PlantingMenu = w:CreateFolder("Planting")
-local CrafMenu = w:CreateFolder("Crafting")
+--local CrafMenu = w:CreateFolder("Crafting")
 local StockMenu = w:CreateFolder("Stock")
 local PetMenu = w:CreateFolder("Pets")
 local SPMenu = w:CreateFolder("Season Pass")
@@ -366,6 +366,7 @@ local function plantSeed(_seed, _pos)
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
 end
 
+--[[
 local submitItemBtn = Player.PlayerGui.CraftingCancel.Frame.Yes
 local CraftingTypes = {
     Gear = {
@@ -420,6 +421,7 @@ local function ClaimCraft(_type)
     }
     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 end
+]]--
 
 local function getEggs(_egg)
     local t = {}
@@ -532,312 +534,37 @@ local function PlaceSprinker(_type, _pos, _amount)
     end
 end
 
-local singleHarvest = {"Easter Candy Carrot", "Easter Liquorice"}
-local PlayerMaxEggs = 5
-local QuestContainers = ALLDATA["QuestContainers"]
-local function main_Quest_Thread(_questID)
-    if not _questID and QuestContainers then return end
-    local questsTable = QuestContainers[_questID]
-    if questsTable and not busy then
-        busy = true
-        local Redeemed = questsTable.Redeemed
-        local quests = questsTable.Quests
-        if quests then
-            for questNum, quest in pairs(quests) do
-                if not quest.Completed then
-                    local type = quest.Type
-                    local progress = quest.Progress
-                    local target = quest.Target -- THE AMOUNT NEEDED
-                    local arguments = quest.Arguments
-                    Print("QUESTDATA", type, progress .. "/" .. target, arguments)
-
-                    local amountLeft = target - progress
-                    if type == "Harvest" then
-                        local MainPlant = arguments[1]
-                        local plant = MainPlant
-                        --Candy Blossom Name Fix
-                        if MainPlant == "Candy Blossom 2026" then
-                            plant = "Candy Blossom"
-                        end
-                        Print("Harvesting Quest:")
-
-                        --EASTER EVENT
-                        local matches = (plant:match("^(%S+)") == "Easter")
-                        if matches then
-                            changeGarden("Easter 2026")
-                        end
-
-
-                        Print("Looking For Plant:", plant)
-                        
-                        if table.find(singleHarvest, MainPlant) then
-                            local amount = checkPlantGardenAmount(MainPlant)
-                            if amount < amountLeft then
-                                local rndPos = getRandomPos()
-                                --Print("Getting Random Position:", rndPos)
-                                print("Plant not planted")
-                                local seed = checkBackpack(plant .. " Seed")
-                                Print("Finding Seed:", plant .. " Seed")
-                                if seed then
-                                    Print("Found Seed:", seed)
-                                    Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
-                                    plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
-                                    Player.Character:WaitForChild("Humanoid"):UnequipTools()
-                                else
-                                    Print("Seed Not Found:", seed)
-                                end
-
-                            end
-                        end
-                        
-                        local plantSearch = checkPlantGarden(MainPlant)
-                        if plantSearch then
-                            --Harvest if able
-                            Print(plant, "Found, Harvesting...")
-                            if IsMaxInventory() then
-                                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
-                            end
-                            mod:FireServer({plantSearch}) task.wait(0.5)
-                        else
-                            Print(plant, "Not Found....")
-                            local planted = findPlant(MainPlant)
-                            if not planted then
-                                local rndPos = getRandomPos()
-                                --Print("Getting Random Position:", rndPos)
-                                print("Plant not planted")
-                                local seed = checkBackpack(plant .. " Seed")
-                                Print("Finding Seed:", plant .. " Seed")
-                                if seed then
-                                    Print("Found Seed:", seed)
-                                    Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
-                                    plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
-                                    Player.Character:WaitForChild("Humanoid"):UnequipTools()
-                                else
-                                    Print("Seed Not Found:", seed)
-                                end
-
-                            else
-                                print("Plant Already Exist")
-                            end
-                        end
-
-                    elseif type == "Plant" then
-                        Print("Planting Plant.... NOT CODED")
-                        --plant plant
-
-                    elseif type == "BuyEventShopItem" then
-                        local plant = arguments[2]
-                        Print("Checking Event Shop Item:", plant)
-                        
-                        local stock = ALLDATA.EventShopStock["Easter Seed Shop"].Stocks
-                        for _,v in pairs(stock) do
-                            if _ == plant and v.Stock and v.Stock > 0 then
-                                local buyAmount = math.max(0, math.min(amountLeft, v.Stock))
-                                Print("Buying", _)
-                                buyEventShop(_, buyAmount)
-                            end
-                        end
-                        
-
-                    
-                    elseif type == "HatchEgg" then
-                        local targetEgg = arguments[1]
-                        Print("Hatching Egg State")
-
-                        changeGarden("Save Slot #1")
-
-                        -- HARVEST FIRST
-                        local Targeteggs = getEggs()
-                        if Targeteggs then
-                            for _, v in pairs(Targeteggs) do
-                                if v and v.Ready and v.TimeToHatch <= 0 then
-                                    print("Harvesting Egg:", v.Name)
-                                    rs:WaitForChild("GameEvents"):WaitForChild("PetEggService"):FireServer("HatchPet", v.Egg)
-                                    task.wait(0.3)
-                                end
-                            end
-                            task.wait(1)
-                        end
-
-                        -- NOW PLANT (ONLY ONE)
-                        local allEggs = getEggs() or {}
-                        local spaceLeft = PlayerMaxEggs - #allEggs
-
-                        if spaceLeft > 0 and amountLeft > 0 then
-                            local rndPos = getRandomPos()
-                            Print("Placing:", targetEgg, "At:", rndPos)
-                            placeEgg(targetEgg, rndPos)
-                        end
-                    elseif type == "PlantWithTrait" then
-                        print("Planting State")
-                        local seedToFind = "Carrot Seed"
-                        if Player:GetAttribute("CurrentSlot") == "Easter 2026" then
-                            seedToFind = "Easter Candy Carrot Seed"
-                        end
-                        print("Seed To Find:", seedToFind)
-                        local seed = checkBackpack(seedToFind)
-                        if seed then
-                            Print("Found Seed:", seed)
-                            for i = 1, amountLeft, 1 do
-                                local rndPos = getRandomPos()
-                                Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(0.5)
-                                plantSeed(seed:GetAttribute("Seed"), rndPos) task.wait(0.5)
-                            end
-                            Player.Character:WaitForChild("Humanoid"):UnequipTools()
-                        else
-                            Print("Couldnt Find Seed:", seedToFind)
-                        end
-                    elseif type == "HarvestTargetWithWeight" then
-                        print("Harvesting With Weight State")
-                        local plant = arguments[2]
-                        local size = arguments[1]
-                        local mutation = arguments[3] or nil
-
-                        local cPlant = checkPlantGarden(plant,{mutation},size)
-                        if IsMaxInventory() then
-                            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("EasterEvent"):WaitForChild("EasterSellInventoryRE"):FireServer()
-                        end
-                        if cPlant and not IsMaxInventory() then
-                            Print("Found Plant:", plant, size)
-                            mod:FireServer({cPlant})
-                            task.wait(1)
-                        else
-                            Print("Cannot Find Plant")
-                        end
-                    elseif type == "Craft" then
-                        Print("Crafting State")
-                        local craftType = arguments[1]
-                        local item = arguments[2]
-
-                        local craft = CraftingTypes[craftType]
-                        local craftingTable = ALLDATA.CraftingData.GlobalCraftingObjectData[craft.Machine].MachineData[craft.Type].CraftingItems
-                        Print("Craft Type:", craft.Type)
-                        Print("Crafting Table:", craftingTable)
-                        if craftingTable then
-                            if craftingTable[1] then
-                                if craftingTable[1].IsDone == true then
-                                    Print("Claiming Item:", item)
-                                    ClaimCraft(craftType)
-                                end
-                                -- If Input is ready but not began
-                            else
-                                Print("Crafting Item:", item)
-                                craftItem(item, craftType)
-                            end
-                        end
-                        task.wait(1)
-                    elseif type == "OpenSeedPack" then
-                        Print("Opening Pack State")
-                        local packToOpen = arguments[1]
-                        local pack = checkBackpack(packToOpen)
-                        if pack then
-                            Print("Found Pack:", pack)
-                            for i = 1, amountLeft, 1 do
-                                Player.Character:WaitForChild("Humanoid"):EquipTool(pack) task.wait(0.5)
-                                pack:Activate()
-                                if SkipRollBtn then SendClick(SkipRollBtn) end
-                                task.wait(10)
-                            end
-                            Player.Character:WaitForChild("Humanoid"):UnequipTools()
-                        end
-
-                    elseif type == "PlaceObject" then
-                        Print("Place Object State")
-                        local object = arguments[1]
-                        Print("Attempting To Place:", object)
-                        PlaceSprinker(object,nil,amountLeft)
-                    else
-                        Print("INFO:",type, "NOT ADDED!!!")
-                        PrintTable(arguments)
-                    end
-                else
-                    if not quest.Claimed then
-                        -- Claim maybe ?
-                    end
-                end
-            end
-        end
-        busy = false
-    end
-end
 
 
 
 --Easter EVENT #########################################################################################################
-
---######################################################################################################################
-local eventItemName = "BeeEvent"
+local eventItemName = "SummerHarvestEvent"
 local EventItem = UpdateItems:WaitForChild(eventItemName, 5) or Interaction:WaitForChild(eventItemName, 5) or Workspace:WaitForChild(eventItemName, 5)
 if EventItem then
     local eventWindow = library:CreateWindow("Event")
-    local EventMenu = eventWindow:CreateFolder("Bee Event")
-    local EventPlant = eventWindow:CreateFolder("Plant")
-    local EventStockMenu = eventWindow:CreateFolder("Stock")
-    --local EventUpgrades = eventWindow:CreateFolder("Upgrades")
-    local blacklistMenu = eventWindow:CreateFolder("Blacklists")
-    --local EventShop = ALLDATA.EventShopStock
-    local attackMenu = eventWindow:CreateFolder('Fighting')
-    
-    local Event_Point = EventItem:FindFirstChild("Event_Point")
-    local blacklistEventItems = {}
-    local BeeEggList = {["Common Bee Egg"]={Item="CommonBeeEgg",Currency="HoneyCoins",Price=10},["Rare Bee Egg"]={Item="RareBeeEgg",Currency="HoneyCoins",Price=100},["Mythical Bee Egg"]={Item="MythicalBeeEgg",Currency="HoneyCoins",Price=500}}
-    local BeeSeedList = {["Honey Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=50},["Honey Blueberry"]={Type="Multi",Currency="HoneyCoins",Price=75},["Honey Buttercup"]={Type="Single",Currency="HoneyCoins",Price=250},["Honey Tomato"]={Type="Multi",Currency="HoneyCoins",Price=100},["Honey Corn"]={Type="Multi",Currency="HoneyCoins",Price=150},["Honey Daffodil"]={Type="Single",Currency="HoneyCoins",Price=400},["Honey Watermelon"]={Type="Single",Currency="HoneyCoins",Price=100},["Honey Pumpkin"]={Type="Single",Currency="HoneyCoins",Price=150},["Honey Apple"]={Type="Multi",Currency="HoneyCoins",Price=600},["Honey Bamboo"]={Type="Single",Currency="HoneyCoins",Price=80},["Honey Coconut"]={Type="Multi",Currency="HoneyCoins",Price=1500},["Honey Cactus"]={Type="Multi",Currency="HoneyCoins",Price=2000},["Honey Dragon Fruit"]={Type="Multi",Currency="HoneyCoins",Price=2750},["Honey Mango"]={Type="Multi",Currency="HoneyCoins",Price=3500},["Honey Grape"]={Type="Multi",Currency="HoneyCoins",Price=4500},["Honey Mushroom"]={Type="Single",Currency="HoneyCoins",Price=55},["Honey Pepper"]={Type="Multi",Currency="HoneyCoins",Price=225},["Honey Cacao"]={Type="Multi",Currency="HoneyCoins",Price=255},["Honey Beanstalk"]={Type="Multi",Currency="HoneyCoins",Price=335},["Honey Sunflower"]={Type="Multi",Currency="HoneyCoins",Price=300},["Honey Ember Lily"]={Type="Multi",Currency="HoneyCoins",Price=355},["Honey Sugar Apple"]={Type="Multi",Currency="HoneyCoins",Price=11000},["Honey Burning Bud"]={Type="Multi",Currency="HoneyCoins",Price=16000},["Honey Giant Pinecone"]={Type="Multi",Currency="HoneyCoins",Price=17000},["Honey Elder Strawberry"]={Type="Multi",Currency="HoneyCoins",Price=18000},["Honey Romanesco"]={Type="Multi",Currency="HoneyCoins",Price=22000},["Honey Crimson Thorn"]={Type="Multi",Currency="HoneyCoins",Price=26000},["Honey Zebrazinkle"]={Type="Multi",Currency="HoneyCoins",Price=32000},["Honey Octobloom"]={Type="Multi",Currency="HoneyCoins",Price=38000},["Honey Alien Apple"]={Type="Multi",Currency="HoneyCoins",Price=60000},["Honey Pollenvine"]={Type="Multi",Currency="HoneyCoins",Price=20000}}
-    local eventShopList = {["Honey Honey Daisy"]={Item="HoneyDaisy",Currency="HoneyCoins",Price=25},["Honey Honey Dew"]={Item="HoneyDew",Currency="HoneyCoins",Price=150},["Honey Hive Seed Pack"]={Item="HiveSeedPack1",Currency="HoneyCoins",Price=2500},["Honey Ambercomb"]={Item="Ambercomb",Currency="HoneyCoins",Price=2000},["Pollen Radar 2026"]={Item="PollenRadarRender",Currency="HoneyCoins",Price=88},["Honey Coneflower"]={Item="Coneflower",Currency="HoneyCoins",Price=2000},["Hive Egg"]={Item="Hive Egg",Currency="HoneyCoins",Price=2500},["Hive Crate"]={Item="HiveCrate",Currency="HoneyCoins",Price=3000},["Professor Bee"]={Item="ProfessorBee",Currency="HoneyCoins",Price=2500},["Honey Birds of Paradise"]={Item="BirdsofParadise",Currency="HoneyCoins",Price=10000}}
+    local EventMenu = eventWindow:CreateFolder("Main")
 
-    local function mergeDictionaries(...)
-        local result = {}
+    local amtInv = 150
 
-        for _, dict in ipairs({...}) do
-            for k, v in pairs(dict) do
-                result[k] = v
-            end
-        end
+    --Remotes
+    local submitHarvest = rs.GameEvents:WaitForChild("SummerHarvestRemoteEvent")
 
-        return result
-    end
-    local mergedListEvent = mergeDictionaries(BeeEggList, BeeSeedList, eventShopList)
-    
-    local function getKeys(_table)
-        local t = {}
-        for k, v in pairs(_table) do
-            table.insert(t, k)
-        end 
-        local sortedT = SortTableByName(t)
-        return sortedT
-    end
-    local function appendPrefix(_table)
-        local t = {}
-        for k,v in pairs(_table) do
-            local name = k
-            if v.Type then
-                if v.Type == "Multi" then name = "(M)" .. name else name = "(S)" .. name end
-            end
-            table.insert(t, name)
-        end
-        local sortedT = SortTableByName(t)
-        return sortedT
-    end
-    --local honeyCoins = ALLDATA.SpecialCurrency.HoneyCoins
-    local function checkCoinCount(_amount)
-        if ALLDATA.SpecialCurrency.HoneyCoins > _amount then
-            return true
-        end
-    end
+local args = {
+    [1] = "SubmitAllPlants"
+}
 
-    local function checkPollinated(plant)
-        for name, value in pairs(plant:GetAttributes()) do
-            if string.find(name:lower(), "pollinated") then
-                return true
-            end
-        end
-    end
-    local function getPollinatedFruit(amount)
+
+
+    --Summer Fruit
+    local SummerHarvestCrops = {"Carrot","Strawberry","Blueberry","Wild Carrot","Pear","Tomato","Cauliflower","Delphinium","Cantaloupe","Watermelon","Green Apple","Avocado","Banana","Pineapple","Kiwi","Bell Pepper","Prickly Pear","Parasol Flower","Lily Of The Valley","Guanabana","Rosy Delight","Loquat","Feijoa","Pitcher Plant","Traveler's Fruit","Sugar Apple","Elephant Ears"}
+    local function getSummerFruit(amount)
         local results = {}
         local prompts = CollectionService:GetTagged("CollectPrompt")
+
         for _, prompt in ipairs(prompts) do
             local plant = prompt:FindFirstAncestorOfClass("Model")
-            if plant and plant:IsDescendantOf(Plants_Physical) then
-                if checkPollinated(plant) and prompt.Enabled then
+            if plant and plant:IsDescendantOf(Plants_Physical) and prompt.Enabled then
+                if table.find(SummerHarvestCrops, plant.Name) then
                     table.insert(results, plant)
                     if amount and #results >= amount then
                         break
@@ -845,108 +572,26 @@ if EventItem then
                 end
             end
         end
+
         return results
-    end
-
-    local function buyStocks(_stocks, _remote, _type)
-        for name, v in pairs(_stocks) do
-            if v.Stock and v.Stock > 0 and not table.find(blacklistEventItems, name) then
-                for i = 1, v.Stock do
-                    local price = mergedListEvent[name]
-                    if price and not checkCoinCount(price.Price) and (not name:find("Carrot")) then
-                        break
-                    end
-                    if _type then
-                        _remote:FireServer(name, _type)
-                    else
-                        _remote:InvokeServer(name)
-                    end
-                end
-            end
-        end
-    end
-
-    local function getNextSeed()
-        for _,v in pairs(Player.Backpack:GetChildren())do
-            local honeyAtt = v:GetAttribute("Seed")
-            if honeyAtt then
-                if honeyAtt:lower():find("honey") then
-                    return v
-                end
-            end
-        end
-
-    end
-    local function getNextCrop()
-        for _,v in pairs(Player.Backpack:GetChildren())do
-
-            local honeyAtt = v:GetAttribute("b")
-            local nameAtt = v:GetAttribute("f")
-            if nameAtt and honeyAtt and honeyAtt == "j" and checkPollinated(v) then
-                if nameAtt:lower():find("honey") then
-                    return v
-                end
-            end
-        end
-
-    end
-
-    --Set Poistion
-    local eventPlantPos
-    local isEventRandomPos = false
-    local isAllPSeeds = false
-    EventPlant:Button("Set/Remove Pos",function()
+    end    
+    
+    
+    
+    --Submit Button
+    EventMenu:Button("Submit All",function()
         spawn(function()
-            eventPlantPos = GetPos()
+            submitHarvest:FireServer()
         end)
     end)
-    --Random Placing
-    EventPlant:Toggle("Random Pos",function(bool)
-        shared.ToggleERP=bool
-        isEventRandomPos = shared.ToggleERP
-    end)
-    EventPlant:Toggle("All Seeds",function(bool)
-        shared.ToggleEAS=bool
-        isAllPSeeds = shared.ToggleEAS
-    end)
 
-    --Auto Plant
-    EventPlant:Toggle("Auto Plant",function(bool)
-        shared.ToggleEAP=bool
-        spawn(function()
-            while shared.ToggleEAP do
-                --local eventSeed = getNextSeed()
-                local seed = Player.Character and Player.Character:FindFirstChildOfClass("Tool")
-                if (not seed or (seed and not seed:GetAttribute("Seed"))) and isAllPSeeds then
-                    seed = getNextSeed()
-                    Player.Character:WaitForChild("Humanoid"):EquipTool(seed) task.wait(1)
-                    
-                end
-                if seed and not busy then
-                    local seedName = seed:GetAttribute("Seed")
-                    if seedName then
-                        busy = true
-                        local newPos
-                        if isEventRandomPos then newPos = getRandomPos()
-                        elseif eventPlantPos then newPos = eventPlantPos end
-                        if newPos then
-                            plantSeed(seedName, newPos)
-                        end
-                        busy = false
-                    end
-                end
-                task.wait()
-            end
-        end)
-    end)
-    --Auto Harvest
-    EventPlant:Toggle("Auto Harvest",function(bool)
+    EventMenu:Toggle("Auto Harvest",function(bool)
         shared.ToggleEAH=bool
         spawn(function()
             while shared.ToggleEAH do
                 if getSpaceLeft() > 0 and not busy then
                     local spaceLeft = math.max(0, getSpaceLeft())
-                    local hCrops = getPollinatedFruit(spaceLeft)
+                    local hCrops = getSummerFruit(spaceLeft)
                     for _,v in pairs(hCrops)do
                         mod:FireServer({v})
                     end
@@ -956,289 +601,30 @@ if EventItem then
         end)
     end)
 
+    EventMenu:Slider("Amount",{
+        min = 1; max = 250; precise = true;
+    },function(value)
+        amtInv = value
+    end)
 
 
-
-    --Auto Buy Event Stock 
-    local EEStype = "Honey Coin Shop"
-    local EESremote = rs:WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock")
-    EventStockMenu:Toggle("Event Shop",function(bool)
-        shared.ToggleEES=bool
+    EventMenu:Toggle("Auto Submit",function(bool)
+        shared.ToggleEAS=bool
         spawn(function()
-            while shared.ToggleEES do
-                if EEStype and EESremote and checkCoinCount(30) then
-                    local EESStocks = ALLDATA.EventShopStock["Honey Coin Shop"].Stocks
-                    buyStocks(EESStocks, EESremote, EEStype)
+            while shared.ToggleEAS do
+                --Check Inventory Full
+                local inv = getInventoryCount()
+                if inv >= amtInv then
+                    submitHarvest:FireServer() task.wait(2)
                 end
-                task.wait(1)
+                task.wait()
             end
         end)
     end)
-    --Auto Buy Bee Eggs
-    local EBERemote = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BeeColonyEggShopService"):WaitForChild("BuyBeeEggStock")
-    EventStockMenu:Toggle("Bee Eggs",function(bool)
-        shared.ToggleEBE=bool
-        spawn(function()
-            while shared.ToggleEBE do
-                if EBERemote and checkCoinCount(10) then
-                    local EBEStocks = ALLDATA.BeeEggShopStock.Stocks
-                    buyStocks(EBEStocks, EBERemote)
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-    --Auto Buy Seed Shop
-    local ESStype = "Honey Seed Shop"
-    EventStockMenu:Toggle("Event Seeds",function(bool)
-        shared.ToggleESS=bool
-        spawn(function()
-            while shared.ToggleESS do
-                if EEStype and EESremote then
-                    local ESSStocks = ALLDATA.EventShopStock["Honey Seed Shop"].Stocks
-                    buyStocks(ESSStocks, EESremote, ESStype)
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-    local ERStype = "Royal Jelly Shop"
-    EventStockMenu:Toggle("Royal Shop",function(bool)
-        shared.ToggleERS=bool
-        spawn(function()
-            while shared.ToggleERS do
-                if ERStype and EESremote then
-                    local ESSStocks = ALLDATA.EventShopStock["Royal Jelly Shop"].Stocks
-                    buyStocks(ESSStocks, EESremote, ERStype)
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-
---HoneyMachine2026
-    --IsRunning (bool)
-    --HoneyStored (number)
-    --TimeLeft (number)
-    --PlantWeight (number)
-
-    
-    local EACRemote = rs:WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE")
-    --CompressAll
-    EventMenu:Button("Compress",function()
-        spawn(function()
-            EACRemote:FireServer("SubmitAll")
-        end)
-    end)
-    --Auto Compress
-    local incData = ALLDATA.HoneyMachine2026
-    EventMenu:Toggle("Auto Compress",function(bool)
-        shared.ToggleEMAC=bool
-        spawn(function()
-            while shared.ToggleEMAC do
-                if getInventoryCount() > 0 and getNextCrop() then
-                    if incData and incData.IsRunning == false and incData.HoneyStored <= 0 then
-                        EACRemote:FireServer("SubmitAll")
-                    end
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-    --Auto Collect Honey
-    local ECHRemote = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachine2026Service_RE")
-    EventMenu:Toggle("Collect Honey",function(bool)
-        shared.ToggleECH=bool
-        spawn(function()
-            while shared.ToggleECH do
-                if incData and incData.HoneyStored > 0 and incData.TimeLeft == 0 then
-                    ECHRemote:FireServer("CollectHoney")
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-
-    --[[
-    --Auto Hatch Egg
-    local args = {
-        [1] = "{6ef06247-f980-44a9-85cb-091de7cc9c83}"
-    }
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("HatchBeeSwarmEgg"):FireServer(unpack(args))
-
-    --Auto Place Egg
-    local args = {
-        [1] = 1
-    }
-    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("BizzyBeeEvent"):WaitForChild("PlaceBeeEggRE"):FireServer(unpack(args))
-    ]]--
-
-    local disBeeEggList = getKeys(BeeEggList)
-    local disBeeSeedList = getKeys(BeeSeedList)
-    local diseventShopList = getKeys(eventShopList)
-
-    local function CheckTables(_name)
-        if not _name then return end
-        local name = _name:gsub("^%b()", ""):gsub("^%s+", "")
-        for _, t in ipairs({disBeeEggList, disBeeSeedList, diseventShopList}) do
-            for _, v in pairs(t) do
-                if name == v then
-                    return v
-                end
-            end
-        end
-    end
-    local function addItemToBlacklist(_item)
-        if _item and not table.find(blacklistEventItems, _item) then
-            print("Adding:", _item, "To Blacklist")
-            table.insert(blacklistEventItems, _item)
-        end
-    end
-
-    local selectedItemEvent
-    blacklistMenu:Button("Add",function()
-        spawn(function()
-            local item = CheckTables(selectedItemEvent)
-            addItemToBlacklist(item)
-        end)
-    end)
-    blacklistMenu:Button("Remove",function()
-        spawn(function()
-            local item = CheckTables(selectedItemEvent)
-            print("[Remove]:", selectedItemEvent, item)
-            if item and table.find(blacklistEventItems, item) then
-                print("Removing:", item, "To Blacklist")
-                RemoveFromTable(blacklistEventItems, item)
-            end
-        end)
-    end)
-    blacklistMenu:Dropdown("Select Egg",disBeeEggList,true,function(SItem)
-        selectedItemEvent = SItem
-    end)
-    blacklistMenu:Dropdown("Select Seed",appendPrefix(BeeSeedList),true,function(SItem)
-        selectedItemEvent = SItem
-    end)
-    blacklistMenu:Dropdown("Select Item",diseventShopList,true,function(SItem)
-        selectedItemEvent = SItem
-    end)
-
-    local customEvent1 = {"Rare Bee Egg", "Common Bee Egg", "Professor Bee", "Honey Strawberry", "Honey Blueberry", "Honey Bamboo", "Honey Buttercup", "Honey Tomato", "Honey Corn", "Honey Daffodil", "Honey Watermelon", "Honey Pumpkin", "Honey Apple", "Honey Bambo", "Honey Coconut", "Honey Cactus", "Honey Dragon Fruit", "Honey Mango", "Honey Grape", "Honey Mushroom", "Honey Pepper", "Honey Cacao", "Honey Sunflower"}
-    blacklistMenu:Button("Custom 1",function()
-        spawn(function()
-            for _,v in pairs(customEvent1)do
-                addItemToBlacklist(v)
-            end
-        end)
-    end)
-
---BeeEventData
-    --WaspWaveSurvival
-        --LastStartedAt
-        --DefeatLockoutUntil
-        --LastPortalignitedAt
-
-    --attackMenu
-    attackMenu:Toggle("Wasps",function(bool)
-        shared.ToggleEW=bool
-        spawn(function()
-            while shared.ToggleEW do
-                local wEgg = workspace:FindFirstChild("WaspEgg")
-                if wEgg and not busy then
-                    busy = true
-                    local startTime = tick()
-
-                    while wEgg.Parent and shared.ToggleEW do
-                        if tick() - startTime >= 30 then break end
-                        local hitbox = wEgg:FindFirstChild("HitBox")
-                        if hitbox then
-                            local dis = GetDistance(hitbox)
-                            if dis > 10 then
-                                local targetPos = hitbox.CFrame * CFrame.new(0, 0, -5)
-                                local facingCFrame = CFrame.lookAt(targetPos.Position, hitbox.Position)
-
-                                MoveTo(facingCFrame)
-                                task.wait(1)
-                            end
-                        else
-                            break
-                        end
-
-                        task.wait(1)
-                    end
-                    busy = false
-                end
-                task.wait(1)
-            end
-        end)
-    end)
-
-    
-    local Dunglabel = workspace.Interaction.UpdateItems.WaspDungeonPortal.RewardsAttachment.Timer.Label
-    local function checkDungeonTimer()
-        if Dunglabel then
-            if Dunglabel.Text:lower() == "ready" then
-                return 1
-            elseif  Dunglabel.Text:lower() == "ready for ignition" then
-                return 2
-            end
-        end
-    end
-
-    --exit portal game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestExit"):FireServer()
-    local WaspCon
-    local WaspUI = Player.PlayerGui:WaitForChild("WaspWaveSurvivalUI")
-    local ignitePortalRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
-    local startDungeonRemote = rs:WaitForChild("GameEvents"):WaitForChild("WaspWaveSurvival"):WaitForChild("RequestStart")
-    attackMenu:Toggle("Dungeon",function(bool)
-        shared.ToggleED=bool
-        spawn(function()
-            if shared.ToggleED then
-                WaspCon = WaspUI:GetPropertyChangedSignal("Enabled"):Connect(function()
-                    busy = WaspUI.Enabled
-                end)
-            else
-                if WaspCon then WaspCon:Disconnect() WaspCon = nil end
-            end
-            while shared.ToggleED do
-                local dunData = ALLDATA.BeeEventData.WaspWaveSurvival
-                if dunData then
-                    local now = os.time()
-                    local currentHourStart = now - (now % 3600)
-                    local lastTime = dunData.LastStartedAt
-                    if lastTime and lastTime >= currentHourStart then
-                        --print("Waiting for portal cooldown")
-                    else
-                        local ignited = dunData.LastPortalIgnitedAt
-                        if ignited and ignited >= currentHourStart then
-                            if  now - ignited >= 600 then
-                                if not busy and checkDungeonTimer() == 1 then
-                                    print("Ready To Enter")
-                                    startDungeonRemote:InvokeServer()
-                                end
-                            else
-                               -- local remaining = 600 - (now - ignited)
-                                --print(("Waiting For Igniting to Finish (%dm %02ds remaining)"):format(math.floor(remaining / 60), remaining % 60))
-                            end
-                        else
-                            if checkDungeonTimer() == 2 then
-                                print("igniting Portal...")
-                                ignitePortalRemote:InvokeServer()
-                            end
-                        end
-                    end
-                end
-                task.wait(1)
-            end
-        end)
-    end)
+    --Auto SubmitALL
 
 end
---------------------------------------------------------------------------------------------------------------------------------------
-
+--######################################################################################################################
 local function buySeed(_item, _amt)
     --print("Buying: x" .. _amt, _item)
     for i = 1, _amt do
@@ -1651,6 +1037,7 @@ PlantingMenu:Toggle("Plant Hand",function(bool)
     end)
 end)
 --CrafMenu ----------------------------------------------------------------------
+--[[
 local selectedCraftItem
 local craftItems = {"Lightning Rod", "Tanning Mirror", "Reclaimer", "Event Lantern x30", "Anti Bee Egg", "Small Toy x3", "Small Treat x3", "Pet Pouch", "Pack Bee", "Silver Ingot", "Gold Ingot", "Silver Piggy", "Golden Piggy", "Chimera Stone"}
 local CMDropList = CrafMenu:Dropdown("Select Item",craftItems,true,function(SItem)
@@ -1660,7 +1047,7 @@ end)
 
 --ALLDATA.CraftingData.GlobalCraftingObjectData["Workbench-1"].MachineData.GearEventWorkbench.CraftingItems[1].TimeRemaining
 -- ALLDATA.CraftingData.GlobalCraftingObjectData["Workbench-1"].MachineData.GearEventWorkbench.CraftingItems[1].TimeRemaining
-
+-
 CrafMenu:Toggle("Auto Craft",function(bool)
     shared.ToggleCMAC=bool
     spawn(function()
@@ -1682,14 +1069,7 @@ CrafMenu:Toggle("Auto Craft",function(bool)
         end
     end)
 end)
-
-
-
-
-
-
-
-
+]]--
 ----------------------------------------------------------------------
 
 StockMenu:Toggle("Buy Seeds",function(bool)
