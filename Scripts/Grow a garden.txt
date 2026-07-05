@@ -1,4 +1,4 @@
-print("Version 1.6.1 - Summer - Testing")
+print("Version 1.6.0 - Summer - Testing")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 
 local rs = game:GetService("ReplicatedStorage")
@@ -549,12 +549,6 @@ if EventItem then
     --Remotes
     local submitHarvest = rs.GameEvents:WaitForChild("SummerHarvestRemoteEvent")
 
-local args = {
-    [1] = "SubmitAllPlants"
-}
-
-
-
     --Summer Fruit
     local SummerHarvestCrops = {"Carrot","Strawberry","Blueberry","Wild Carrot","Pear","Tomato","Cauliflower","Delphinium","Cantaloupe","Watermelon","Green Apple","Avocado","Banana","Pineapple","Kiwi","Bell Pepper","Prickly Pear","Parasol Flower","Lily Of The Valley","Guanabana","Rosy Delight","Loquat","Feijoa","Pitcher Plant","Traveler's Fruit","Sugar Apple","Elephant Ears"}
     local function getSummerFruit(amount)
@@ -581,7 +575,7 @@ local args = {
     --Submit Button
     EventMenu:Button("Submit All",function()
         spawn(function()
-            submitHarvest:FireServer()
+            submitHarvest:FireServer("SubmitAllPlants")
         end)
     end)
 
@@ -615,7 +609,7 @@ local args = {
                 --Check Inventory Full
                 local inv = getInventoryCount()
                 if inv >= amtInv then
-                    submitHarvest:FireServer() task.wait(2)
+                    submitHarvest:FireServer("SubmitAllPlants") task.wait(2)
                 end
                 task.wait()
             end
