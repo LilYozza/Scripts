@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v4.5")
+print("v4.6")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -170,6 +170,12 @@ local gameData = {
     [103] = {
         world = {
             name = "Easter_Event_World",
+            raids = {
+            },
+            gachaTable = {
+            },
+            upgradeTable = {
+            }
         },
         enemies = {
             { name = 'Bunny', tokens = {"Easter Coin", drops = {"Bunny Ears", "Bunny Tail"}}}, 
@@ -1285,6 +1291,7 @@ local gameData = {
         }
     },
 }
+
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 and next(_tbl1) ~= nil then
         for name,v in pairs(_tbl1)do
@@ -1314,41 +1321,48 @@ local function IntData()
         populateTable(v.world.fighterTable, FIGHTERS)
 
         --TOKENS
-        for _, enemy in pairs(v.enemies) do
-            for _, token in pairs(enemy) do
-                if not table.find(TOKENS, token) then table.insert(TOKENS, token) end
+        if v.enemies then
+            for _, enemy in pairs(v.enemies) do
+                for _, token in pairs(enemy) do
+                    if not table.find(TOKENS, token) then table.insert(TOKENS, token) end
+                end
             end
         end
-        for _, gacha in pairs(v.world.gachaTable) do
-            if gacha.token and not table.find(TOKENS, gacha.token) then table.insert(TOKENS, gacha.token) end
+        if v.world.gachaTable then
+            for _, gacha in pairs(v.world.gachaTable) do
+                if gacha.token and not table.find(TOKENS, gacha.token) then table.insert(TOKENS, gacha.token) end
+            end
         end
-        for _, upgrade in pairs(v.world.upgradeTable) do
-            if upgrade.token and not table.find(TOKENS, upgrade.token) then table.insert(TOKENS, upgrade.token) end
+        if v.world.upgradeTable then
+            for _, upgrade in pairs(v.world.upgradeTable) do
+                if upgrade.token and not table.find(TOKENS, upgrade.token) then table.insert(TOKENS, upgrade.token) end
+            end
         end
 
         
         --KEYS
-        for name, raid in pairs(v.world.raids) do
-            if raid.key and raid.key.type then 
-                local type = "Event"
-                if raid.key.type == 1 then
-                    type = "Exchange_Shop_Keys"
-                elseif raid.key.type == 2 then
-                    type = "Exchange_Shop_Keys_2"
-                end
+        if v.world.raids then
+            for name, raid in pairs(v.world.raids) do
+                if raid.key and raid.key.type then 
+                    local type = "Event"
+                    if raid.key.type == 1 then
+                        type = "Exchange_Shop_Keys"
+                    elseif raid.key.type == 2 then
+                        type = "Exchange_Shop_Keys_2"
+                    end
 
-                KEYINFO[name] = {
-                    id = raid.key.id,
-                    raid = raid,
-                    storeType = type,
-                    type = raid.key.type,
-                    limit = raid.key.limit,
-                    name = name
-                }
-                table.insert(KEYS, name)
+                    KEYINFO[name] = {
+                        id = raid.key.id,
+                        raid = raid,
+                        storeType = type,
+                        type = raid.key.type,
+                        limit = raid.key.limit,
+                        name = name
+                    }
+                    table.insert(KEYS, name)
+                end
             end
         end
-
     end
     for _, v in ipairs(WEAPONS) do
         table.insert(WFTABLE, v)
