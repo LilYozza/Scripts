@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v4.4")
+print("v4.5")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -160,6 +160,19 @@ local gameData = {
             }
         },
         enemies = {
+            { name = 'Nezudeer', tokens = {}, drops = {"Candy Cane Cutter"}}, 
+            { name = 'GoHoHo', tokens = {}, drops = {"Candy Scythe Cane"} }, 
+            { name = 'Rorodeer', tokens = {}, drops = {"Frostmint Saber"}}, 
+            { name = 'Ginsta', tokens = {}, {"Demon Crumb Slayer"}}, 
+            { name = 'Elfchigo', tokens = {}, drops = {"Cangetsu"}}, 
+        }
+    },
+    [103] = {
+        world = {
+            name = "Easter_Event_World",
+        },
+        enemies = {
+            { name = 'Bunny', tokens = {"Easter Coin", drops = {"Bunny Ears", "Bunny Tail"}}}, 
         }
     },
     [1] = {
@@ -304,7 +317,8 @@ local gameData = {
                 }
             },
             upgradeTable = {
-                ["Slayer_Energy_Progression"] = {token = "Exchange Coin", Upgrading_Name = "Energy", bench = true}
+                ["Slayer_Energy_Progression"] = {token = "Exchange Coin", Upgrading_Name = "Energy", bench = true},
+                ["Exp_Obelisk"] = { token = "Obelisk Coin" },
             }
         },
         enemies = {
@@ -330,7 +344,13 @@ local gameData = {
             upgradeTable = {
                 ["ReAwakening_Progression"] = { token = "ReAwakening Token" },
                 ["Monarch_Progression"] = { token = "Monarch Token" },
-            }
+            },
+            fighterTable = {
+                ["Tanky Arise"] = {
+                    token = "Shadow Soul",
+                    list = { "[E] Tanky", "[D] Tanky", "[C] Tanky", "[B] Tanky", "[A] Tanky", "[S] Tanky", "[SS] Tanky", "[SSS] Tanky" }
+                }                
+            },
         },
         enemies = {
             { name = 'Weak_Sung', tokens = {"Hunter Rank Token"}}, 
@@ -1265,7 +1285,6 @@ local gameData = {
         }
     },
 }
-
 local function populateTable(_tbl1, _tbl2)
     if _tbl1 and next(_tbl1) ~= nil then
         for name,v in pairs(_tbl1)do
@@ -1635,19 +1654,28 @@ end
 
 
 local Islands = Workspace:WaitForChild("Islands")
-local IslandStuff = Islands:WaitForChild("West City With Pads and Stuff")
+local Dimension_1 = Islands:WaitForChild("Dimension 1")
+local Dimension_2 = Islands:WaitForChild("Dimension 2")
+local IslandStuff = Dimension_1:WaitForChild("West City With Pads and Stuff")
 
 local function TeleportMap(_map, _index, _walk, _dungeonCheck)
     _dungeonCheck = _dungeonCheck or true
     local loaded = nil
     local str = ". "
-    local folder = Islands
+    local folder = Dimension_1
 
     _walk = true -- TEMP OVERRIDE
 
     if _map == "Earth_City" then folder = IslandStuff str = str .. _map end
 
     for _, v in pairs(folder:GetChildren()) do
+        if string.find(v.Name, _index .. str) then
+            loaded = v
+            break
+        end
+    end
+
+    for _, v in pairs(Dimension_2:GetChildren()) do
         if string.find(v.Name, _index .. str) then
             loaded = v
             break
