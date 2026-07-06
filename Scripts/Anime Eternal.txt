@@ -13,7 +13,7 @@ local StatsMenu = w:CreateFolder("Stats")
 local ChestMenu = w:CreateFolder("Chests")
 local WebhookMenu = w:CreateFolder("Webhook")
 
-print("v4.6")
+print("v4.7")
 
 local sGachaAmount = 5
 local questAmount = 50000
@@ -105,6 +105,7 @@ local gameData = {
                 ["Maze_Level_3"] = {},
                 ["Maze_Level_4"] = {},
                 ["Maze_Level_5"] = {},
+                ["Maze_Level_6"] = {},
                 
             },
             gachaTable = {},
@@ -1291,6 +1292,30 @@ local gameData = {
         }
     },
     [35] = {
+        world = {
+            name = "Kuo_Academy",
+            raids = {
+            },
+            gachaTable = {
+                ["DxD Species"] = {"Humans", "Stray Devils", "Reincarnated Devils", "Pure-Blood Devils", "Fallen Angels", "Angels", "Youkai", "Gods", "Dragons"},
+                ["Sacred Gear"] = {"Healing Tear", "Blade Blacksmith", "Sword Birth", "Night Reflection", "Canis Lykaon", "Regulus Nemea", "Annihilation Maker", "True Longinus", "Boosted Gear"}
+            },
+            upgradeTable = {
+                ["Dragon_Booster"] = {token = "Sacred Gear Token", Upgrading_Name = "Damage", bench = true}
+            }
+        },
+        enemies = {
+            { name = 'Aisia', tokens = {"DxD Species Token"}},
+            { name = 'Gespar', tokens = {"Sacred Gear Token"}},
+            { name = 'Kaneko', tokens = {"DxD Species Token", "Sacred Gear Token"}},
+            { name = 'Rosweiss', tokens = {"Dragon Torso Token", "Sacred Gear Token"}},
+            { name = 'Xanovia', tokens = {"Dragon Torso Token", "Sacred Gear Token"}}, 
+            { name = 'Akena', tokens = {"Dragon Torso Token", "Sacred Gear Token"}}, 
+            { name = 'Issai', tokens = {"Dragon Helment Token", "Sacred Gear Token"}}, 
+            { name = 'Riasa', tokens = {"DxD Species Token", "Sacred Gear Token"}}, 
+        }
+    },
+    [36] = {
         world = {
             name = "Kuo_Academy",
             raids = {
