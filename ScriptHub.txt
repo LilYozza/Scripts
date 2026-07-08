@@ -690,6 +690,10 @@ local Games = {
 	[118941584817777] = {
 		Name = '+1 Speed Keyboard Escape',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/+1%20Speed%20Keyboard%20Escape.txt'
+	},
+	[131756752872026] = {
+		Name = 'Dive Deep',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Dive%20Deep.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()

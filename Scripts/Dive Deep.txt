@@ -1,0 +1,210 @@
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+
+local GuiService = game:GetService("GuiService")
+local Players=game:GetService("Players")
+local Player=Players.LocalPlayer
+
+local world1 = workspace:WaitForChild("Game") --Main
+local world2 = workspace:WaitForChild("World2"):WaitForChild("Game") -- Moon
+
+local pPlot1 = world1:WaitForChild("Plots"):WaitForChild(Player.Name)
+local pPlot2 = world2:WaitForChild("Plots"):WaitForChild(Player.Name)
+
+pcall(function()
+    GuiService:SetGameplayPausedNotificationEnabled(false)
+end)
+
+-->Return Functions<--
+local function getWorld(_world)
+    local world =  _world or Player:GetAttribute("CurrentWorld")
+    if world then
+        return (world == "Main") and world1 or world2
+    end
+    return world
+end
+
+local function DeleteWorldObject(_name)
+    for _,v in pairs(world1:GetDescendants())do
+        if v.Name:match(_name) and v:IsA("Folder") and not v:IsDescendantOf(pPlot1) and not v:IsDescendantOf(pPlot2) then
+            v:Destroy()
+        end
+    end
+    for _,v in pairs(world2:GetDescendants())do
+        if v.Name:match(_name) and v:IsA("Folder") and not v:IsDescendantOf(pPlot1) and not v:IsDescendantOf(pPlot2) then
+            v:Destroy()
+        end
+    end
+end
+
+local function getFishes()
+    local world = getWorld()
+    if world then
+        return world:WaitForChild("Fishes")
+    end
+end
+
+local function getAllFishTypes()
+    local t = {}
+    local fishes = getFishes()
+    if fishes then
+        for _,v in pairs(fishes:GetChildren())do
+            if not table.find(t, v.Name) then
+                table.insert(t, v.Name)
+            end
+        end
+    end
+    return t
+end
+
+local function getAllZones()
+    local t = {}
+
+    for _, zone in ipairs(world1.FishZones:GetChildren()) do
+        table.insert(t, zone.Name)
+    end
+
+    for _, zone in ipairs(world2.FishZones:GetChildren()) do
+        table.insert(t, zone.Name)
+    end
+
+    return t
+end
+
+local function getZone(_zone)
+    local find = world1.FishZones:FindFirstChild(_zone) or world2.FishZones:FindFirstChild(_zone) or nil
+    return find
+end
+
+local function getBestFish()
+    local bestPrice = 0
+    local fish
+    local fishes = getFishes()
+    if fishes then
+        for _,v in pairs(fishes:GetChildren())do
+            local price = v:GetAttribute("CashPerSec")
+            if price and price > bestPrice then
+                fish = v
+            end
+        end
+    end
+    return fish
+end
+
+local function catchFish(_fish)
+    local root = _fish:FindFirstChild("RootPart")
+    if root then
+        
+        local prompt = root:FindFirstChild("ProximityPrompt")
+        if prompt then
+            MoveTo(root) task.wait(1)
+            fireproximityprompt(prompt)
+        end
+    end
+end
+
+
+Auto:Button("Home",function()
+    spawn(function()
+        local spawn = Player.RespawnLocation or nil
+        if spawn then
+            MoveTo(spawn, Vector3.new(0,3,0))
+        end
+    end)
+end)
+
+local sZone
+Auto:Dropdown("Select Zone",getAllZones(),true,function(SItem)
+    sZone = SItem
+end)
+
+Auto:Button("Teleport",function()
+    spawn(function()
+        local zone = getZone(sZone)
+        if zone then
+            MoveTo(zone)
+        end
+    end)
+end)
+
+
+local conIO
+Auto:Toggle("Inf Oxygen",function(bool)
+    shared.ToggleIO=bool
+    spawn(function()
+        if shared.ToggleIO then
+            conIO = Player:GetAttributeChangedSignal("isSwimming"):Connect(function()
+                Player:SetAttribute("isSwimming", false)
+            end)
+        else
+            if conIO then conIO:Disconnect() conIO = nil end
+        end
+    end)
+end)
+
+local sFish
+local FishListDropDown = Auto:Dropdown("Select Fish",getAllFishTypes(),true,function(SItem)
+    sFish = SItem
+end)
+
+Auto:Toggle("Best Fish",function(bool)
+    shared.ToggleBF=bool
+    spawn(function()
+        while shared.ToggleBF do
+            local bestFish = getBestFish()
+            if bestFish then
+                catchFish(bestFish)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Farm Fish",function(bool)
+    shared.ToggleFF=bool
+    spawn(function()
+        while shared.ToggleFF do
+            if sFish then
+                local fishes = getFishes()
+                if fishes then
+                    for _,v in pairs(fishes:GetChildren())do
+                        if v.Name:match(sFish) and shared.ToggleFF then
+                            catchFish(v)
+                        end
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        FishListDropDown:Refresh(getAllFishTypes())
+    end
+end)
+
+Auto:Button("Clean",function()
+    spawn(function()
+        --PLOTS
+        local plot1 = world1:WaitForChild("Plots")
+        local plot2 = world1:WaitForChild("Plots")
+
+        for _,v in pairs(plot1:GetChildren())do
+            if v.Name ~= Player.Name then
+                v:Destroy()
+            end
+        end
+        for _,v in pairs(plot2:GetChildren())do
+            if v.Name ~= Player.Name then
+                v:Destroy()
+            end
+        end
+        --Items
+        local foldersToDelete = {"Terrain", "Decoration", "Water", "OceanArea", "BigSign", "DeveloperSigns", "EventBoards", "OceanNonCollideable"}
+        for _,v in pairs(foldersToDelete)do
+            DeleteWorldObject(v)
+        end
+    end)
+end)
