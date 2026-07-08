@@ -1,4 +1,4 @@
-print("Version: 1.0.1")
+print("Version: 1.0.2")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -83,21 +83,35 @@ local function getZone(_zone)
     return find
 end
 
+local function isPointInPart(part, point)
+    local localPoint = part.CFrame:PointToObjectSpace(point)
+    local halfSize = part.Size * 0.5
+
+    return math.abs(localPoint.X) <= halfSize.X
+        and math.abs(localPoint.Y) <= halfSize.Y
+        and math.abs(localPoint.Z) <= halfSize.Z
+end
+
 local function getBestFish(zone)
     local bestPrice = 0
     local bestFish
     local fishes = getFishes()
+
     if not fishes then
         return nil
     end
+
     for _, fish in ipairs(fishes:GetChildren()) do
         local price = fish:GetAttribute("CashPerSec")
+
         if price then
             local inRange = true
+
             if zone then
                 local root = fish:FindFirstChild("RootPart")
+
                 if root then
-                    inRange = GetDistance(root, zone) <= 1000
+                    inRange = isPointInPart(zone, root.Position)
                 else
                     inRange = false
                 end
