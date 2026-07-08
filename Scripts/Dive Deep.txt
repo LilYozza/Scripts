@@ -1,4 +1,4 @@
-print("Version: 1.0.0")
+print("Version: 1.0.1")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -159,15 +159,20 @@ Auto:Toggle("Fish Zone",function(bool)
     shared.ToggleFZ=bool
     spawn(function()
         while shared.ToggleFZ do
-
+            local zone = getZone(sZone)
+            if zone then
+                local bestFish = getBestFish(zone)
+                if bestFish then
+                    catchFish(bestFish)
+                end
+            end
             task.wait(1)
         end
     end)
 end)
 
---[[
 local conIO
-Auto:Toggle("Inf Oxygen",function(bool)
+Auto:Toggle("Enable Buttons",function(bool)
     shared.ToggleIO=bool
     spawn(function()
         if shared.ToggleIO then
@@ -179,19 +184,19 @@ Auto:Toggle("Inf Oxygen",function(bool)
         end
     end)
 end)
-]]--
+
 Auto:Toggle("Auto Oxygen",function(bool)
     shared.ToggleAO=bool
     spawn(function()
         while shared.ToggleAO do
             local oxygen = getOxygen()
-            if oxygen and oxygen <= 0 and homePos then
+            if oxygen and oxygen <= 10 and homePos then
                 local lastPos = GetPos()
                 MoveTo(homePos, Vector3.new(0,3,0))
                 task.wait(1)
                 MoveTo(lastPos)
             end
-            task.wait(1)
+            task.wait(5)
         end
     end)
 end)
