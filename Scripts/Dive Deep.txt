@@ -25,6 +25,12 @@ local function getWorld(_world)
     return world
 end
 
+local function getOxygen()
+    local oLabel = Player.PlayerGui.PersistentUI.OxygenBar.OxygenBar.Amount
+    local oxygen = tonumber(oLabel.Text:match("(%d+)"))
+    return oxygen or 0
+end
+
 local function DeleteWorldObject(_name)
     for _,v in pairs(world1:GetDescendants())do
         if v.Name:match(_name) and v:IsA("Folder") and not v:IsDescendantOf(pPlot1) and not v:IsDescendantOf(pPlot2) then
@@ -76,7 +82,7 @@ local function getZone(_zone)
     return find
 end
 
-local function getBestFish()
+local function getBestFish(_zone)
     local bestPrice = 0
     local fish
     local fishes = getFishes()
@@ -84,7 +90,16 @@ local function getBestFish()
         for _,v in pairs(fishes:GetChildren())do
             local price = v:GetAttribute("CashPerSec")
             if price and price > bestPrice then
-                fish = v
+                if _zone then
+                    local root = v:FindFirstChild("RootPart")
+                    local dis = GetDistance(root, _zone)
+                    if dis <= 1000 then
+                        fish = v
+                    end
+                else
+                    fish = v
+                end
+                
             end
         end
     end
@@ -103,12 +118,18 @@ local function catchFish(_fish)
     end
 end
 
+local homePos
+Player:GetPropertyChangedSignal("RespawnLocation"):Connect(function()
+    local spawn = Player.RespawnLocation
+    if spawn then
+        homePos = spawn 
+    end
+end)
 
 Auto:Button("Home",function()
     spawn(function()
-        local spawn = Player.RespawnLocation or nil
-        if spawn then
-            MoveTo(spawn, Vector3.new(0,3,0))
+        if homePos then
+            MoveTo(homePos, Vector3.new(0,3,0))
         end
     end)
 end)
@@ -127,7 +148,17 @@ Auto:Button("Teleport",function()
     end)
 end)
 
+Auto:Toggle("Fish Zone",function(bool)
+    shared.ToggleFZ=bool
+    spawn(function()
+        while shared.ToggleFZ do
 
+            task.wait(1)
+        end
+    end)
+end)
+
+--[[
 local conIO
 Auto:Toggle("Inf Oxygen",function(bool)
     shared.ToggleIO=bool
@@ -141,11 +172,28 @@ Auto:Toggle("Inf Oxygen",function(bool)
         end
     end)
 end)
+]]--
+Auto:Toggle("Auto Oxygen",function(bool)
+    shared.ToggleAO=bool
+    spawn(function()
+        while shared.ToggleAO do
+            local oxygen = getOxygen()
+            if oxygen and oxygen <= 0 and homePos then
+                local lastPos = GetPos()
+                MoveTo(homePos, Vector3.new(0,3,0))
+                task.wait(1)
+                MoveTo(lastPos)
+            end
+            task.wait(1)
+        end
+    end)
+end)
 
 local sFish
 local FishListDropDown = Auto:Dropdown("Select Fish",getAllFishTypes(),true,function(SItem)
     sFish = SItem
 end)
+
 
 Auto:Toggle("Best Fish",function(bool)
     shared.ToggleBF=bool
@@ -189,7 +237,7 @@ Auto:Button("Clean",function()
     spawn(function()
         --PLOTS
         local plot1 = world1:WaitForChild("Plots")
-        local plot2 = world1:WaitForChild("Plots")
+        local plot2 = world2:WaitForChild("Plots")
 
         for _,v in pairs(plot1:GetChildren())do
             if v.Name ~= Player.Name then
