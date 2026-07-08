@@ -5,6 +5,7 @@ local GuiService = game:GetService("GuiService")
 local Players=game:GetService("Players")
 local Player=Players.LocalPlayer
 
+local world = workspace:WaitForChild("Game") --Main
 local world1 = workspace:WaitForChild("Game") --Main
 local world2 = workspace:WaitForChild("World2"):WaitForChild("Game") -- Moon
 
@@ -38,7 +39,6 @@ local function DeleteWorldObject(_name)
 end
 
 local function getFishes()
-    local world = getWorld()
     if world then
         return world:WaitForChild("Fishes")
     end
