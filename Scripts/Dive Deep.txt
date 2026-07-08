@@ -82,28 +82,34 @@ local function getZone(_zone)
     return find
 end
 
-local function getBestFish(_zone)
+local function getBestFish(zone)
     local bestPrice = 0
-    local fish
+    local bestFish
     local fishes = getFishes()
-    if fishes then
-        for _,v in pairs(fishes:GetChildren())do
-            local price = v:GetAttribute("CashPerSec")
-            if price and price > bestPrice then
-                if _zone then
-                    local root = v:FindFirstChild("RootPart")
-                    local dis = GetDistance(root, _zone)
-                    if dis <= 1000 then
-                        fish = v
-                    end
+    if not fishes then
+        return nil
+    end
+    for _, fish in ipairs(fishes:GetChildren()) do
+        local price = fish:GetAttribute("CashPerSec")
+        if price then
+            local inRange = true
+            if zone then
+                local root = fish:FindFirstChild("RootPart")
+                if root then
+                    inRange = GetDistance(root, zone) <= 1000
                 else
-                    fish = v
+                    inRange = false
                 end
-                
+            end
+
+            if inRange and price > bestPrice then
+                bestPrice = price
+                bestFish = fish
             end
         end
     end
-    return fish
+
+    return bestFish
 end
 
 local function catchFish(_fish)
@@ -112,7 +118,7 @@ local function catchFish(_fish)
         
         local prompt = root:FindFirstChild("ProximityPrompt")
         if prompt then
-            MoveTo(root) task.wait(1)
+            MoveTo(root) task.wait(0.5)
             fireproximityprompt(prompt)
         end
     end
