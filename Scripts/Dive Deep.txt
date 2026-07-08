@@ -1,3 +1,4 @@
+print("Version: 1.0.0")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -124,7 +125,7 @@ local function catchFish(_fish)
     end
 end
 
-local homePos
+local homePos = Player.RespawnLocation or nil
 Player:GetPropertyChangedSignal("RespawnLocation"):Connect(function()
     local spawn = Player.RespawnLocation
     if spawn then
