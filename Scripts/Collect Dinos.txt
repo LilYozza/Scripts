@@ -1,4 +1,4 @@
-print("Version: 1.0.0")
+print("Version: 1.0.1")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -22,17 +22,19 @@ local function getSlotInfo()
     local t = {}
 
     for _, slot in ipairs(EggSlots:GetChildren()) do
-        local egg = slot:FindFirstChildWhichIsA("Tool") or nil
-        local timerText = slot.TimerPart.SurfaceGui.TimerFrame.TimerText
-        local text = timerText.Text
+        if slot.Name:find("Slot") then
+            local egg = slot:FindFirstChildWhichIsA("Tool") or nil
+            local timerText = slot.TimerPart.SurfaceGui.TimerFrame.TimerText
+            local text = timerText.Text
 
-        t[slot] = {
-            egg = egg,
-            isReady = text == "Ready",
-            timeLeft = (tonumber(text:match("(%d+)m")) or 0) * 60
-                     + (tonumber(text:match("(%d+)s")) or 0),
-            slot = slot
-        }
+            t[slot] = {
+                egg = egg,
+                isReady = text == "Ready",
+                timeLeft = (tonumber(text:match("(%d+)m")) or 0) * 60
+                        + (tonumber(text:match("(%d+)s")) or 0),
+                slot = slot
+            }
+        end
     end
 
     return t
@@ -47,11 +49,6 @@ local function isSlotsFull()
     end
     return true
 end
-
-Auto:Button("Home",function()
-    spawn(function()
-    end)
-end)
 
 Auto:Toggle("Auto Collect",function(bool)
     shared.ToggleAC=bool
