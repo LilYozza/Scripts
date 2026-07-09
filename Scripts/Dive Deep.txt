@@ -1,4 +1,4 @@
-print("Version: 1.0.5")
+print("Version: 1.0.4")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -165,7 +165,7 @@ Player:GetPropertyChangedSignal("RespawnLocation"):Connect(function()
 end)
 
 
-local TeleportRemote = workspace:WaitForChild("Network"):WaitForChild("Teleport-RemoteEvent"):FireServer(unpack(args))
+local TeleportRemote = workspace:WaitForChild("Network"):WaitForChild("Teleport-RemoteEvent")
 Auto:Button("Home",function()
     spawn(function()
         TeleportRemote:FireServer("Aquarium")
@@ -190,13 +190,11 @@ Auto:Toggle("Auto Sell",function(bool)
     spawn(function()
         while shared.ToggleAS do
             local backpackInfo = getBackpackInfo()
-            if backpackInfo then
-                if backpackInfo.Left <= 0 then
-                    TeleportRemote:FireServer("Sell")
-                    task.wait(1)
-                    --packetRemote:FireServer(buffargs)
+            if backpackInfo and backpackInfo.Left <= 0 then
+                TeleportRemote:FireServer("Sell")
+                task.wait(1)
+                --packetRemote:FireServer(buffargs)
 
-                end
             end
             task.wait(1)
         end
@@ -223,11 +221,14 @@ Auto:Toggle("Fish Zone",function(bool)
     shared.ToggleFZ=bool
     spawn(function()
         while shared.ToggleFZ do
-            local zone = getZone(sZone)
-            if zone then
-                local bestFish = getBestFish(zone)
-                if bestFish then
-                    catchFish(bestFish)
+            local backpackInfo = getBackpackInfo()
+            if backpackInfo and backpackInfo.Left > 0 then
+                local zone = getZone(sZone)
+                if zone then
+                    local bestFish = getBestFish(zone)
+                    if bestFish then
+                        catchFish(bestFish)
+                    end
                 end
             end
             task.wait(catchSpeed)
