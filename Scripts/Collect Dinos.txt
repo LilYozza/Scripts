@@ -12,7 +12,7 @@ local plotName = Player:GetAttribute("assignedPlot")
 
 local Plot = Plots:FindFirstChild(plotName)
 local EggSlots = Plot:WaitForChild("EggSlots")
-local UnitSigns = Plot.WaitForChild("UnitSigns")
+local UnitSigns = Plot:WaitForChild("UnitSigns")
 
 local startHatchingRemote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("StartEggHatch")
 -->Non Return Functions<--
