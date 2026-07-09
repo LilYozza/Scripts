@@ -1,4 +1,4 @@
-print("Version: 1.0.1")
+print("Version: 1.0.2")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -88,16 +88,19 @@ Auto:Toggle("Auto Hatch",function(bool)
         while shared.ToggleAH do
             local slots = getSlotInfo()
             if slots then
+                local lastPos
                 for _,v in pairs(slots)do
                     if v.egg and v.isReady then
                         local slot = v.slot
                         local prox = slot:FindFirstChild("HatchEggPrompt")
                         if slot and prox then
-                            MoveTo(v.slot) task.wait(0.5)
-                            fireproximityprompt(prox) task.wait(0.5)
+                            if not lastPos then lastPos = GetPos() end
+                            MoveTo(v.slot) task.wait(0.3)
+                            fireproximityprompt(prox) task.wait(0.1)
                         end
                     end
                 end
+                if lastPos then MoveTo(lastPos) end
             end
             task.wait(1)
         end
