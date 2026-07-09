@@ -1,4 +1,4 @@
-print("Version: 1.0.7")
+print("Version: 1.0.8")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -13,7 +13,7 @@ local world2 = workspace:WaitForChild("World2"):WaitForChild("Game") -- Moon
 local pPlot1 = world1:WaitForChild("Plots"):WaitForChild(Player.Name)
 local pPlot2 = world2:WaitForChild("Plots"):WaitForChild(Player.Name)
 
-local sellNpc = workspace:WaitForChild("Game"):WaitForChild("Map"):WaitForChild("MapMiddle"):WaitForChild("SellArea"):WaitForChild("SellNPC")
+
 local sellBtn = Player:WaitForChild("PlayerGui"):WaitForChild("PlayerResponses"):WaitForChild("Frame"):WaitForChild("1"):WaitForChild("Text")
 
 local priceType = "Highest"
@@ -214,6 +214,8 @@ Auto:Toggle("Auto Sell", function(bool)
                 TeleportRemote:FireServer("Sell")
 
                 local hrp = Player.Character and Player.Character:WaitForChild("HumanoidRootPart")
+                local pWorld = getWorld()
+                local sellNpc = pWorld:WaitForChild("Map"):WaitForChild("MapMiddle"):WaitForChild("SellArea"):WaitForChild("SellNPC")
                 local prompt = sellNpc:WaitForChild("ProximityPrompt")
                 local npcRoot = sellNpc:WaitForChild("HumanoidRootPart", 15) or nil
 
