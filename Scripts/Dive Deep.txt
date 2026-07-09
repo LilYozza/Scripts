@@ -1,4 +1,4 @@
-print("Version: 1.0.6")
+print("Version: 1.0.5")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -16,11 +16,14 @@ local pPlot2 = world2:WaitForChild("Plots"):WaitForChild(Player.Name)
 local sellNpc = workspace:WaitForChild("Game"):WaitForChild("Map"):WaitForChild("MapMiddle"):WaitForChild("SellArea"):WaitForChild("SellNPC")
 local sellBtn = Player:WaitForChild("PlayerGui"):WaitForChild("PlayerResponses"):WaitForChild("Frame"):WaitForChild("1"):WaitForChild("Text")
 
+local priceType = "Highest"
 local catchSpeed = 0
 
 pcall(function()
     GuiService:SetGameplayPausedNotificationEnabled(false)
 end)
+
+local rebirthRemote = workspace:WaitForChild("Network"):WaitForChild("RebirthRequest-RemoteEvent")
 
 -->Return Functions<--
 local function getWorld(_world)
@@ -190,7 +193,7 @@ local buffargs = {
 
 local packetRemote = game:GetService("ReplicatedStorage"):WaitForChild("Packets"):WaitForChild("Packet"):WaitForChild("RemoteEvent")
 
-local priceType = "Highest"
+
 Auto:Dropdown("Highest",{"Highest", "Lowest"},true,function(SItem)
     priceType = SItem
 end)
@@ -228,6 +231,19 @@ Auto:Toggle("Auto Sell", function(bool)
                 end
             end
 
+            task.wait(1)
+        end
+    end)
+end)
+
+local requirementBtn = Player:WaitForChild("PlayerGui"):WaitForChild("PersistentUI"):WaitForChild("Rebirth"):WaitForChild("BTNs"):WaitForChild("Rebirth"):WaitForChild("DontMeetRequirements")
+Auto:Toggle("Auto Rebirth",function(bool)
+    shared.ToggleAR=bool
+    spawn(function()
+        while shared.ToggleAR do
+            if requirementBtn and not requirementBtn.Visible then
+                rebirthRemote:FireServer()
+            end
             task.wait(1)
         end
     end)
