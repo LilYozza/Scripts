@@ -1,4 +1,4 @@
-print("Version: 1.0.5")
+print("Version: 1.0.6")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -276,6 +276,9 @@ Auto:Toggle("Fish Zone",function(bool)
                     local bestFish = getBestFish(zone)
                     if bestFish then
                         catchFish(bestFish)
+                    else
+                        --TP TO ZONE
+                        MoveTo(zone) task.wait(5)
                     end
                 end
             end
