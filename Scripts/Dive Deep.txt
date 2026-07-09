@@ -1,4 +1,4 @@
-print("Version: 1.0.3")
+print("Version: 1.0.5")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -26,6 +26,16 @@ local function getWorld(_world)
         return (world == "Main") and world1 or world2
     end
     return world
+end
+
+local function getBackpackInfo()
+    local t = {}
+
+    t.Space = Player:GetAttribute("BackpackSpace") or 0
+    t.Used = Player:GetAttribute("BackpackUsed") or 0
+    t.Left = t.Space - t.Used
+
+    return t
 end
 
 local function getOxygen()
@@ -138,9 +148,11 @@ local function catchFish(fish)
 
     MoveTo(root)
 
-    while prompt.Parent and fish.Parent do
+    local startTime = tick()
+
+    while prompt.Parent and fish.Parent and (tick() - startTime) < 5 do
         fireproximityprompt(prompt)
-        task.wait() -- Runs once per frame; adjust if needed (e.g. 0.05)
+        task.wait()
     end
 end
 
@@ -152,13 +164,46 @@ Player:GetPropertyChangedSignal("RespawnLocation"):Connect(function()
     end
 end)
 
+
+local TeleportRemote = workspace:WaitForChild("Network"):WaitForChild("Teleport-RemoteEvent"):FireServer(unpack(args))
 Auto:Button("Home",function()
     spawn(function()
-        if homePos then
-            MoveTo(homePos, Vector3.new(0,3,0))
+        TeleportRemote:FireServer("Aquarium")
+    end)
+end)
+
+Auto:Button("Sell",function()
+    spawn(function()
+        TeleportRemote:FireServer("Sell")
+    end)
+end)
+
+local buffargs = {
+    --[1] = buffer(buffer: 0xe6f11feaf9bf06fb) --[[Generation Failure]]
+}
+
+local packetRemote = game:GetService("ReplicatedStorage"):WaitForChild("Packets"):WaitForChild("Packet"):WaitForChild("RemoteEvent")
+
+
+Auto:Toggle("Auto Sell",function(bool)
+    shared.ToggleAS=bool
+    spawn(function()
+        while shared.ToggleAS do
+            local backpackInfo = getBackpackInfo()
+            if backpackInfo then
+                if backpackInfo.Left <= 0 then
+                    TeleportRemote:FireServer("Sell")
+                    task.wait(1)
+                    --packetRemote:FireServer(buffargs)
+
+                end
+            end
+            task.wait(1)
         end
     end)
 end)
+
+
 
 local sZone
 Auto:Dropdown("Select Zone",getAllZones(),true,function(SItem)
