@@ -1,4 +1,4 @@
-print("Version: 1.0.8")
+print("Version: 1.0.9")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -165,6 +165,7 @@ local function catchFish(fish)
     end
 end
 
+--[[
 local homePos = Player.RespawnLocation or nil
 Player:GetPropertyChangedSignal("RespawnLocation"):Connect(function()
     local spawn = Player.RespawnLocation
@@ -172,7 +173,7 @@ Player:GetPropertyChangedSignal("RespawnLocation"):Connect(function()
         homePos = spawn 
     end
 end)
-
+]]--
 
 local TeleportRemote = workspace:WaitForChild("Network"):WaitForChild("Teleport-RemoteEvent")
 Auto:Button("Home",function()
@@ -314,18 +315,38 @@ Auto:Toggle("Enable Buttons",function(bool)
     end)
 end)
 
-Auto:Toggle("Auto Oxygen",function(bool)
-    shared.ToggleAO=bool
+Auto:Toggle("Auto Oxygen", function(bool)
+    shared.ToggleAO = bool
+
     spawn(function()
         while shared.ToggleAO do
             local oxygen = getOxygen()
+
             if oxygen and oxygen <= 10 and homePos then
                 local lastPos = GetPos()
-                MoveTo(homePos, Vector3.new(0,3,0))
-                task.wait(1)
-                MoveTo(lastPos)
+
+                TeleportRemote:FireServer("Aquarium")
+
+                local startTime = tick()
+                local oxygenRefilled = false
+
+                while tick() - startTime < 10 do
+                    local currentOxygen = getOxygen()
+
+                    if currentOxygen and currentOxygen >= 100 then
+                        oxygenRefilled = true
+                        break
+                    end
+
+                    task.wait(0.2)
+                end
+
+                if oxygenRefilled then
+                    MoveTo(lastPos)
+                end
             end
-            task.wait(5)
+
+            task.wait(1)
         end
     end)
 end)
