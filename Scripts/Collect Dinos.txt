@@ -1,4 +1,4 @@
-print("Version: 1.0.2")
+print("Version: 1.0.3")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -50,6 +50,13 @@ local function isSlotsFull()
     return true
 end
 
+Auto:Button("Place Egg",function()
+    spawn(function()
+        startHatchingRemote:FireServer()
+    end)
+end)
+
+
 Auto:Toggle("Auto Collect",function(bool)
     shared.ToggleAC=bool
     spawn(function()
@@ -65,19 +72,21 @@ Auto:Toggle("Auto Collect",function(bool)
     end)
 end)
 
-
+local conIO
 Auto:Toggle("Auto Place",function(bool)
     shared.ToggleAP=bool
     spawn(function()
-        while shared.ToggleAP do
-            --check
-            local holdingEgg = Player:GetAttribute("holdingEgg")
-            if holdingEgg and holdingEgg == true then
-                if not isSlotsFull() then
-                    startHatchingRemote:FireServer()
+        if shared.ToggleAP then
+            conIO = Player:GetAttributeChangedSignal("holdingEgg"):Connect(function()
+                local holdingEgg = Player:GetAttribute("holdingEgg")
+                if holdingEgg and holdingEgg == true then
+                    if not isSlotsFull() then
+                        startHatchingRemote:FireServer()
+                    end
                 end
-            end
-            task.wait(1)
+            end)
+        else
+            if conIO then conIO:Disconnect() conIO = nil end
         end
     end)
 end)
