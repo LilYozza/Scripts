@@ -1,0 +1,108 @@
+print("Version: 1.0.0")
+local w = library:CreateWindow("Main")
+local Auto = w:CreateFolder("Auto")
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+-->Base Variables<--
+
+local Plots = workspace:WaitForChild("Plots")
+local plotName = Player:GetAttribute("assignedPlot")
+
+local Plot = Plots:FindFirstChild(plotName)
+local EggSlots = Plot:WaitForChild("EggSlots")
+local UnitSigns = Plot.WaitForChild("UnitSigns")
+
+local startHatchingRemote = game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("StartEggHatch")
+-->Non Return Functions<--
+
+-->Return Functions<--
+local function getSlotInfo()
+    local t = {}
+
+    for _, slot in ipairs(EggSlots:GetChildren()) do
+        local egg = slot:FindFirstChildWhichIsA("Tool") or nil
+        local timerText = slot.TimerPart.SurfaceGui.TimerFrame.TimerText
+        local text = timerText.Text
+
+        t[slot] = {
+            egg = egg,
+            isReady = text == "Ready",
+            timeLeft = (tonumber(text:match("(%d+)m")) or 0) * 60
+                     + (tonumber(text:match("(%d+)s")) or 0),
+            slot = slot
+        }
+    end
+
+    return t
+end
+
+local function isSlotsFull()
+    local slots = getSlotInfo()
+    for _,v in pairs(slots)do
+        if not v.egg then
+            return false
+        end
+    end
+    return true
+end
+
+Auto:Button("Home",function()
+    spawn(function()
+    end)
+end)
+
+Auto:Toggle("Auto Collect",function(bool)
+    shared.ToggleAC=bool
+    spawn(function()
+        while shared.ToggleAC do
+            for _,v in pairs(UnitSigns:GetChildren())do
+                local btn = v:FindFirstChild("Button")
+                if btn then
+                    Touch(btn)
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+
+Auto:Toggle("Auto Place",function(bool)
+    shared.ToggleAP=bool
+    spawn(function()
+        while shared.ToggleAP do
+            --check
+            local holdingEgg = Player:GetAttribute("holdingEgg")
+            if holdingEgg and holdingEgg == true then
+                if not isSlotsFull() then
+                    startHatchingRemote:FireServer()
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)
+
+Auto:Toggle("Auto Hatch",function(bool)
+    shared.ToggleAH=bool
+    spawn(function()
+        while shared.ToggleAH do
+            local slots = getSlotInfo()
+            if slots then
+                for _,v in pairs(slots)do
+                    if v.egg and v.isReady then
+                        local slot = v.slot
+                        local prox = slot:FindFirstChild("HatchEggPrompt")
+                        if slot and prox then
+                            MoveTo(v.slot) task.wait(0.5)
+                            fireproximityprompt(prox) task.wait(0.5)
+                        end
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end)

@@ -694,6 +694,10 @@ local Games = {
 	[131756752872026] = {
 		Name = 'Dive Deep',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Dive%20Deep.txt'
+	},
+	[132169393925482] = {
+		Name = 'Collect Dinos',
+		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Collect%20Dinos.txt'
 	}
 }
 repeat task.wait()until game:IsLoaded()
