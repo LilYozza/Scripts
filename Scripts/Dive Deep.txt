@@ -1,4 +1,4 @@
-print("Version: 1.0.9")
+print("Version: 1.1.0")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -97,8 +97,10 @@ local function getAllZones()
 end
 
 local function getZone(_zone)
-    local find = world1.FishZones:FindFirstChild(_zone) or world2.FishZones:FindFirstChild(_zone) or nil
-    return find
+    if _zone then
+        local find = world1.FishZones:FindFirstChild(_zone) or world2.FishZones:FindFirstChild(_zone) or nil
+        return find
+    end
 end
 
 local function isPointInPart(part, point)
@@ -322,7 +324,7 @@ Auto:Toggle("Auto Oxygen", function(bool)
         while shared.ToggleAO do
             local oxygen = getOxygen()
 
-            if oxygen and oxygen <= 10 and homePos then
+            if oxygen and oxygen <= 10 then
                 local lastPos = GetPos()
 
                 TeleportRemote:FireServer("Aquarium")
