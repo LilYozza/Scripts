@@ -1,4 +1,4 @@
-print("Version: 1.0.6")
+print("Version: 1.0.7")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -192,10 +192,14 @@ local buffargs = {
 }
 
 local packetRemote = game:GetService("ReplicatedStorage"):WaitForChild("Packets"):WaitForChild("Packet"):WaitForChild("RemoteEvent")
-
+local equipBestRemote =  workspace:WaitForChild("Network"):WaitForChild("RequestEquipBestFish-RemoteFunction")
 
 Auto:Dropdown("Highest",{"Highest", "Lowest"},true,function(SItem)
     priceType = SItem
+end)
+
+Auto:Toggle("Auto Equip",function(bool)
+    shared.ToggleAE=bool
 end)
 
 
@@ -223,9 +227,14 @@ Auto:Toggle("Auto Sell", function(bool)
                     or (hrp and (hrp.Position - npcRoot.Position).Magnitude <= prompt.MaxActivationDistance)
 
                 if shared.ToggleAS and tick() - start < 10 then
+                    if shared.ToggleAE then equipBestRemote:InvokeServer() end
+                    if shared.ToggleAR then rebirthRemote:FireServer() end
+
                     fireproximityprompt(prompt)
 
                     task.wait(3)
+
+                    
 
                     SendClick(sellBtn)
                 end
