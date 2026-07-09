@@ -215,28 +215,30 @@ Auto:Toggle("Auto Sell", function(bool)
 
                 local hrp = Player.Character and Player.Character:WaitForChild("HumanoidRootPart")
                 local prompt = sellNpc:WaitForChild("ProximityPrompt")
-                local npcRoot = sellNpc:WaitForChild("HumanoidRootPart")
+                local npcRoot = sellNpc:WaitForChild("HumanoidRootPart", 15) or nil
 
-                local start = tick()
+                if npcRoot then
+                    local start = tick()
 
-                -- Wait until we're close enough, or timeout after 10 seconds
-                repeat
-                    task.wait(0.1)
-                until not shared.ToggleAS
-                    or tick() - start >= 10
-                    or (hrp and (hrp.Position - npcRoot.Position).Magnitude <= prompt.MaxActivationDistance)
+                    -- Wait until we're close enough, or timeout after 10 seconds
+                    repeat
+                        task.wait(0.1)
+                    until not shared.ToggleAS
+                        or tick() - start >= 10
+                        or (hrp and (hrp.Position - npcRoot.Position).Magnitude <= prompt.MaxActivationDistance)
 
-                if shared.ToggleAS and tick() - start < 10 then
-                    if shared.ToggleAE then equipBestRemote:InvokeServer() end
-                    if shared.ToggleAR then rebirthRemote:FireServer() end
+                    if shared.ToggleAS and tick() - start < 10 then
+                        if shared.ToggleAE then equipBestRemote:InvokeServer() end
+                        if shared.ToggleAR then rebirthRemote:FireServer() end
 
-                    fireproximityprompt(prompt)
+                        fireproximityprompt(prompt)
 
-                    task.wait(3)
+                        task.wait(3)
 
-                    
+                        
 
-                    SendClick(sellBtn)
+                        SendClick(sellBtn)
+                    end
                 end
             end
 
