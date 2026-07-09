@@ -1,4 +1,4 @@
-print("Version: 1.0.4")
+print("Version: 1.0.6")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -13,7 +13,10 @@ local world2 = workspace:WaitForChild("World2"):WaitForChild("Game") -- Moon
 local pPlot1 = world1:WaitForChild("Plots"):WaitForChild(Player.Name)
 local pPlot2 = world2:WaitForChild("Plots"):WaitForChild(Player.Name)
 
-local catchSpeed = 0.5
+local sellNpc = workspace:WaitForChild("Game"):WaitForChild("Map"):WaitForChild("MapMiddle"):WaitForChild("SellArea"):WaitForChild("SellNPC")
+local sellBtn = Player:WaitForChild("PlayerGui"):WaitForChild("PlayerResponses"):WaitForChild("Frame"):WaitForChild("1"):WaitForChild("Text")
+
+local catchSpeed = 0
 
 pcall(function()
     GuiService:SetGameplayPausedNotificationEnabled(false)
@@ -105,7 +108,7 @@ local function isPointInPart(part, point)
 end
 
 local function getBestFish(zone)
-    local bestPrice = 0
+    local bestPrice = (priceType == "Lowest") and math.huge or 0
     local bestFish
     local fishes = getFishes()
 
@@ -129,9 +132,12 @@ local function getBestFish(zone)
                 end
             end
 
-            if inRange and price > bestPrice then
-                bestPrice = price
-                bestFish = fish
+            if inRange then
+                if (priceType == "Highest" and price > bestPrice)
+                or (priceType == "Lowest" and price < bestPrice) then
+                    bestPrice = price
+                    bestFish = fish
+                end
             end
         end
     end
@@ -184,18 +190,44 @@ local buffargs = {
 
 local packetRemote = game:GetService("ReplicatedStorage"):WaitForChild("Packets"):WaitForChild("Packet"):WaitForChild("RemoteEvent")
 
+local priceType = "Highest"
+Auto:Dropdown("Highest",{"Highest", "Lowest"},true,function(SItem)
+    priceType = SItem
+end)
 
-Auto:Toggle("Auto Sell",function(bool)
-    shared.ToggleAS=bool
+
+Auto:Toggle("Auto Sell", function(bool)
+    shared.ToggleAS = bool
+
     spawn(function()
         while shared.ToggleAS do
             local backpackInfo = getBackpackInfo()
+
             if backpackInfo and backpackInfo.Left <= 0 then
                 TeleportRemote:FireServer("Sell")
-                task.wait(1)
-                --packetRemote:FireServer(buffargs)
 
+                local hrp = Player.Character and Player.Character:WaitForChild("HumanoidRootPart")
+                local prompt = sellNpc:WaitForChild("ProximityPrompt")
+                local npcRoot = sellNpc:WaitForChild("HumanoidRootPart")
+
+                local start = tick()
+
+                -- Wait until we're close enough, or timeout after 10 seconds
+                repeat
+                    task.wait(0.1)
+                until not shared.ToggleAS
+                    or tick() - start >= 10
+                    or (hrp and (hrp.Position - npcRoot.Position).Magnitude <= prompt.MaxActivationDistance)
+
+                if shared.ToggleAS and tick() - start < 10 then
+                    fireproximityprompt(prompt)
+
+                    task.wait(3)
+
+                    SendClick(sellBtn)
+                end
             end
+
             task.wait(1)
         end
     end)
