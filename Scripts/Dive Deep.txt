@@ -1,4 +1,4 @@
-print("Version: 1.0.2")
+print("Version: 1.0.3")
 local w = library:CreateWindow("Main")
 local Auto = w:CreateFolder("Auto")
 
@@ -12,6 +12,8 @@ local world2 = workspace:WaitForChild("World2"):WaitForChild("Game") -- Moon
 
 local pPlot1 = world1:WaitForChild("Plots"):WaitForChild(Player.Name)
 local pPlot2 = world2:WaitForChild("Plots"):WaitForChild(Player.Name)
+
+local catchSpeed = 0.5
 
 pcall(function()
     GuiService:SetGameplayPausedNotificationEnabled(false)
@@ -127,15 +129,18 @@ local function getBestFish(zone)
     return bestFish
 end
 
-local function catchFish(_fish)
-    local root = _fish:FindFirstChild("RootPart")
-    if root then
-        
-        local prompt = root:FindFirstChild("ProximityPrompt")
-        if prompt then
-            MoveTo(root) task.wait(0.5)
-            fireproximityprompt(prompt)
-        end
+local function catchFish(fish)
+    local root = fish:FindFirstChild("RootPart")
+    if not root then return end
+
+    local prompt = root:FindFirstChild("ProximityPrompt")
+    if not prompt then return end
+
+    MoveTo(root)
+
+    while prompt.Parent and fish.Parent do
+        fireproximityprompt(prompt)
+        task.wait() -- Runs once per frame; adjust if needed (e.g. 0.05)
     end
 end
 
@@ -180,7 +185,7 @@ Auto:Toggle("Fish Zone",function(bool)
                     catchFish(bestFish)
                 end
             end
-            task.wait(1)
+            task.wait(catchSpeed)
         end
     end)
 end)
@@ -229,7 +234,7 @@ Auto:Toggle("Best Fish",function(bool)
             if bestFish then
                 catchFish(bestFish)
             end
-            task.wait(1)
+            task.wait(catchSpeed)
         end
     end)
 end)
@@ -248,7 +253,7 @@ Auto:Toggle("Farm Fish",function(bool)
                     end
                 end
             end
-            task.wait(1)
+            task.wait(catchSpeed)
         end
     end)
 end)
@@ -257,6 +262,12 @@ task.spawn(function()
     while task.wait(1) do
         FishListDropDown:Refresh(getAllFishTypes())
     end
+end)
+
+Auto:Slider("Catch Speed",{
+    min = 0; max = 5; precise = false;
+},function(value)
+    catchSpeed = value
 end)
 
 Auto:Button("Clean",function()
