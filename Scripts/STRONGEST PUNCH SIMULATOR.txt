@@ -1,3 +1,4 @@
+print("1.0.0")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 w = library:CreateWindow("Main")
 
@@ -90,9 +91,8 @@ Auto:Toggle("Auto Collect",function(bool)
                 if firstItem and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
                     for __,_v in pairs(firstItem:GetChildren()) do
                         --local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
-                        if _v:IsA("BasePart") and shared.ToggleAC then
+                        if _v and _v:IsA("BasePart") and shared.ToggleAC then
                             Touch(_v, 0.4)
-                            break
                         end
                     end
                 end
