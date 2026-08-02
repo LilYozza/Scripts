@@ -1,4 +1,4 @@
-print("1.0.3")
+print("1.0.4")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 w = library:CreateWindow("Main")
 
@@ -77,6 +77,10 @@ Auto:Toggle("Auto Punch",function(bool)
     end)
 end)
 
+Auto:Toggle("TP lvl4",function(bool)
+    shared.ToggleTP=bool
+end)
+
 Auto:Toggle("Auto Collect",function(bool)
     shared.ToggleAC=bool
     spawn(function()
@@ -90,9 +94,14 @@ Auto:Toggle("Auto Collect",function(bool)
                 for i, v in pairs(newTable) do
                     for _, _v in pairs(v:GetChildren())do
                        local tp = _v:FindFirstChildWhichIsA("TouchTransmitter")
-                       if tp and v.Name:sub(-2) ~= "_4" and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
-                            Touch(_v, 0.4)
-                            break
+                       if tp and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
+                            if v.Name:sub(-2) == "_4" then
+                                if shared.ToggleTP then
+                                    MoveTo(_v) task.wait(1) break
+                                end
+                            else
+                                Touch(_v, 0.4) break
+                            end
                        end
                     end
                 end
@@ -192,4 +201,5 @@ local dataToSave = {
     ["No Walls"] = {var = "ToggleNWW"},
     ["Orbs"] = {var = "cOrbs"},
     ["Server Hop"] = {var = "ToggleSH"},
+    ["TP lvl4"] = {var = "ToggleTP"}
 } SaveManager(dataToSave)
