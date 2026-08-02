@@ -89,8 +89,8 @@ Auto:Toggle("Auto Collect",function(bool)
 
                 if firstItem and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
                     for __,_v in pairs(firstItem:GetChildren()) do
-                        local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
-                        if part and shared.ToggleAC then
+                        --local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
+                        if _v:IsA("BasePart") and shared.ToggleAC then
                             Touch(_v, 0.4)
                             break
                         end
