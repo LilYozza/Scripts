@@ -1,4 +1,4 @@
-print("1.0.2")
+print("1.0.3")
 local SaveDataManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/LilYozza/Scripts/refs/heads/main/Misc/SaveManager.txt"))()
 w = library:CreateWindow("Main")
 
@@ -85,8 +85,18 @@ Auto:Toggle("Auto Collect",function(bool)
             if curStage then
 
                 local newTable = sortByItemName(curStage:GetChildren())
-                local firstItem = newTable[1]
-
+                --local firstItem = newTable[1]
+                --if firstItem and firstItem.Name:sub(-2) ~= "_4" and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
+                for i, v in pairs(newTable) do
+                    for _, _v in pairs(v:GetChildren())do
+                       local tp = _v:FindFirstChildWhichIsA("TouchTransmitter")
+                       if tp and v.Name:sub(-2) ~= "_4" and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
+                            Touch(_v, 0.4)
+                            break
+                       end
+                    end
+                end
+                --[[
                 if firstItem and firstItem.Name:sub(-2) ~= "_4" and curStage.Name == tostring(Stage.Value) and shared.ToggleAC then
                     for __,_v in pairs(firstItem:GetChildren()) do
                         local part = _v:FindFirstChildWhichIsA("TouchTransmitter")
@@ -96,7 +106,7 @@ Auto:Toggle("Auto Collect",function(bool)
                         end
                     end
                 end
-
+                ]]--
             end
             task.wait()
         end
