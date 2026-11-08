@@ -707,7 +707,7 @@ local Games = {
 		Name = 'Storage Hunters',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Storage%20Hunters.txt'
 	},
-	[8304191830] = {
+	[3183403065] = {
 		Name = 'Anime Adventures',
 		Script = 'https://raw.githubusercontent.com/LilYozza/Scripts/main/Scripts/Anime%20Adventures.txt'
 	}
