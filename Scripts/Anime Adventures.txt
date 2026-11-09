@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://mythios.online/api/freemium"))()
+--loadstring(game:HttpGet("https://mythios.online/api/freemium"))()
