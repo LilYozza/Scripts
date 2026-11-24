@@ -57,6 +57,12 @@ end)
 
 local function rejoin(place_id)
 	if not place_id then place_id = game.PlaceId end
+
+	--AA FIX
+	if game.GameId == 3183403065 then
+		place_id = 8304191830 --Hub
+	end
+
     while true do
         pcall(function()
             TeleportService:Teleport(place_id, Player)
@@ -269,13 +275,7 @@ end)
 shared.ToggleDAR = true
 game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == "ErrorPrompt" and shared.ToggleDAR then
-		--AA FIX
-		if game.GameId == 3183403065 then
-			rejoin(8304191830) --Hub
-		else
-			rejoin(game.PlaceId)
-		end
-        
+		rejoin(game.PlaceId)
     end
 end)
 
