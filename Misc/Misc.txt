@@ -266,6 +266,7 @@ Tools:Toggle("Banana Peel",function(bool)
     end)
 end)
 
+shared.ToggleDAR = true
 game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == "ErrorPrompt" and shared.ToggleDAR then
         rejoin(game.PlaceId)
