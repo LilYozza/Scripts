@@ -55,6 +55,17 @@ GPlayers:Toggle("Player Chams",function(bool)
 end)
 --===========================================================================================--
 
+local function rejoin(place_id)
+	if not place_id then place_id = game.PlaceId end
+    while true do
+        pcall(function()
+            TeleportService:Teleport(place_id, Player)
+        end)
+
+        task.wait(5)
+    end
+end
+
 --====================================DropDown Player List===================================--
 local DropList = GPlayers:Dropdown("Select Player",GetDisplayNames(),true,function(SItem)
 	PlayerSelect_M = GetPlayerByDisplayName(SItem)
@@ -255,10 +266,21 @@ Tools:Toggle("Banana Peel",function(bool)
     end)
 end)
 
+game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+    if child.Name == "ErrorPrompt" and shared.ToggleDAR then
+        rejoin(game.PlaceId)
+    end
+end)
+
+Dev:Toggle("Auto Rejoin",function(bool)
+	shared.ToggleDAR = bool
+end)
+
 
 Dev:Button("Rejoin Server",function()
 	spawn(function()
-        TeleportService:Teleport(game.PlaceId, Player)
+        --TeleportService:Teleport(game.PlaceId, Player)
+		rejoin(game.PlaceId)
     end)
 end)
 
