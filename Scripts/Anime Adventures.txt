@@ -2,3 +2,11 @@
 --BARRAGE-LPOS3Z
 --loadstring(game:HttpGet("https://barrage.cc/loader"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/bobloscript/robscript/main/AnimeAdventures"))()
+
+--MAIN
+--place = 8304191830
+--game = 3183403065
+
+--INGAME
+--place 8349889591
+--game = 3183403065

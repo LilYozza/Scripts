@@ -269,7 +269,13 @@ end)
 shared.ToggleDAR = true
 game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == "ErrorPrompt" and shared.ToggleDAR then
-        rejoin(game.PlaceId)
+		--AA FIX
+		if game.GameId == 3183403065 then
+			rejoin(8304191830) --Hub
+		else
+			rejoin(game.PlaceId)
+		end
+        
     end
 end)
 
